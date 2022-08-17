@@ -1,0 +1,21 @@
+<div class="batch-delay">
+  <div class="delay-contain">
+    <div class="delay-content">
+      <div class="delay-item">
+        <div class="pull-left delay-title">执行日期:</div>
+        <div class="pull-left ml8">
+          <div>
+            <nz-date-picker style="width: 147px;" [nzAllowClear]="false" [(ngModel)]="optimization_keywordData.start_time" (ngModelChange)="onChangeStart($event)" [nzSize]="'small'" placeholder="开始时间"></nz-date-picker>
+            <span class="mr5">-</span>
+            <nz-date-picker style="width: 147px;" [nzAllowClear]="false" [(ngModel)]="optimization_keywordData.end_time" (ngModelChange)="onChangeEnd($event)" [nzSize]="'small'" placeholder="结束时间"></nz-date-picker>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="delay-footer mt20 mb10">
+      <button class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">取消</button>
+      <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'"  (click)="sure()">确认</button>
+    </div>
+
+  </div>
+</div>

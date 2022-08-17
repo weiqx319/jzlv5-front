@@ -1,0 +1,68 @@
+<div>
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addMetricCategory()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加指标分类</span>
+      </a>
+    </div>
+  </div>
+  <div class="manage-table manage-no-result-table pt8">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'default'"
+              [nzData]="categoryList"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ y: noResultHeight+'px' }">
+      <thead>
+      <tr>
+        <th [nzWidth]="'200px'">
+          <span>分类id</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>分类名称</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作时间</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of categoryList">
+        <td>{{data['category_id']}}</td>
+        <td>{{data['category_name']}}</td>
+        <td>{{data['last_modify_time']}}</td>
+        <!-- 操作 -->
+        <td><a (click)="editMetricCategory(data)">编辑</a>
+        <!-- <span class="ml8 mr8">|</span>
+           <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="delMetricsCategory(data.category_id)" nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click">删除</a> -->
+        </td>
+      </tr>
+      <tr *ngIf="categoryList.length===0">
+        <td #noResultTd [attr.colspan]="10"  [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+          <div class="table-no-result">
+            <div class="table-no-result-content">
+              <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addMetricCategory()">
+               <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加指标分类</span>
+              </button>
+              <div class="mt8">您还没有指标分类，添加分类可以更好地对指标进行分类管理</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+
+</div>

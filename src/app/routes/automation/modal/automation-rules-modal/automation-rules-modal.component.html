@@ -1,0 +1,87 @@
+<div class="custom-rules">
+  <div class="line-wrapper" *ngIf="triggerConditions.level!==0&&triggerConditions.level<4"><div class="line"><i nz-icon nzType="minus" nzTheme="outline"></i></div></div>
+  <div class="logic-operator-wrapper" [ngStyle]="{'background-color':triggerConditions.isGroup ? addAreaColors[triggerConditions.level] : 'transparent'}" *ngIf="triggerConditions.level<4">
+    <div class="logic-operator" *ngIf="triggerConditions.isGroup" (click)="changeRelation(triggerConditions)"><div>{{triggerConditions.logicGate==='and'?'且':'或'}}</div></div>
+    <div class="add-icon" [ngStyle]="{'background-color':triggerConditions.isGroup ? 'transparent' :addAreaColors[triggerConditions.level] }" (click)="addRule(triggerConditions)" [ngClass]="{'disabled':triggerConditions.level>3}">
+      <div class="plus"><i nz-icon nzType="plus" nzTheme="outline"></i></div>
+    </div>
+  </div>
+  <div class="line-wrapper" *ngIf="!triggerConditions.isGroup"><div class="line"><i nz-icon nzType="minus" nzTheme="outline"></i></div></div>
+  <div class="rule-box">
+    <ng-container *ngIf="triggerConditions.isGroup">
+      <ng-container *ngFor="let item of triggerConditions.group;let i=index">
+        <app-automation-rules-modal [triggerConditions]='item' [actionParent]="triggerConditions" [actionIndex]="i"></app-automation-rules-modal>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="!triggerConditions.isGroup">
+      <div class="rule-wrapper">
+        <div class="start-rules-wrapper">
+          <nz-select class="w120" nzShowSearch nzAllowClear nzPlaceHolder="选择指标类型" [(ngModel)]="triggerConditions.settings['metricGroup']" nzSize="small" (ngModelChange)="changeMetricGroup()">
+            <ng-container *ngFor="let metricGroup of triggerMetricGroup" >
+              <nz-option *ngIf="metricOptions[metricGroup.key].length > 0" [nzLabel]="metricGroup.name" [nzValue]="metricGroup.key"></nz-option>
+            </ng-container>
+          </nz-select>
+          <nz-select class="ml5 w120" nzShowSearch nzPlaceHolder="选择指标" [(ngModel)]="triggerConditions.settings['metricId']" nzSize="small" (ngModelChange)="changeMetric()">
+            <ng-container *ngFor="let metric of metricOptions[triggerConditions.settings['metricGroup']]" >
+              <nz-option [nzLabel]="metric.name" [nzValue]="metric.key"></nz-option>
+            </ng-container>
+          </nz-select>
+          <ng-container *ngIf="!triggerConditions.settings['noTime']">
+            <nz-select class="ml5 w200" nzShowSearch nzPlaceHolder="选择时间" [(ngModel)]="triggerConditions.settings['time']" nzSize="small"  (ngModelChange)="changeTime()">
+              <ng-container *ngFor="let time of timeSelect.options">
+                <nz-option *ngIf="!time.groupId" [nzLabel]="time.label" [nzValue]="time.value"></nz-option>
+              </ng-container>
+              <nz-option-group *ngFor="let group of timeSelect.groups" [nzLabel]="group.label">
+                <ng-container *ngFor="let time of timeSelect.options" >
+                  <nz-option *ngIf="time.groupId===group.id" [nzLabel]="time.label" [nzValue]="time.value"></nz-option>
+                </ng-container>
+              </nz-option-group>
+            </nz-select>
+          </ng-container>
+          <nz-select class="ml5 w80" nzShowSearch nzPlaceHolder="选择运算符" [(ngModel)]="triggerConditions.settings['operator']" nzSize="small">
+            <nz-option *ngFor="let operator of operatorOptions" [nzLabel]="operator.name" [nzValue]="operator.key"></nz-option>
+          </nz-select>
+          <!-- 静态设置 -->
+          <ng-container *ngIf="!triggerConditions.settings.isDynamic">
+            <nz-input-number class="ml5 w80" [(ngModel)]="triggerConditions.settings['value']" [nzMin]="0" [nzStep]="1" nzSize="small"></nz-input-number>
+            <span class="ml5" *ngIf="triggerConditions.settings['isRate']">%</span>
+          </ng-container>
+          <!-- 动态计算 -->
+          <ng-container *ngIf="triggerConditions.settings.isDynamic">
+            <div class="auto-compute-wrapper ml10">
+              <nz-input-number [(ngModel)]="triggerConditions.settings['factor']" [nzMin]="'0.00'" [nzStep]="'0.05'" nzSize="small"></nz-input-number>
+              <span class="ml5">x</span>
+              <nz-select class="ml5 w120" nzShowSearch nzPlaceHolder="选择指标类型" [(ngModel)]="triggerConditions.settings['dynamic_metricGroup']" nzSize="small" (ngModelChange)="changeDynamicMetricGroup()">
+                <ng-container *ngFor="let metricGroup of triggerMetricGroup" >
+                  <nz-option *ngIf="metricOptions[metricGroup.key].length > 0" [nzLabel]="metricGroup.name" [nzValue]="metricGroup.key"></nz-option>
+                </ng-container>
+              </nz-select>
+              <nz-select class="ml5 w120" nzShowSearch nzPlaceHolder="选择指标" [(ngModel)]="triggerConditions.settings['dynamic_metricId']" nzSize="small" (ngModelChange)="changeDynamicMetric()">
+                <ng-container *ngFor="let metric of metricOptions[triggerConditions.settings['dynamic_metricGroup']]" >
+                  <nz-option [nzLabel]="metric.name" [nzValue]="metric.key"></nz-option>
+                </ng-container>
+              </nz-select>
+              <ng-container *ngIf="!triggerConditions.settings['dynamic_noTime']">
+                <nz-select class="ml5 w200" nzShowSearch nzPlaceHolder="选择时间" [(ngModel)]="triggerConditions.settings['dynamic_time']" nzSize="small" (ngModelChange)="changeDynamicTime()">
+                  <ng-container *ngFor="let time of timeSelect.options" >
+                    <nz-option *ngIf="!time.groupId" [nzLabel]="time.label" [nzValue]="time.value"></nz-option>
+                  </ng-container>
+                  <nz-option-group *ngFor="let group of timeSelect.groups" [nzLabel]="group.label">
+                    <ng-container *ngFor="let time of timeSelect.options" >
+                      <nz-option *ngIf="time.groupId===group.id" [nzLabel]="time.label" [nzValue]="time.value"></nz-option>
+                    </ng-container>
+                  </nz-option-group>
+                </nz-select>
+              </ng-container>
+            </div>
+          </ng-container>
+        </div>
+        <div class="end-icons-wrapper">
+          <i nz-icon nzType="cloud-sync" nzTheme="outline" nz-tooltip [nzTooltipTitle]="triggerConditions.settings.isDynamic?'静态设置':'动态计算'" (click)="triggerConditions.settings.isDynamic=!triggerConditions.settings.isDynamic"></i>
+          <i nz-icon nzType="copy" (click)="copyRule(triggerConditions,actionIndex,actionParent)" nzTheme="outline" nz-tooltip nzTooltipTitle="复制"></i>
+          <i nz-icon nzType="delete" (click)="deleteRule(actionIndex,actionParent)" [ngClass]="{'disabled':!actionParent}" nzTheme="outline" nz-tooltip [nzTooltipTitle]="actionParent?'删除':'不可删除'"></i>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

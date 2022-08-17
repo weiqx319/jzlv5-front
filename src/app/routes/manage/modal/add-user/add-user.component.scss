@@ -1,0 +1,56 @@
+.w100p{
+  width: 100%;
+}
+.new-role-form{
+  width: 482px;
+}
+.role-form-item{
+  // overflow: hidden;
+  display: flex;
+  align-items: center;
+  .form-label{
+    width: 60px;
+    text-align: right;
+  }
+}
+.role-header{
+  height: 30px;
+  line-height: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color:#eef2f7;
+  border:1px solid #e4e4e4;
+}
+.role-content{
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.role-basic-content{
+  display: flex;
+  display: -webkit-flex;
+  justify-content: flex-end;
+}
+.role-account-content{
+  min-height: 150px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+.role-optimizer-content{
+  min-height: 200px;
+  display: flex;
+  display: -webkit-flex;
+  justify-content: center;
+}
+.role-sub-company-content{
+  min-height: 200px;
+  display: flex;
+  display: -webkit-flex;
+  justify-content: center;
+}
+.role-account-item{
+  width: 100%;
+}
+.role-footer{
+  padding: 8px 20px;
+  text-align: right;
+}

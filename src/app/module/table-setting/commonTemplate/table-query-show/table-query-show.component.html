@@ -1,0 +1,34 @@
+<div #descDiv class="condition-desc" [ngStyle]="{'max-width': offLeft + 'px'}" style="padding-right:5px;white-space: nowrap; overflow: hidden" *ngIf="isShow">
+  <div class="condition-clear" (click)="clearAllCondition()">
+    <i nz-icon nzType="delete" nzTheme="outline"></i>
+  </div>
+  <div class="pull-left dataRange-desc" *ngIf="dataRangeIsShow">
+    <span>筛选数据范围为：</span>
+    <ng-container [ngSwitch]="dataRange['select_type']">
+      <span *ngSwitchCase="'account'">账户</span>
+      <span *ngSwitchCase="'publisher'">媒体</span>
+      <span *ngSwitchCase="'campaign'">计划</span>
+      <span *ngSwitchCase="'adgroup'">单元</span>
+    </ng-container>
+    <a (click)="deleteDataRange()"><i nz-icon nzType="close" nzTheme="outline"></i></a>
+  </div>
+  <div class="condition-desc-content pl8 pr8" *ngIf="showConditions.length > 0">
+    <ng-container *ngFor="let item of showConditions;let i = index;">
+      <span class="white-space">{{item.show}}</span>
+      <a class="inline-block line-height" (click)="deleteCondition(item.condition)">
+        <i nz-icon nzType="close" nzTheme="outline"></i>
+      </a>
+      <span class="mr5" *ngIf="showConditions.length!==i+1">;</span>
+    </ng-container>
+  </div>
+
+  <div class="filter-desc-content pl8 pr8" *ngIf="showFilterConditions.length > 0">
+    <ng-container *ngFor="let fil of showFilterConditions; let j = index;">
+      <span class="white-space">{{fil.desc}}</span>
+      <a class="inline-block line-height" (click)="deleteFilter(fil.condition)">
+        <i nz-icon nzType="close" nzTheme="outline"></i>
+      </a>
+      <span class="mr5" *ngIf="showFilterConditions.length!==j+1">;</span>
+    </ng-container>
+  </div>
+</div>

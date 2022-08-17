@@ -1,0 +1,506 @@
+<div class="account-binding-content">
+  <form class="account-binding-form" [formGroup]="validateAccountBindingForm">
+    <div class="account-binding-form-content">
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>广告主:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'cid'" [nzSize]="'default'" [nzDisabled]="chanPubId>0" [(ngModel)]="accountSetting.cid" [nzPlaceHolder]="'请选择广告主'" nzShowSearch>
+            <nz-option
+              *ngFor="let option of advertiserList"
+              [nzLabel]="option.advertiser_name"
+              [nzValue]="option.cid">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' class="ml8" *ngIf="getFormControl('cid').dirty&&getFormControl('cid').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择广告主</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="account-form-item" *ngIf="chanPubId>0">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>渠道:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left accountName">
+          <input [trim]="'blur'" nz-input class="w100p" [nzSize]="'default'" [formControlName]="'channel_id'" type="text" disabled="disabled" readonly [ngModel]="channel_name">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>媒体:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'publisher_id'" [nzDisabled]="chanPubId>0" [nzSize]="'default'" [(ngModel)]="accountSetting.publisher_id" (ngModelChange)="publisherChange()" nzShowSearch>
+            <nz-option
+              *ngFor="let option of allPublishers"
+              [nzLabel]="option.publisher_name"
+              [nzValue]="option.publisher_id">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' class="ml8" *ngIf="getFormControl('publisher_id').dirty&&getFormControl('publisher_id').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择媒体</div>
+        </div>
+      </nz-form-item>
+      <ng-container *ngIf="accountSetting.publisher_id!==13 && accountSetting.publisher_id!==14 && accountSetting.publisher_id!==15">
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+            <label><span class="redStart">*</span>推广账户用户名:</label>
+          </div>
+          <!--{{chanPubId>0}}-->
+          <!--添加-->
+          <nz-form-control class="w200 ml8 pull-left" *ngIf="chanPubId === 0">
+            <input nz-input
+                   [trim]="'blur'"
+                   class="w100p"
+                   [nzSize]="'default'"
+                   [formControlName]="'pub_account_name'"
+                   type="text"
+                   placeholder="输入用户名"
+                   [(ngModel)]="accountSetting.pub_account_name">
+          </nz-form-control>
+          <!--编辑-->
+          <nz-form-control class="w200 ml8 pull-left accountName" *ngIf="chanPubId > 0">
+            <input nz-input
+                   [trim]="'blur'"
+                   class="w100p"
+                   [nzSize]="'default'"
+                   [formControlName]="'pub_account_name'"
+                   type="text"
+                   disabled= "disabled"
+                   readonly
+                   [(ngModel)]="accountSetting.pub_account_name">
+
+          </nz-form-control>
+          <div class="ml8 pull-left">
+            <div class='ant-form-item-explain' *ngIf="getFormControl('pub_account_name').dirty&&getFormControl('pub_account_name').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入用户名</div>
+          </div>
+        </nz-form-item>
+      </ng-container>
+      <ng-container *ngIf="!chanPubId">
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+            <label><span class="redStart">*</span>推广账户密码:</label>
+          </div>
+          <nz-form-control class="w200 ml8 pull-left">
+            <input nz-input
+                   [trim]="'blur'"
+                   class="w100p"
+                   [nzSize]="'default'"
+                   [formControlName]="'pub_password'"
+                   type="password"
+                   placeholder="输入密码"
+                   [(ngModel)]="accountSetting.pub_password">
+
+          </nz-form-control>
+          <div class="ml8 pull-left">
+            <div class='ant-form-item-explain' *ngIf="getFormControl('pub_password').dirty&&getFormControl('pub_password').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入密码</div>
+          </div>
+        </nz-form-item>
+      </ng-container>
+      <ng-container *ngIf="accountSetting.publisher_id===13 || accountSetting.publisher_id===14 ">
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+            <label><span class="redStart">*</span>账户名:</label>
+          </div>
+          <!--{{chanPubId>0}}-->
+          <!--添加-->
+          <nz-form-control class="w200 ml8 pull-left" *ngIf="chanPubId === 0">
+            <input nz-input
+                   [trim]="'blur'"
+                   class="w100p"
+                   [nzSize]="'default'"
+                   [formControlName]="'pub_account_name'"
+                   type="text"
+                   placeholder="输入账户名"
+                   [(ngModel)]="accountSetting.pub_account_name">
+          </nz-form-control>
+          <!--编辑-->
+          <nz-form-control class="w200 ml8 pull-left accountName" *ngIf="chanPubId > 0">
+            <input nz-input
+                   [trim]="'blur'"
+                   class="w100p"
+                   [nzSize]="'default'"
+                   [formControlName]="'pub_account_name'"
+                   type="text"
+                   disabled= "disabled"
+                   readonly
+                   [(ngModel)]="accountSetting.pub_account_name">
+
+          </nz-form-control>
+          <div class="ml8 pull-left">
+            <div class='ant-form-item-explain' *ngIf="getFormControl('pub_account_name').dirty&&getFormControl('pub_account_name').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入账户名</div>
+          </div>
+        </nz-form-item>
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+            <label><span class="redStart">*</span>账户ID:</label>
+          </div>
+          <nz-form-control class="w200 ml8 pull-left">
+            <input nz-input
+                   [trim]="'blur'"
+                   class="w100p"
+                   [nzSize]="'default'"
+                   [formControlName]="'owner_id'"
+                   type="text"
+                   disabled= "disabled"
+                   placeholder="输入账户ID"
+                   [(ngModel)]="accountSetting.owner_id">
+          </nz-form-control>
+          <div class="ml8 pull-left">
+            <div class='ant-form-item-explain' *ngIf="getFormControl('owner_id').dirty&&getFormControl('owner_id').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入账户ID</div>
+          </div>
+        </nz-form-item>
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+            <label *ngIf="accountSetting.publisher_id===13"><span class="redStart">*</span>Sign Id :</label>
+            <label *ngIf="accountSetting.publisher_id!==13"><span class="redStart">*</span>app_id:</label>
+          </div>
+          <nz-form-control class="w200 ml8 pull-left">
+            <input nz-input
+                   [trim]="'blur'"
+                   class="w100p"
+                   [nzSize]="'default'"
+                   [formControlName]="'app_id'"
+                   type="text"
+                   disabled= "disabled"
+                   [placeholder]="accountSetting.publisher_id===13 ? '输入Sign Id' : '输入app_id'"
+                   [(ngModel)]="accountSetting.app_id">
+          </nz-form-control>
+          <div class="ml8 pull-left">
+            <div class='ant-form-item-explain' *ngIf="getFormControl('app_id').dirty&&getFormControl('app_id').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入app_id</div>
+          </div>
+        </nz-form-item>
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+            <label *ngIf="accountSetting.publisher_id===13"><span class="redStart">*</span>Secret Key:</label>
+            <label *ngIf="accountSetting.publisher_id!==13"><span class="redStart">*</span>app_secret:</label>
+          </div>
+          <nz-form-control class="w200 ml8 pull-left">
+            <input nz-input
+                   [trim]="'blur'"
+                   class="w100p"
+                   [nzSize]="'default'"
+                   [formControlName]="'app_secret'"
+                   type="text"
+                   disabled= "disabled"
+                   [placeholder]="accountSetting.publisher_id===13 ? '输入Secret Key' : '输入app_secret'"
+                   [(ngModel)]="accountSetting.app_secret">
+          </nz-form-control>
+          <div class="ml8 pull-left">
+            <div class='ant-form-item-explain' *ngIf="getFormControl('app_secret').dirty&&getFormControl('app_secret').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入app_secret</div>
+          </div>
+        </nz-form-item>
+      </ng-container>
+
+<!--      <ng-container *ngIf="accountSetting.publisher_id===16">-->
+<!--        <nz-form-item class="account-form-item">-->
+<!--          <div class="form-label pull-left">-->
+<!--            <label><span class="redStart">*</span>app_id:</label>-->
+<!--          </div>-->
+<!--          <nz-form-control class="w200 ml8 pull-left">-->
+<!--            <input nz-input-->
+<!--                   class="w100p"-->
+<!--                   [nzSize]="'default'"-->
+<!--                   [formControlName]="'app_id'"-->
+<!--                   type="text"-->
+<!--                   disabled= "disabled"-->
+<!--                   placeholder="输入app_id"-->
+<!--                   [(ngModel)]="accountSetting.app_id">-->
+<!--          </nz-form-control>-->
+<!--          <div class="ml8 pull-left">-->
+<!--            <div class='ant-form-item-explain' *ngIf="getFormControl('app_id').dirty&&getFormControl('app_id').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入app_id</div>-->
+<!--          </div>-->
+<!--        </nz-form-item>-->
+<!--        <nz-form-item class="account-form-item">-->
+<!--          <div class="form-label pull-left">-->
+<!--            <label><span class="redStart">*</span>app_secret:</label>-->
+<!--          </div>-->
+<!--          <nz-form-control class="w200 ml8 pull-left">-->
+<!--            <input nz-input-->
+<!--                   class="w100p"-->
+<!--                   [nzSize]="'default'"-->
+<!--                   [formControlName]="'app_secret'"-->
+<!--                   type="text"-->
+<!--                   disabled= "disabled"-->
+<!--                   placeholder="输入app_secret"-->
+<!--                   [(ngModel)]="accountSetting.app_secret">-->
+<!--          </nz-form-control>-->
+<!--          <div class="ml8 pull-left">-->
+<!--            <div class='ant-form-item-explain' *ngIf="getFormControl('app_secret').dirty&&getFormControl('app_secret').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入app_secret</div>-->
+<!--          </div>-->
+<!--        </nz-form-item>-->
+<!--      </ng-container>-->
+
+      <ng-container *ngIf="accountSetting.publisher_id===2">
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+            <label><span *ngIf="accountSetting.publisher_id===2" class="redStart">*</span>显示域名PC端:</label>
+          </div>
+          <nz-form-control class="w200 ml8 pull-left">
+            <input nz-input
+              [trim]="'blur'"
+              class="w100p"
+              [nzSize]="'default'"
+              [formControlName]="'display_domain_pc'"
+              type="text"
+              [(ngModel)]="accountSetting.display_domain_pc">
+
+          </nz-form-control>
+          <div class="ml8 pull-left">
+            <div class='ant-form-item-explain' *ngIf="getFormControl('display_domain_pc').dirty&&getFormControl('display_domain_pc').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入PC端显示域名</div>
+          </div>
+        </nz-form-item>
+      </ng-container>
+      <ng-container *ngIf="accountSetting.publisher_id===2">
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+            <label><span *ngIf="accountSetting.publisher_id===2" class="redStart">*</span>显示域名WAP端:</label>
+          </div>
+          <nz-form-control class="w200 ml8 pull-left">
+            <input nz-input
+              [trim]="'blur'"
+              class="w100p"
+              [nzSize]="'default'"
+              [formControlName]="'display_domain_wap'"
+              type="text"
+              [(ngModel)]="accountSetting.display_domain_wap">
+
+          </nz-form-control>
+          <div class="ml8 pull-left">
+            <div class='ant-form-item-explain' *ngIf="getFormControl('display_domain_wap').dirty&&getFormControl('display_domain_wap').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入WAP端显示域名</div>
+          </div>
+        </nz-form-item>
+      </ng-container>
+      <!-- <ng-container *ngIf="companyId===33||companyId===1727"> -->
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+           <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'营销分析中显示的渠道名称'" [nzTooltipPlacement]="'topLeft'" class="mr5" style="color: #f09200"></i>
+           <label>数据归属渠道:</label>
+          </div>
+          <nz-form-control class="w200 ml8 pull-left">
+            <nz-select class="w100p" [formControlName]="'attribution_channel'" [nzSize]="'default'" [nzDisabled]="accountSetting.publisher_id===7" [(ngModel)]="accountSetting.attribution_channel" nzShowSearch>
+              <nz-option
+                *ngFor="let option of allChannels"
+                [nzLabel]="option.channel_name"
+                [nzValue]="option.channel_id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+            <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'营销分析中显示的媒体名称'" [nzTooltipPlacement]="'topLeft'" class="mr5" style="color: #f09200"></i>
+            <label>数据归属媒体:</label>
+          </div>
+          <nz-form-control class="w200 ml8 pull-left">
+            <nz-select class="w100p" [formControlName]="'attribution_publisher'" [nzSize]="'default'" [(ngModel)]="accountSetting.attribution_publisher" nzShowSearch>
+              <nz-option
+                *ngFor="let option of allPublishers"
+                [nzLabel]="option.publisher_name"
+                [nzValue]="option.publisher_id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      <!-- </ng-container> -->
+
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label>账户标签:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <input nz-input
+            [trim]="'blur'"
+            class="w100p"
+            [nzSize]="'default'"
+            [formControlName]="'account_label'"
+            placeholder="输入账户标签"
+            type="text"
+            [(ngModel)]="accountSetting.account_label">
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- 账户标签列表 -->
+      <nz-form-item class="account-form-item" *ngFor="let item of accountLabelList" >
+        <div class="form-label pull-left">
+          <label>标签-{{item.name}}</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <input nz-input
+            class="w100p"
+            [nzSize]="'default'"
+            [formControlName]="item.key"
+            placeholder="输入标签"
+            type="text"
+            [(ngModel)]="accountSetting['account_custom_label'][item.key]">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label>账户备注:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <input nz-input
+            [trim]="'blur'"
+            class="w100p"
+            [nzSize]="'default'"
+            [formControlName]="'account_comment'"
+            placeholder="输入账户备注"
+            type="text"
+            [(ngModel)]="accountSetting.account_comment">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="account-form-item" *ngIf="(accountSetting.channel_id===1||accountSetting.publisher_id===17) && [1,4,17].indexOf(accountSetting.publisher_id)>-1 && type !== 'virtual'">
+        <div class="form-label pull-left">
+          <button nz-button [nzType]="'default'" [nzSize]="'default'" (click)="setDomain()">
+            <span>域名设置</span>
+          </button>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <span style="color:#CEC5C5;">非必填项，如果设置不对则会导致刷排名不准，请在运营人员协助下填写</span>
+        </nz-form-control>
+      </nz-form-item>
+      <ng-container *ngIf="([1,4,17].indexOf(accountSetting.publisher_id)>-1)">
+
+        <nz-form-item class="account-form-item">
+          <div class="form-label pull-left">
+            <label>竞价域名设置:</label>
+          </div>
+          <nz-form-control class="w250 ml8 pull-left">
+            <nz-radio-group style="display: flex;align-items: center;" [nzSize]="'default'" [(ngModel)]="accountSetting.rank_type" [formControlName]="'rank_type'">
+                <label class="mb2" nz-radio [nzValue]="'click'">
+                  <span>使用访问域名</span>
+                </label>
+                <label nz-radio [nzValue]="'show'">
+                  <span>使用显示域名</span>
+                </label>
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+
+        <ng-container *ngIf="accountSetting.rank_type=='show'">
+          <nz-form-item class="account-form-item" *ngIf="accountSetting.publisher_id===1">
+            <div class="form-label pull-left">
+              <label>显示域名PC端:</label>
+            </div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <input nz-input
+                     [trim]="'blur'"
+                     class="w100p"
+                     [nzSize]="'default'"
+                     [formControlName]="'display_domain_pc'"
+                     type="text"
+                     [(ngModel)]="accountSetting.display_domain_pc">
+
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item class="account-form-item">
+            <div class="form-label pull-left">
+              <label>显示域名WAP端:</label>
+            </div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <input nz-input
+                     [trim]="'blur'"
+                     class="w100p"
+                     [nzSize]="'default'"
+                     [formControlName]="'display_domain_wap'"
+                     type="text"
+                     [(ngModel)]="accountSetting.display_domain_wap">
+
+            </nz-form-control>
+          </nz-form-item>
+        </ng-container>
+        <ng-container *ngIf="accountSetting.rank_type=='click'">
+          <nz-form-item class="account-form-item" *ngIf="accountSetting.publisher_id===1">
+            <div class="form-label pull-left">
+              <label>访问域名PC端:</label>
+            </div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <input nz-input
+                     [trim]="'blur'"
+                     class="w100p"
+                     [nzSize]="'default'"
+                     [formControlName]="'promo_domain_pc'"
+                     type="text"
+                     [(ngModel)]="accountSetting.promo_domain_pc">
+
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item class="account-form-item">
+            <div class="form-label pull-left">
+              <label>访问域名WAP端:</label>
+            </div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <input nz-input
+                     [trim]="'blur'"
+                     class="w100p"
+                     [nzSize]="'default'"
+                     [formControlName]="'promo_domain_wap'"
+                     type="text"
+                     [(ngModel)]="accountSetting.promo_domain_wap">
+
+            </nz-form-control>
+          </nz-form-item>
+        </ng-container>
+
+      </ng-container>
+
+      <div *ngIf="chanPubId === 0">
+        <ng-container *ngIf="accountSetting.publisher_id!==1">
+          <nz-form-item class="account-form-item">
+            <div class="form-label pull-left">
+              <label><span class="redStart">*</span>验证码:</label>
+            </div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <div>
+                <input nz-input
+                     [trim]="'blur'"
+                       class="w100p"
+                       [nzSize]="'default'"
+                       [formControlName]="'image_token'"
+                       type="text"
+                       [(ngModel)]="accountSetting.verify_code">
+
+              </div>
+            </nz-form-control>
+            <div class="ml8 pull-left">
+              <div class='ant-form-item-explain' *ngIf="getFormControl('image_token').dirty&&getFormControl('image_token').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请填写验证码</div>
+            </div>
+          </nz-form-item>
+          <nz-form-item class="account-form-item">
+            <div class="form-label pull-left"></div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <div class="overHidden">
+                <div class="account-image-token pull-left" style="line-height: 38px;">
+                  <ng-container *ngIf="!image_loading">
+                    <i nz-icon nzType="loading" nzTheme="outline"></i>
+                  </ng-container>
+
+                  <ng-container *ngIf="image_loading">
+                    <img width="100%" height="100%" src="{{verificationImg}}" alt="验证码">
+                  </ng-container>
+                </div>
+                <div class="pull-left ml5" style="line-height: 40px;">
+                  <a (click)="getImage()">换一张</a>
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </ng-container>
+      </div>
+
+    </div>
+    <div class="account-binding-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" [nzLoading]="saveing" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="!validateAccountBindingForm.valid" (click)="doSave()">
+        <span>完成</span>
+      </button>
+    </div>
+  </form>
+</div>

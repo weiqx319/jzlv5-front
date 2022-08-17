@@ -1,0 +1,49 @@
+<div class="oauth">
+  <div class="oauth-head" *ngIf="is_show && (status === 1 || status === 2 || status === 3) ">
+    当前登录的账户：{{accountInfo['login_username']}}   <span class="ml16" style="cursor: pointer;" (click)="logout()">退出登录</span>
+  </div>
+  <div class="oauth-container">
+    <div class="oauth-content">
+      <div class="oauth-left">
+        <p class="title" *ngIf="status === 1 || status === 2 || status === 4">已授权{{productInfo['name']}}权限</p>
+        <p class="title" *ngIf="status === 3 || status === 5">未授权{{productInfo['name']}}权限</p>
+        <div class="oauth-left-model" *ngIf="status === 0">
+          请返回帐户绑定页继续操作！
+        </div>
+        <div class="oauth-left-model" *ngIf="status === 1">
+          已经成功授权{{productInfo['name']}}，快去{{productInfo['name']}}产品界面操作吧！
+        </div>
+        <div class="oauth-left-model" *ngIf="status === 2">
+          该授权账户已经绑定在系统中，可以登录绑定{{productInfo['name']}}账号进行操作
+        </div>
+        <div class="oauth-left-model" *ngIf="status === 3">
+          您的账户目前还未授权{{productInfo['name']}}权限，授权权限可在{{productInfo['name']}}产品中对媒体账户进行操作
+        </div>
+        <div class="oauth-left-model" *ngIf="status === 4">
+          您的账户目前已经成功授权{{productInfo['name']}} ,登录已有的{{productInfo['name']}}账号进行后续操作
+        </div>
+        <div class="oauth-left-model" *ngIf="status === 5">
+          您的账户目前还未授权{{productInfo['name']}}权限，授权权限可在{{productInfo['name']}}产品中对媒体账户进行操作
+        </div>
+        <div class="oauth-left-bottom">
+          <button nz-button *ngIf="status === 1" class="operBtn" [nzType]="'default'"  routerLink="/" [nzSize]="'small'">直接进入概览页</button>
+          <button nz-button *ngIf="status === 2" class="operBtn" [nzType]="'default'"  (click)="login()" [nzSize]="'small'">登录</button>
+          <button nz-button *ngIf="status === 3" class="operBtn" [nzType]="'default'"  routerLink="/" [nzSize]="'small'">授权在当前登录账户中</button>
+          <button nz-button *ngIf="status === 4" class="operBtn" [nzType]="'default'"  routerLink="/login" [nzSize]="'small'">登录</button>
+          <button nz-button *ngIf="status === 5" class="operBtn" [nzType]="'default'"  routerLink="/register" [nzSize]="'small'">授权，去注册</button>
+          <p class="loginP" *ngIf="status === 3 || status === 5">或使用其他{{productInfo['name']}}账户登录 <a href="Javascript:" (click)="login()">登录</a></p>
+        </div>
+      </div>
+      <div class="oauth-right">
+        <div>
+          <img src="../../../../assets/logo_white.png" alt="">
+        </div>
+        <p class="mt18">国内首创，多个搜索引擎+信息流媒体，打通客服软件/第三方转化数据的 一站式竞价广告优化与管理系统</p>
+        <p class="mt18">{{productInfo['name']}}网络竞价广告管理与优化预测型SaaS平台，发展了数百家企业客户，也不乏一些超级客户。 在线教育、金融、电商、游戏等行业的营销人员，都在依靠{{productInfo['name']}}数据科学驱动的优化平台，挖掘历史效果数据价值 、精细管理每一次广告竞价、最大化广告回报。</p>
+        <p class="mt18 color-F0A157">现在注册送7天免费使用</p>
+        <button nz-button class="mt18 registerBtn display-none" [nzType]="'default'"  routerLink="/register" [nzSize]="'small'">注册账号</button>
+
+      </div>
+    </div>
+  </div>
+</div>

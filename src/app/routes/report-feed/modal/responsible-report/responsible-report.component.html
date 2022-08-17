@@ -1,0 +1,275 @@
+<div>
+  <div class="app-module-condition pb8 pl30 pr30">
+    <div class="app-module-operations mt8">
+      <div class="app-module-operations-left">
+        <button class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeCondition()">
+         <i nz-icon nzType="filter" nzTheme="outline"></i><span>高级筛选</span>
+        </button>
+        <button class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeField()">
+          <i nz-icon nzType="bars" nzTheme="outline"></i><span>修改列</span>
+        </button>
+        <div class="inline-block ml8 fs12">
+          <app-table-query-show-feed [summary_type]="viewTableData.summary_type" [filterConditions] = "allFilterOption" [dataRange]="viewTableData['data_range']" [conditions]="viewTableData['condition']" (changed)="reloadData()"></app-table-query-show-feed>
+        </div>
+
+      </div>
+      <div class="app-module-operations-right fs12">
+        <nz-select class="w100 mr8"
+                   [(ngModel)]="viewTableData.time_grain"
+                   (ngModelChange)="timeRangeChange($event)"
+                   [nzSize]="'small'">
+          <nz-option [nzValue]="'summary'" [nzLabel]="'汇总:合计'"></nz-option>
+          <nz-option [nzValue]="'day'" [nzLabel]="'汇总:分日'"></nz-option>
+        </nz-select>
+        <nz-select class="w80 mr8" (ngModelChange)="mainRangeChange($event)"
+                   [(ngModel)]="viewTableData['main_range']"
+                   [nzSize]="'small'">
+          <nz-option [nzValue]="'leftJoin'" [nzLabel]="'全部'"></nz-option>
+          <nz-option [nzValue]="'join'" [nzLabel]="'有展现'"></nz-option>
+          <nz-option [nzValue]="'no_impression'" [nzLabel]="'无展现'"></nz-option>
+        </nz-select>
+        <div class="inline-block">
+          <button class="manage-add" nz-popconfirm [nzPopconfirmTitle]="createReportTpl" (nzOnCancel)="cancelCreateReport()" (nzOnConfirm)="handCreateReport()" [(nzPopconfirmVisible)]="showCreateReport"  [nzPopconfirmPlacement]="'bottomRight'" [nzPopconfirmOverlayClassName]="'pop-report-wrap'"  nz-button [nzType]="'default'" [nzSize]="'small'">
+            <span>生成报表</span>
+          </button>
+          <ng-template #createReportTpl>
+            <div class="pop-report">
+              <div class="lab-row">
+                <span>隐藏说明：</span>
+                <nz-radio-group style="width: 160px;" [(ngModel)]="viewTableData.hidden_condition" [nzSize]="'small'">
+                  <label class="" nz-radio [nzValue]="true">
+                    隐藏<i nz-popover [nzPopoverContent]="'不插入报表生成条件'" nzPopoverPlacement="left" nz-icon nzType="question-circle" nzTheme="outline"></i>
+                  </label>
+                  <label nz-radio [nzValue]="false">
+                    显示<i nz-popover [nzPopoverContent]="'在前五行将插入报表生成条件'" nzPopoverPlacement="left" nz-icon nzType="question-circle" nzTheme="outline"></i>
+                  </label>
+                </nz-radio-group>
+              </div>
+              <div class="lab-row">
+                <span>名称：</span>
+                <input nz-input type="text" placeholder="报表1" [nzSize]="'small'" style="width: 160px;"
+                       [(ngModel)]="viewReportSetting.report_name">
+              </div>
+              <div class="lab-row">
+                <span>格式：</span>
+                <nz-select class="w160" [nzSize]="'small'" [(ngModel)]="viewReportSetting.report_format">
+                  <nz-option [nzLabel]="'Excel'" [nzValue]="'excel'"></nz-option>
+                  <nz-option [nzLabel]="'PDF'" [nzValue]="'pdf'"></nz-option>
+                </nz-select>
+              </div>
+
+              <div class="lab-row">
+                <span>时间粒度：</span>
+                <nz-select class="w160" [nzSize]="'small'" [(ngModel)]="time_grain">
+                  <nz-option [nzLabel]="'合计'" [nzValue]="'summary'"></nz-option>
+                  <nz-option [nzLabel]="'分日'" [nzValue]="'day'"></nz-option>
+                  <nz-option [nzLabel]="'分星期'" [nzValue]="'weekSplit'"></nz-option>
+                  <nz-option [nzLabel]="'分周'" [nzValue]="'week'"></nz-option>
+                  <nz-option [nzLabel]="'分月'" [nzValue]="'month'"></nz-option>
+                </nz-select>
+              </div>
+              <div class="lab-row">
+                <span>频率：</span>
+                <nz-select class="w160" [nzSize]="'small'" [(ngModel)]="viewReportSetting.report_freq">
+                  <nz-option [nzLabel]="'每天'" [nzValue]="'day'"></nz-option>
+                  <nz-option [nzLabel]="'每周'" [nzValue]="'week'"></nz-option>
+                  <nz-option [nzLabel]="'每月'" [nzValue]="'month'"></nz-option>
+                  <nz-option [nzLabel]="'立即执行'" [nzValue]="'now'"></nz-option>
+                </nz-select>
+              </div>
+              <div class="lab-row">
+                <span>接收邮箱：</span>
+                <span>（一行一个）</span>
+              </div>
+              <div class="mt5">
+                <textarea  nz-input type ="'textarea'" rows="4" [(ngModel)]="viewReportSetting.email_list" style="width: 220px"></textarea>
+              </div>
+
+            </div>
+          </ng-template>
+
+          <!--<button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="downloadReport()">生成报表</button>-->
+        </div>
+        <div class="module-time inline-block ml8" (click)="changeDate()">
+          <div class="time-content pl8 pr8">
+            <span>{{timeDesc}}</span>
+          </div>
+          <div class="module-icon time-icon">
+            <i nz-icon nzType="calendar" nzTheme="outline"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--<app-view-bookmark #viewMark [summaryType]="viewTableData['summary_type']" [fixTop]="bookMarkTop" (create)="createBookMark($event)" (save)="saveBookMark($event)" (selected)="changeSelectedBookMark($event)" ></app-view-bookmark>-->
+  </div>
+
+  <div class="view-table biz-report" [ngStyle]="{'height':tableHeight+'px'}">
+    <ngx-datatable
+      #viewTable
+      class="jzl"
+      [rows]="rows"
+      [summaryRow]="true"
+      [summaryHeight]="rowHeight"
+      [summaryPosition]="'top'"
+      [loadingIndicator]="loadingIndicator"
+      [columns]="columns"
+      [columnMode]="'force'"
+      [headerHeight]="44"
+      [footerHeight]="40"
+      [rowHeight]="rowHeight"
+      [count]="pageInfo.currentPageCount"
+      [scrollbarV]="true"
+      [scrollbarH]="true"
+      [externalPaging]="true"
+      [externalSorting]="true"
+      [virtualization]="true"
+      [sorts]="defaultSortItems"
+      [sortType]="'single'"
+      (sort)="sortView($event)"
+      (resize)="refreshTableSize()"
+      [reorderable]="reorderable"
+      [messages]="dataMessages"
+      [selected]="selected"
+      [selectionType]="'checkbox'"
+      (select)='onSelect($event)' >
+
+      <!--<ngx-datatable-column [width]="300" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">-->
+      <ng-template #chkHeader ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+        <label
+          class="datatable-checkbox" [ngClass]="{selectedCurrent:selectedType=='current' && selected.length>0}">
+          <a nz-dropdown [nzDropdownMenu]="menu">
+            <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"/>
+          </a>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu nzSelectable>
+            <li nz-menu-item (click)="selectedChange('current',allRowsSelected,selectFn)">
+              <a>选择当前页</a>
+            </li>
+            <li nz-menu-item  (click)="selectedChange('all',allRowsSelected,selectFn)">
+              <a>选择全部</a>
+            </li>
+          </ul>
+          </nz-dropdown-menu>
+
+
+        </label>
+      </ng-template>
+
+      <ng-template #summaryCell let-row="row" let-value="value" let-column="column">
+        <div class="summary-cell" *ngIf="summaryData[column.prop]">
+          {{ summaryData[column.prop] }}
+        </div>
+      </ng-template>
+      <ng-template #rateSummaryCell let-row="row" let-value="value" let-column="column">
+        <div class="summary-cell" *ngIf="summaryData[column.prop]">
+          <ng-container *ngIf="summaryData[column.prop] == '10000000.00'">
+            +∞
+          </ng-container>
+          <ng-container *ngIf="summaryData[column.prop] == '-10000000.00'">
+            -∞
+          </ng-container>
+          <ng-container *ngIf="summaryData[column.prop] != '-10000000.00' && summaryData[column.prop] != '10000000.00'">
+            {{ summaryData[column.prop] + '%'}}
+          </ng-container>
+        </div>
+      </ng-template>
+
+      <ng-template #rateSummaryCellColor let-row="row" let-value="value" let-column="column">
+        <div class="summary-cell" *ngIf="summaryData[column.prop]">
+          <ng-container *ngIf="summaryData[column.prop] == '10000000.00'">
+            <span class="up-color">+∞</span>
+          </ng-container>
+          <ng-container *ngIf="summaryData[column.prop] == '-10000000.00'">
+            <span class="down-color">-∞</span>
+          </ng-container>
+          <ng-container *ngIf="summaryData[column.prop] != '-10000000.00' && summaryData[column.prop] != '10000000.00'">
+            <span [ngClass]="{'up-color':summaryData[column.prop]>0,'down-color':summaryData[column.prop]<0}">{{ summaryData[column.prop] + '%'}}</span>
+          </ng-container>
+        </div>
+      </ng-template>
+      <ng-template #summaryCellColor let-row="row" let-value="value" let-column="column">
+        <div class="summary-cell" *ngIf="summaryData[column.prop]">
+          <span [ngClass]="{'up-color':summaryData[column.prop]>0,'down-color':summaryData[column.prop]<0}">{{ summaryData[column.prop] }}</span>
+        </div>
+      </ng-template>
+
+
+      <ng-template #chkCell ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+        <label
+          class="datatable-checkbox">
+          <input type="checkbox" [checked]="isSelected" (change)="singleSelectedChange(onCheckboxChangeFn,$event)"/>
+        </label>
+      </ng-template>
+      <ng-template #filterHeader ngx-datatable-header-template  let-column="column" let-value="value" let-sortFn="sortFn">
+      <span class="datatable-header-cell-wrapper" (click)="sortFn()">
+          <span class="datatable-header-cell-label"> {{column.name}}</span>
+      </span>
+        <app-filter [filterType]="column.data['filterType']" [filterKey]="column.data['filterKey']" [(filterResult)]="column.data['filterResult']" [extraOption]="column.data['extraOption']"  [filterOption]="column.data['filterOption']" (submit)="reloadFirstPage()"></app-filter>
+      </ng-template>
+
+
+
+      <ng-template #rateCell ngx-datatable-cell-template let-value="value">
+        <ng-container *ngIf="value == '10000000.00'">
+          +∞
+        </ng-container>
+        <ng-container *ngIf="value == '-10000000.00'">
+          -∞
+        </ng-container>
+        <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00' && value!= null && value!=''">
+          {{ value + '%'}}
+        </ng-container>
+      </ng-template>
+
+      <ng-template #rateCellColor ngx-datatable-cell-template let-value="value">
+        <ng-container *ngIf="value == '10000000.00'">
+          <span class="up-color">+∞</span>
+        </ng-container>
+        <ng-container *ngIf="value == '-10000000.00'">
+          <span class="down-color">-∞</span>
+        </ng-container>
+        <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00'">
+          <span [ngClass]="{'up-color':value>0,'down-color':value<0}">{{ value + '%'}}</span>
+        </ng-container>
+      </ng-template>
+      <ng-template #cellColor ngx-datatable-cell-template let-value="value">
+        <span [ngClass]="{'up-color':value>0,'down-color':value<0}">{{ value }}</span>
+      </ng-template>
+
+
+
+      <!--</ngx-datatable-column>-->
+
+      <ngx-datatable-footer>
+        <ng-template  ngx-datatable-footer-template>
+          <div class="page-count" *ngIf="pageInfo.loadingStatus == 'success'">
+            共{{pageInfo.allCount}}条
+          </div>
+          <div class="page-count" *ngIf="pageInfo.loadingStatus == 'pending'">
+            <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+          </div>
+          <div class="page-count" *ngIf="pageInfo.loadingStatus == 'error'">
+            总条数加载失败
+          </div>
+          <div class="page-size-select">
+            <select [(ngModel)]="pageInfo.pageSize" (ngModelChange)="changePageSize($event)">
+              <option *ngFor="let sizeList of pageInfo.pageSizeList" [value]="sizeList.key">{{sizeList.name}}</option>
+            </select>
+          </div>
+          <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="pageInfo.currentPage"
+            [size]="pageInfo.pageSize"
+            [count]="pageInfo.allCount"
+            [hidden]="!((pageInfo.allCount / pageInfo.pageSize) > 1)"
+            (change)="changePage($event)">
+          </datatable-pager>
+        </ng-template>
+      </ngx-datatable-footer>
+    </ngx-datatable>
+  </div>
+
+</div>

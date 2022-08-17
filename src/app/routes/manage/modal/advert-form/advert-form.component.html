@@ -1,0 +1,118 @@
+<div class="sub-company-content">
+  <form class="sub-company-form" [formGroup]="validateAdvertForm">
+    <div class="sub-company-form-content">
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>广告主名称:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <input nz-input
+            class="w100p"
+            [nzSize]="'default'"
+            [formControlName]="'advertiser_name'"
+            type="text"
+            placeholder="输入广告主名称"
+            [(ngModel)]="advert_setting.advertiser_name"
+            disabled="{{cid>0}}">
+
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('advertiser_name').dirty&&getFormControl('advertiser_name').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入广告主名称</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>网站域名:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <input nz-input
+            class="w100p"
+            [nzSize]="'default'"
+            [formControlName]="'web_domain'"
+            type="text"
+            placeholder="输入网站域名"
+            [(ngModel)]="advert_setting.web_domain">
+
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('web_domain').dirty&&getFormControl('web_domain').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入网站域名</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>所属行业:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'advertiser_type'" [nzSize]="'default'" [(ngModel)]="advert_setting.advertiser_type" [nzPlaceHolder]="'请选择行业'">
+            <nz-option
+              *ngFor="let option of tradeList"
+              [nzLabel]="option.trade_name"
+              [nzValue]="option.trade_id">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('advertiser_type').dirty&&getFormControl('advertiser_type').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择行业</div>
+        </div>
+      </nz-form-item>
+
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>所属事业部:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <input nz-input
+                 class="w100p"
+                 [nzSize]="'default'"
+                 [formControlName]="'department'"
+                 type="text"
+                 placeholder="输入事业部"
+                 [(ngModel)]="advert_setting.department">
+
+        </nz-form-control>
+      </nz-form-item>
+      <!--<div class="sub-company-form-item sub-company-form-logo">
+        <div class="form-label pull-left">
+          <label>上传logo:</label>
+        </div>
+        <div class="sub-company-form-logo-content ml8 pull-left">
+          <div class="sub-company-form-logo-img">
+            <img width="100%" height="100%" src="assets/loading.gif" alt="九枝兰 logo">
+          </div>
+          <div class="sub-company-form-logo-button ml8">
+            <nz-upload
+              nzAction="http://v5api.jiuzhilan.com/v5/manager_base/advertiser/upload_logo"
+              nzName="files"
+              [nzShowUploadList]="false"
+              [nzWithCredentials]="true"
+              [nzBeforeUpload]="beforeUpload"
+              (nzChange)="handleChange($event)">
+              <button nz-button>
+                <span>选择文件</span>
+              </button>
+            </nz-upload>
+          </div>
+        </div>
+      </div>-->
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label>备注信息:</label>
+        </div>
+        <nz-form-control class="sub-company-form-textarea w200 ml8 pull-left">
+          <textarea nz-input [nzSize]="'default'"    [formControlName]="'advertiser_info'"    class="w100p"  placeholder="备注信息"   [(ngModel)]="advert_setting.comments"  [nzAutosize]></textarea>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('advertiser_type').dirty&&getFormControl('advertiser_type').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择行业</div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="sub-company-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="!validateAdvertForm.valid" (click)="doAdd()">
+        <span>完成</span>
+      </button>
+    </div>
+  </form>
+</div>

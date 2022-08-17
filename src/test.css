@@ -1,0 +1,110 @@
+/* You can add global styles to this file, and also import other style files */
+.ngx-datatable.jzl {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  background: #F9FAFC;
+  border: 1px solid #E4E4E4;
+  color: black;
+  font-size: 13px;
+}
+
+.ngx-datatable.jzl .datatable-header {
+  background: #EEF2F7;
+  color: black;
+}
+
+.ngx-datatable.jzl .datatable-header .datatable-header-cell {
+  text-align: left;
+  padding: .5rem 1.2rem;
+  font-weight: bold;
+}
+
+.ngx-datatable.jzl .datatable-header .datatable-header-cell .datatable-header-cell-label {
+  line-height: 24px;
+}
+
+.ngx-datatable.jzl .datatable-body {
+  background: #F9FAFC;
+}
+
+.ngx-datatable.jzl .datatable-body .datatable-body-row {
+  border-top: 1px solid #E4E4E4;
+}
+
+.ngx-datatable.jzl .datatable-body .datatable-body-row .datatable-body-cell {
+  text-align: left;
+  padding: .5rem 1.2rem;
+  vertical-align: top;
+}
+
+.ngx-datatable.jzl .datatable-body .datatable-body-row.datatable-row-even {
+  background-color: #F9FAFC;
+}
+
+.ngx-datatable.jzl .datatable-body .datatable-body-row:hover {
+  background: #ECF6FE;
+  -webkit-transition-property: background;
+  transition-property: background;
+  -webkit-transition-duration: .3s;
+  transition-duration: .3s;
+  -webkit-transition-timing-function: linear;
+  transition-timing-function: linear;
+}
+
+.ngx-datatable.jzl .datatable-body .datatable-body-row:focus {
+  background-color: #232837;
+}
+
+.ngx-datatable.jzl .datatable-body .datatable-body-row.active {
+  background-color: #1483ff;
+  color: #FFF;
+}
+
+.ngx-datatable.jzl .datatable-footer {
+  background: #FFFFFF;
+  color: #72809b;
+  margin-top: -1px;
+}
+
+.ngx-datatable.jzl .datatable-footer .page-count {
+  line-height: 50px;
+  height: 50px;
+  padding: 0 1.2rem;
+}
+
+.ngx-datatable.jzl .datatable-footer .datatable-pager {
+  margin: 0 10px;
+  vertical-align: top;
+}
+
+.ngx-datatable.jzl .datatable-footer .datatable-pager ul li {
+  margin: 10px 0px;
+}
+
+.ngx-datatable.jzl .datatable-footer .datatable-pager ul li:not(.disabled).active a,
+.ngx-datatable.jzl .datatable-footer .datatable-pager ul li:not(.disabled):hover a {
+  background-color: #455066;
+  font-weight: bold;
+}
+
+.ngx-datatable.jzl .datatable-footer .datatable-pager a {
+  height: 22px;
+  min-width: 24px;
+  line-height: 22px;
+  padding: 0;
+  border-radius: 3px;
+  margin: 0 3px;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: bottom;
+  color: #72809b;
+}
+
+.ngx-datatable.jzl .datatable-footer .datatable-pager .datatable-icon-left,
+.ngx-datatable.jzl .datatable-footer .datatable-pager .datatable-icon-skip,
+.ngx-datatable.jzl .datatable-footer .datatable-pager .datatable-icon-right,
+.ngx-datatable.jzl .datatable-footer .datatable-pager .datatable-icon-prev {
+  font-size: 18px;
+  line-height: 27px;
+  padding: 0 3px;
+}

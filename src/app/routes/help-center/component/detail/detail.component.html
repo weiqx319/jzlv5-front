@@ -1,0 +1,7 @@
+<div class="help-detail">
+  <h3 class="title">{{info? info['post_title']: ''}}</h3>
+  <p style="color: #999">更新时间：{{info? info['post_date']: ''}}</p>
+  <div class="mt14" [innerHTML]="info?info['post_content']: ''"></div>
+  <div class="mb100 backList"><a (click)="goBack()">返回问题列表</a></div>
+</div>
+

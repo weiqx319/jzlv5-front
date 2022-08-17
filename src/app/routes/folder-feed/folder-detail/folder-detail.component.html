@@ -1,0 +1,21 @@
+<div class="folder-detail-nav-tab">
+  <div class="folder-detail-desc">
+    <div class="action-back" >
+      <a (click)="backList()">
+      <i nz-icon nzType="left" nzTheme="outline"></i><span>返回分组列表页</span>
+      </a>
+    </div>
+    <div *ngIf="folderInfo!=null"> <span>{{folderInfo['folder_name']}}</span>  </div>
+  </div>
+  <div class="folder-detail-nav-menu">
+    <ng-container *ngFor="let tab of folderTab">
+      <div class="oper-type" [routerLink]="[tab.key]"  [routerLinkActive]="['active']">
+        {{tab.name}}
+      </div>
+      <div class="ml10"></div>
+    </ng-container>
+  </div>
+</div>
+<div class="folder-detail">
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,31 @@
+
+<div class="single_img mt4 mb4" *ngIf="['大图','大图竖图','小图'].includes(data['image_mode'])">
+  <p class="create-title">
+    {{ title }}
+  </p>
+  <div class="creative-content mt4" *ngIf="imgList.length>0">
+    <img src="{{imgList[0] }}"  class="{{ getImgClass(data['image_mode']) }}" />
+  </div>
+</div>
+<div class="multi_img mt4 mb4" *ngIf="data['image_mode'] === '组图'">
+  <p class="create-title">
+    {{ title }}
+  </p>
+  <div class="creative-content mt4">
+    <ng-container *ngFor="let img of imgList">
+      <img src="{{img}}" class="{{ getImgClass(data['image_mode']) }}" />
+    </ng-container>
+  </div>
+</div>
+<div class="video mt4 mb4" *ngIf="['横版视频', '竖版视频'].includes(data['image_mode'])">
+  <p class="create-title">
+    {{ title }}
+  </p>
+  <div class="creative-content mt4" *ngIf="imgList.length>0">
+    <a href="{{data['video_url']}}" target="_blank">
+      <img src="{{imgList[0]}}" class="{{ getImgClass(data['image_mode']) }}" />
+      <i nz-icon nzType="play-circle" nzTheme="outline" class="video-btn" ></i>
+    </a>
+
+  </div>
+</div>

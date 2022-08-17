@@ -1,0 +1,16 @@
+<div class="fixed-condition-manage page-condition-header">
+  <a class="back-button" (click)="goBack()"><i nz-icon nzType="left" nzTheme="outline"></i> 返回消息中心页</a>
+</div>
+<div class="content-section-manage">
+  <div class="message-container">
+    <nz-spin [nzSpinning]="messageLoading">
+      <div class="msg-title">
+        <h2>{{messageDetail.message_title}}</h2>
+        <p>{{messageDetail.message_start_time}}</p>
+      </div>
+      <div class="msg-content">{{messageDetail.message_content}}</div>
+    </nz-spin>
+  </div>
+
+</div>
+

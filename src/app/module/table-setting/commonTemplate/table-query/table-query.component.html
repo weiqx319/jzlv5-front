@@ -1,0 +1,130 @@
+<div class="filter-item-container mt20 mb20">
+<div class="lab-row mt10" *ngIf="summaryType!='optimization_detail_ranking' && summaryType!='search_keyword'">
+  <label>数据范围:</label>
+  <app-item-select class="w100 ml8" [summaryType]="summaryType" [itemDetail]="dataRange" (itemSelected)="dataRangeChange($event)"></app-item-select>
+
+</div>
+<div class="lab-row mt10 mb30">
+  <label>筛选条件:</label>
+  <div class="condition-setting">
+    <ng-container *ngFor="let  filter of  condition;let i = index; ">
+      <div class="condition-row mb8" style="position: relative">
+        <label *ngIf="i!==0" style="position: absolute; left: -65px">筛选条件{{i+1}}:</label>
+        <nz-select class="ml8 w160"
+                   [nzSize]="'small'"
+                   [(ngModel)]="filter.key"
+                   (ngModelChange)="filterKeyChange($event,filter)"
+                   [nzShowSearch]="true">
+          <nz-option
+            *ngFor="let option of allConditionList"
+            [nzLabel]="option.name"
+            [nzValue]="option.key">
+          </nz-option>
+        </nz-select>
+        <div class="inline-block w80 ml8">
+          <nz-select
+            class="w80"
+            [nzSize]="'small'"
+            [(ngModel)]="filter.op"
+            nzPlaceHolder="">
+            <nz-option
+              *ngFor="let option of conditionOper[filter.type]"
+              [nzLabel]="option.name"
+              [nzValue]="option.key">
+            </nz-option>
+          </nz-select>
+        </div>
+        <!-- <div class="inline-block w120 ml8">
+           <input nz-input
+             class="w100p"
+             [nzSize]="'small'"
+             type="text"
+             placeholder="值"
+             [(ngModel)]="filter.value">
+
+         </div>-->
+        <div class="ml8 w120 inline-block"  *ngIf="filter['type'] == 'number' || filter['type'] == 'numberFilter'">
+          <input nz-input
+                 class="w100p"
+                 [nzSize]="'small'"
+                 type="text"
+                 placeholder="值"
+                 [(ngModel)]="filter.value">
+        </div>
+        <div class="ml8 w120 inline-block"  *ngIf="filter['type'] == 'singleList'">
+          <nz-select
+            class="w120"
+            [nzSize]="'small'"
+            [(ngModel)]="filter.value"
+            nzPlaceHolder="">
+            <!--:filterOption[filter['key']]['filterOption']-->
+            <!--  <ng-container *ngIf="filter['relishKey']">
+                <nz-option
+                  *ngFor="let option of filterOption['relishKey']['filterOption']"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+              </ng-container>
+
+              <ng-container *ngIf="!filter['relishKey']">
+                <nz-option
+                  *ngFor="let option of filterOption[filter['key']]['filterOption']"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+              </ng-container>-->
+            <nz-option
+              *ngFor="let option of filterOption[filter['key']]['filterOption']"
+              [nzLabel]="option.name"
+              [nzValue]="option.key">
+            </nz-option>
+
+          </nz-select>
+        </div>
+        <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  (click)="removeFilterField(i,$event)"></i>
+
+        <div class="ml8" *ngIf="filter['type'] === 'string' || filter['type'] === 'multiValue'" >
+          <textarea class="mt8" style="width: 376px;"  nz-input type ="'textarea'" rows="4" placeholder="*最多同时搜1000个文本，一行一个" [(ngModel)]="filter.value"></textarea>
+        </div>
+        <div class="ml8" *ngIf="filter['type'] === 'checkboxList'" >
+          <nz-select class="mt8"
+                     style="width: 376px"
+                     [nzMode]="'multiple'"
+                     [nzSize]="'small'"
+                     nzPlaceHolder="请选择"
+                     [(ngModel)]="filter.value">
+            <nz-option
+              *ngFor="let option of filterOption[filter['key']]['filterOption']"
+              nzCustomContent
+              [nzLabel]="option.name"
+              [nzValue]="option.key">
+              <span>{{option.name}}</span>
+              <ng-container *ngIf="option['belong_to']">
+                <span class="ml10" style="color: #ccc;">{{option['belong_to']['name']}}</span>
+              </ng-container>
+
+            </nz-option>
+
+          </nz-select>
+
+        </div>
+      </div>
+    </ng-container>
+    <nz-form-control>
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addFilterField($event)">
+       <i nz-icon nzType="plus" nzTheme="outline"></i>
+        <span> 添加条件</span>
+      </button>
+    </nz-form-control>
+  </div>
+
+
+</div>
+</div>
+<div class="button-controller">
+  <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelModal()">
+    <span>取消</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="saveData()">
+    <span>确定</span>      </button>
+</div>

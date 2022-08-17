@@ -1,0 +1,152 @@
+<div class="report-edit-container pt30 pl30 pr30">
+  <div class="report-edit-sidebar mr20">
+    <div class="report-edit-sidebar-basic">
+      <div class="base-title">
+        基本设置
+      </div>
+      <div class="base-body">
+        <div class="lab-row">
+          <span>渠道：</span>
+          <span>{{reportSetting.channel_id== 1 ? "搜索推广" :(reportSetting.channel_id== 2?"信息流":"全部渠道")}}</span>
+
+        </div>
+        <div class="lab-row">
+          <span>格式：</span>
+          <span>{{reportSetting.report_format== 'excel' ? "EXCEL" : "PDF"}}</span>
+
+        </div>
+        <!--<div class="lab-row">-->
+          <!--<span>广告主：</span>-->
+          <!--<span>XXXXXXX</span>-->
+
+        <!--</div>-->
+        <div class="lab-row">
+          <span>名称：</span>
+          <input nz-input   type="text" placeholder="报表1"[nzSize]="'small'" style="width: 120px;" [(ngModel)]="reportSetting.report_name">
+
+        </div>
+      </div>
+    </div>
+    <div class="report-edit-sidebar-running mt20">
+      <div class="base-title">
+        运行设置
+      </div>
+      <div class="base-body">
+        <div class="lab-row">
+          <span>频率：</span>
+          <nz-select class="w100" [nzSize]="'small'" [(ngModel)]="reportSetting.report_freq" (ngModelChange)="onFreqChange()">
+            <nz-option [nzLabel]="'每小时'" [nzValue]="'hour'"></nz-option>
+            <nz-option [nzLabel]="'每天'" [nzValue]="'day'"></nz-option>
+            <nz-option [nzLabel]="'每周'" [nzValue]="'week'"></nz-option>
+            <nz-option [nzLabel]="'每月'" [nzValue]="'month'"></nz-option>
+            <nz-option [nzLabel]="'立即执行'" [nzValue]="'now'"></nz-option>
+          </nz-select>
+
+        </div>
+        <div class="lab-row" *ngIf="reportSetting.report_freq!=='now' && reportSetting.report_freq!=='hour'">
+          <span>时段：</span>
+          <nz-time-picker class="w100 time-picker" [nzSize]="'small'" [(ngModel)]="cron_time" [nzAllowEmpty]="false"  nzFormat="HH:mm" [nzMinuteStep]="5" [nzDisabledHours]="disabledHours" [nzDisabledMinutes]="disabledMinutes"></nz-time-picker>
+        </div>
+        <div class="lab-row" *ngIf="reportSetting.report_freq=='hour'">
+          <span>分钟：</span>
+          <nz-select class="w100" [nzSize]="'small'" [(ngModel)]="cron_minute">
+            <ng-container *ngFor="let item of cronMinuteList">
+              <nz-option [nzValue]="item" [nzLabel]="item+''"></nz-option>
+            </ng-container>
+          </nz-select>
+        </div>
+        <div class="lab-row">
+          <span>接收邮箱：</span>
+          <span>（一行一个）</span>
+        </div>
+        <div class="mt5">
+          <textarea  nz-input rows="4" [(ngModel)]="reportSetting.email_list" ></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="report-edit-save-button mt20">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelSaveReport()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="saveReport(1)">
+        <span>保存草稿</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="saveReport(2)">
+        <span>运行</span>
+      </button>
+    </div>
+
+  </div>
+  <div class="report-edit-content">
+    <div class="excel-header" *ngIf="reportSetting.report_format=='excel'">
+      <ng-container *ngFor="let sheet of reportSetting.sheets_setting;let index = index;">
+        <div class="excel-sheets pl8 hand" [class.active]="index == reportSheetIndexActive" (click)="changeActiveIndex(index)">
+          <ng-container *ngIf="reportSheetNameEditObj.editIndex != index;">
+            <span>{{sheet.sheet_name}}</span>
+              <a class="ant-dropdown-link drop-menu-icon" nz-dropdown [nzDropdownMenu]="menu" [nzTrigger]="'click'">
+                <i nz-icon style="color: #404040 ;" nzType="down" nzTheme="outline"></i>
+              </a>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu>
+                <li nz-menu-item (click)="editSheetName(sheet,index)">重命名</li>
+                <li nz-menu-item nz-popconfirm [nzPopconfirmTitle]="'确定要删除此项？'" (nzOnConfirm)="delSheet(index)">删除</li>
+
+              </ul>
+              </nz-dropdown-menu>
+
+          </ng-container>
+          <ng-container *ngIf="reportSheetNameEditObj.editIndex == index">
+            <input nz-input type="text" placeholder="报表1"[nzSize]="'small'" style="width: 96px;" [(ngModel)]="reportSheetNameEditObj.editName">
+            <button style="width: 24px;" (click)="cancelEditName()" nz-button [nzType]="'default'"  [nzSize]="'small'" class="pl4 pr4 mr2 ml2">
+              <i nz-icon nzType="close" nzTheme="outline"></i>
+            </button>
+            <button style="width: 24px;" (click)="saveEditName(sheet)" nz-button [nzType]="'primary'" [nzSize]="'small'" class="pl4 pr4">
+              <i nz-icon nzType="check" nzTheme="outline"></i>
+            </button>
+          </ng-container>
+        </div>
+      </ng-container>
+      <div class="icon-plus hand" (click)="addExcelSheet()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i>
+      </div>
+      <div class="turn-next" *ngIf="reportSetting.report_data_type != 2">
+        <i nz-icon nzType="left" nzTheme="outline"></i>
+        <i nz-icon nzType="right" nzTheme="outline"></i>
+      </div>
+    </div>
+    <div class="excel-body">
+      <!--<ng-container>-->
+        <app-report-table-show  [tableHeightRe]="tableHeight" [tableSetting]="reportSetting.sheets_setting[reportSheetIndexActive]['table_setting']" (editTableData)="editReportTable()"></app-report-table-show>
+      <!--</ng-container>-->
+      <ng-container 
+      >
+        <ng-container *ngFor="let chartDetail of reportSetting.sheets_setting[reportSheetIndexActive]['charts_setting'] let  i = index;">
+          <app-report-chart-show [chartTitle]="chartDetail['chart_name']" [chartType]="chartDetail['chart_type']" (del)="delReportByIndex(i)" (edit)="editReportByIndex(i,chartDetail)"></app-report-chart-show>
+        </ng-container>
+      </ng-container>
+      <div class="report-edit-content-body">
+        <div class="report-content-toolbar mt30 mb30" *ngIf="(reportSetting.report_data_type*1 === 2 && reportSetting.sheets_setting[reportSheetIndexActive]['sheet_module']['table']) || reportSetting.report_data_type*1 !== 2">
+          <div>添加图表</div>
+          <div class="report-content-type ml8" [ngClass]="{disabled:!reportSetting.sheets_setting[reportSheetIndexActive]['sheet_module']['table']}" (click)="addReportTable()">
+            <i nz-icon nzType="layout" nzTheme="outline"></i>
+          </div>
+          <ng-container *ngIf="reportSetting.report_data_type*1 !== 2">
+            <div class="report-content-type ml8" *ngIf=" this.reportSetting.sheets_setting[this.reportSheetIndexActive]['table_setting']['report_type']!='dim_report' && this.reportSetting.sheets_setting[this.reportSheetIndexActive]['table_setting']['summary_type']!='optimization_detail_effect' && this.reportSetting.sheets_setting[this.reportSheetIndexActive]['table_setting']['summary_type']!='optimization_detail_ranking' " [ngClass]="{disabled:!reportSetting.sheets_setting[reportSheetIndexActive]['sheet_module']['line']}" (click)="addReportChart('line')">
+              <i nz-icon nzType="line-chart" nzTheme="outline"></i>
+            </div>
+            <div class="report-content-type ml8" *ngIf="this.reportSetting.sheets_setting[this.reportSheetIndexActive]['table_setting']['summary_type']!='optimization_detail_effect' && this.reportSetting.sheets_setting[this.reportSheetIndexActive]['table_setting']['summary_type']!='optimization_detail_ranking'" [ngClass]="{disabled:!reportSetting.sheets_setting[reportSheetIndexActive]['sheet_module']['bar']}" (click)="addReportChart('bar')">
+              <i nz-icon nzType="bar-chart" nzTheme="outline"></i>
+            </div>
+            <div class="report-content-type ml8" *ngIf="this.reportSetting.sheets_setting[this.reportSheetIndexActive]['table_setting']['report_type']!='dim_repor' && this.reportSetting.sheets_setting[this.reportSheetIndexActive]['table_setting']['summary_type']!='optimization_detail_effect' && this.reportSetting.sheets_setting[this.reportSheetIndexActive]['table_setting']['summary_type']!='optimization_detail_ranking'"  [ngClass]="{disabled:!reportSetting.sheets_setting[reportSheetIndexActive]['sheet_module']['lineStack']}" (click)="addReportChart('lineStack')">
+              <i nz-icon nzType="area-chart" nzTheme="outline"></i>
+            </div>
+            <div class="report-content-type ml8" *ngIf="this.reportSetting.sheets_setting[this.reportSheetIndexActive]['table_setting']['summary_type']!='optimization_detail_effect' && this.reportSetting.sheets_setting[this.reportSheetIndexActive]['table_setting']['summary_type']!='optimization_detail_ranking'" [ngClass]="{disabled:!reportSetting.sheets_setting[reportSheetIndexActive]['sheet_module']['pie']}" (click)="addReportChart('pie')">
+              <i nz-icon nzType="pie-chart" nzTheme="outline"></i>
+            </div>
+          </ng-container>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

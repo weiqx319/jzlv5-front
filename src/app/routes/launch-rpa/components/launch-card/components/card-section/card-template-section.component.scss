@@ -1,0 +1,109 @@
+.add-card-template-container {
+  background-color: #fff;
+  box-sizing: border-box;
+  .title {
+    height: 50px;
+    line-height: 50px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sub_title {
+    height: 36px;
+    line-height: 36px;
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .target-setting {
+    overflow: auto;
+  }
+
+  .form-btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+}
+
+.lab-row{
+  display: flex;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.lab-row > label:first-child{
+  width: 140px;
+  text-align: right;
+  display: inline-block;
+}
+
+.delete {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+
+.promotion-card-container {
+  .title {
+    height: 50px;
+    line-height: 50px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sub_title {
+    height: 36px;
+    line-height: 36px;
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .form-content {
+
+    .basic-card {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    //.basic-card, .form-card {
+    //  max-width: 1000px;
+    //}
+
+    .w100p {
+      width: 100%;
+    }
+
+    .w170 {
+      width: 170px !important;
+    }
+
+    .w_full {
+      width: 568px;
+    }
+
+    .w305 {
+      width: 305px;
+    }
+  }
+
+  .target-setting {
+    overflow: auto;
+  }
+
+  .form-btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  .tip{
+    //font-size: 12px;
+    color: rgb(144, 147, 153);
+  }
+}
+

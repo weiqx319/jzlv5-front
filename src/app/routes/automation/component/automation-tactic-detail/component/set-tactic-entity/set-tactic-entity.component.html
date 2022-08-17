@@ -1,0 +1,132 @@
+<!-- <div class="content-card">
+  <div class="title">策略信息</div>
+  <div class="content">
+    <div class="detail">
+      <div class="name mb10">
+        <div class="label">策略名称：</div>
+        <input nz-input placeholder="请输入策略名称" [(ngModel)]="strategyInfo['tactic_info']['tactic_name']" />
+      </div>
+      <div class="description">
+        <div class="label">策略描述：</div>
+        <ng-container *ngFor="let item of strategyInfo.tactic_info.tactic_rule">
+          <input nz-input placeholder="请输入策略描述" [(ngModel)]="item['tactic_description_name']" readonly />
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="content-card">
+  <!-- <div class="title">适用于：(选择实体)</div> -->
+  <div class="content">
+    <div class="title-area">
+      <p class="bold">适用于：(选择实体)</p>
+    </div>
+    <div class="detail">
+      <div class="entity-type-select mb10">
+        <nz-radio-group [(ngModel)]="strategyInfo['tactic_entity_type']" nzButtonStyle="solid">
+          <label nz-radio-button [nzValue]="2">指定实体</label>
+          <label nz-radio-button [nzValue]="1" nzDisabled>按条件筛选</label>
+        </nz-radio-group>
+      </div>
+      <div class="entity-type-specify" *ngIf="strategyInfo['tactic_entity_type']===2">
+        <p>请到（{{strategyInfo['tacticLevelName']}}）层级下选择对应实体，加入该策略</p>
+      </div>
+      <div class="entity-type-condition" *ngIf="strategyInfo['tactic_entity_type']===1">
+        <div class="condition-wrapper">
+          <div class="condition-item" *ngFor="let  filter of condition;let i = index; ">
+            <span class="condition-label">筛选条件{{condition.length>1?i+1:''}}：</span>
+            <div class="condition-detail">
+              <div class="line-wrapper first-line">
+                <nz-select class="ml5 w160"
+                         [nzSize]="'small'"
+                         [(ngModel)]="filter.key"
+                         (ngModelChange)="filterKeyChange($event,filter)"
+                         [nzShowSearch]="true">
+                <nz-option
+                  *ngFor="let option of allConditionList"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+                </nz-select>
+                <div class="inline-block w80 ml5">
+                  <nz-select
+                    class="w80"
+                    [nzSize]="'small'"
+                    [(ngModel)]="filter.op"
+                    nzPlaceHolder="">
+                    <nz-option
+                      *ngFor="let option of conditionOper[filter.type]"
+                      [nzLabel]="option.name"
+                      [nzValue]="option.key">
+                    </nz-option>
+                  </nz-select>
+                </div>
+                <div class="ml5 w120 inline-block"  *ngIf="filter['type'] == 'number' || filter['type'] == 'numberFilter'">
+                  <input nz-input
+                         class="w100p"
+                         [nzSize]="'small'"
+                         type="text"
+                         placeholder="值"
+                         [(ngModel)]="filter.value">
+                </div>
+                <div class="ml5 w120 inline-block"  *ngIf="filter['type'] == 'singleList'">
+                  <nz-select
+                    class="w120"
+                    [nzSize]="'small'"
+                    [(ngModel)]="filter.value"
+                    nzPlaceHolder="">
+                    <nz-option
+                      *ngFor="let option of filterOption[filter['key']]['filterOption']"
+                      [nzLabel]="option.name"
+                      [nzValue]="option.key">
+                    </nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              <div class="line-wrapper">
+                <div class="ml5" *ngIf="filter['type'] === 'string' || filter['type'] === 'multiValue'" >
+                  <textarea style="width: 370px;"  nz-input type ="'textarea'" rows="4" placeholder="*最多同时搜1000个文本，一行一个" [(ngModel)]="filter.value"></textarea>
+                </div>
+                <div class="ml5" *ngIf="filter['type'] === 'checkboxList'" >
+                  <nz-select style="width: 370px"
+                             [nzMode]="'multiple'"
+                             [nzSize]="'small'"
+                             nzPlaceHolder="请选择"
+                             [(ngModel)]="filter.value">
+                    <nz-option
+                      *ngFor="let option of filterOption[filter['key']]['filterOption']"
+                      nzCustomContent
+                      [nzLabel]="option.name"
+                      [nzValue]="option.key">
+                      <span>{{option.name}}</span>
+                      <ng-container *ngIf="option['belong_to']">
+                        <span class="ml10" style="color: #ccc;">{{option['belong_to']['name']}}</span>
+                      </ng-container>
+                    </nz-option>
+                  </nz-select>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="delete-button" *ngIf="condition.length>1">
+              <i nz-icon nzType="close" nzTheme="outline" nz-tooltip [nzTooltipTitle]="'删除'" (click)="removeFilterField(i,$event)"></i>
+            </div> -->
+            <div class="delete-icon" *ngIf="condition.length>1">
+              <i nz-icon nzType="delete" nzTheme="outline" nz-tooltip [nzTooltipTitle]="'删除'" (click)="removeFilterField(i,$event)"></i>
+            </div>
+          </div>
+        </div>
+        <div class="condition-button">
+          <button class="button" nz-button [nzType]="'default'" (click)="addFilterField($event)">
+           <i nz-icon nzType="plus" nzTheme="outline"></i>
+            <span>添加条件</span>
+          </button>
+          <button class="ml20 button" nz-button [nzType]="'default'" (click)="resetFilterField($event)">
+            <i nz-icon nzType="undo" nzTheme="outline"></i>
+            <span class="ml5">重置</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

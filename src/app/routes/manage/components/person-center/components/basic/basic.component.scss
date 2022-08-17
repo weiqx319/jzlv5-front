@@ -1,0 +1,64 @@
+@import "../../../../../../../styles/util/mixin";
+
+.jzl_card {
+  position: relative;
+  margin-bottom: 8px;
+  border: 1px solid #e4e4e4;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+
+.jzl_card_body {
+  //padding-top:8px;
+  background-color: white;
+  // padding: 16px 8px;
+  .user-info {
+    font-size: 14px;
+    height: 35px !important;
+  }
+
+  .lab-row {
+    @include title-height(30);
+  }
+
+  .lab-row span:first-child {
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+  }
+  .not-allowed {
+    cursor: not-allowed;
+  }
+}
+
+.jzl_card_head {
+  margin-bottom: 0;
+  border-bottom: 1px solid #e4e4e4;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: #eef1f6;
+  height: 30px;
+  line-height: 30px;
+}
+.jzl_card_head_actions {
+  position: absolute;
+  top: 0;
+  right: 5px;
+  a {
+    font-size: 16px;
+    display: block;
+    float: left;
+    width: 20px;
+    //padding: rem 0;
+    margin: 0 !important;
+    color: #151b1e;
+    text-align: center;
+    background: transparent;
+    border: 0;
+  }
+}
+.error-tip {
+  margin-left: 8px;
+  line-height: 30px;
+}

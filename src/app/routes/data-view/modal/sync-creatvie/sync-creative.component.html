@@ -1,0 +1,15 @@
+<ng-container *ngIf="selected.length==0">
+  <button class="manage-add mr8" (click)="syncTip()" nz-button [nzType]="'default'" [nzSize]="'small'">
+    <i nz-icon nzType="sync" nzTheme="outline"></i><span>同步创意</span>
+  </button>
+</ng-container>
+<ng-container *ngIf="selected.length!=0">
+    <button class="manage-add mr8" nz-popconfirm [nzPopconfirmTitle]="syncTemplate" (nzOnConfirm)="doSync()" [nzPopconfirmPlacement]="'bottomLeft'" nz-button [nzType]="'default'" [nzSize]="'small'">
+      <i nz-icon nzType="sync" nzTheme="outline"></i><span>同步创意</span>
+    </button>
+</ng-container>
+<ng-template #syncTemplate>
+  <p *ngIf="summaryType ==='campaign'" class="text-center"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: #faad14" ></i> 确定同步所选计划?</p>
+  <p *ngIf="summaryType ==='account'" class="text-center"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: #faad14" ></i> 确定同步所选账户?</p>
+  <p *ngIf="summaryType ==='creative'" class="text-center"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: #faad14" ></i> 确定同步所选创意?</p>
+</ng-template>

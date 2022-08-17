@@ -1,0 +1,127 @@
+<div class="add-card-template-container ml20 pr20 pb20">
+    <div class="form-content">
+      <div class="target-setting">
+        <!--推广卡片-->
+        <div class="form-card mb10">
+          <div class="promotion-card-container">
+            <div class="form-content">
+<!--              <div class="lab-row mb20">-->
+<!--                <label><span class="redStart">*</span>下载类型:</label>-->
+<!--                <div>-->
+<!--                  <nz-select class="w300 ml8"-->
+<!--                             [nzSize]="'small'"-->
+<!--                             [nzPlaceHolder]="'请选择'"-->
+<!--                             [nzDisabled]="true"-->
+<!--                             [(ngModel)]="defaultArr['download_type']"-->
+<!--                             (ngModelChange)="changeDownloadType($event)"-->
+<!--                  >-->
+<!--                    <nz-option *ngFor="let item of downloadTypeList" [nzLabel]="item.name"-->
+<!--                               [nzValue]="item.key"></nz-option>-->
+<!--                  </nz-select>-->
+<!--                </div>-->
+<!--              </div>-->
+              <div class="lab-row mb20" *ngIf="useProductImg=='0'">
+                <label><span class="redStart">*</span>卡片主图:</label>
+                <div>
+                  <div class="mb10 ml8" *ngIf="imgUrl">
+                    <img [ngStyle]="menuService.currentPublisherId===22?{'max-width':'288px'}:{}" [src]="imgUrl"/>
+                  </div>
+                  <div>
+                    <button class="ml8" nz-button [nzType]="'default'"
+                            [nzSize]="menuService.currentPublisherId===22?'default':'small'" (click)="uploadMaterials()">
+                      <span>上传主图</span>
+                    </button>
+                    <button class="ml8 mr8" nz-button [nzType]="'default'"
+                            [nzSize]="menuService.currentPublisherId===22?'default':'small'" (click)="addImageMaterials(materialSlt,menuService.currentPublisherId===22?5:0)">
+                      <i nz-icon nzType="select" nzTheme="outline"></i><span>选择主图</span>
+                    </button>
+                  </div>
+                  <div class="error-tip mt5 ml8" *ngIf="checkError.material_id.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkError.material_id.tip_text }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lab-row mb20">
+                <label><span class="redStart">*</span>卡片标题:</label>
+                <div>
+                  <input class="w_full ml8" maxlength="7" nz-input [nzSize]="menuService.currentPublisherId===22?'default':'small'"
+                         [(ngModel)]="defaultArr['promo_card_setting']['product_description']" [placeholder]="'请输入卡片标题'"
+                         (ngModelChange)="cardNameChange($event)">
+                  <span class="ml8">{{cardNameLength}}/7</span>
+                  <div class="error-tip mt5 ml8" *ngIf="checkError.product_description.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkError.product_description.tip_text }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="lab-row mb20">
+                <label><span class="redStart">*</span>推广卖点:</label>
+                <div>
+                  <button class="ml8" nz-button (click)="addSellingPoints()"> +
+                    推广卖点
+                  </button>
+                  <span class="ml20"> 已选：{{pointsNumber}}/10</span>
+                  <div class="ml8 mt5 tip">当您选择多个卖点时，系统将默认为您开启针对推广卖点的优选投放</div>
+                  <ng-container *ngFor="let item of defaultArr['promo_card_setting']['product_points'] let index = index">
+                    <div class="w_full mt20">
+                      <input class="w305 ml8" nz-input  [nzSize]="menuService.currentPublisherId===22?'default':'small'"
+                             [(ngModel)]="item.name" [placeholder]="'请输入推广卖点'"
+                             (ngModelChange)="sellingNameChange(item)">
+                      <span class="ml8">{{item.sellingPointsNameLength}}/9</span>
+                      <span class="ml20 delete" *ngIf="defaultArr['promo_card_setting']['product_points'].length > 1"
+                            (click)="deleteSellingPoints(index)">×</span>
+                    </div>
+                  </ng-container>
+                  <div class="error-tip mt5 ml8" *ngIf="checkError.product_selling_points.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkError.product_selling_points.tip_text }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="lab-row mb20">
+                <label><span class="redStart">*</span>行动号召:</label>
+                <div>
+                  <nz-radio-group
+                    class="ml8"
+                    [nzSize]="menuService.currentPublisherId===22?'default':'small'"
+                    [(ngModel)]="defaultArr['promo_card_setting']['enable_personal_action']"
+                  >
+                    <ng-container>
+                      <label nz-radio-button [nzValue]="true">
+                        <span>开启智能优选</span>
+                      </label>
+                    </ng-container>
+                    <ng-container>
+                      <label nz-radio-button [nzValue]="false">
+                        <span>关闭智能优选</span>
+                      </label>
+                    </ng-container>
+                  </nz-radio-group>
+                  <div class="mt5 ml8 tip">系统将基于字节领先的技术能力和实时的投放数据，在每次抖音广告显示时，挑选最有利于转化的文案进行显示，帮助您提升转化能力。</div>
+                  <div class="mt20">
+                    <nz-select class="w200 ml8"
+                               [nzSize]="menuService.currentPublisherId===22?'default':'small'"
+                               [nzPlaceHolder]="'请选择'"
+                               [(ngModel)]="defaultArr['promo_card_setting']['call_to_action']"
+                               (ngModelChange)="getItemErrorTip('call_to_action',defaultArr['promo_card_setting']['call_to_action'])"
+                    >
+                      <nz-option *ngFor="let item of callToList" [nzLabel]="item" [nzValue]="item"></nz-option>
+                    </nz-select>
+                    <div class="error-tip mt5 ml8" *ngIf="checkError.call_to_action.is_show">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{ checkError.call_to_action.tip_text }}</span>
+                    </div>
+                  </div>
+                  <div class="ml8 mt5 tip">在无法使用智能优选的流量场景下，将使用上方文案展示给用户</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+

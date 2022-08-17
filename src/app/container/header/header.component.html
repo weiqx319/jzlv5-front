@@ -1,0 +1,229 @@
+<div class="nav">
+  <div class="flex-column nav-bar">
+    <div class="header-nav-left">
+      <div class="nav-logo" *ngIf="productInfo['logo_white']">
+        <!--<div>九枝兰</div>
+        <div class="ml8">|</div>
+        <div class="ml8">更智能的竞价广告管理优化平台</div>-->
+        <!-- <img class="{{productInfo['imgClass']}}" src="../../../assets/{{productInfo['logo_white']}}" alt=""> -->
+        <img *ngIf="productInfo['logo_margin_left']" class="{{productInfo['imgClass']}}" [ngStyle]="{'margin-left':productInfo['logo_margin_left'] }" src="{{productInfo['logo_white']}}" alt="">
+        <img *ngIf="!productInfo['logo_margin_left']" class="{{productInfo['imgClass']}}" src="{{productInfo['logo_white']}}" alt="">
+      </div>
+      <span class="logo-name" *ngIf="!productInfo['logo_white']">{{productInfo['name']}}</span>
+
+      <div class="product-type" *ngIf="currentScope!='manage'">
+          <a nz-dropdown [nzDropdownMenu]="menu" class="current-menu new">{{menuService.productName$ | async}} <i nz-icon nzType="down"></i> </a>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu>
+            <ng-container *ngFor="let channelType of channelTypes">
+              <li nz-menu-item *ngIf="!channelType.isGroup" (click)="changeChannelType(channelType.channel_id,channelType.publisher_id,userSelectedOper.role_id,userSelectedOper.select_cid)"><span class="new">{{channelType.name}}</span></li>
+              <li nz-submenu  *ngIf="channelType.isGroup && channelType.children.length>0">
+                <span title class="new">{{channelType.name}}</span>
+                <ul>
+                  <li nz-menu-item
+                    (click)="changeChannelType(subMenu.channel_id,subMenu.publisher_id,userSelectedOper.role_id,userSelectedOper.select_cid)"
+                    *ngFor="let subMenu of channelType.children">{{subMenu.name}}</li>
+                </ul>
+              </li>
+            </ng-container>
+          </ul>
+          </nz-dropdown-menu>
+      </div>
+      <div class="product-type" *ngIf="currentScope=='manage'">
+        <span>系统管理</span>
+      </div>
+
+      <!-- 导航 -->
+      <div class="nav-menu-new ml40" style="position: relative">
+        <!-- 投放管理新菜单 -->
+        <ul class="nav-menu-ul" *ngIf="currentScope!='manage'">
+          <li class="nav-menu-li" [routerLinkActive]="['menu-selected']" *ngFor="let menu of (menuService.currentMenuItemsNew$ | async)">
+            <a [routerLink]="menu.url" >{{menu.name}}</a>
+          </li>
+        </ul>
+        <ul class="nav-menu-ul" *ngIf="currentScope == 'manage'">
+          <li class="nav-menu-li" [routerLinkActive]="['menu-selected']">
+            <a [routerLink]="'/manage/personal'" >个人中心</a>
+          </li>
+          <ng-container *ngIf="currentManagerUser.role_id != 2 && currentManagerUser.role_id != 7">
+          <li class="nav-menu-li" [routerLinkActive]="['menu-selected']">
+            <a [routerLink]="'/manage/account'" >账户中心</a>
+          </li>
+          <li class="nav-menu-li" [routerLinkActive]="['menu-selected']">
+            <a [routerLink]="'/manage/metric'" >维度指标</a>
+          </li>
+          <li class="nav-menu-li" [routerLinkActive]="['menu-selected']">
+            <a [routerLink]="'/manage/log'" >日志管理</a>
+          </li>
+          <li class="nav-menu-li" [routerLinkActive]="['menu-selected']">
+            <a [routerLink]="'/manage/tools'" >智能工具</a>
+          </li>
+          <li class="nav-menu-li" [routerLinkActive]="['menu-selected']">
+            <a [routerLink]="'/manage/ingestion'" >数据导入</a>
+          </li>
+          <ng-container *ngIf="currentManagerUser.role_id === 1">
+            <li class="nav-menu-li" [routerLinkActive]="['menu-selected']">
+              <a [routerLink]="'/manage/authority'" >权限管理</a>
+            </li>
+          </ng-container>
+          </ng-container>
+          <ng-container *ngIf="currentManagerUser.role_id != 2">
+            <li class="nav-menu-li" [routerLinkActive]="['menu-selected']">
+              <a [routerLink]="'/manage/materials-manage'" >素材管理</a>
+            </li>
+          </ng-container>
+        </ul>
+      </div>
+    </div>
+
+    <div class="nav-user">
+      <div class="ml8 message" (click)="getMessageList()" *ngIf="!productInfo['hiddenMessage']">
+        <button
+          style="background: #0a223a; border: #0a223a;"
+          title="消息通知"
+          nzType="primary"
+          nz-popover
+          [(nzPopoverVisible)]="messageVisible"
+          nzPopoverTrigger="click"
+          [nzPopoverContent]="contentTemplate"
+        >
+          <nz-badge [nzCount]="authService.messageUnreadCount" [ngClass]="{active: messageVisible}"><i nz-icon nzType="bell" nzTheme="outline"></i></nz-badge>
+        </button>
+        <ng-template #contentTemplate>
+          <nz-spin [nzSpinning]="messageLoading">
+            <ul>
+              <ng-container *ngIf="messageList.length">
+                <li *ngFor="let message of messageList" (click)="closeMsgBox()" routerLink="/manage/personal/msg/message_detail" [queryParams]="{message_id:message.message_id,is_read:message.is_read}">{{message.message_start_time}} {{message.message_title}}</li>
+              </ng-container>
+              <ng-container *ngIf="!messageList.length">
+                <li class="no-message-data">暂无消息</li>
+              </ng-container>
+            </ul>
+          </nz-spin>
+          <div class="mt10 msg_more">
+            <a routerLink="/manage/personal/msg/message_list" (click)="closeMsgBox()">查看更多>></a>
+          </div>
+        </ng-template>
+      </div>
+      <div class="ml8" [routerLinkActive]="['active-link']" *ngIf="!productInfo['hiddenHelpCenter']">
+        <a (click)="jumpHelp()" routerLink="/help">
+          <i title="帮助中心" nz-icon nzType="question-circle" nzTheme="outline"></i>
+        </a>
+      </div>
+      <ng-container *ngIf="!!productInfo['canLogout']">
+        <ng-container *ngIf="(authState$|async).isLogin">
+          <div class="ml8 hand" (click)="logOut()"><i title="退出登录" nz-icon nzType="logout" nzTheme="outline"></i></div>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!isMange">
+        <nz-select class="w150 ml8"
+                   [nzPlaceHolder]="'搜索'"
+                   [(ngModel)]="userSelectedOper.select_uid"
+                   [nzSize]="'small'"
+                   (ngModelChange)="changeSelectedUser($event)"
+                   [nzShowSearch]="true"
+                   >
+          <nz-option
+            *ngFor="let user of userList"
+            [nzLabel]="user.user_name"
+            [nzValue]="user.user_id"
+            [nzDisabled]="user.ad_list.length<1"
+            [nzCustomContent]="user.isHasCurrentAdvertiser"
+          >
+          <span style="color: #0a223a">{{user.user_name}}</span>
+          </nz-option>
+        </nz-select>
+        <nz-select
+          class="w200 ml8"
+          [nzPlaceHolder]="'搜索'"
+          [(ngModel)]="userSelectedOper.select_cid"
+          (ngModelChange)="changeAdvertiser($event)"
+          [nzSize]="'small'"
+          [nzShowSearch]="true"
+          *ngIf="!menuService.isCompany"
+          >
+          <nz-option
+            *ngFor="let advertiser of advertiserList"
+            [nzLabel]="advertiser.advertiser_name"
+            [nzValue]="advertiser.cid">
+          </nz-option>
+        </nz-select>
+      </ng-container>
+
+      <ng-container *ngIf="isMange">
+        <nz-select class="w150 ml8"
+                   [nzPlaceHolder]="'搜索'"
+                   [(ngModel)]="userAdminSelectOper.select_uid"
+                   [nzSize]="'small'"
+                   (ngModelChange)="changeManageUser($event)"
+                   [nzShowSearch]="true">
+          <nz-option
+            *ngFor="let user of manageUserList"
+            [nzLabel]="user.user_name"
+            [nzValue]="user.user_id"
+          >
+          </nz-option>
+        </nz-select>
+      </ng-container>
+      <div class="ml8"><i style="font-size: 20px" nz-icon nzType="unordered-list" nzTheme="outline" nz-popover [nzPopoverContent]="menuSquareContent"  nzPopoverPlacement="bottomRight" nzPopoverTrigger="hover"></i></div>
+    </div>
+  </div>
+</div>
+<ng-container *ngIf="currentScope!='manage' && !!productInfo['showGuide']">
+  <app-register-process [companyPubAccountNum]="currentLoginUser.company_pub_account_num"></app-register-process>
+</ng-container>
+
+
+<ng-template #messageTemplate let-message="data">
+  <a routerLink="/manage/personal/msg/message_detail" [queryParams]="{message_id:message.message_id,is_read:message.is_read}">
+    <h3>{{message.message_title}}</h3>
+    <div class="mt10">{{message.message_content}}</div>
+  </a>
+</ng-template>
+
+<!--  导航弹窗-->
+<ng-template #menuSquareContent>
+  <div class="menu-square-container">
+    <div class="menu-content">
+      <div class="menu-content-header">
+        <span>产品矩阵</span>
+        <!-- <a class="pull-right" href="//jiuzhilan.com" target="_blank">查看更多>></a> -->
+      </div>
+      <div class="menu-content-list mt10">
+        <a class="menu-content-item" *ngIf="currentLoginUser.company_status === 1 && !productInfo['hiddenDemo']" href="http://www.jiuzhilan.com/demo/" target="_blank">
+          <div class="menu-content-item-icon">
+            <i nz-icon nzType="stock" nzTheme="outline"></i>
+          </div>
+          <div class="mt10">体验 Demo</div>
+        </a>
+        <a class="menu-content-item" *ngIf="currentLoginUser.cdp_company_id && currentLoginUser.cdp_company_user_id && productInfo['cdp_url']" href="{{productInfo['cdp_url'].startsWith('http') ? '' : '//'}}{{productInfo['cdp_url']}}" target="_blank">
+          <div class="menu-content-item-icon">
+            <i nz-icon nzType="stock" nzTheme="outline"></i>
+          </div>
+          <div class="mt10">CDP</div>
+        </a>
+        <a class="menu-content-item" *ngIf="currentManagerUser.role_id != 7&&currentLoginUser.show_summary" href="{{productInfo['vip_url'].startsWith('http') ? '' : '//'}}{{productInfo['vip_url']}}" target="_blank">
+          <div class="menu-content-item-icon">
+            <i nz-icon nzType="dollar" nzTheme="outline"></i>
+          </div>
+          <div class="mt10">营销分析</div>
+        </a>
+        <a class="menu-content-item" *ngIf="currentManagerUser.role_id != 7" [ngClass]="{'menu-item-selected':currentScope!='manage'}" [routerLink]="'/'" target="_blank">
+          <div class="menu-content-item-icon">
+            <i nz-icon [nzType]="'send'" nzTheme="outline"></i>
+          </div>
+          <div class="mt10">投放管理</div>
+        </a>
+        <a class="menu-content-item" [routerLinkActive]="['menu-item-selected']" [routerLink]="'/manage'" target="_blank">
+          <div class="menu-content-item-icon">
+            <i nz-icon [nzType]="'setting'" nzTheme="outline"></i>
+          </div>
+          <div class="mt10">系统管理</div>
+        </a>
+      </div>
+    </div>
+    <!-- <div class="menu-content-footer">
+      <i nz-icon nzType="info-circle" nzTheme="outline"></i><span class="ml8">Marketing API，全方位实现自动化营销管理</span>
+    </div> -->
+  </div>
+</ng-template>

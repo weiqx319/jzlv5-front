@@ -1,0 +1,38 @@
+<div class="bookmark-list">
+  <div appToggleSidebar  class="mark-tab-btn" style="background: #338aff; padding: 0 8px;">
+    <i nz-icon nzType="left" nzTheme="outline"></i>
+    <span>书签</span>
+    <i nz-icon nzType="question-circle" nzTheme="outline"
+                nz-popover
+                [nzPopoverContent]="stableTemplate"
+                nzPopoverPlacement="left"
+                class="ml8"
+                style="color: #fff"></i>
+  </div>
+  <ng-template #stableTemplate>
+    <div class="w220">
+      可以将常用的筛选条件存成书签，方便以后可以快速查看。在书签中点击书签名就可以进入相应的页面
+    </div>
+  </ng-template>
+  <div class="right-sidebar">
+    <div class="mark-add-tab">
+      <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="$event.srcElement.blur();createBookMark()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加当前页为书签</span>
+      </button>
+    </div>
+    <ul class="mark-lists">
+      <li class="mark-item"  [ngClass]="{'mark-selected':item['bookmark_id'] == activeBookMarkId, 'showOption': item['is_default'] != 1}" *ngFor="let item of markList;let i = index;">
+        <div class="mark-item-name"  (click)="changeSelectedBookMark(item)"  nz-tooltip [nzTooltipTitle]="item.bookmark_name" nzTooltipPlacement="left">
+          {{item.bookmark_name}}
+        </div>
+        <div class="mark-item-desc" [innerHtml]="item.conditions" (click)="changeSelectedBookMark(item)">
+        </div>
+        <div class="mark-actions" *ngIf="item['is_default'] != 1">
+          <i nz-icon nzType="save" nzTheme="outline" class="hover-show" (click)="saveBookMark(item)"></i>
+          <i nz-icon nzType="close" nzTheme="outline" class="hover-show pl8 pr16" nz-popconfirm [nzPopconfirmTitle]="'确定要删除此书签页吗？'"  (nzOnConfirm)="delBookMark(item, i)"  [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click"></i>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+

@@ -1,0 +1,9 @@
+.element-setting {
+  display: flex;
+  &:last-child {
+    margin-bottom: 0 !important;
+  }
+  .element-setting-row {
+    display: flex;
+  }
+}

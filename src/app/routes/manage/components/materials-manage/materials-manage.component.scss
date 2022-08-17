@@ -1,0 +1,231 @@
+
+
+.materials-manage-contents-modal{
+  .ant-table-small .ant-table-thead > tr > th{
+    height: 50px;
+  }
+
+
+  .ant-table-tbody > tr > td {
+    height: 50px;
+    padding: 4px;
+  }
+
+  .ant-table-thead > tr > tH {
+    height: 50px;
+    padding: 4px;
+  }
+}
+
+.materials-manage-container {
+  height: 100%;
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  background-color: #f4f7fc;
+}
+.materials-manage-sidebar {
+  width: 150px;
+  flex: 0 0 150px;
+  background-color: #ffffff;
+
+  .materials-manage-title {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 26px;
+    margin: 0;
+    font-size: 12px;
+    color: #8492a6;
+    cursor: pointer;
+    user-select: none;
+
+    i {
+      color: #3e5171;
+      margin-right: 12px;
+    }
+
+    span {
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+      color: #1f2d3d;
+      max-width: calc(100% - 26px);
+    }
+  }
+}
+.materials-manage-link {
+  a {
+    color: #404040;
+    text-decoration: none;
+  }
+  .active-link {
+    background-color: #f4f7fc;
+  }
+  .active-link a {
+    color: #56acef;
+  }
+}
+.materials-manage-link-item {
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+}
+.materials-manage-content {
+  overflow: auto;
+  flex: auto;
+  //padding-left: 20px;
+  //padding-right: 20px;
+}
+.materials-manage-content-top{
+  // padding: 24px 24px 6px;
+  padding: 6px 15px;
+  margin: 0 10px;
+  background-color: #fff;
+
+  .materials-manage-item{
+    padding: 10px 20px;
+    nz-form-label{
+      width: 80px;
+      text-align: left;
+    }
+  }
+}
+.materials-manage-content-bottom{
+  // margin: 20px 10px;
+  .materials-manage-contents{
+    background-color: white;
+    // padding: 20px;
+
+    .ant-table-small .ant-table-thead > tr > th{
+      height: 50px;
+    }
+
+
+    .ant-table-tbody > tr > td {
+      height: 50px;
+      padding: 4px;
+    }
+
+    .ant-table-thead > tr > tH {
+      height: 50px;
+      padding: 4px;
+    }
+
+    .materials-manage-operation{
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .header-right{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+    }
+  }
+  .video-img{
+    padding: 10px;
+    height: 150px;
+    position: relative;
+    background-size: cover;
+    background-position-x: 50%;
+    background-position-y: center;
+    .video-time{
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 12px;
+      padding: 0 8px;
+      color: #fff;
+      border: 1px solid hsla(0,0%,100%,.6);
+      border-radius: 4px;
+      background: rgba(0,0,0,.4);
+      height: 20px;
+      line-height: 20px;
+      pointer-events: none;
+    }
+  }
+
+  .video-title{
+    max-width: 190px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+.play-icon{
+  font-size: 24px;
+  color: #fff;
+  opacity: .5;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+.float-right{
+  float: right;
+}
+
+.materials-cell{
+  padding: 8px;
+}
+.materials-info {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+
+  .materials-poster {
+    flex: none;
+    width: 80px;
+    height: 44px;
+    border-radius: 2px;
+    overflow: hidden;
+    text-align: center;
+    background: #000;
+    position: relative;
+    cursor: pointer
+  }
+
+  .materials-poster img {
+    height: 44px
+  }
+
+  .materials-title {
+    margin: 0 8px 0 12px;
+    padding: 2px 0;
+    line-height: 20px;
+    display: flex;
+    align-items: flex-end;
+    word-break: break-all;
+    display: -webkit-box
+  }
+
+}
+.card-page {
+  .ant-pagination {
+    text-align: right;
+  }
+}
+.lab-row-manage {
+  display: flex;
+  margin-bottom: 10px;
+
+  > label {
+    //width: 100px;
+    text-align: right;
+    margin-right: 8px;
+  }
+
+  .roles-div {
+    width: 500px;
+  }
+}
+

@@ -1,0 +1,34 @@
+<div class="account-binding-keeper-child-content">
+  <form class="account-binding-form" [formGroup]="validateAccountBindingForm">
+    <div class="account-binding-form-content">
+
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>帐户管家:</label>
+        </div>
+        <span class="ml8">{{superAccountName}}</span>
+        <!--添加-->
+      </nz-form-item>
+      <div class="fontSize12 mb20" style="height:200px;overflow: hidden" *ngIf="tableShow">
+        <hot-table
+          class="hot"
+          [data]="childDataset"
+          [contextMenu]="contextMenu"
+          [colHeaders]="true"
+          [rowHeaders]="true"
+          [colWidths]="[300]">
+          <hot-column [readOnly]="false" title="账户"></hot-column>
+        </hot-table>
+      </div>
+
+    </div>
+    <div class="account-binding-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" [nzLoading]="saveing" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="!validateAccountBindingForm.valid" (click)="doSave()">
+        <span>完成</span>
+      </button>
+    </div>
+  </form>
+</div>

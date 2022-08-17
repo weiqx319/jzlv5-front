@@ -1,0 +1,85 @@
+<div class="sub-company-content">
+  <form class="sub-company-form" [formGroup]="validateAudienceForm">
+    <div class="sub-company-form-content pt20">
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>选择账户:</label>
+        </div>
+        <nz-form-control class="w300 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'chan_pub_id'" [nzSize]="'default'" [(ngModel)]="defaultData.chan_pub_id" (ngModelChange)="changeAccount($event)" [nzPlaceHolder]="'请选择账户'" nzShowSearch nzAllowClear>
+            <nz-option
+              *ngFor="let option of accountsList"
+              [nzLabel]="option.pub_account_name"
+              [nzValue]="option.chan_pub_id">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('chan_pub_id').dirty&&getFormControl('chan_pub_id').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择账户</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>营销目标:</label>
+        </div>
+        <nz-form-control class="ml8 pull-left">
+          <nz-radio-group [formControlName]="'subject'"
+            [(ngModel)]="defaultData.subject">
+            <ng-container *ngFor="let item of landingTypeList">
+              <label nz-radio-button [nzValue]="item.key">
+                <span>{{item.name}}</span>
+              </label>
+            </ng-container>
+          </nz-radio-group>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('subject').dirty&&getFormControl('subject').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择营销目标</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>落地页名称:</label>
+        </div>
+        <nz-form-control class="w300 ml8 pull-left">
+          <input nz-input
+                 class="w100p"
+                 [nzSize]="'default'"
+                 [formControlName]="'custom_landing_page_name'"
+                 type="text"
+                 placeholder="输入落地页名称"
+                 [(ngModel)]="defaultData.custom_landing_page_name">
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('custom_landing_page_name').dirty&&getFormControl('custom_landing_page_name').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入落地页名称</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>落地页链接:</label>
+        </div>
+        <nz-form-control class="w300 ml8 pull-left">
+          <input nz-input
+                 class="w100p"
+                 [nzSize]="'default'"
+                 [formControlName]="'custom_landing_page_url'"
+                 type="text"
+                 placeholder="输入落地页链接"
+                 [(ngModel)]="defaultData.custom_landing_page_url">
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('custom_landing_page_url').dirty&&getFormControl('custom_landing_page_url').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入落地页链接</div>
+          <div class='ant-form-item-explain' *ngIf="getFormControl('custom_landing_page_url').dirty&&getFormControl('custom_landing_page_url').hasError('pattern')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请检查落地页链接</div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="sub-company-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="!validateAudienceForm.valid" (click)="doSave()">
+        <span>完成</span>
+      </button>
+    </div>
+  </form>
+</div>
+

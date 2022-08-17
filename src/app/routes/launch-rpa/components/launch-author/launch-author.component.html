@@ -1,0 +1,86 @@
+<div class="launch-rpa-contents">
+  <div class="launch-rpa-operation">
+    <div class="header-left">
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="createAuthor()" >
+        <i nz-icon nzType="plus"></i><span>添加作者</span>
+      </a>
+    </div>
+    <div class="header-right">
+
+    </div>
+  </div>
+  <div class="pt20">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'small'"
+              [nzData]="[{}]"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="globalTemplate.totalItemTemplate"
+              [nzScroll]="{ x: '1000px', y: noResultHeight+'px' }"
+    >
+      <thead>
+      <tr>
+        <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" [nzIndeterminate]="_indeterminate" (nzCheckedChange)="_checkAll($event)">
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>名称</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'material_author_name',name:'名称'}" [(filterResult)]="filterResult['author_name']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>角色</span>
+          <app-filter [filterType]="'operSingleList'" [filterKey]="{key:'material_author_role',name:'角色'}" [(filterResult)]="filterResult['author_role']" [filterOption]="filterRoleOption" (submit)="doFilter()"></app-filter>
+        <th [nzWidth]="'200px'">
+          <span>创建时间</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>备注说明</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)">
+        </td>
+        <td>
+          {{ data.material_author_name }}
+        </td>
+        <td>
+          {{ data.material_author_role_name }}
+        </td>
+        <td>
+          {{ data.create_time }}
+        </td>
+        <td>
+          {{ data.comments }}
+        </td>
+        <td>
+          <a href="javascript:" (click)="editAuthor(data)">修改</a>
+          <span class="ml4 mr4">|</span>
+            <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteAuthor(data)" nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzTrigger="click" href="javascript:">删除</a>
+        </td>
+      </tr>
+      <tr *ngIf="!apiData.length && !loading">
+        <td [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height':(noResultHeight-10)+'px'}">
+          <div style="text-align: center">
+            无数据展示
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div> 
+
+
+
+<app-global-template></app-global-template>

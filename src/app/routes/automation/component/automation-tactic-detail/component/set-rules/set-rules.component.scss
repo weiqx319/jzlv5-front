@@ -1,0 +1,50 @@
+.add-action {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .add-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 130px;
+    height: 30px;
+    margin: 0 0 20px;
+    padding: 0;
+    color: #7655c9;
+    font-weight: 600;
+    font-size: 14px;
+    background-color: #fff;
+    border: 1px solid rgba(160, 170, 190, 0.3);
+    border-radius: 15px;
+    cursor: pointer;
+    &:hover {
+      box-shadow: 0 3px 6px rgb(0 0 0 / 16%);
+    }
+  }
+}
+
+.disabled {
+  cursor: not-allowed !important;
+  &:hover {
+    cursor: not-allowed !important;
+    color: #a0aabe !important;
+  }
+}
+
+.detail-label-row {
+  display: flex;
+  align-items: center;
+  .label-name {
+    width: 80px;
+  }
+  .time-picker {
+    width: 100px;
+    margin-left: 10px;
+  }
+}
+
+.error-valid {
+  border: 1px solid red;
+}

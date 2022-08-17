@@ -1,0 +1,126 @@
+<div>
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addCompanyMetric()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加集团指标</span>
+      </a>
+      <span style="color:orange;">*注：适用于营销分析查看指标数据（集团统一设置）。</span>
+    </div>
+  </div>
+  <div class="manage-table manage-no-result-table pt8">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'default'"
+              [nzData]="apiData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{x: '1150px', y: noResultHeight+'px' }">
+      <thead>
+      <tr>
+        <th nzLeft [nzWidth]="'200px'" >
+          <span>指标名称</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'metric_name',name:'指标名称',type:'multiValue'}" [(filterResult)]="filterResult['metric_name']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th nzLeft [nzWidth]="'150px'">
+          <span>指标分类</span>
+          <app-filter [filterType]="'multiList'" [(filterOption)]="categoryList" [filterKey]="{key:'category_id',name:'指标分类',type:'multiList'}" [(filterResult)]="filterResult['category_id']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th nzLeft [nzWidth]="'150px'">
+          <span>排序值</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>备注</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作人</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>预置</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>数据类型</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>是否百分比</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>是否默认</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作时间</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td nzLeft>
+          <ng-container *ngIf="data['is_cid_level']>=1">
+            <a href="javascript:" [routerLink]="['./', data.metric_id]">{{data['metric_name']}}</a>
+          </ng-container>
+          <ng-container *ngIf="data['is_cid_level']<1">
+           {{data['metric_name']}}
+          </ng-container>
+        </td>
+        <!-- 指标分类 -->
+        <td nzLeft>{{data['category_name']}}</td>
+        <td nzLeft>{{data['sort']}}
+          <a (click)="editSortNum(data['metric_id'],data['sort'])"><i nz-icon nzType="edit" nzTheme="outline"></i></a>
+        </td>
+        <td>{{data['metric_remarks']}}</td>
+        <td>{{data['user_name']}}</td>
+        <td>{{data['metric_type'] == 1 ? '否':'是'}}</td>
+        <td>{{data['metric_data_type'] ==1 ?'整型':'小数'}}</td>
+        <td>{{data['is_rate'] ==1 ?'是':'否'}}</td>
+        <td><nz-switch [(ngModel)]="data['is_default']" (ngModelChange)="changeMetricDefault(data)"></nz-switch></td>
+        <td>{{data['last_modify_time']}}</td>
+        <td><a (click)="editCompanyMetric(data.metric_id)">编辑</a> <span class="ml8 mr8">|</span>
+          <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="delCompanyMetric(data.metric_id)" nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click">删除</a>
+        </td>
+      </tr>
+      <tr *ngIf="apiData.length===0">
+        <td #noResultTd [attr.colspan]="9"  [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+          <div class="table-no-result">
+            <div class="table-no-result-content">
+              <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addCompanyMetric()">
+               <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加集团指标</span>
+              </button>
+              <div class="mt8">只有在您定义指标后，工具才可以做各种转化数据分析和优化建议</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+    <!-- 排序值编辑窗口 -->
+    <nz-modal
+      [(nzVisible)]="isSortNumEditVisible"
+      nzTitle="编辑排序值"
+      (nzOnCancel)="this.isSortNumEditVisible = false"
+      (nzOnOk)="submitSortNumEdit()"
+      [nzOkLoading]="isSortNumEditLoading"
+    >
+    <div class="lab-row mt10">
+      <label>排序值:</label>
+      <div class="w150 ml8">
+        <input nz-input
+          [nzSize]="'default'"
+          type="number"
+          [(ngModel)]="sortNumEditValue"
+          placeholder="请输入排序值">
+      </div>
+    </div>
+    </nz-modal>
+  </div>
+</div>
+

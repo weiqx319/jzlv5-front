@@ -1,0 +1,73 @@
+<ng-container *ngIf="publisherId == 1">
+  <div *ngIf="selectData['bdCampaignBsType'].length>1">
+    <h3>百度定向编辑需要先筛选计划类型,且闪投计划不支持定向设置</h3>
+  </div>
+
+  <ng-container *ngIf="selectData['bdCampaignBsType'].length == 1 && selectData['bdCampaignBsType'][0] == '普通计划'">
+    <app-edit-group-target-single-bd
+      [selectData]="selectData"
+      [summaryType]="summaryType"
+      [is_check]="is_check"
+      [stringIdArray]="stringIdArray"
+      (is_saving)="save_state($event)"
+    ></app-edit-group-target-single-bd>
+  </ng-container>
+
+  <ng-container *ngIf="selectData['bdCampaignBsType'].length == 1 && selectData['bdCampaignBsType'][0] == '闪投计划'">
+    <div>
+      <h3>百度闪投计划暂不支持修改定向设置</h3>
+    </div>
+    <!--<app-edit-group-target-bd-dsa-->
+      <!--[selectData]="selectData"-->
+      <!--[summaryType]="summaryType"-->
+      <!--[is_check]="is_check"-->
+      <!--[stringIdArray]="stringIdArray"-->
+    <!--&gt;</app-edit-group-target-bd-dsa>-->
+  </ng-container>
+
+
+
+</ng-container>
+
+
+<ng-container *ngIf="publisherId == 6">
+<!--  <div *ngIf="selectData['bdCampaignBsType'].length>1">-->
+<!--    <h3>百度定向编辑需要先筛选计划类型,且闪投计划不支持定向设置</h3>-->
+<!--  </div>-->
+  <app-edit-group-target-single-gdt
+    [selectData]="selectData"
+    [summaryType]="summaryType"
+    [is_check]="is_check"
+    [stringIdArray]="stringIdArray"
+    (is_saving)="save_state($event)"
+  ></app-edit-group-target-single-gdt>
+
+
+
+</ng-container>
+
+
+<ng-container *ngIf="publisherId == 7">
+<!--  <div *ngIf="selectData['bdCampaignBsType'].length>1">-->
+<!--    <h3>百度定向编辑需要先筛选计划类型,且闪投计划不支持定向设置</h3>-->
+<!--  </div>-->
+  <app-edit-group-target-single-bytedance
+    [selectData]="selectData"
+    [summaryType]="summaryType"
+    [is_check]="is_check"
+    [stringIdArray]="stringIdArray"
+    (is_saving)="save_state($event)"
+  ></app-edit-group-target-single-bytedance>
+
+
+
+</ng-container>
+<ng-container *ngIf="publisherId == 17">
+  <app-edit-group-target-single-uc
+    [selectData]="selectData"
+    [summaryType]="summaryType"
+    [is_check]="is_check"
+    [stringIdArray]="stringIdArray"
+    (is_saving)="save_state($event)"
+  ></app-edit-group-target-single-uc>
+</ng-container>

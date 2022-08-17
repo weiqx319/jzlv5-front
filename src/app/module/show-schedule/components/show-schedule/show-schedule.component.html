@@ -1,0 +1,59 @@
+<div class="border extensionPeriod mt5">
+  <div class="topItem">
+    <div>
+      <i>生效时段</i>
+      <i>暂停时段</i>
+    </div>
+  </div>
+  <div class="schedule-setting">
+    <div class="poperation-area">
+      <div class="grid-layer">
+        <!--<div [ngClass]="{selecte_void: item['box_selection'] === 3 , selecte: item['selected'] === 1 , hover:item['showBorder'] && !showSelectFrame}"-->
+        <div
+          [ngClass]="{
+            selecte_void: item['box_selection'] === 3,
+            hover: item['showBorder'] && !showSelectFrame,
+            is_half: timeDimension===0.5
+          }"
+          *ngFor="let item of timeArray"
+          [ngStyle]="{ left: item.x + 'px', top: item.y + 'px' }"
+        ></div>
+      </div>
+      <div
+        class="showItem"
+        style="position: absolute; background: #108EE9; color: #fff; text-align: center; border-bottom: 1px solid #e8e8e8"
+        *ngFor="let show of showArray"
+        [ngStyle]="{
+          left: itemWidth * show['start']*timeDimension + 'px',
+          height: itemWidth + 'px',
+          'line-height': itemWidth + 'px',
+          width: itemWidth * (show['end'] - show['start'])*timeDimension + 'px',
+          top: itemWidth * show['week'] + 'px'
+        }"
+      >
+      <ng-container *ngIf="timeDimension===0.5">
+
+        <span *ngIf="!show['end']">{{ (show["start"]%2?show["start"]/2-0.5:show["start"]/2)+":"+show["start"]%2?30:"00" }}</span>
+        <span *ngIf="show['end']">{{
+          (show["start"]%2?show["start"]/2-0.5:show["start"]/2)+":"+(show["start"]%2?30:"00")+"~" 
+          + (show["end"]%2?show["end"]/2-0.5:show["end"]/2)+":"+(show["end"]%2?30:"00")
+        }}</span>
+      </ng-container>
+      <ng-container *ngIf="timeDimension===1">
+
+        <span *ngIf="!show['end']">{{ show["start"] + ":00" }}</span>
+        <span *ngIf="show['end']">{{
+          show["start"] + ":00 ~" + show["end"] + ":00"
+        }}</span>
+      </ng-container>
+      </div>
+    </div>
+    <div class="axis-y-area">
+      <div *ngFor="let weekItem of getDateList(0, 24)">{{ weekItem }}</div>
+    </div>
+    <div class="axis-x-area">
+      <div *ngFor="let weekItem of weekNameArray">{{ weekItem }}</div>
+    </div>
+  </div>
+  <!--<p class="mt16" style="color: #f09200">提示：蓝色为投放，白色为不投放</p>-->
+</div>

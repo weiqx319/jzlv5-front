@@ -1,0 +1,187 @@
+<div class="conversion-container mt20 mb20">
+  <div *ngIf="editFrom === 'bizUnitName'" class="trade-mark-content">
+    <div class="lab-row mb10">
+      <label class="">{{parentInfo?parentInfo['biz_unit_type_name']:''}}名称:</label>
+      <div class="ml8">
+        <input nz-input
+               class="w200"
+               [nzSize]="'default'"
+               type="text"
+               [(ngModel)]="allDefaultData[editFrom]['biz_unit_name']"
+               (ngModelChange)="inputChange(allDefaultData[editFrom]['biz_unit_name'])"
+               placeholder="请输入名称">
+      </div>
+      <div *ngIf="allDefaultData[editFrom]['is_warning']" class="pull-left ml4 worning"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{allDefaultData[editFrom]['error_message']}}</div>
+    </div>
+  </div>
+  <div *ngIf="editFrom === 'addBizUnitName'" class="trade-mark-content">
+    <div class="lab-row mb10" *ngFor="let itemFile of allDefaultData[editFrom].biz_list, let index=index">
+      <label class="">{{parentInfo?parentInfo['biz_unit_type_name']:''}}名称<span>{{index+1}}</span>:</label>
+      <div class="ml8">
+        <input nz-input
+               class="w200"
+               [nzSize]="'default'"
+               type="text"
+               [(ngModel)]="itemFile['biz_unit_name']"
+               (ngModelChange)="inputChange(itemFile['biz_unit_name'])"
+               placeholder="请输入名称">
+        <i nz-icon nzType="close" nzTheme="outline" class=" delete-color ml8"  *ngIf="index!==0"  (click)="deleteName(index)"></i>
+      </div>
+      <div *ngIf="itemFile['has_error']" class="pull-left ml4 worning" [ngClass]="{'ml25': index===0&&allDefaultData[editFrom].biz_list.length>1}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{itemFile['error_message']}}</div>
+    </div>
+
+    <button *ngIf="!allDefaultData[editFrom]['is_warning']" class="addBtn" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="addName('one')">
+     <i nz-icon nzType="plus" nzTheme="outline"></i>
+      <span>继续添加</span>
+    </button>
+    <button *ngIf="allDefaultData[editFrom]['is_warning']" class="addBtn disabled-status" nz-button [nzType]="'default'" [nzSize]="'default'">
+     <i nz-icon nzType="plus" nzTheme="outline"></i>
+      <span>继续添加</span>
+    </button>
+  </div>
+  <div *ngIf="editFrom === 'bizUnitChildName'" class="trade-mark-content">
+    <div class="lab-row mb10" >
+      <label class="">{{parentInfo?parentInfo['biz_unit_type_name']:''}}名称:</label>
+      <div class="ml8">
+        <input nz-input
+               class="w200"
+               [nzSize]="'default'"
+               type="text"
+               [(ngModel)]="allDefaultData[editFrom]['biz_unit_name']"
+               (ngModelChange)="inputChange(allDefaultData[editFrom]['biz_unit_name'])"
+               placeholder="请输入名称">
+      </div>
+      <div *ngIf="allDefaultData[editFrom]['is_warning']" class="pull-left ml4 worning"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{allDefaultData[editFrom]['error_message']}}</div>
+
+    </div>
+  </div>
+  <div *ngIf="editFrom === 'parentUnit'" class="trade-mark-content">
+    <div class="lab-row mb10" >
+      <label class="">所属上级标识:</label>
+      <div class="ml8">
+        <nz-select class="w200" [nzSize]="'default'" [(ngModel)]="allDefaultData[editFrom].parent_id" [nzPlaceHolder]="'请选择所属上级标识'">
+          <nz-option
+            *ngFor="let option of listFilter"
+            [nzLabel]="option.name"
+            [nzValue]="option.key">
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="editFrom === 'addBizUnitChildName'" class="trade-mark-content">
+    <div class="two-item" *ngFor="let itemFile of allDefaultData[editFrom].biz_list, let index=index">
+      <span class="order_number">{{index+1}}.</span>
+      <div class="lab-row mb10" >
+        <label class="">所属上级标识:</label>
+        <div class="ml8">
+          <nz-select class="w200" [nzSize]="'default'"
+                     [(ngModel)]="itemFile.parent_id"
+                     [nzPlaceHolder]="'请选择所属上级标识'">
+            <nz-option
+              *ngFor="let option of listFilter"
+              [nzLabel]="option.name"
+              [nzValue]="option.key">
+            </nz-option>
+          </nz-select>
+          <a class="ml8" (click)="createOne(itemFile)">新建</a>
+          <a nz-popover [(nzPopoverVisible)]="itemFile['show']" nzPopoverPlacement="bottom" nzPopoverTrigger="click" [nzPopoverContent]="createone" (click)="createOne(itemFile)">新建</a>
+
+
+        </div>
+        <!--<div *ngIf="itemFile['has_error']" class="pull-left ml4 worning"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{itemFile['error_message']}}</div>-->
+      </div>
+      <div class="lab-row mb10" >
+        <label class="">{{parentInfo['biz_unit_type_name']}}名称:</label>
+        <div class="ml8">
+          <input nz-input
+                 class="w200"
+                 [nzSize]="'default'"
+                 type="text"
+                 [(ngModel)]="itemFile['biz_unit_name']"
+                 (ngModelChange)="inputChange(itemFile['biz_unit_name'])"
+                 placeholder="请输入名称">
+
+        </div>
+        <div *ngIf="itemFile['has_error']" class=" ml4 worning pull-left"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{itemFile['error_message']}}</div>
+
+      </div>
+
+      <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8 two-delete"  *ngIf="index!==0" (click)="deleteName(index)"></i>
+      <ng-template #createone>
+        <div class="create-one-content">
+          <p class="mb14" style="color: rgba(0,0,0,.85)">新建一级标识名称</p>
+          <div class="lab-row mb10"  *ngFor="let one of createOneData, let oneIndex=index">
+            <label class="">{{firstMark['biz_unit_type_name']}}名称:</label>
+            <div class="ml8 inline-block">
+              <input nz-input
+                     class="w200"
+                     [nzSize]="'default'"
+                     type="text"
+                     (click)="nameClick('createOne')"
+                     [(ngModel)]="one['biz_unit_name']"
+                     placeholder="请输入名称">
+            </div>
+          </div>
+          <div class="btn">
+            <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="clickCreateOneCancel(itemFile)">
+              <span>取消</span>
+            </button>
+            <button class="ml8" nz-button [nzType]="'primary'" [disabled]="checkAddOneSuccess" [nzSize]="'default'" (click)="clickCreateOneOk(itemFile)">
+              <span>完成</span>
+            </button>
+          </div>
+
+        </div>
+      </ng-template>
+    </div>
+
+    <button *ngIf="!allDefaultData[editFrom]['is_warning']" class="addBtn" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="addName('two')">
+     <i nz-icon nzType="plus" nzTheme="outline"></i>
+      <span>继续添加</span>
+    </button>
+    <button *ngIf="allDefaultData[editFrom]['is_warning']" class="addBtn disabled-status" nz-button [nzType]="'default'" [nzSize]="'default'">
+     <i nz-icon nzType="plus" nzTheme="outline"></i>
+      <span>继续添加</span>
+    </button>
+  </div>
+  <div *ngIf="editFrom === 'tradeNameFirst'" class="trade-mark-content">
+    <div class="lab-row mb10">
+      <label class="">维度名称:</label>
+      <div class="ml8">
+        <input nz-input
+               class="w200"
+               [nzSize]="'default'"
+               type="text"
+               [(ngModel)]="allDefaultData[editFrom]['biz_unit_type_name']"
+               (ngModelChange)="inputChange(allDefaultData[editFrom]['biz_unit_type_name'])"
+               placeholder="请输入名称">
+      </div>
+      <div *ngIf="allDefaultData[editFrom]['is_warning']" class="pull-left ml4 worning"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{allDefaultData[editFrom]['error_message']}}</div>
+    </div>
+  </div>
+  <div *ngIf="editFrom === 'tradeNameSecond'" class="trade-mark-content">
+    <div class="lab-row mb10">
+      <label class="">行业标识名称二级:</label>
+      <div class="ml8">
+        <input nz-input
+               class="w200"
+               [nzSize]="'default'"
+               type="text"
+               [(ngModel)]="allDefaultData[editFrom]['biz_unit_type_name']"
+               (ngModelChange)="inputChange(allDefaultData[editFrom]['biz_unit_type_name'])"
+               placeholder="请输入名称">
+      </div>
+      <div *ngIf="allDefaultData[editFrom]['is_warning']" class="pull-left ml4 worning"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{allDefaultData[editFrom]['error_message']}}</div>
+    </div>
+  </div>
+
+  <div class="trade-mark-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [disabled]="allDefaultData[editFrom]['is_warning'] || checkSuccess" [nzType]="'primary'" [nzSize]="'default'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

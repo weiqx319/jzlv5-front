@@ -1,0 +1,40 @@
+.channels-edit-content {
+  .tips{
+    color: red;
+    margin-bottom: 10px;
+
+  }
+  .lab-row {
+    display: flex;
+    margin-bottom: 10px;
+
+    > label {
+      width: 136px;
+      text-align: left;
+    }
+
+    .w100p {
+      width: 100%;
+    }
+
+    .ml50p {
+      margin-left: 50%;
+    }
+
+    .w_full {
+      width: 568px;
+    }
+  }
+
+  .channels-edit-btn {
+    text-align: right;
+    padding-top: 16px;
+  }
+  .ant-input-group-addon {
+    padding: 0;
+    border: 0;
+  }
+  .input-group-btn {
+    border-right: 0;
+  }
+}

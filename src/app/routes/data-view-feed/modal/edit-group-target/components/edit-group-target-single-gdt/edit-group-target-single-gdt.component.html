@@ -1,0 +1,390 @@
+<!--单元_编辑单元-->
+<div>
+  <h3 *ngIf="selectData['update_type'] == 'single'">
+    编辑(定向): <span>{{ groupData['pub_adgroup_name'] }}</span
+  >（属于:{{ publisherOption[groupData['publisher_id']] }}/{{
+    groupData['pub_account_name']
+    }}、{{ groupData['pub_campaign_name'] }}）
+  </h3>
+  <h3 *ngIf="selectData['update_type'] != 'single'">
+    批量编辑定向设置：
+  </h3>
+  <div class="target-group">
+    <div class="target-group-title">
+      <span>定向包设置:</span>
+    </div>
+    <div class="target-group-content">
+      <div class="inpRow mt10">
+        <div class="inpRow_left pull-left">
+          <label
+            class="titleLa w200 inline-block"
+          >
+            <span>{{editTargetGroupConfig.target_list.name}}:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left ed_sele">
+          <nz-switch nzSize="small" [(ngModel)]="editTargetGroupConfig.target_list.is_open"></nz-switch>
+          <ng-container *ngIf="editTargetGroupConfig.target_list.is_open">
+            <nz-select class="ml10" style="width: 200px;"
+                       [(ngModel)]="editTargetGroupConfig.target_list.target_id"
+                       (ngModelChange)="getTargetInfoById(editTargetGroupConfig.target_list.target_id)"
+                       [nzPlaceHolder]="'请选择'"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of editTargetGroupConfig.target_list.sub"
+                [nzLabel]="option['name']"
+                [nzValue]="option['key']"
+              >
+              </nz-option>
+            </nz-select>
+
+          </ng-container>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <ng-container *ngFor="let item of editDefaultDataGroup">
+    <div class="target-group">
+      <div class="target-group-title">
+        <span>{{item['block_desc']}}:</span>
+      </div>
+      <div class="target-group-content">
+        <ng-container *ngFor="let slot of item['slot_list']">
+
+          <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type == 'range'">
+            <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+              <div class="inpRow_left pull-left">
+                <label
+                  class="titleLa w200 inline-block"
+                  nz-checkbox
+                  [(ngModel)]="editDefaultDataOption[slot].is_edit"
+                  [nzDisabled]="editTargetGroupConfig.target_list.is_open"
+
+                >
+                  <span>{{editDefaultDataOption[slot].name}}:</span>
+                </label>
+              </div>
+              <div class="inpRow_right pull-left ed_sele">
+                <nz-switch nzSize="small" [(ngModel)]="editDefaultDataOption[slot].is_open" [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"></nz-switch>
+                <ng-container *ngIf="editDefaultDataOption[slot].is_open">
+                  <nz-select class="ml10" style="width: 200px;"
+                             [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"
+                             [(ngModel)]="editDefaultDataOption[slot].rangeStartResult"
+                             [nzPlaceHolder]="'请选择'"
+                             [nzSize]="'small'">
+                    <nz-option
+                      *ngFor="let option of editDefaultDataOption[slot].rangeValue"
+                      [nzLabel]="option['label']"
+                      [nzValue]="option['value']"
+                      [nzDisabled]="option['value']>editDefaultDataOption[slot].rangeEndResult"
+                    >
+                    </nz-option>
+                  </nz-select>
+                  <span class="ml10 mr10"> - </span>
+                  <nz-select style="width: 200px;"
+                             [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"
+                             [(ngModel)]="editDefaultDataOption[slot].rangeEndResult"
+                             [nzPlaceHolder]="'请选择'"
+                             [nzSize]="'small'">
+                    <nz-option
+                      *ngFor="let option of editDefaultDataOption[slot].rangeValue"
+                      [nzLabel]="option['label']"
+                      [nzValue]="option['value']"
+                      [nzDisabled]="option['value']<editDefaultDataOption[slot].rangeStartResult"
+                    >
+                    </nz-option>
+                  </nz-select>
+
+
+
+                </ng-container>
+              </div>
+              <div class="clear"></div>
+            </div>
+
+          </ng-container>
+          <ng-container *ngIf="editDefaultDataOption[slot] && checkIsObject(editDefaultDataOption[slot]) && editDefaultDataOption[slot].form_type === 'checkbox'">
+            <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+              <div class="inpRow_left pull-left">
+                <label
+                  class="titleLa w200 inline-block"
+                  nz-checkbox
+                  [(ngModel)]="editDefaultDataOption[slot].is_edit"
+                  [nzDisabled]="editTargetGroupConfig.target_list.is_open"
+                >
+                  <span>{{editDefaultDataOption[slot].name}}:</span>
+                </label>
+              </div>
+              <div class="inpRow_right pull-left ed_sele">
+                <nz-switch nzSize="small" [(ngModel)]="editDefaultDataOption[slot].is_open" [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"></nz-switch>
+                <ng-container *ngIf="editDefaultDataOption[slot].is_open">
+                  <nz-checkbox-group class="ml10" [(ngModel)]="editDefaultDataOption[slot].sub"
+                                     [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"
+                                     (ngModelChange)="updateSingleChecked(slot)"></nz-checkbox-group>
+                </ng-container>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="editDefaultDataOption[slot] && checkIsObject(editDefaultDataOption[slot]) && editDefaultDataOption[slot].form_type === 'checkbox_tree'">
+            <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+              <div class="inpRow_left pull-left">
+                <label
+                  class="titleLa w200 inline-block"
+                  nz-checkbox
+                  [(ngModel)]="editDefaultDataOption[slot].is_edit"
+                  [nzDisabled]="editTargetGroupConfig.target_list.is_open"
+                >
+                  <span>{{editDefaultDataOption[slot].name}}:</span>
+                </label>
+              </div>
+              <div class="inpRow_right pull-left ed_sele">
+                <nz-switch nzSize="small" [(ngModel)]="editDefaultDataOption[slot].is_open" [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"></nz-switch>
+                <ng-container *ngIf="editDefaultDataOption[slot].is_open">
+                  <div>
+                    <nz-transfer-tree [target]="editDefaultDataOption[slot].resultList"  [getParentKey]="!!editDefaultDataOption[slot].getParentKey" [source]="editDefaultDataOption[slot].sub" (nzChange)="transferTreeChange(editDefaultDataOption[slot],$event)"></nz-transfer-tree>
+                    <div *ngIf="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open" class="disableArea"> </div>
+                  </div>
+                </ng-container>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="editDefaultDataOption[slot] && checkIsObject(editDefaultDataOption[slot]) && editDefaultDataOption[slot].form_type === 'radio'">
+            <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+              <div class="inpRow_left pull-left">
+                <label
+                  class="titleLa w200 inline-block"
+                  nz-checkbox
+                  [(ngModel)]="editDefaultDataOption[slot].is_edit"
+                  [nzDisabled]="editTargetGroupConfig.target_list.is_open"
+                >
+                  <span>{{editDefaultDataOption[slot].name}}:</span>
+                </label>
+              </div>
+              <div class="inpRow_right pull-left ed_sele">
+                <nz-switch nzSize="small" [(ngModel)]="editDefaultDataOption[slot].is_open" [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"></nz-switch>
+                <ng-container *ngIf="editDefaultDataOption[slot].is_open">
+                  <nz-radio-group style="display: inline-flex" class="ml10" [(ngModel)]="editDefaultDataOption[slot].resultValue" [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open" >
+                    <label  *ngFor="let radio of editDefaultDataOption[slot].sub" nz-radio nzValue="{{radio['value']}}">
+                      {{radio['label']}}
+                    </label>
+                  </nz-radio-group>
+
+
+                </ng-container>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="editDefaultDataOption[slot] && checkIsObject(editDefaultDataOption[slot]) && editDefaultDataOption[slot].form_type === 'behavior_or_interest'">
+            <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+              <div class="inpRow_left pull-left">
+                <label
+                  class="titleLa w200 inline-block"
+                  nz-checkbox
+                  [(ngModel)]="editDefaultDataOption[slot].is_edit"
+                  [nzDisabled]="editTargetGroupConfig.target_list.is_open"
+                >
+                  <span>{{editDefaultDataOption[slot].name}}:</span>
+                </label>
+              </div>
+              <div class="inpRow_right pull-left ed_sele">
+                <nz-switch nzSize="small" [(ngModel)]="editDefaultDataOption[slot].is_open" [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"></nz-switch>
+                <ng-container *ngIf="editDefaultDataOption[slot].is_open">
+                  <div class="combine_data">
+                    <div class="combine_tile" (click)="editDefaultDataOption[slot].combine_data.interest.expand = !editDefaultDataOption[slot].combine_data.interest.expand">
+                      <i nz-icon nzType="right-circle" nzTheme="fill" *ngIf="!editDefaultDataOption[slot].combine_data.interest.expand"></i>
+                      <i nz-icon nzType="down-circle" nzTheme="fill" *ngIf="editDefaultDataOption[slot].combine_data.interest.expand"></i>
+                      <span class="ml10">{{editDefaultDataOption[slot].combine_data.interest.name}}</span>
+                    </div>
+                    <div class="combine_content" *ngIf="editDefaultDataOption[slot].combine_data.interest.expand">
+                      <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption.behavior_or_interest.combine_data.interest.resultList" (nzChange)="transferTreeChange(editDefaultDataOption.behavior_or_interest.combine_data.interest,$event)" [source]="editDefaultDataOption.behavior_or_interest.combine_data.interest.sub"></nz-transfer-tree>
+                      <div *ngIf="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open" class="disableArea"> </div>
+                    </div>
+                  </div>
+
+                  <div class="combine_data">
+                    <div class="combine_tile" (click)="editDefaultDataOption[slot].combine_data.behavior.expand = !editDefaultDataOption[slot].combine_data.behavior.expand">
+                      <i nz-icon nzType="right-circle" nzTheme="fill" *ngIf="!editDefaultDataOption[slot].combine_data.behavior.expand"></i>
+                      <i nz-icon nzType="down-circle" nzTheme="fill" *ngIf="editDefaultDataOption[slot].combine_data.behavior.expand"></i>
+                      <span class="ml10">{{editDefaultDataOption[slot].combine_data.behavior.name}}</span>
+                    </div>
+                    <div class="combine_content" *ngIf="editDefaultDataOption[slot].combine_data.behavior.expand">
+                      <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption.behavior_or_interest.combine_data.behavior.combine_data.behavior_category.resultList" (nzChange)="transferTreeChange(editDefaultDataOption.behavior_or_interest.combine_data.behavior.combine_data.behavior_category,$event)"  [source]="editDefaultDataOption.behavior_or_interest.combine_data.behavior.combine_data.behavior_category.sub"></nz-transfer-tree>
+
+                      <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+                        <div class="inpRow_left pull-left">
+                            <span>{{editDefaultDataOption.behavior_or_interest.combine_data.behavior.combine_data.scene.name}}:</span>
+                        </div>
+                        <div class="inpRow_right pull-left ed_sele">
+                            <nz-checkbox-group class="ml10" [(ngModel)]="editDefaultDataOption.behavior_or_interest.combine_data.behavior.combine_data.scene.sub"
+                                               [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"
+                            ></nz-checkbox-group>
+                        </div>
+                        <div class="clear"></div>
+                      </div>
+
+                      <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+                        <div class="inpRow_left pull-left">
+                            <span>{{editDefaultDataOption.behavior_or_interest.combine_data.behavior.combine_data.time_window.name}}:</span>
+                        </div>
+                        <div class="inpRow_right pull-left ed_sele">
+                          <ng-container *ngIf="editDefaultDataOption[slot].is_open">
+                            <nz-radio-group style="display: inline-flex" class="ml10" [(ngModel)]="editDefaultDataOption.behavior_or_interest.combine_data.behavior.combine_data.time_window.resultValue" >
+                              <label  *ngFor="let radio of editDefaultDataOption.behavior_or_interest.combine_data.behavior.combine_data.time_window.sub" nz-radio nzValue="{{radio['value']}}">
+                                {{radio['label']}}
+                              </label>
+                            </nz-radio-group>
+
+
+                          </ng-container>
+                        </div>
+                        <div class="clear"></div>
+                      </div>
+
+                      <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+                        <div class="inpRow_left pull-left">
+                            <span>{{editDefaultDataOption.behavior_or_interest.combine_data.behavior.combine_data.strength.name}}:</span>
+                        </div>
+                        <div class="inpRow_right pull-left ed_sele">
+                            <nz-checkbox-group class="ml10" [(ngModel)]="editDefaultDataOption.behavior_or_interest.combine_data.behavior.combine_data.strength.sub"
+                                               [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"
+                            ></nz-checkbox-group>
+                        </div>
+                        <div class="clear"></div>
+                      </div>
+
+                      <div *ngIf="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open" class="disableArea"> </div>
+                    </div>
+                  </div>
+
+                </ng-container>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </ng-container>
+
+
+          <ng-container *ngIf="editDefaultDataOption[slot] && checkIsObject(editDefaultDataOption[slot]) && editDefaultDataOption[slot].form_type === 'targeting_audience'">
+            <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+              <div class="inpRow_left pull-left">
+                <label
+                  class="titleLa w200 inline-block"
+                  nz-checkbox
+                  [(ngModel)]="editDefaultDataOption[slot].is_edit"
+                  [nzDisabled]="editTargetGroupConfig.target_list.is_open"
+                >
+                  <span>{{editDefaultDataOption[slot].name}}:</span>
+                </label>
+              </div>
+              <div class="inpRow_right pull-left ed_sele">
+                <nz-switch nzSize="small" [(ngModel)]="editDefaultDataOption[slot].is_open" [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"></nz-switch>
+                <ng-container *ngIf="editDefaultDataOption[slot].is_open">
+                  <div class="combine_data">
+                    <div class="combine_tile">
+                      <span class="ml10">{{editDefaultDataOption.targeting_audience.combine_data.custom_audience.name}}</span>
+                    </div>
+                    <div class="combine_content">
+                      <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption.targeting_audience.combine_data.custom_audience.resultList" (nzChange)="transferTreeChange(editDefaultDataOption.targeting_audience.combine_data.custom_audience,$event)" [source]="editDefaultDataOption.targeting_audience.combine_data.custom_audience.sub"></nz-transfer-tree>
+                      <div *ngIf="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open" class="disableArea"> </div>
+                    </div>
+                  </div>
+
+                  <div class="combine_data">
+                    <div class="combine_tile">
+                      <span class="ml10">{{editDefaultDataOption.targeting_audience.combine_data.excluded_custom_audience.name}}</span>
+                    </div>
+                    <div class="combine_content">
+                      <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption.targeting_audience.combine_data.excluded_custom_audience.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption.targeting_audience.combine_data.excluded_custom_audience,$event)" [source]="editDefaultDataOption.targeting_audience.combine_data.excluded_custom_audience.sub"></nz-transfer-tree>
+                      <div *ngIf="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open" class="disableArea"> </div>
+                    </div>
+                  </div>
+
+                </ng-container>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="editDefaultDataOption[slot] && checkIsObject(editDefaultDataOption[slot]) && editDefaultDataOption[slot].form_type === 'device_brand_model'">
+            <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+              <div class="inpRow_left pull-left">
+                <label
+                  class="titleLa w200 inline-block"
+                  nz-checkbox
+                  [(ngModel)]="editDefaultDataOption[slot].is_edit"
+                  [nzDisabled]="editTargetGroupConfig.target_list.is_open"
+                >
+                  <span>{{editDefaultDataOption[slot].name}}:</span>
+                </label>
+              </div>
+              <div class="inpRow_right pull-left ed_sele">
+                <nz-switch nzSize="small" [(ngModel)]="editDefaultDataOption[slot].is_open" [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"></nz-switch>
+                <ng-container *ngIf="editDefaultDataOption[slot].is_open">
+                  <div class="combine_data">
+                      <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption.device_brand_model.resultList" (nzChange)="transferTreeChange(editDefaultDataOption.device_brand_model,$event)" [source]="editDefaultDataOption.device_brand_model.sub"></nz-transfer-tree>
+                      <label
+                        class="titleLa inline-block"
+                        nz-checkbox
+                        [(ngModel)]="editDefaultDataOption.device_brand_model.exclude"
+                        [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"
+                      >
+                        <span>排除所选设备的用户</span>
+                      </label>
+
+                      <div *ngIf="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open" class="disableArea"> </div>
+                  </div>
+
+                </ng-container>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="editDefaultDataOption[slot] && checkIsObject(editDefaultDataOption[slot]) && editDefaultDataOption[slot].form_type === 'geo_location'">
+            <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption[slot].is_edit }">
+              <div class="inpRow_left pull-left">
+                <label
+                  class="titleLa w200 inline-block"
+                  nz-checkbox
+                  [(ngModel)]="editDefaultDataOption[slot].is_edit"
+                  [nzDisabled]="editTargetGroupConfig.target_list.is_open"
+                >
+                  <span>{{editDefaultDataOption[slot].name}}:</span>
+                </label>
+              </div>
+              <div class="inpRow_right pull-left ed_sele">
+                <nz-switch nzSize="small" [(ngModel)]="editDefaultDataOption[slot].is_open" (ngModelChange)="updateLocationTypes(editDefaultDataOption['geo_location']['location_types']['sub'])" [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"></nz-switch>
+                <ng-container *ngIf="editDefaultDataOption[slot].is_open">
+                  <div class="combine_data">
+                      <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption['geo_location']['resultList']" (nzChange)="transferTreeChange(editDefaultDataOption['geo_location'],$event)" [source]="editDefaultDataOption['geo_location']['sub']"></nz-transfer-tree>
+                      <nz-checkbox-group class="ml10" [(ngModel)]="editDefaultDataOption['geo_location']['location_types']['sub']"
+                                     [nzDisabled]="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open"
+                      (ngModelChange)="updateLocationTypes(editDefaultDataOption['geo_location']['location_types']['sub'])"></nz-checkbox-group>
+
+                      <div *ngIf="!editDefaultDataOption[slot].is_edit || editTargetGroupConfig.target_list.is_open" class="disableArea"> </div>
+                  </div>
+
+                </ng-container>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </ng-container>
+
+
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+
+
+
+
+
+</div>

@@ -1,0 +1,500 @@
+<div class="adgroup-section-container" *ngIf="!structConfigLoading">
+  <div class="form-content">
+    <div class="lab-row mb20 w100p">
+      <label><span class="redStart">*</span>计划名称:</label>
+      <div>
+        <input nz-input
+               class="w_full ml8 mr8"
+               [nzSize]="'small'"
+               type="text"
+               [(ngModel)]="data.adgroup_name"
+               (ngModelChange)="groupNameChange(data)"
+               placeholder="请输入">
+        <span>{{groupNameLength}}/50</span>
+
+        <!--        <button-->
+<!--          nz-button-->
+<!--          nzType="default"-->
+<!--          nz-popover-->
+<!--          [nzSize]="'small'"-->
+<!--          nzPopoverTrigger="click"-->
+<!--          (click)="onAdgroupNamePreview();"-->
+<!--          [nzPopoverContent]="nameTemplate"-->
+<!--        >-->
+<!--          预览-->
+<!--        </button>-->
+<!--        <ng-template #nameTemplate>-->
+<!--          <div>{{ adgroupNamePreview }}</div>-->
+<!--        </ng-template>-->
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.adgroup_name.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.adgroup_name.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="lab-row mb20">
+      <label>启用暂停:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.operation">
+        <ng-container *ngFor="let option of structConfig['operation']['sub']">
+          <label nz-radio-button nzValue="{{option['value']}}">
+            <span>{{ option['label'] }}</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20">
+      <label id="delivery_range">投放范围:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.delivery_range"
+        (ngModelChange)="deliveryRangeChange($event);">
+        <ng-container *ngFor="let option of structConfig['delivery_range']['sub']">
+          <label nz-radio-button nzValue="{{option['value']}}" [nzDisabled]="option.value === 'UNION' && (materialType === 1 || materialType === 2)">
+            <span>{{ option['label'] }}</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20" *ngIf="data.delivery_range === 'UNION'">
+      <label>穿山甲投放形式:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.union_video_type">
+        <ng-container *ngFor="let option of structConfig['union_video_type']['sub']">
+          <label nz-radio-button nzValue="{{option['value']}}" *ngIf="option['value'] !== 'SPLASH_VIDEO'">
+            <span>{{ option['label'] }}</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20">
+      <label id="pricing_setting">投放目标:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.pricing"
+        (ngModelChange)="pricingChange($event);">
+        <ng-container *ngFor="let option of structConfig['pricing']['sub']">
+          <label nz-radio-button nzValue="{{option['value']}}" *ngIf="(option['value'] === 'PRICING_OCPC' && data.delivery_range === 'UNION') || option['value'] !== 'PRICING_OCPC'">
+            <span>{{ option['label'] }}</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20" *ngIf="landing_type === 'APP'">
+      <label>应用下载方式:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.download_type"
+        (ngModelChange)="downloadTypeChange();">
+        <ng-container *ngFor="let option of structConfig['download_type']['sub']">
+          <label nz-radio-button nzValue="{{option['value']}}">
+            <span>{{ option['label'] }}</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <ng-container *ngIf="landing_type === 'APP' && data.download_type === 'DOWNLOAD_URL'">
+      <div class="lab-row mb20">
+        <label>应用下载类型:</label>
+        <nz-radio-group
+          class="ml8"
+          [nzSize]="'small'"
+          [(ngModel)]="data.app_type"
+          (ngModelChange)="appTypeChange();">
+          <ng-container *ngFor="let option of structConfig['app_type']['sub']">
+            <label nz-radio-button nzValue="{{option['value']}}">
+              <span>{{ option['label'] }}</span>
+            </label>
+          </ng-container>
+        </nz-radio-group>
+      </div>
+      <div class="lab-row mb20 w100p">
+        <label><span class="redStart">*</span>应用下载链接:</label>
+        <div>
+          <nz-input-group class="w_full ml8" [nzSize]="'small'" [nzAddOnBefore]="nameBeforeTemplate">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="data.download_url"
+                   (ngModelChange)="downloadUrlChanged();"
+                   (blur)="downloadUrlBlur();"
+                   placeholder="从系统设置中获取">
+          </nz-input-group>
+          <ng-template #nameBeforeTemplate>
+              <button class="input-group-btn" nz-button [nzSize]="'small'" nz-dropdown [nzDropdownMenu]="menu" [nzTrigger]="'click'">
+                <span>选择</span>
+                <i nz-icon nzType="down"></i>
+              </button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ng-container *ngIf="data.app_type === 'APP_ANDROID'">
+                  <ul nz-menu>
+                    <li nz-menu-item *ngFor="let option of downloadUrlList['1']" (click)="urlClick(option, 1);">
+                      <a>{{option.app_url_name}}</a>
+                    </li>
+                  </ul>
+                </ng-container>
+                <ng-container *ngIf="data.app_type === 'APP_IOS'">
+                  <ul nz-menu>
+                    <li nz-menu-item *ngFor="let option of downloadUrlList['2']" (click)="urlClick(option, 2);">
+                      <a>{{option.app_url_name}}</a>
+                    </li>
+                  </ul>
+                </ng-container>
+              </nz-dropdown-menu>
+          </ng-template>
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.download_url.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.download_url.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="lab-row mb20">
+        <label><span class="redStart">*</span>应用包名:</label>
+        <div>
+          <input nz-input
+                 class="w200 ml8"
+                 [nzSize]="'small'"
+                 type="text"
+                 [(ngModel)]="data.package"
+                 disabled
+                 placeholder="请输入">
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.package.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.package.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="landing_type === 'APP' && data.download_type === 'DOWNLOAD_URL'">
+      <div class="lab-row mb20">
+        <label>优先应用商店下载:</label>
+        <nz-radio-group
+          class="ml8"
+          [nzSize]="'small'"
+          [(ngModel)]="data.download_mode">
+          <ng-container *ngFor="let option of structConfig['download_mode']['sub']">
+            <label nz-radio-button nzValue="{{option['value']}}">
+              <span>{{ option['label'] }}</span>
+            </label>
+          </ng-container>
+        </nz-radio-group>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="(landing_type === 'APP' && data.download_type === 'EXTERNAL_URL') || landing_type === 'LINK'">
+      <div class="lab-row mb20 w100p">
+        <label>链接方式:</label>
+        <nz-radio-group
+          class="ml8"
+          [(ngModel)]="data.url_select"
+          (ngModelChange)="changeUrlType()"
+          [nzSize]="'small'"
+        >
+          <ng-container>
+            <label nz-radio-button [nzValue]="'media'">
+              <span>媒体链接</span>
+            </label>
+            <label nz-radio-button [nzValue]="'local'">
+              <span>本地链接</span>
+            </label>
+          </ng-container>
+        </nz-radio-group>
+      </div>
+      <div class="lab-row mb20 w100p">
+        <label><span class="redStart">*</span>落地页链接:</label>
+        <div>
+          <nz-input-group class="w_full ml8" [nzSize]="'small'" [nzAddOnBefore]="nameBeforeTemplate">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="data.external_url"
+                   (ngModelChange)="externalUrlChanged();"
+                   (blur)="externalUrlBlur();"
+                   placeholder="从系统设置中获取">
+          </nz-input-group>
+          <ng-template #nameBeforeTemplate>
+              <button class="input-group-btn" nz-button [nzSize]="'small'" nz-dropdown [nzDropdownMenu]="menu2"  [nzTrigger]="'click'">
+                <span>选择</span>
+                <i nz-icon nzType="down"></i>
+              </button>
+              <nz-dropdown-menu #menu2="nzDropdownMenu">
+                <ul nz-menu>
+                  <ng-container *ngIf="data.url_select === 'local'">
+                    <li nz-menu-item *ngFor="let option of downloadUrlList['3']" (click)="urlClick(option, 3);">
+                      <a>{{option.app_url_name}}</a>
+                    </li>
+                  </ng-container>
+                  <ng-container *ngIf="data.url_select === 'media'">
+                    <li nz-menu-item *ngFor="let option of mediaTargetList" (click)="urlClick(option, 4);">
+                      <a>{{option.name}}</a>
+                    </li>
+                  </ng-container>
+
+                </ul>
+              </nz-dropdown-menu>
+          </ng-template>
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.external_url.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.external_url.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="landing_type === 'APP' && data.download_type === 'EXTERNAL_URL'">
+      <div class="lab-row mb20 w100p">
+        <label><span class="redStart">*</span>应用直达链接:</label>
+        <div>
+          <nz-radio-group
+            class="ml8"
+            [nzSize]="'small'"
+            [(ngModel)]="data.is_open_url">
+            <label nz-radio-button [nzValue]="0">
+              <span>不启用</span>
+            </label>
+            <label nz-radio-button [nzValue]="1">
+              <span>启用</span>
+            </label>
+          </nz-radio-group>
+          <ng-container *ngIf="data.is_open_url === 1">
+            <div class="mt20">
+              <input nz-input
+                     class="w_full ml8"
+                     [nzSize]="'small'"
+                     type="text"
+                     [(ngModel)]="data.open_url"
+                     placeholder="请输入应用直达链接">
+              <div class="error-tip mt5 ml8" *ngIf="errorTip.open_url.is_show">
+                <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                <span style="color: red;">{{ errorTip.open_url.tip_text }}</span>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+    <div class="lab-row mb20" *ngIf="chan_pub_id && (data.pricing === 'PRICING_OCPC' || data.pricing === 'PRICING_OCPM')">
+      <label><span class="redStart">*</span>转化目标:</label>
+      <div>
+        <nz-select class="w200 ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="data.convert_id"
+                   [nzPlaceHolder]="'请选择'"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of conversionTargetList"
+            [nzLabel]="option.name"
+            [nzValue]="option.id">
+          </nz-option>
+        </nz-select>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.convert_id.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.convert_id.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="lab-row mb20 w100p">
+      <label id="bid_setting">投放场景:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.smart_bid_type"
+        (ngModelChange)="smartBidTypeChange($event);">
+        <label nz-radio-button [nzValue]="'SMART_BID_CUSTOM'">
+          <span>常规投放</span>
+        </label>
+        <label nz-radio-button [nzValue]="'SMART_BID_CONSERVATIVE'" [nzDisabled]="data.pricing !== 'PRICING_OCPM'">
+          <span>放量投放</span>
+        </label>
+      </nz-radio-group>
+    </div>
+
+    <div class="lab-row mb20 w100p" *ngIf="data.smart_bid_type === 'SMART_BID_CUSTOM'">
+      <label>{{(data.pricing === 'PRICING_OCPM' || data.pricing === 'PRICING_OCPC') ? '竞价策略' : '投放速度类型'}}:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.flow_control_mode">
+        <ng-container *ngFor="let option of flowControlModeList[data.pricing]">
+          <label nz-radio-button [nzValue]="option.key">
+            <span>{{ option.name }}</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20 w100p">
+      <label><span class="redStart">*</span>日预算:</label>
+      <div>
+        <input nz-input
+               class="w180 ml8 mr8"
+               [nzSize]="'small'"
+               type="number"
+               [(ngModel)]="data.budget">元
+        <div class="lab-tip mt5 ml8">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+          <span *ngIf="data.pricing === 'PRICING_CPC' || data.pricing === 'PRICING_CPM'">取值范围: 100-9999999.99</span>
+          <span *ngIf="data.pricing === 'PRICING_OCPC' || data.pricing === 'PRICING_OCPM'">取值范围: 300-9999999.99</span>
+        </div>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.budget.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.budget.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lab-row mb20 w100p" *ngIf="data.smart_bid_type === 'SMART_BID_CONSERVATIVE'">
+      <label>调整自动出价:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.adjust_cpa"
+        (ngModelChange)="changeAdjustCpa()"
+      >
+        <label nz-radio-button [nzValue]="1">
+          <span>是</span>
+        </label>
+        <label nz-radio-button [nzValue]="0">
+          <span>否</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20 w100p" *ngIf="data.smart_bid_type === 'SMART_BID_CONSERVATIVE' && data.adjust_cpa === 1">
+      <label><span class="redStart">*</span>广告出价:</label>
+      <div>
+        <input nz-input
+               class="w180 ml8 mr8"
+               [nzSize]="'small'"
+               type="number"
+               [(ngModel)]="data.bid">元
+        <div class="lab-tip mt5 ml8">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+          <span *ngIf="data.pricing === 'PRICING_OCPC' || data.pricing === 'PRICING_OCPM'">取值范围: 0.1-日预算, 最高不超过10000元</span>
+        </div>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.bid.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.bid.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="lab-row mb20 w100p" *ngIf="data.smart_bid_type === 'SMART_BID_CUSTOM'">
+      <label><span class="redStart">*</span>出价:</label>
+      <div>
+        <input nz-input
+               class="w180 ml8 mr8"
+               [nzSize]="'small'"
+               type="number"
+               [(ngModel)]="data.bid">元
+        <div class="lab-tip mt5 ml8">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+          <span *ngIf="data.pricing === 'PRICING_CPC'">取值范围: 0.2-100</span>
+          <span *ngIf="data.pricing === 'PRICING_CPM'">取值范围: 4-100</span>
+          <span *ngIf="data.pricing === 'PRICING_OCPC' || data.pricing === 'PRICING_OCPM'">取值范围: 0.1-日预算, 最高不超过10000元</span>
+        </div>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.bid.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.bid.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="lab-row mb20 w100p">
+      <label id="schedule_type">投放时间:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.schedule_type">
+        <label nz-radio-button [nzValue]="'SCHEDULE_FROM_NOW'">
+          <span>长期投放</span>
+        </label>
+        <label nz-radio-button [nzValue]="'SCHEDULE_START_END'" [nzDisabled]="data.smart_bid_type === 'SMART_BID_CONSERVATIVE'">
+          <span>日期范围</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20 w100p" *ngIf="data.schedule_type === 'SCHEDULE_START_END'">
+      <label>起始时间:</label>
+      <nz-range-picker
+        class="w200 ml8"
+        [nzAllowClear]="false"
+        [nzSize]="'small'"
+        [(ngModel)]="data.time_range"
+        [nzDisabledDate]="getDisableDate"
+        [nzFormat]="'yyyy/MM/dd'">
+      </nz-range-picker>
+    </div>
+    <div class="lab-row mb20 w100p">
+      <label>投放时段:</label>
+      <div>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="data.schedule_time_slt">
+          <label nz-radio-button [nzValue]="'nolimt'">
+            <span>不限</span>
+          </label>
+          <label nz-radio-button [nzValue]="'schedule_time'">
+            <span>指定时段</span>
+          </label>
+        </nz-radio-group>
+        <ng-container *ngIf="data.schedule_time_slt === 'schedule_time'">
+          <app-edit-schedule [outFormat]="'string'" [timeDimension]="0.5" [parentTimeDate]="data['schedule_time']" [showCoefficient]="showCoefficient" (dateSelected)="dateDate($event)"></app-edit-schedule>
+        </ng-container>
+      </div>
+    </div>
+    <div class="lab-row mb20 w100p">
+      <label>深度优化方式:</label>
+      <div>
+        <nz-select class="w200 ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="data.deep_bid_type"
+                   [nzPlaceHolder]="'请选择'"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of structConfig['deep_bid_type']['sub']"
+            [nzLabel]="option.label"
+            [nzValue]="option.value">
+          </nz-option>
+        </nz-select>
+        <div class="lab-tip mt5 ml8">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+          <span>目前仅开通深度转化的客户可以设置</span>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="data.deep_bid_type === 'DEEP_BID_MIN'">
+      <div class="lab-row mb20">
+        <label><span class="redStart">*</span>深度优化出价:</label>
+        <div>
+          <input nz-input
+                 class="w180 ml8 mr8"
+                 [nzSize]="'small'"
+                 type="number"
+                 [(ngModel)]="data.deep_cpabid">元
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.deep_cpabid.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.deep_cpabid.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="data.deep_bid_type === 'ROI_COEFFICIENT'">
+      <div class="lab-row mb20">
+        <label><span class="redStart">*</span>深度转化ROI系数:</label>
+        <div>
+          <input nz-input
+                 class="w200 ml8 mr8"
+                 [nzSize]="'small'"
+                 type="number"
+                 [(ngModel)]="data.roi_goal">
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.roi_goal.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.roi_goal.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

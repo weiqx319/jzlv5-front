@@ -1,0 +1,24 @@
+<div class="task-container">
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="placeholder"></div>
+    <div class="task-title-right pull-right">
+      <nz-range-picker
+        [nzFormat]="'yyyy/MM/dd'"
+        [ngModel]="dateValue"
+        (ngModelChange)="onDateChange($event)"
+        (nzOnCalendarChange)="onCalendarChange($event)"
+        [nzDisabledDate]="disabledEndDate"
+        [nzSize]="'default'"
+        [nzAllowClear]="false"
+        (nzOnOpenChange)="openDateChange($event)"
+      ></nz-range-picker>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <app-conversion-list
+      [start_time]="start_time"
+      [end_time]="end_time"
+      (singleTaskEmit)="getTaskDetailById($event)"
+    ></app-conversion-list>
+  </div>
+</div>

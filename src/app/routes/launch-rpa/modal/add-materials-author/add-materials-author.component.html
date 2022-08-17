@@ -1,0 +1,64 @@
+<div class="add-materials-author-container mt20 mb20">
+  <form [formGroup]="validateForm">
+    <div class="form-content">
+      <nz-form-item>
+        <div class="lab-row">
+          <label>作者名称:</label>
+          <nz-form-control>
+            <input nz-input
+                   class="w200 ml8"
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="defaultData.material_author_name"
+                   [formControlName]="'material_author_name'"
+                   placeholder="请输入作者名称">
+          </nz-form-control>
+          <div class="pull-left ml8">
+            <div class='ant-form-item-explain' *ngIf="getFormControl('material_author_name')?.dirty&&getFormControl('material_author_name')?.hasError('required')">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入作者名称
+            </div>
+          </div>
+        </div>
+      </nz-form-item>
+      <nz-form-item>
+        <div class="lab-row">
+          <label>角色:</label>
+          <nz-form-control>
+            <nz-select class="w200 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="defaultData.material_author_role"
+                       [formControlName]="'material_author_role'"
+                       [nzPlaceHolder]="'请选择角色'">
+              <ng-container *ngFor="let item of roleList;">
+                <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+              </ng-container>
+            </nz-select>
+          </nz-form-control>
+        </div>
+      </nz-form-item>
+      <nz-form-item>
+        <div class="lab-row">
+          <label>备注信息:</label>
+          <nz-form-control>
+            <textarea class="w200 ml8"
+                      style="height: 60px;"
+                      nz-input [nzSize]="'small'"
+                      placeholder="备注信息"
+                      [(ngModel)]="defaultData.comments"
+                      [formControlName]="'comments'"
+                      [nzAutosize]>
+            </textarea>
+          </nz-form-control>
+        </div>
+      </nz-form-item>
+    </div>
+  </form>
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()" [disabled]="!validateForm.valid">
+      <span>保存</span>
+    </button>
+  </div>
+</div>

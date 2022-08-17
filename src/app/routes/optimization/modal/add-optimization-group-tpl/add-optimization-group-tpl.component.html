@@ -1,0 +1,318 @@
+<!--优化设置-->
+<div class="pl40 pr40">
+  <div>
+
+    <div class="inpRow mt20" *ngIf="!parentData">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w73 mr8 inline-block">
+          <span>选择媒体:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left">
+        <nz-select style="width: 142px;"
+                   [(ngModel)]="publisherId"
+                   nzPlaceHolder="请选择媒体"
+                   [nzSize]="'small'">
+          <nz-option
+            *ngFor="let option of publisherTypeList"
+            [nzLabel]="option.name"
+            [nzValue]="option.key">
+          </nz-option>
+        </nz-select>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="inpRow mt20" *ngIf="parentData">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w73 mr8 inline-block">
+          <span>媒体:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left">
+        <span>{{publisherTypeListName[publisherId]}}</span>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="inpRow mt8">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w73 mr8 inline-block">
+          <span>模版名称:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left">
+        <input nz-input style="width: 142px;"
+               [(ngModel)]="optimization_keywordData.tpl_name"
+               placeholder=""
+               [nzSize]="'small'"
+               placeholder="请输入">
+
+      </div>
+      <div class="clear"></div>
+    </div>
+
+    <div class="inpRow mt8">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w73 mr8 inline-block">
+          <span>调词模式:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left">
+        <nz-radio-group
+          [(ngModel)]="optimization_keywordData.adjustment_words_type.action">
+          <label class="mr20" nz-radio [nzValue]="1">
+            <span>单次</span>
+          </label>
+          <label nz-radio [nzValue]="2">
+            <span>循环</span>
+          </label>
+        </nz-radio-group>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div *ngIf="optimization_keywordData.adjustment_words_type.action === 2 " class="inpRow mt8">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w73 mr8 inline-block">
+          <span>调词间隔:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left noCheckbox">
+        <div>
+          <nz-select style="width: 100px;"
+                     [(ngModel)]="optimization_keywordData['interval_word']"
+                     [nzSize]="'small'">
+            <nz-option [nzValue]="5" [nzLabel]="5"></nz-option>
+            <nz-option [nzValue]="10" [nzLabel]="10"></nz-option>
+            <nz-option [nzValue]="20" [nzLabel]="20"></nz-option>
+            <nz-option [nzValue]="30" [nzLabel]="30"></nz-option>
+            <nz-option [nzValue]="60" [nzLabel]="60"></nz-option>
+            <nz-option [nzValue]="120" [nzLabel]="120"></nz-option>
+          </nz-select>
+          <span class="ml5">min（*固定竞价资源，请合理使用）</span>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="inpRow mt8">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w73 mr8 inline-block">
+          <span>竞价地域:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left noCheckbox">
+        <div>
+
+          <nz-select style="width: 100px;"
+                     [nzPlaceHolder]="'搜索'"
+                     [nzDisabled]="optimization_keywordData.ranking_region_default"
+                     [(ngModel)]="optimization_keywordData['province']"
+                     [nzSize]="'small'"
+                     (ngModelChange)= "changeProvince(optimization_keywordData['province'])"
+                     [nzShowSearch]="true">
+            <nz-option
+              *ngFor="let option of provinceList"
+              [nzLabel]="option.name"
+              [nzValue]="option.code"
+            >
+            </nz-option>
+          </nz-select>
+          <nz-select class="ml5" *ngIf="cityList.length > 0 || showCity === true" style="width: 100px;"
+                     [nzDisabled]="optimization_keywordData.ranking_region_default"
+                     [nzPlaceHolder]="'搜索'"
+                     [(ngModel)]="optimization_keywordData['city']"
+                     [nzSize]="'small'"
+                     [nzShowSearch]="true">
+            <nz-option
+              *ngFor="let option of cityList"
+              [nzLabel]="option.name"
+              [nzValue]="option.code">
+            </nz-option>
+          </nz-select>
+           <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'以竞价主地域的实时排名作为该计划下的所有地域的排名基准。'" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+
+          <label class="titleLa ml12 inline-block" nz-checkbox [(ngModel)]="optimization_keywordData.ranking_region_default">
+            <span>使用默认地域</span>
+          </label>
+          <span class="wroning ml10" [ngClass]="{clSave:iswraing}" *ngIf="!optimization_keywordData.province && !optimization_keywordData.ranking_region_default"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>无匹配地域，请选择地域</span>
+
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="inpRow mt8">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w73 mr8 inline-block">
+          <span>运行等级:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left noCheckbox">
+        <nz-radio-group [(ngModel)]="optimization_keywordData.running_grade">
+          <div class="gradeDiv">
+            <div>
+              <label class="mr20" nz-radio [nzValue]="1">
+                <span class="spanText">低</span>
+              </label>
+            </div>
+            <div class="modelDiv">
+              <label nz-radio [nzValue]="2">
+                <span class="spanText">中</span>
+              </label>
+            </div>
+            <div class="lastDiv">
+              <label nz-radio [nzValue]="3">
+                <span class="spanText">高</span>
+              </label>
+            </div>
+          </div>
+        </nz-radio-group>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <!--调词模式为单次时的 约束条件-->
+    <div *ngIf="optimization_keywordData.adjustment_words_type.action === 1 " class="inpRow mt5">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w73 mr8 inline-block">
+          <span>约束条件:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left noCheckbox">
+        <div class="optimization">
+          <div class="pull-left h20">
+            <label class="titleLa mr5 inline-block">
+              <span>目标排名:</span>
+            </label>
+          </div>
+          <div class="pull-left">
+            <nz-select class="mr5" style="width:100px;"
+                       [(ngModel)]="optimization_keywordData.constraint_condition_sigle['device']"
+                       (ngModelChange)="deviceChange(optimization_keywordData.constraint_condition_sigle['device'])"
+                       [nzPlaceHolder]="'请选择'"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of deviceArray"
+                [nzLabel]="option"
+                [nzValue]="option">
+              </nz-option>
+            </nz-select>
+            <nz-select class="mr5" style="width: 70px;" *ngIf="(publisherId && publisherId*1 === 4) && optimization_keywordData.constraint_condition_sigle['device'] === 'wap'"
+                       [(ngModel)]="optimization_keywordData.constraint_condition_sigle['device_os']"
+                       [nzSize]="'small'">
+              <nz-option [nzValue]="1" [nzLabel]="'安卓'"></nz-option>
+              <nz-option [nzValue]="2" [nzLabel]="'ios'"></nz-option>
+            </nz-select>
+            <nz-select class="mr5" style="width:70px;"
+                       [(ngModel)]="optimization_keywordData.constraint_condition_sigle['ranking_left']"
+                       nzPlaceHolder="请选择"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of ranking"
+                [nzLabel]="option.name"
+                [nzValue]="option.id">
+              </nz-option>
+            </nz-select>
+            <nz-select class="mr5" style="width:70px;"
+                       [(ngModel)]="optimization_keywordData.constraint_condition_sigle['ranking_right']"
+                       nzPlaceHolder="请选择"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of ranking"
+                [nzLabel]="option.name"
+                [nzValue]="option.id">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="optimization mt8">
+          <label class="titleLa mr5 inline-block pull-left">
+            <span>出价范围:</span>
+          </label>
+          <div class="pull-left">
+            <nz-radio-group [(ngModel)]="optimization_keywordData.constraint_condition_sigle.price_type">
+              <div>
+                <div class="pull-left">
+                  <label class="w20 mr0" nz-radio [nzValue]="1"></label>
+                </div>
+                <div class="pull-left">
+                  <span class="mr5">当前出价</span>
+                  <nz-input-number
+                    style="width: 70px;"
+                    class="mr5"
+                    [(ngModel)]="optimization_keywordData.constraint_condition_sigle['price_rate_min']"
+                    [nzMin]="0.1"
+                    [nzStep]="0.1"
+                    [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">倍（小）到</span>
+                  <nz-input-number
+                    style="width: 70px;"
+                    class="mr5"
+                    [(ngModel)]="optimization_keywordData.constraint_condition_sigle['price_rate_max']"
+                    [nzMin]="0.1"
+                    [nzStep]="0.1"
+                    [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">倍（大），且不超过</span>
+                  <nz-input-number  style="width: 70px;" class="mr5"
+                                    [(ngModel)]="optimization_keywordData.constraint_condition_sigle['price_rate_max_abs']"
+                                    [nzMin]="0.1"
+                                    [nzStep]="0.1"
+                                    [nzSize]="'small'">
+                  </nz-input-number>
+                  <span>元</span>
+                </div>
+                <div class="clear"></div>
+              </div>
+              <div class="mt8">
+                <div class="pull-left">
+                  <label class="w20 mr0" nz-radio [nzValue]="2"></label>
+                </div>
+                <div class="pull-left">
+                  <nz-input-number
+                    style="width: 70px;"
+                    class="mr5"
+                    [(ngModel)]="optimization_keywordData.constraint_condition_sigle['price_left']"
+                    [nzMin]="0.1"
+                    [nzStep]="0.1"
+                    [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">元（小）到</span>
+                  <nz-input-number class="mr5"
+                                   style="width: 70px;"
+                                   [(ngModel)]="optimization_keywordData.constraint_condition_sigle['price_right']"
+                                   [nzMin]="0.1"
+                                   [nzStep]="0.1"
+                                   [nzSize]="'small'">
+                  </nz-input-number>
+                  <span>元（大）</span>
+                </div>
+                <div class="clear"></div>
+              </div>
+            </nz-radio-group>
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <!--调词模式为循环时的 约束条件-->
+    <ng-container *ngIf="publisherId">
+      <div *ngIf="optimization_keywordData.adjustment_words_type.action === 2">
+        <app-constraint-condition-view
+
+          [publisher_id]="publisherId * 1"
+          [parentSelect]="[1]"
+          (constraintArray)="getConstraintArray($event)"
+          [showParentConstraintData]="optimization_keywordData.constraint_condition_loop"
+          [is_edit] = "true">
+        </app-constraint-condition-view>
+      </div>
+    </ng-container>
+  </div>
+  <p class="mt10" *ngIf="iswraing" style="color: red;">{{tishi}}</p>
+
+</div>
+<div class="mt40 text-right">
+  <button class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">取消</button>
+  <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'"  (click)="sure()">确认</button>
+</div>

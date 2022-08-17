@@ -1,0 +1,81 @@
+<div >
+  <div class="fixed-condition-manage page-condition-header">
+    <span class="back-button" (click)="goBack()">
+      <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+      <span class="ml10">返回</span>
+    </span>
+  </div>
+  <div class="content-section-manage">
+    <div class="create-role-container">
+      <div class="link-section">
+        <div class="link-section-header"><span>创建角色</span></div>
+        <div class="link-section-content">
+          <div class="lab-row">
+            <label><span class="required">*</span>角色名称:</label>
+            <div class="w300 ml8">
+              <input nz-input type="text" placeholder="请输入角色名称" [(ngModel)]="defaultData.role_name">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="link-section">
+        <div class="link-section-header"><span>集团指标权限</span></div>
+        <div class="link-section-content">
+          <div class="lab-row">
+            <label><span class="required">*</span>集团指标:</label>
+            <nz-select class="w80 ml8" [nzSize]="'default'" [(ngModel)]="defaultData.role_data.company_metric.permission_type">
+              <nz-option *ngFor="let item of operateList" [nzLabel]="item.label" [nzValue]="item.key"></nz-option>
+            </nz-select>
+            <nz-select class="w200 ml10" [nzSize]="'default'" [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagPlaceHolder" nzMode="multiple" nzPlaceHolder="请选择" [(ngModel)]="defaultData.role_data.company_metric.data">
+              <nz-option *ngFor="let item of companyMetricList" [nzLabel]="item.metric_name" [nzValue]="item.metric_id"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+      </div>
+      <div class="link-section">
+        <div class="link-section-header"><span>自定义转化 / 指标权限</span></div>
+        <div class="link-section-content">
+          <div class="custom-permission mb20" *ngFor="let item of defaultData.role_data.custom_role_data let i = index">
+            <div class="custom-permission-conversion">
+              <nz-select class="w150 ml8" [nzSize]="'default'" [(ngModel)]="item.cid" (ngModelChange)="changeAdvertiser()">
+                <nz-option *ngFor="let option of advertiserList" [nzLabel]="option.advertiser_name" [nzValue]="option.cid" [nzDisabled]="option.is_disabled"></nz-option>
+              </nz-select>
+              <span class="ml20 mr10">自定义转化</span>
+              <nz-select class="w100 ml8" [nzSize]="'default'" [(ngModel)]="item.conversion.permission_type">
+                <nz-option *ngFor="let option of operateList" [nzLabel]="option.label" [nzValue]="option.key"></nz-option>
+              </nz-select>
+              <nz-select class="w200 ml10" [nzSize]="'default'" [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagPlaceHolder" nzMode="multiple" nzPlaceHolder="请选择" [(ngModel)]="item.conversion.data">
+                <nz-option *ngFor="let option of conversionMapList[item.cid]" [nzLabel]="option.conver_name" [nzValue]="option.conver_column"></nz-option>
+              </nz-select>
+            </div>
+            <div class="custom-permission-metric ml50">
+              <span class="mr10">自定义指标</span>
+              <nz-select class="w100 ml8" [nzSize]="'default'" [(ngModel)]="item.metric.permission_type">
+                <nz-option *ngFor="let option of operateList" [nzLabel]="option.label" [nzValue]="option.key"></nz-option>
+              </nz-select>
+              <nz-select class="w200 ml10" [nzSize]="'default'" [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagPlaceHolder" nzMode="multiple" nzPlaceHolder="请选择" [(ngModel)]="item.metric.data">
+                <nz-option *ngFor="let option of metricMapList[item.cid]" [nzLabel]="option.metric_name" [nzValue]="option.metric_define_id"></nz-option>
+              </nz-select>
+            </div>
+            <div class="delete-box ml20" style="line-height: 28px;">
+              <span class="delete-icon " (click)="deleteCustomPermission(i)"><i nz-icon nzType="close" nzTheme="outline"></i></span>
+            </div>
+          </div>
+          <div class="add-box ml8" *ngIf="defaultData.role_data.custom_role_data.length < advertiserList.length">
+            <label (click)="addPermission()"><i class="add-icon" nz-icon nzType="plus-circle"></i> 增加权限</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 保存 -->
+    <div class="mt20 link-foot">
+      <button nz-button [nzType]="'default'"  class="mr10" (click)="goBack()">
+        <span>取消</span>
+      </button>
+      <button nz-button [nzType]="'primary'" (click)="doSave()">
+        <span>保存</span>
+      </button>
+    </div>
+  </div>
+</div>
+<ng-template #tagPlaceHolder let-selectedList> 已选 {{ selectedList.length + 3 }}</ng-template>

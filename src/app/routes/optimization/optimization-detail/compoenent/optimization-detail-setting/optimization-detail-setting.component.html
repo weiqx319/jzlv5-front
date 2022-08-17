@@ -1,0 +1,113 @@
+<div class="conDiv">
+  <div class="conSon ml200">
+    <div class="mb400">
+      <h3>基本信息</h3>
+      <div class="inpRow mt8">
+        <div class="inpRow_left mr8 pull-left">
+          <label class="titleLa w52 inline-block">
+            <span>优化类型:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left" >
+          <p>排名优化</p>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="inpRow mt8" >
+        <div class="inpRow_left mr8 pull-left">
+          <label class="titleLa w52 inline-block">
+            <span>媒体:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left" >
+          <p>{{publisherOption[publisherId]}}</p>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="inpRow mt8">
+        <div class="inpRow_left mr8 pull-left">
+          <label class="titleLa w52 inline-block">
+            <span>名称:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left" >
+          <div class="pull-left">
+            <input nz-input
+                   [(ngModel)]="info.optimization_name"
+                   [nzSize]="'small'">
+          </div>
+          <div class="ml8 pull-left wroning" [ngClass]="{clSave:iswraing == true}" *ngIf="!this.info.optimization_name">
+            <span><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>输入名称</span>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <h3>优化设置</h3>
+      <ng-template #priorTypeTemplate>
+        <div>
+          <p>价格优先：以目标排名下限为目标，开始竞价</p>
+          <p>排名优先：以目标排名上限为目标，开始竞价</p>
+        </div>
+      </ng-template>
+      <div class="inpRow mt8">
+        <div class="inpRow_left pull-left">
+          <label class="titleLa w120 mr8 inline-block">
+            <span>未到达过目标排名:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left" >
+          <nz-radio-group [nzSize]="'small'" [(ngModel)]="info.optimization_setting.high_price_no_rank.value" >
+            <label class="mr20" nz-radio [nzValue]="1">
+              <span>恢复原价</span>
+              <i nz-icon nzType="question-circle" nzTheme="outline"
+                 nz-popover
+                 [nzPopoverContent]="highPrice1Template"
+                 nzPopoverPlacement="right"
+                 class="ml8"
+                 style="color: #f09200"></i>
+            </label>
+            <label nz-radio [nzValue]="2">
+              <span>保留最优排名</span>
+              <i nz-icon nzType="question-circle" nzTheme="outline"
+                 nz-popover
+                 [nzPopoverContent]="'到达出价上限未到达目标排名时保留最优排名'"
+                 nzPopoverPlacement="right"
+                 class="ml8"
+                 style="color: #f09200"></i>
+            </label>
+            <label class="mr20" nz-radio [nzValue]="3">
+              <span>不恢复原价</span>
+              <i nz-icon nzType="question-circle" nzTheme="outline"
+                 nz-popover
+                 [nzPopoverContent]="'保留最后一次系统竞价的价格'"
+                 nzPopoverPlacement="right"
+                 class="ml8"
+                 style="color: #f09200"></i>
+            </label>
+          </nz-radio-group>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <ng-template #highPrice1Template>
+        <div class="w300">
+          <p>1.循环竞价模式：恢复到上一轮调价结束时的价格</p>
+          <p>2.单次竞价模式：恢复到上一次单次调价结束时的价格</p>
+        </div>
+      </ng-template>
+      <ng-template #stableTemplate>
+        <div class="w220">
+          <span>媒体会将两个出价差不多的关键词进行轮流展示，如果要避免这种情况可以考虑在最低出价上增加一定金额稳定排名</span>
+        </div>
+      </ng-template>
+
+    </div>
+
+  </div>
+</div>
+<!--footer start-->
+<div class="flexFooter border">
+  <button nz-button [nzLoading]="saveing" [nzType]="'primary'" (click)="_save()">
+    <span>保存</span>
+  </button>
+</div>
+<!--footer end-->

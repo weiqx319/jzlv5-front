@@ -1,0 +1,51 @@
+<div class="sub-company-content">
+  <div class="sub-company-form-content">
+    <div class="sub-company-form-item  mb20">
+      <div class="form-label pull-left">
+        <label>否词类型:</label>
+      </div>
+      <div class="w300 ml8 pull-left" >
+        <nz-radio-group
+          [(ngModel)]="defaultData.apply_level">
+          <label class="mr20"
+                 nz-radio
+                 [nzValue]="0">
+            <span>全部</span>
+          </label>
+          <label nz-radio
+                 [nzValue]="4">
+            <span>关键词</span>
+          </label>
+          <label nz-radio
+                 [nzValue]="5">
+            <span>创意</span>
+          </label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <div class="sub-company-form-item  mb20">
+      <div class="form-label pull-left">
+        <label>黑词:</label>
+      </div>
+      <div class="sub-company-form-textarea w300 ml8 pull-left">
+        <textarea nz-input
+                  [nzSize]="'small'"
+                  class="w100p"
+                  [(ngModel)]="wordName"
+                  [nzAutosize]>
+        </textarea>
+        <div class="mt10" style="color: red;">
+          <span>注: 黑词一行一个</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sub-company-form-footer">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="submitting" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

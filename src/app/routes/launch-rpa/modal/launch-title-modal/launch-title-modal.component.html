@@ -1,0 +1,168 @@
+<div class="launch-title-modal-container">
+  <div class="selected-content">
+    <div class="selected-head">
+      <div class="mb20">已选列表 <span style="color: red">{{titleSelectedList.length}}</span></div>
+      <div class="mb20"> <span (click)="clearAllSelected()">清空</span></div>
+    </div>
+
+    <ul class="selected-list">
+      <li class="selected-item" *ngFor="let selectedTitle of titleSelectedList">
+        <div class="selected-title">{{selectedTitle}}</div>
+        <div class="selected-title-oper"><i nz-icon nzType="close" nzTheme="outline" (click)="clearSingeSelected(selectedTitle)"></i></div>
+      </li>
+    </ul>
+  </div>
+  <div class="selected-container">
+    <div class="select-list-nav">
+      <div class="select-list-nav-col mb10">
+        <div class="select-list-nav-btn">
+          <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" (click)=" _checkAll(true);">
+            <span>全选</span>
+          </button>
+          <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" (click)=" _checkAll(false);">
+            <span>取消选择</span>
+          </button>
+          <a class="btn-jzl ml5" nz-button [nzSize]="'small'" [nzType]="'primary'" (click)="addLaunchTitle()" >
+            <i nz-icon nzType="plus"></i><span>手动添加</span>
+          </a>
+        </div>
+        <div class="select-list-nav-btn mt10">
+          <div class="lab-row ml10">
+            <label class="w60 align-r">创建时间:</label>
+            <nz-range-picker class="ml8" style="width: 278px" [(ngModel)]="queryItem.create_time.value" [nzSize]="'small'" (ngModelChange)="reloadData(true)" nzFormat="yyyy-MM-dd"></nz-range-picker>
+          </div>
+          <div class="lab-row ml10">
+            <label class="w60 align-r">标题:</label>
+            <nz-select class="w70 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="queryItem.title.op"
+                       [nzPlaceHolder]="'请选择'"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of stringFilterOper"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+            <input class="w200 ml8" nz-input [nzSize]="'small'" [(ngModel)]="queryItem.title.value" placeholder="请输入">
+          </div>
+        </div>
+        <div class="select-list-nav-btn mt10">
+          <div class="lab-row ml10">
+            <label class="w60 align-r">标签:</label>
+            <nz-select class="w70 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="queryItem.title_tags.op"
+                       [nzPlaceHolder]="'请选择'"
+                       nzShowSearch>
+              <nz-option [nzLabel]="'或'"  [nzValue]="'json_contains_or'"> </nz-option>
+              <nz-option [nzLabel]="'且'"  [nzValue]="'json_contains_and'"> </nz-option>
+            </nz-select>
+            <nz-select class="w200 ml8"
+                       [nzSize]="'small'"
+                       [nzMode]="'tags'"
+                       [(ngModel)]="queryItem.title_tags.value"
+                       [nzPlaceHolder]="'请选择标签或手动输入'"
+                       nzShowSearch>
+              <ng-container *ngFor="let data of tagsList">
+                <nz-option [nzLabel]="data['tags_content']"  [nzValue]="data['tags_content']"> </nz-option>
+              </ng-container>
+            </nz-select>
+          </div>
+          <div class="lab-row ml10">
+            <label class="w60 align-r">排除标签:</label>
+            <nz-select class="w70 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="queryItem.exclude_title_tags.op"
+                       [nzPlaceHolder]="'请选择'"
+                       nzShowSearch>
+              <nz-option [nzLabel]="'或'"  [nzValue]="'not_json_contains_or'"> </nz-option>
+              <nz-option [nzLabel]="'且'"  [nzValue]="'not_json_contains_and'"> </nz-option>
+            </nz-select>
+            <nz-select class="w200 ml8"
+                       [nzSize]="'small'"
+                       [nzMode]="'tags'"
+                       [(ngModel)]="queryItem.exclude_title_tags.value"
+                       [nzPlaceHolder]="'请选择标签或手动输入'"
+                       nzShowSearch>
+              <ng-container *ngFor="let data of tagsList">
+                <nz-option [nzLabel]="data['tags_content']"  [nzValue]="data['tags_content']"> </nz-option>
+              </ng-container>
+            </nz-select>
+          </div>
+          <button class="ml10" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="reloadData(true)">
+            <span>查询</span>
+          </button>
+          <button class="ml10" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="reset();">
+            <span>重置</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="title-list" style="width: 1000px;">
+        <nz-table #basicTable
+                  [nzShowTotal]="globalTemplate.totalItemTemplate"
+                  [nzFrontPagination] = false
+                  [nzSize]="'small'"
+                  [nzData]="apiData"
+                  [(nzPageSize)]="pageSize"
+                  [(nzPageIndex)]="currentPage"
+                  (nzPageIndexChange)="refreshData()"
+                  (nzPageSizeChange)="refreshData(true)"
+                  [nzTotal]="total"
+                  [nzLoading]="loading"
+                  [nzNoResult]="globalTemplate.noResultTd"
+                  [nzScroll]="{ x: '1392px', y: noResultHeight + 'px' }">
+          <thead>
+          <tr>
+            <th nzWidth="62px" nzLeft="0px" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll($event)">
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'title')" nzWidth="240px"  nzLeft="62px">标题</th>
+            <th nzWidth="120px">标签</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_cost')" nzWidth="120px">消耗</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_cpm')" nzWidth="80px">CPM</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_cpc')" nzWidth="80px">CPC</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_ctr')" nzWidth="80px">点击率</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'b_convert_rate')" nzWidth="120px">转化率</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'b_convert')" nzWidth="120px">转化数</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'b_convert_cost')" nzWidth="120px">转化成本</th>
+            <th nzWidth="120px">客户成本</th>
+            <th nzWidth="130px" nzShowSort (nzSortOrderChange)="sortData($event,'create_time')">创建时间</th>
+
+
+
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of basicTable.data">
+            <td nzLeft="0px" nzShowCheckbox  [(nzChecked)]="data.checked" (nzCheckedChange)="checkSingle($event,data)">
+            <td nzLeft="62px">{{data['title']}}</td>
+            <td>{{data['title_tags']}}</td>
+            <td>{{data['pub_cost']}}</td>
+            <td>{{data['pub_cpm']}}</td>
+            <td>{{data['pub_cpc']}}</td>
+            <td>{{data['pub_ctr']}}</td>
+            <td>{{data['b_convert_rate']}}</td>
+            <td>{{data['b_convert']}}</td>
+            <td>{{data['b_convert_cost']}}</td>
+            <td>{{data['convert_cost']}}</td>
+            <td>{{data['create_time']}}</td>
+          </tr>
+
+          </tbody>
+        </nz-table>
+    </div>
+
+    <div class="form-btns">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+        <span>确定</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+<app-global-template></app-global-template>
+

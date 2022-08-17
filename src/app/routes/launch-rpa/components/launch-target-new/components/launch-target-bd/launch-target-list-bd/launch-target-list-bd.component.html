@@ -1,0 +1,92 @@
+<div class="launch-rpa-contents">
+  <div class="launch-rpa-operation">
+    <div class="header-left">
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="openTargetVisible('basic')">
+        <i nz-icon nzType="plus"></i><span>创建定向包</span>
+      </a>
+    </div>
+  </div>
+  <div class="pt20 collapse-box">
+    <nz-table #basicTable
+              [nzFrontPagination]="false"
+              [nzShowTotal]="totalItemTemplate"
+              [nzSize]="'small'"
+              [nzData]="apiData"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzNoResult]="noResultTd"
+              [nzScroll]="{ x: '900px', y: noResultHeight + 'px' }">
+      <thead>
+      <tr>
+        <!--            <th [nzWidth]="'62px'" nzShowCheckbox></th>-->
+        <th [nzWidth]="'200px'">
+          <span>名称</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'audience_template_name',name:'定向包名称',type:'multiValue'}" [(filterResult)]="filterResult['audience_template_name']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>定向包类型</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'landing_type',name:'定向包类型',type:'singleList'}" [(filterResult)]="filterResult['landing_type']" [filterOption]="filterLandingOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>创建时间</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <!--            <td nzShowCheckbox></td>-->
+        <td>{{data.audience_template_name}}</td>
+        <td>{{data.landing_type === "1" ? '网站链接' : data.landing_type === "2" ? '应用推广-IOS' : '应用推广-Android'}}</td>
+        <td>{{data.create_time}}</td>
+        <td>
+          <a href="javascript:" (click)="openTargetVisible('basicEdit',data)">修改</a>
+          <span class="ml4 mr4">|</span>
+          <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteTargetBasicTemplate(data.audience_template_id)"
+             nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzTrigger="click" href="javascript:">删除</a>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+
+<!-- 表格显示总条数 -->
+<ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+<ng-template #noResultTd>
+  <div class="table-no-result" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+    <div class="table-no-result-content">
+
+      <div class="mt8">无数据</div>
+    </div>
+  </div>
+</ng-template>
+
+<div class="target-drawer">
+  <nz-drawer
+    *ngIf="targetDrawerVisible"
+    [nzVisible]="targetDrawerVisible"
+    [nzBodyStyle]="{ 'background-color': '#f4f7fc' }"
+    [nzWidth]="'100%'"
+    nzPlacement="right"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="closeTargetDrawer()"
+  >
+    <app-launch-target-basic-bd [audienceTemplateId]="audienceTemplateId" [childAudienceTemplateId]="childAudienceTemplateId" [targetType]="targetType" (resultsChange)="closeTargetDrawer($event)"></app-launch-target-basic-bd>
+  </nz-drawer>
+
+  <ng-template #drawerTitle>
+    <span *ngIf="targetType === 'basic'">新增定向包</span>
+    <span *ngIf="targetType === 'basicEdit'">编辑定向包</span>
+    <!--    <span *ngIf="targetType === 'package'">新增投放包</span>-->
+    <!--    <span *ngIf="targetType === 'packageEdit'">编辑投放包</span>-->
+    <!--    <span class="target-word">基础包不能直接用于新建投放，需再新增投放包用于新建投放</span>-->
+  </ng-template>
+</div>
+

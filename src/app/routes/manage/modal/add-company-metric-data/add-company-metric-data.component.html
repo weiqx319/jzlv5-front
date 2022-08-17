@@ -1,0 +1,140 @@
+<div class="filter-item-container mt20 mb20">
+  <div class="lab-row mt10 lab-row-flex">
+    <label>名称:</label>
+    <div class="w200 ml8">
+      <input nz-input
+        [nzSize]="'default'"
+        type="text"
+        [(ngModel)]="defaultMetric.metric_name"
+        placeholder="请输入名称">
+
+    </div>
+  </div>
+
+  <div class="lab-row mt10 lab-row-flex">
+    <label>指标分类:</label>
+    <nz-select class="w200 ml8" [nzSize]="'default'" [nzPlaceHolder]="'请选择指标分类'"
+        [nzShowSearch]="true"
+        [(ngModel)]="defaultMetric.category_id">
+        <ng-container *ngFor="let item of categoryList">
+        {{item | json}}
+        <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+        </ng-container>
+    </nz-select>
+  </div>
+
+  <div class="lab-row mt10">
+    <label>备注:</label>
+    <div class="w200 ml8">
+       <textarea
+         nz-input
+         placeholder="备注"
+         [(ngModel)]="defaultMetric.metric_remarks"
+         [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+       ></textarea>
+    </div>
+  </div>
+  <div class="lab-row mt10">
+    <label>分广告主设置:</label>
+    <nz-radio-group [(ngModel)]="defaultMetric.is_cid_level" [nzDisabled]="metricDataId>0"  class="ml8">
+      <label nz-radio [nzValue]="1">
+        <span>是</span>
+      </label>
+      <label nz-radio [nzValue]="0">
+        <span>否</span>
+      </label>
+    </nz-radio-group>
+  </div>
+
+  <div class="lab-row mt10">
+    <label>类型:</label>
+    <nz-radio-group [(ngModel)]="defaultMetric.metric_data_type" class="ml8">
+      <label nz-radio [nzValue]="1">
+        <span>整数类型</span>
+      </label>
+      <label nz-radio [nzValue]="2">
+        <span>小数类型</span>
+      </label>
+    </nz-radio-group>
+  </div>
+
+  <div class="lab-row mt10">
+    <label>百分比:</label>
+    <nz-radio-group [(ngModel)]="defaultMetric.is_rate" class="ml8">
+      <label nz-radio [nzValue]="1">
+        <span>是</span>
+      </label>
+      <label nz-radio [nzValue]="0">
+        <span>否</span>
+      </label>
+    </nz-radio-group>
+  </div>
+
+  <div class="lab-row mt10">
+    <label>是否默认:</label>
+    <nz-radio-group [(ngModel)]="defaultMetric.is_default" class="ml8">
+      <label nz-radio [nzValue]="1">
+        <span>是</span>
+      </label>
+      <label nz-radio [nzValue]="0">
+        <span>否</span>
+      </label>
+    </nz-radio-group>
+  </div>
+
+  <div class="lab-row mt10" *ngIf="defaultMetric.is_cid_level!=1">
+    <label>计算公式:</label>
+    <div class="conversion-setting">
+      <div class="metric-detail ml8 ">
+        <div class="custom-report-formula-item" *ngFor="let struct of formulaData;let i = index;" [ngClass]="{mt10:i>0}">
+          <div class="custom-obj-select">
+            <div class="sem-brackets" (click)="checkBracket(struct,'left_bracket')" [ngClass]="{'brackets-blue':struct.left_bracket,'brackets-gray':!struct.left_bracket}">(</div>
+            <nz-select class="w150 ml8" [nzSize]="'small'"  [nzShowSearch]="true"  [(ngModel)]="struct.type" (ngModelChange)="structTypeChange(struct)">
+              <ng-container *ngFor="let item of itemTypeRelation">
+                <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+              </ng-container>
+            </nz-select>
+            <div class="w200 ml8" style="display: inline-block" *ngIf="struct.type ==='normal_data'">
+              <input nz-input
+                     [nzSize]="'small'"
+                     type="text"
+                     [(ngModel)]="struct.value"
+                     placeholder="请输入名称">
+
+            </div>
+            <nz-select [nzShowSearch]="true" class="w200 ml8" [nzSize]="'small'"   [(ngModel)]="struct.value" (ngModelChange)="refreshName($event,struct)"  *ngIf="struct.type !=='normal_data'" >
+              <ng-container *ngFor="let item of itemTypeDataDetail[struct.type]" >
+                <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+              </ng-container>
+            </nz-select>
+            <div class="sem-brackets ml8" *ngIf="i>0" (click)="checkBracket(struct,'right_bracket')" [ngClass]="{'brackets-blue':struct.right_bracket,'brackets-gray':!struct.right_bracket}">)</div>
+            <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  *ngIf="i >0" (click)="deleteLine(i)"></i>
+          </div>
+          <div class="mt10 custom-operator-select">
+            <nz-select [nzShowSearch]="true" class="w80 ml8" [nzSize]="'small'"  [(ngModel)]="struct.operator">
+              <ng-container *ngFor="let item of operatorLists">
+                <nz-option [nzLabel]="item.value" [nzValue]="item.oper"></nz-option>
+              </ng-container>
+            </nz-select>
+            <a class="btn btn-default btn-primary ml8" (click)="addLine(i)" >添加</a>
+          </div>
+        </div>
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+<div class="button-controller">
+  <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+    <span>取消</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="submitting" (click)="doSave()">
+    <span>完成</span>
+  </button>
+</div>

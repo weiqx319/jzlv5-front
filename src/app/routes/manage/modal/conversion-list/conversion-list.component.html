@@ -1,0 +1,101 @@
+<div style="position: absolute;top: 10px">
+  <app-table-query-show
+    [filterConditions]="filterData"
+    (changed)="refreshData()"
+  ></app-table-query-show>
+</div>
+<nz-table
+  #nzTable
+  class="pt8"
+  nzShowSizeChanger
+  [nzPageSizeOptions]="[30, 50, 100, 500]"
+  [nzSize]="'default'"
+  [nzData]="taskListData"
+  [nzFrontPagination]="false"
+  [(nzPageSize)]="pageSize"
+  [(nzPageIndex)]="currentPage"
+  (nzPageIndexChange)="refreshData()"
+  (nzPageSizeChange)="refreshData(true)"
+  [nzTotal]="total"
+  [nzLoading]="loading"
+  [nzShowTotal]="totalItemTemplate"
+  [nzScroll]="{ y: noResultHeight + 'px' }"
+  class="task-table"
+>
+  <thead>
+  <!-- <thead (nzSortChange)="sort($event)" nzSingleSort> -->
+  <tr>
+    <th [nzWidth]="'100px'">
+      <span>广告主</span>
+      <app-filter
+        [filterType]="filterData['advertiser_name']['filterType']"
+        [filterKey]="filterData['advertiser_name']['filterKey']"
+        [(filterResult)]="filterData['advertiser_name']['filterResult']"
+        (submit)="doFilter()"
+      ></app-filter>
+    </th>
+    <th [nzWidth]="'200px'">
+      <span>数据源类型</span>
+      <app-filter
+        [filterType]="filterData['conver_source_type']['filterType']"
+        [filterKey]="filterData['conver_source_type']['filterKey']"
+        [(filterResult)]="filterData['conver_source_type']['filterResult']"
+        [filterOption]="filterData['conver_source_type']['filterOption']"
+        (submit)="doFilter()"
+      ></app-filter>
+    </th>
+    <th [nzWidth]="'200px'">
+      <span>数据源渠道</span>
+      <app-filter
+        [filterType]="filterData['conver_channel_type']['filterType']"
+        [filterKey]="filterData['conver_channel_type']['filterKey']"
+        [(filterResult)]="filterData['conver_channel_type']['filterResult']"
+        [filterOption]="filterData['conver_channel_type']['filterOption']"
+        (submit)="doFilter()"
+      ></app-filter>
+    </th>
+    <th [nzWidth]="'240px'">
+      <span>数据详情</span>
+      <app-filter
+        [filterType]="filterData['conver_desc']['filterType']"
+        [filterKey]="filterData['conver_desc']['filterKey']"
+        [(filterResult)]="filterData['conver_desc']['filterResult']"
+        (submit)="doFilter()"
+      ></app-filter>
+    </th>
+    <th [nzWidth]="'240px'">
+      <span>处理结果</span>
+      <app-filter
+        [filterType]="filterData['conver_result']['filterType']"
+        [filterKey]="filterData['conver_result']['filterKey']"
+        [(filterResult)]="filterData['conver_result']['filterResult']"
+        (submit)="doFilter()"
+      ></app-filter>
+    </th>
+    <th [nzWidth]="'150px'">
+      <span>转化数据日期</span>
+      <app-filter
+        [filterType]="filterData['data_date']['filterType']"
+        [filterKey]="filterData['data_date']['filterKey']"
+        [(filterResult)]="filterData['data_date']['filterResult']"
+        (submit)="doFilter()"
+      ></app-filter>
+    </th>
+    <th [nzWidth]="'200px'">
+      <span>更新时间</span>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let data of taskListData">
+    <td>{{data.advertiser_name}}</td>
+    <td>{{data.conver_source_type_name}}</td>
+    <td>{{data.conver_channel_type_name}}</td>
+    <td>{{data.conver_desc}}</td>
+    <td>{{data.conver_result}}</td>
+    <td>{{data.data_date}}</td>
+    <td>{{data.last_modify_time }}</td>
+  </tr>
+  </tbody>
+</nz-table>
+<ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>

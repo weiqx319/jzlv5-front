@@ -1,0 +1,232 @@
+<!--账户单个编辑-->
+<div>
+  <h3>编辑: <span>{{accountInfo['pub_account_name']}}</span>（属于:{{publisherOption[accountInfo['publisher_id']]}}）</h3>
+  <p class="slow_360" *ngIf="publishId === 3">360媒体的编辑操作同步到媒体端有一定时间的延迟，请耐心等待，请勿重复修改!</p>
+  <div class="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 mr8 inline-block">
+        <span>定时设置:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left noCheckbox ">
+      <nz-radio-group
+        [(ngModel)]="cronSetting">
+        <label class="mr20"
+               nz-radio
+               [nzValue]="'now'">
+          <span>立即执行</span>
+        </label>
+        <label nz-radio
+               [nzValue]="'current'">
+          <span>自定义</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="inpRow_right pull-left" *ngIf="cronSetting == 'current'">
+      <nz-date-picker
+        [nzShowTime]="{ nzFormat: 'HH:mm' }"
+        [nzDisabledDate]="disabledDate"
+        nzFormat="yyyy-MM-dd HH:mm"
+        nzPlaceHolder="请选择时间"
+        [nzSize]="'small'"
+        [(ngModel)] = "cronSettingTime"
+      ></nz-date-picker>
+    </div>
+
+
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" [ngClass]="{disabled:editing_accountData['budget']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w73 inline-block" nz-checkbox [(ngModel)]="editing_accountData['budget']['is_edit']">
+        <span>日预算:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <nz-radio-group [(ngModel)]="budgetRadio" [nzDisabled]="!editing_accountData['budget']['is_edit']">
+        <div>
+          <div class="h20 pull-left">
+            <label nz-radio
+                   [nzValue]="1">
+              <span>每日</span>
+            </label>
+          </div>
+          <nz-input-number [(ngModel)]="budget"
+                           [nzDisabled]="!editing_accountData['budget']['is_edit']"
+                           (click) ="changeInput('budget')"
+                           [nzSize]="'small'">
+          </nz-input-number>
+          <span class="ml5">元</span>
+          <ng-container *ngIf=" editing_accountData['budget']['is_edit'] && budgetRadio === 1">
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="publishId === 3 && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于30 且为10的倍数</span>
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="publishId === 4 && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于10</span>
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="(publishId === 1 || publishId === 2) && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于50</span>
+          </ng-container>
+        </div>
+        <div class="mt5">
+          <label
+            nz-radio
+            [nzValue]="2">
+            <span>不限定</span>
+          </label>
+        </div>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt5" [ngClass]="{disabled:editing_accountData['exclude_ip']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w73 inline-block" nz-checkbox [(ngModel)]="editing_accountData['exclude_ip']['is_edit']">
+        <span>IP排除:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+        <div>
+          <textarea placeholder="一个IP一行" *ngIf="editing_accountData['exclude_ip']['is_edit']" [(ngModel)]="exclude_ip" (click) ="changeInput('exclude_ip')" (ngModelChange)="contentChange('exclude_ip', exclude_ip)" class="titleColor w400 border"  rows="5"></textarea>
+          <textarea placeholder="一个IP一行" *ngIf="!editing_accountData['exclude_ip']['is_edit']" [(ngModel)]="exclude_ip" disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+          <i *ngIf="publishId === 1 || publishId === 2" class="tip">({{tips.length.exclude_ip}}/200)</i>
+          <i *ngIf="publishId === 4" class="tip">({{tips.length.exclude_ip}}/100)</i>
+          <i *ngIf="publishId === 3" class="tip">({{tips.length.exclude_ip}}/300)</i>
+
+          <ng-container *ngIf="editing_accountData['exclude_ip']['is_edit']">
+            <!--百度、搜狗-->
+            <span style=" position: absolute;display: inline-block;right: -147px;top: 25px;"
+                  class="wroning ml20"
+                  [ngClass]="{clSave:tips.length.exclude_ip}"
+                  *ngIf="tips.exclude_ip && (publishId === 1 || publishId === 2)">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>
+                IP排除不能超过200个
+            </span>
+            <!--360-->
+            <span style=" position: absolute;display: inline-block;right: -147px;top: 25px;"
+                  class="wroning ml20"
+                  [ngClass]="{clSave:tips.length.exclude_ip}"
+                  *ngIf="tips.exclude_ip && publishId === 3">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>
+                IP排除不能超过300个
+            </span>
+            <!--神马-->
+            <span style=" position: absolute;display: inline-block;right: -147px;top: 25px;"
+                  class="wroning ml20"
+                  [ngClass]="{clSave:tips.length.exclude_ip}"
+                  *ngIf="tips.exclude_ip && publishId === 4">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>
+                IP排除不能超过100个
+            </span>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" style="display: none" [ngClass]="{disabled:editing_accountData['dimensions']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w73  inline-block" nz-checkbox
+             [(ngModel)]="editing_accountData['dimensions']['is_edit']">
+        <span>维度:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left mr30 dimensionTableDiv" style="width: 600px;">
+      <table cellpadding="0" cellspacing="0">
+        <thead >
+        <tr>
+          <th ><span>维度名称</span></th>
+          <th >
+            <span>账户</span>
+              <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'设置该账户下所有的关键词的维度值'" [nzTooltipPlacement]="'topLeft'"  class="ml5" style="color: #f09200"></i>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of dimensionsData">
+          <td >
+            <span>{{data.name}}</span>
+          </td>
+          <td >
+            <div *ngIf="!data.state">
+              <ng-container *ngIf="!data.value">
+                <span class="c8c8c8">账户维度设置</span>
+              </ng-container>
+              <ng-container *ngIf="data.value">
+                <span>{{data.value}}</span>
+              </ng-container>
+              <i nz-icon nzType="edit" nzTheme="outline" class="dimensionsEdit"  *ngIf="editing_accountData['dimensions']['is_edit']" (click)="edit(data)" ></i>
+              <i nz-icon nzType="edit" nzTheme="outline" class="dimensionsEdit"  *ngIf="!editing_accountData['dimensions']['is_edit']" ></i>
+            </div>
+            <div class="dimension" *ngIf="data.state">
+              <input nz-input #input style="width: 40%;" [nzSize]="'small'" [(ngModel)]="data.value">
+              <button nz-button [nzType]="'primary'" (click)="sure(data)" >
+                <span>确定</span>
+              </button>
+              <button nz-button [nzType]="'default'" (click)="cancel_dimension(data)">
+                <span>取消</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" style="display: none">
+    <p>账户1的修改日志</p>
+    <div class="dimensionTableDiv mt10">
+      <table cellpadding="0" cellspacing="0">
+        <thead >
+        <tr>
+          <th class="tdWidth"><span>日期</span></th>
+          <th ><span>账户</span></th>
+          <th ><span>操作实体</span></th>
+          <th ><span>设置项</span></th>
+          <th ><span>操作前值</span></th>
+          <th class="tdWidth"><span>操作后值</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="tdWidth">
+            <span>2017.11.30 17.13</span>
+          </td>
+          <td >
+            <span>username</span>
+          </td>
+          <td >
+            <span>单元</span>
+          </td>
+          <td >
+            <span>出价</span>
+          </td>
+          <td >
+            <span>2.1</span>
+          </td>
+          <td class="tdWidth">
+            <span>2.1</span>
+          </td>
+        </tr>
+        <tr>
+          <td class="tdWidth">
+            <span>2017.11.30 17.13</span>
+          </td>
+          <td >
+            <span>username</span>
+          </td>
+          <td >
+            <span>单元</span>
+          </td>
+          <td >
+            <span>出价</span>
+          </td>
+          <td >
+            <span>2.1</span>
+          </td>
+          <td class="tdWidth">
+            <span>2.1</span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<div class="tactic-header">
+  <div class="arrow-left" (click)="goBack()">
+    <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+    <span class="ml10">返回</span>
+  </div>
+
+  <button nz-button nzType="primary" (click)="done()">
+    <span>完成</span>
+    <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
+  </button>
+</div>
+<div class="tactic-content">
+  <div class="content-card">
+    <div class="content">
+      <div class="title-area">
+        <p class="bold">策略名称：</p>
+      </div>
+      <div class="detail">
+        <form nz-form>
+          <nz-form-item>
+            <nz-form-control
+              [nzValidateStatus]="errorValidObj.tactic_name"
+              nzErrorTip="策略名称不能为空"
+            >
+              <input nz-input [ngModel]="strategyInfo['tactic_info']['tactic_name']" placeholder="请输入策略名称" name="tactic_name" (ngModelChange)="changeTacticName($event)" />
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
+    </div>
+  </div>
+  <app-set-rules></app-set-rules>
+  <app-set-tactic-entity></app-set-tactic-entity>
+</div>

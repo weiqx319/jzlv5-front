@@ -1,0 +1,84 @@
+<div class="filter-item-container mt20 mb20">
+  <div class="lab-row ml30">
+    <label>时间范围:</label>
+    <nz-select class="w100 ml8" [nzSize]="'small'" [(ngModel)]="tableTimeSetting.summary_date" (ngModelChange)="changeSelectedDate($event)">
+      <ng-container *ngFor="let item of dateLists">
+        <nz-option [nzLabel]="item.name" [nzValue]="item.key" [nzDisabled]="item['disable'] && (item['disable'].indexOf(summary_type) !== -1)"></nz-option>
+      </ng-container>
+    </nz-select>
+    <nz-range-picker  [(ngModel)]="tableTimeSetting.summary_date_range"  [nzDisabledDate]="defined_is_disable ? getDisableDate : null " [nzFormat]="'yyyy/MM/dd'" [nzDisabled]="tableTimeSetting.summary_date !== 'custom'" [nzAllowClear]="false"  [nzSize]="'small'" class="ml8"></nz-range-picker>
+    <div class="inline-block flex-auto ml8 w100" *ngIf="showAlias">
+      <input nz-input [nzSize]="'small'" [(ngModel)]="tableTimeSetting.summary_date_alias" placeholder="列头显示名称">
+    </div>
+    <button class="ml8 setTime" *ngIf="is_summary_time" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="setSummaryTime()">
+      <span>设置汇总时间</span>
+    </button>
+  </div>
+  <div class="lab-row mt10 ml30" *ngIf="isCompare||canAddCompare">
+    <label>对比时间1:</label>
+    <nz-select class="w100 ml8" [nzSize]="'small'" [(ngModel)]="tableTimeSetting.summary_date_compare" (ngModelChange)="changeSelectedCompareDate($event)">
+      <ng-container *ngFor="let item of compareDateLists">
+        <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+      </ng-container>
+    </nz-select>
+    <nz-range-picker  [(ngModel)]="tableTimeSetting.summary_date_compare_range" [nzDisabledDate]="getDisableDate" [nzFormat]="'yyyy/MM/dd'" [nzAllowClear]="false" [nzDisabled]="tableTimeSetting.summary_date_compare !== 'custom'" [nzSize]="'small'" class="ml8"></nz-range-picker>
+    <div class="inline-block flex-auto ml8 w100" *ngIf="showAlias">
+      <input nz-input [nzSize]="'small'" [(ngModel)]="tableTimeSetting.summary_date_compare_alias" placeholder="列头显示名称">
+    </div>
+    <!-- <i *ngIf="canAddCompare&&isCompare" nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  style="line-height: 20px;" (click)="removeCompareDate()"></i> -->
+  </div>
+
+  <ng-container *ngIf="isCompare">
+    <div class="lab-row mt10 ml30" *ngFor="let otherCompareDate of tableTimeSetting.other_compare_date_list;let i = index;">
+      <label>对比时间{{i+2}}:</label>
+      <nz-select class="w100 ml8" [nzSize]="'small'" [(ngModel)]="otherCompareDate.summary_date" (ngModelChange)="changeOtherSelectedDate($event,i)">
+        <ng-container *ngFor="let item of dateLists">
+          <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+        </ng-container>
+      </nz-select>
+      <nz-range-picker  [(ngModel)]="otherCompareDate.summary_date_range" [nzDisabledDate]="getDisableDate" [nzFormat]="'yyyy/MM/dd'" [nzAllowClear]="false" [nzDisabled]="otherCompareDate.summary_date !== 'custom'" [nzSize]="'small'" class="ml8"></nz-range-picker>
+      <div class="inline-block flex-auto ml8 w100" *ngIf="showAlias">
+        <input nz-input [nzSize]="'small'" [(ngModel)]="otherCompareDate.alias" placeholder="列头显示名称">
+      </div>
+      <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  style="line-height: 20px;" (click)="removeOtherSelectedDate(i,$event)"></i>
+    </div>
+
+
+  </ng-container>
+
+
+  <!-- <div class="lab-row mt10 ml30" *ngIf="canAddCompare&&!isCompare ">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addCompareDate()">
+     <i nz-icon nzType="plus" nzTheme="outline"></i>
+      <span>添加对比时间</span>
+    </button>
+  </div> -->
+  <div class="lab-row mt10 ml30" *ngIf="isCompare && tableTimeSetting.other_compare_date_list.length<4">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addOtherCompareDate()">
+     <i nz-icon nzType="plus" nzTheme="outline"></i>
+      <span>添加对比时间</span>
+    </button>
+  </div>
+
+
+  <div class="lab-row mt10 ml30" *ngIf="false">
+    <label>时间粒度:</label>
+    <nz-select class="w100 ml8" [nzSize]="'small'" [(ngModel)]="tableTimeSetting.time_grain">
+      <nz-option [nzLabel]="'合计'" [nzValue]="'summary'"></nz-option>
+      <nz-option [nzLabel]="'分日'" [nzValue]="'day'"></nz-option>
+      <nz-option [nzLabel]="'分星期'" [nzValue]="'weekSplit'"></nz-option>
+      <nz-option [nzLabel]="'分周'" [nzValue]="'week'"></nz-option>
+      <nz-option [nzLabel]="'分月'" [nzValue]="'month'"></nz-option>
+    </nz-select>
+  </div>
+  <div *ngIf="tableTimeSetting.summary_date && tableTimeSetting.summary_date === 'day:0:0'" style="padding-left: 98px;margin-top: 16px;color: #f09200;">
+    <p>今日实时数据会有一小段时间的延迟，请大家知晓!</p>
+  </div>
+</div>
+<div class="button-controller">
+  <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelModal()">
+    <span>取消</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="saveTime()">
+    <span>确定</span>      </button>
+</div>

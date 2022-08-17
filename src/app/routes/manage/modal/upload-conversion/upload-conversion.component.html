@@ -1,0 +1,70 @@
+<p style="color: red;" class="mt8" *ngIf="uploading">正在上传转化数据，请勿离开或者刷新此页面！</p>
+<div class="sub-company-content">
+  <form nz-form class="sub-company-form" [formGroup]="uploadForm">
+    <!--<p style="color: red;margin-bottom: 10px;padding-left: 76px;">正在上传转化数据，请勿离开或者刷新此页面！</p>-->
+    <!--<p class="mt8">*请上传.xls或.xlsx文件</p>-->
+    <div class="sub-company-form-content">
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>转化数据格式:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left" >
+          <nz-select class="w100p" [formControlName]="'source_type'" [nzSize]="'default'" [(ngModel)]="uploadSetting.source_type" [nzPlaceHolder]="'请选择转化格式'">
+            <ng-container *ngFor="let item of conversionType">
+              <nz-option [nzLabel]="item.name" [nzValue]="item.key" [nzDisabled]="item.disable"></nz-option>
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>广告主:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left" >
+          <nz-select class="w100p" [formControlName]="'cid'" [nzSize]="'default'" [(ngModel)]="uploadSetting.cid" [nzPlaceHolder]="'请选择广告主'">
+            <ng-container *ngFor="let item of advertiserLists">
+              <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <div class="uploadDiv" style="display: inline-block;position: relative;width: 100%;margin-left: 108px;margin-top: 5px;">
+        <nz-upload *ngIf="!uploading" class="pull-left"
+                   [nzCustomRequest]="customReq"
+                   [(nzFileList)]="fileList"
+                   [nzBeforeUpload]="beforeUpload"
+                   [nzSize]="'default'"
+                   [nzLimit] = 1
+                   [nzName]="'files'">
+          <button nz-button style="height: 30px">
+            <i nz-icon nzType="upload" nzTheme="outline"  ></i><span>上传文件</span>
+          </button>
+        </nz-upload>
+        <button *ngIf="uploading" nz-button style="height: 30px" class="mt2 pull-left">
+          <i nz-icon nzType="upload" nzTheme="outline"  ></i><span>上传文件</span>
+        </button>
+        <span style="display: inline-block; margin-top: 3px; position: absolute;left: 95px;">*请上传.xls或.xlsx文件</span>
+      </div>
+      <div *ngIf="uploading || exception === 'exception'" class="m1020" style="margin-right: 25px; width: 72%; margin-left: 20px;">
+        <nz-progress [nzStatus]="exception" [nzPercent]="speed" nzSize="default"></nz-progress>
+      </div>
+      <div class="mb20"  style="display: inline-block;position: relative;width: 100%;margin-left: 108px;margin-top: 5px;">
+        <a href="javascript:" class="inline-block" style="position: absolute; top:2px;" (click)="downloadTemplate()">下载参考模板</a>
+      </div>
+
+
+    </div>
+    <div class="sub-company-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [disabled]="uploading" [nzSize]="'default'" (click)="cancelUpload()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" *ngIf="!uploading" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="handleUpload()">
+        <span>完成</span>
+      </button>
+      <button class="ml8" *ngIf="uploading" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="uploading">
+        <span>上传中...</span>
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,83 @@
+.materials-manage-content-top {
+  padding: 6px 15px;
+  margin: 0 10px;
+  background-color: #fff;
+
+  .materials-manage-item {
+    padding: 10px 20px;
+    nz-form-label {
+      width: 80px;
+      text-align: left;
+    }
+  }
+}
+
+.sub-company-form-item {
+  display: flex;
+  align-items: center;
+  .form-label {
+    width: 75px;
+    text-align: right;
+  }
+}
+div.sub-company-form-textarea {
+  ::ng-deep .ant-input-sm {
+    height: 100px;
+  }
+}
+
+.sub-company-content {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: flex-end;
+}
+.sub-company-form {
+  width: 450px;
+}
+.sub-company-form-content {
+  min-height: 280px;
+}
+.sub-company-form-footer {
+  padding-top: 8px;
+  text-align: right;
+}
+
+.upload-item {
+  overflow: hidden;
+  margin-bottom: 5px;
+
+  .upload-title {
+    width: 75px;
+    text-align: right;
+    line-height: 30px;
+    float: left;
+    display: block;
+  }
+  .uploadDiv {
+    margin-left: 8px;
+    float: left;
+    position: relative;
+    width: 80%;
+    .example {
+      display: inline-block;
+      margin-top: 3px;
+      position: absolute;
+      left: 95px;
+    }
+  }
+  .zhushi{
+    display: inline-block;
+    margin-top: 7px;
+    position: absolute;
+    left: 95px;
+  }
+
+  .progressDiv {
+    margin-right: 25px;
+    width: 82%;
+  }
+
+  .overHidden {
+    overflow: hidden;
+  }
+}

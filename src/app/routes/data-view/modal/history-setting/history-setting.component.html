@@ -1,0 +1,82 @@
+<div class="pt8 pb8">
+  <div *ngIf="parentData.selected_data.length === 1" class="pt8 pb8">
+    <h3 *ngIf="summaryType === 'keyword'">
+      操作记录: <span>{{ showSingleKeywordData['pub_keyword'] }}</span
+      >（属于:{{ publisherOption[showSingleKeywordData['publisher_id']] }}/{{
+        showSingleKeywordData['pub_account_name']
+      }}、{{ showSingleKeywordData['pub_campaign_name'] }}、{{
+        showSingleKeywordData['pub_adgroup_name']
+      }}）
+    </h3>
+    <h3 *ngIf="summaryType === 'campaign'">
+      操作记录: <span>{{ campaignInfo['pub_campaign_name'] }}</span
+      >（属于:{{ publisherOption[campaignInfo['publisher_id']] }}/{{
+        campaignInfo['pub_account_name']
+      }}）
+    </h3>
+    <h3 *ngIf="summaryType === 'adgroup'">
+      操作记录: <span>{{ groupData['pub_adgroup_name'] }}</span
+      >（属于:{{ publisherOption[groupData['publisher_id']] }}/{{
+        groupData['pub_account_name']
+      }}、{{ groupData['pub_campaign_name'] }}）
+    </h3>
+    <h3 *ngIf="summaryType === 'account'">
+      操作记录: <span>{{ accountInfo['pub_account_name'] }}</span
+      >（属于:{{ publisherOption[accountInfo['publisher_id']] }}）
+    </h3>
+    <div class="desc">
+      注：仅显示最近90天内的前50条数据
+    </div>
+  </div>
+  <nz-table
+    #nzTable
+    nzShowSizeChanger
+    [nzPageSizeOptions]="[30, 50, 100, 500]"
+    [nzSize]="'small'"
+    [nzData]="apiData"
+    [nzFrontPagination]="false"
+    [(nzPageSize)]="pageSize"
+    [(nzPageIndex)]="currentPage"
+    (nzPageIndexChange)="refreshData()"
+    (nzPageSizeChange)="refreshData(true)"
+    [nzTotal]="total"
+    [nzLoading]="loading"
+    [nzScroll]="{ y: noResultHeight + 'px' }"
+    [nzShowPagination]="false"
+  >
+    <thead>
+      <tr>
+        <th [nzWidth]="'150px'">
+          <span>修改时间</span>
+        </th>
+        <th [nzWidth]="'50px'"><span>操作人</span></th>
+        <th [nzWidth]="'150px'"><span>操作内容</span></th>
+        <th [nzWidth]="'150px'">
+          <span>操作前值</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>操作后值</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of apiData">
+        <td>
+          {{ data.create_time }}
+        </td>
+        <td>
+          {{ data.user_name }}
+        </td>
+        <td>
+          {{ data.operation_content }}
+        </td>
+        <td>
+          {{ data.operation_before }}
+        </td>
+        <td>
+          {{ data.operation_after }}
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>

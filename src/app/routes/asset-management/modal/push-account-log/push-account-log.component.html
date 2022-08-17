@@ -1,0 +1,52 @@
+<div class="section-content-container">
+  <nz-table #basicTable
+            nzShowSizeChanger
+            nzFrontPagination="false"
+            [nzPageSizeOptions]="[10,20,30,50,100]"
+            [nzShowTotal]="totalItemTemplate"
+            [nzSize]="'default'"
+            [nzData]="apiData"
+            [(nzPageSize)]="pageSize"
+            [(nzPageIndex)]="currentPage"
+            (nzPageIndexChange)="refreshData()"
+            (nzPageSizeChange)="refreshData(true)"
+            [nzTotal]="total"
+            [nzLoading]="loading"
+            [nzScroll]="{ y: noResultHeight + 'px' }">
+    <thead>
+      <tr>
+        <!-- <th nzWidth="62px" nzLeft class="jzlCheckboxHeader">
+          <a nz-dropdown [nzDropdownMenu]="menu">
+            <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)"
+                   [nzIndeterminate]="indeterminate"></label>
+          </a>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu nzSelectable>
+              <li nz-menu-item (click)="_checkAll(true)" [nzSelected]="currentSelectedPage=='current'">
+                <a>选择当前页</a>
+              </li>
+              <li nz-menu-item (click)="_checkAllPage(true)" [nzSelected]="currentSelectedPage=='all'">
+                <a>选择全部</a>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </th> -->
+        <th nzWidth="200px">账户</th>
+        <th nzWidth="100px">推送状态</th>
+        <th nzWidth="200px">推送时间</th>
+        <th nzWidth="200px">失败原因</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of apiData">
+        <!-- <td nzLeft nzShowCheckbox [(nzChecked)]="data['checked']"
+            (nzCheckedChange)="_refreshSingleChangeStatus($event)"> -->
+        <td >{{data['pub_account_name']}}</td>
+        <td >{{statusObj[data['status']]}}</td>
+        <td >{{data['create_time']}}</td>
+        <td >{{data['push_fail_reason']}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+</div>

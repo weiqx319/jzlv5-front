@@ -1,0 +1,55 @@
+<div class="sub-company-content">
+  <form nz-form class="sub-company-form" [formGroup]="dimensionForm">
+    <div class="sub-company-form-content">
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>维度名称:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <input nz-input
+            class="w100p"
+            [nzSize]="'small'"
+            [formControlName]="'dim_name'"
+            type="text"
+            placeholder="请输入维度名称"
+            [(ngModel)]="dimensionSetting.dimension_name">
+
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' class="ml8" *ngIf="getFormControl('dim_name').dirty && getFormControl('dim_name').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入广告主名称</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>广告主:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left" >
+          <nz-select class="w100p" [nzDisabled]="true" [formControlName]="'cid'" [nzSize]="'small'" [(ngModel)]="dimensionSetting.cid" [nzPlaceHolder]="'请选择广告'">
+            <ng-container *ngFor="let item of advertiserList">
+              <nz-option [nzLabel]="item.advertiser_name" [nzValue]="item.cid"></nz-option>
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('cid').dirty && getFormControl('cid').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择行业</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label>备注信息:</label>
+        </div>
+        <nz-form-control class="sub-company-form-textarea w200 ml8 pull-left">
+          <textarea [formControlName]="'dim_comment'"  nz-input [nzSize]="'small'"     class="w100p"  placeholder="备注信息"   [(ngModel)]="dimensionSetting.dimension_desc"  [nzAutosize]></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="sub-company-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="submitting" [disabled]="!dimensionForm.valid" (click)="doSave()">
+        <span>完成</span>
+      </button>
+    </div>
+  </form>
+</div>

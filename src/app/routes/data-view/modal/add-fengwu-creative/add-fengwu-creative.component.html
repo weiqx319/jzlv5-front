@@ -1,0 +1,464 @@
+<div class="fengwu-add-container">
+  <div class="fengwu-add-header">
+    <span>添加凤舞创意</span>
+    <a class="pull-right" (click)="goBack()">返回</a>
+  </div>
+  <p style="color:#999;font-size:12px;margin:20px 0 0 20px">说明：凤舞创意分为基础样式和组合样式，组合样式由2个或2个以上基础样式自动组合而成，点击查看<a href="/fengwuorient/previewtable?token=352ae108ae547f5e2021ad45c453de49ff3a92e79c3636186689cfd2ef20190d&amp;expireTimes=1642149387&amp;_=1642149388657" target="_blank" style="color:#549adb">《组合样式和基础样式的组合关系表》</a>。</p>
+
+  <div class="fengwu-add-content">
+    <div class="mb10 ml8">
+      <label style="width:70px;display: inline-block">创意类型： </label>
+      <nz-radio-group [(ngModel)]="creative_type" (ngModelChange)="creativeTypeChange($event)">
+        <label *ngFor="let item of creativeType" nz-radio-button [nzValue]="item.key">{{item.name}}</label>
+      </nz-radio-group>
+    </div>
+    <div class="mb10 ml8">
+      <label style="width:70px;display: inline-block">设备类型： </label>
+      <nz-radio-group [(ngModel)]="device" (ngModelChange)="deviceTypeChange()">
+        <label nz-radio-button [nzValue]="1">计算机</label>
+        <label *ngIf="creative_type!=='lists'&&creative_type!=='short_guides'&&creative_type!=='potential'" nz-radio-button [nzValue]="2">移动</label>
+      </nz-radio-group>
+    </div>
+<!--新建内容-->
+    <div class="fw-content">
+      <div class="pt20 pb20 pl20 pr20">
+        <h3 class="fw-h3">{{infoObj[creative_type].name}}<span class="ml8">注:{{infoObj[creative_type]['note'][device]}}</span></h3>
+        <div>
+          <!--凤舞橱窗-->
+          <ng-container *ngIf="creative_type==='windows'">
+            <ul class="fw-list">
+              <li class="fw-item mb10" *ngFor="let data of resultData[creative_type];let i=index;">
+                <div><label class="w60 title">商品{{i+1}}:</label></div>
+                <div class="flex mt10">
+                  <label class="w120 title">商品名称:</label>
+                  <div>
+                    <input class="w200" nz-input [placeholder]="lengthLimit[creative_type]['title_'+device].min+'-'+lengthLimit[creative_type]['title_'+device].max+'个字符'" [(ngModel)]="data.title" />
+                    <div class="error-tip mt5" *ngIf="errorTip.title.is_show&&isShowTextTip(data.title,lengthLimit[creative_type]['title_'+device].min,lengthLimit[creative_type]['title_'+device].max)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{'请输入'+lengthLimit[creative_type]['title_'+device].min+'-'+lengthLimit[creative_type]['title_'+device].max+'个字符' }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex mt10">
+                  <label class="w120 title">商品描述:</label>
+                  <div>
+                    <input class="w200" nz-input [placeholder]="lengthLimit[creative_type]['text_'+device].min+'-'+lengthLimit[creative_type]['text_'+device].max+'个字符'" [(ngModel)]="data.description" />
+                    <div class="error-tip mt5" *ngIf="errorTip.text.is_show&&isShowTextTip(data.description,lengthLimit[creative_type]['text_'+device].min,lengthLimit[creative_type]['text_'+device].max)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{'请输入'+lengthLimit[creative_type]['text_'+device].min+'-'+lengthLimit[creative_type]['text_'+device].max+'个字符' }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex mt10">
+                  <label class="w120 title">链接网址:</label>
+                  <div>
+                    <input class="w200" nz-input placeholder="以http://或https://开头的有效网址" [(ngModel)]="data.url" />
+                    <div class="error-tip mt5" *ngIf="errorTip.url.is_show&&isShowUrlTip(data.url)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{errorTip.url.tip_text}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex mt10">
+                  <label class="w120 title">导入图片:</label>
+                  <div>
+                    <div class="flex">
+                      <nz-upload
+                        class="w120"
+                        nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                        nzName="avatar"
+                        nzListType="picture-card"
+                        [nzShowUploadList]="false"
+                      >
+                        <ng-container *ngIf="!data.image">
+                          <button style="border-radius:5px" nz-button nzType="primary">上传</button>
+                        </ng-container>
+                        <img *ngIf="data.image" [src]="data.image" style="width: 100%" />
+                      </nz-upload>
+                      <p style="color: #999"> *大小为121x75像素<br> *不超过30K<br> *支持JPG、JPEG、PNG格式 </p>
+                    </div>
+                    <div class="error-tip mt5" *ngIf="errorTip.image.is_show&&data.image.length<1">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{errorTip.image.tip_text}}</span>
+                    </div>
+                  </div>
+
+                </div>
+                <ng-container *ngIf="i+1>infoObj[creative_type][device].min_length">
+                  <button nz-button class="add-btn delete-btn" nzType="default"  (click)="deleteParams(resultData[creative_type],i)">删除</button>
+                </ng-container>
+              </li>
+              <li class="fw-item mb10" style="text-align: center" *ngIf="resultData[creative_type].length<infoObj[creative_type][device].max_length">
+                <button nz-button class="mt50 add-btn" nzType="primary" [nzSize]="'small'" (click)="addParams(resultData[creative_type])">
+                  <i nz-icon nzType="plus" nzTheme="outline"></i><span>继续添加商品</span>
+                </button>
+              </li>
+            </ul>
+          </ng-container>
+          <!--凤舞短子链 -->
+          <ng-container *ngIf="creative_type==='sublinks'">
+            <ul class="fw-list">
+              <li class="fw-item mb10" *ngFor="let data of resultData[creative_type];let i=index;">
+                <div><label class="w60 title">子链{{i+1}}:</label></div>
+                <div class="flex mt10">
+                  <label class="w120 title">链接文字:</label>
+                  <div>
+                    <input class="w200" nz-input [placeholder]="lengthLimit[creative_type]['text_'+device].min+'-'+lengthLimit[creative_type]['text_'+device].max+'个字符'" [(ngModel)]="data.text" />
+                    <div class="error-tip mt5" *ngIf="errorTip.text.is_show&&isShowTextTip(data.description,lengthLimit[creative_type]['text_'+device].min,lengthLimit[creative_type]['text_'+device].max)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{'请输入'+lengthLimit[creative_type]['text_'+device].min+'-'+lengthLimit[creative_type]['text_'+device].max+'个字符' }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex mt10">
+                  <label class="w120 title">链接网址:</label>
+                  <div>
+                    <input class="w200" nz-input placeholder="以http://或https://开头的有效网址" [(ngModel)]="data.url" />
+                    <div class="error-tip mt5" *ngIf="errorTip.url.is_show&&isShowUrlTip(data.url)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{errorTip.url.tip_text}}</span>
+                    </div>
+                  </div>
+                </div>
+                <ng-container *ngIf="i+1>infoObj[creative_type][device].min_length">
+                  <button nz-button class="add-btn delete-btn" nzType="default"  (click)="deleteParams(resultData[creative_type],i)">删除</button>
+                </ng-container>
+              </li>
+              <li class="fw-item mb10" style="text-align: center" *ngIf="resultData[creative_type].length<infoObj[creative_type][device].max_length">
+                <button nz-button class="mt50 add-btn" nzType="primary" [nzSize]="'small'" (click)="addParams(resultData[creative_type])">
+                  <i nz-icon nzType="plus" nzTheme="outline"></i><span>继续添加子链</span>
+                </button>
+              </li>
+            </ul>
+          </ng-container>
+          <!--凤舞长子链 -->
+          <ng-container *ngIf="creative_type==='links'">
+            <ul class="fw-list">
+              <li class="fw-item mb10" *ngFor="let data of resultData[creative_type];let i=index;">
+                <div><label class="w60 title">子链{{i+1}}:</label></div>
+                <div class="flex mt10">
+                  <label class="w120 title">子链标签:</label>
+                  <div>
+                    <input class="w200" nz-input placeholder="4-8个字符" [(ngModel)]="data.title" />
+                    <div class="error-tip mt5" *ngIf="errorTip.text.is_show&&isShowTextTip(data.title,4,8)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">请输入4-8个字符</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex mt10">
+                  <label class="w120 title">链接文字:</label>
+                  <div>
+                    <textarea rows="3" class="w200" nz-input [placeholder]="lengthLimit[creative_type]['text_'+device].min+'-'+lengthLimit[creative_type]['text_'+device].max+'个字符'" [(ngModel)]="data.text"></textarea>
+                    <div class="error-tip mt5" *ngIf="errorTip.text.is_show&&isShowTextTip(data.description,lengthLimit[creative_type]['text_'+device].min,lengthLimit[creative_type]['text_'+device].max)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{'请输入'+lengthLimit[creative_type]['text_'+device].min+'-'+lengthLimit[creative_type]['text_'+device].max+'个字符' }}</span>
+                  </div>
+                </div>
+                </div>
+                <div class="flex mt10">
+                  <label class="w120 title">链接网址:</label>
+                  <div>
+                    <input class="w200" nz-input placeholder="以http://或https://开头的有效网址" [(ngModel)]="data.url" />
+                    <div class="error-tip mt5" *ngIf="errorTip.url.is_show&&isShowUrlTip(data.url)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{errorTip.url.tip_text}}</span>
+                    </div>
+                  </div>
+                </div>
+                <ng-container *ngIf="i+1>infoObj[creative_type][device].min_length">
+                  <button nz-button class="add-btn delete-btn" nzType="default"  (click)="deleteParams(resultData[creative_type],i)">删除</button>
+                </ng-container>
+              </li>
+              <li class="fw-item mb10" style="text-align: center" *ngIf="resultData[creative_type].length<infoObj[creative_type][device].max_length">
+                <button nz-button class="mt50 add-btn" nzType="primary" [nzSize]="'small'" (click)="addParams(resultData[creative_type])">
+                  <i nz-icon nzType="plus" nzTheme="outline"></i><span>继续添加子链</span>
+                </button>
+              </li>
+            </ul>
+          </ng-container>
+          <!--凤舞导航 -->
+          <ng-container *ngIf="creative_type==='guides'">
+            <ul class="fw-list">
+              <li class="fw-item mb10" *ngFor="let data of resultData[creative_type];let i=index;">
+                <div><label class="w60 title">导航{{i+1}}:</label></div>
+                <div class="flex mt10">
+                  <label class="w60 title">标签名</label>
+                  <div>
+                    <input class="w200" nz-input placeholder="4-8个字符" [(ngModel)]="data.title" />
+                    <div class="error-tip mt5" *ngIf="errorTip.text.is_show&&isShowTextTip(data.title,4,8)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">请输入4-8个字符</span>
+                    </div>
+                  </div>
+                </div>
+                <ul class="mt10">
+                  <li class="pt10 pb10" [ngClass]="{'delete-back':inx+1>infoObj['guides'][device].min_link}" style="position: relative" *ngFor="let item of data.links;let inx=index;">
+                    <div class="flex">
+                      <label class="w120 title">子链{{inx+1}}: 链接文字:</label>
+                      <div>
+                        <input class="w200" nz-input [placeholder]="lengthLimit[creative_type]['text_'+device].min+'-'+lengthLimit[creative_type]['text_'+device].max+'个字符'" [(ngModel)]="item.text" />
+                        <div class="error-tip mt5" *ngIf="errorTip.text.is_show&&isShowTextTip(item.text,lengthLimit[creative_type]['text_'+device].min,lengthLimit[creative_type]['text_'+device].max)">
+                          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                          <span style="color: red;">{{'请输入'+lengthLimit[creative_type]['text_'+device].min+'-'+lengthLimit[creative_type]['text_'+device].max+'个字符' }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex mt10">
+                      <label class="w120 title">链接网址:</label>
+                      <div>
+                        <input class="w200" nz-input placeholder="以http://或https://开头的有效网址" [(ngModel)]="item.url" />
+                        <div class="error-tip mt5" *ngIf="errorTip.url.is_show&&isShowUrlTip(item.url)">
+                          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                          <span style="color: red;">{{errorTip.url.tip_text}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span class="delete-icon"><i nz-icon nzType="close" nzTheme="outline" (click)="deleteLink(data.links,inx)"></i></span>
+                  </li>
+                  <div class="flex mt10" *ngIf="data.links.length<infoObj['guides'][device].max_link">
+                    <label class="w120 title"></label>
+                    <div>
+                      <button nz-button class="mr8 add-btn" nzType="primary" [nzSize]="'small'" (click)="addLink(data.links)">
+                        <i nz-icon nzType="plus" nzTheme="outline"></i><span>继续添加子链</span>
+                      </button>
+                    </div>
+                  </div>
+                </ul>
+                <ng-container *ngIf="i+1>infoObj[creative_type][device].min_length">
+                  <button nz-button class="add-btn delete-btn" nzType="default"  (click)="deleteParams(resultData[creative_type],i)">删除</button>
+                </ng-container>
+              </li>
+              <li class="fw-item mb10" style="text-align: center" *ngIf="resultData[creative_type].length<infoObj[creative_type][device].max_length">
+                <button nz-button class="mt50 add-btn" nzType="primary" [nzSize]="'small'" (click)="addParams(resultData[creative_type])">
+                  <i nz-icon nzType="plus" nzTheme="outline"></i><span>继续添加导航</span>
+                </button>
+              </li>
+            </ul>
+          </ng-container>
+          <!--凤舞短导航 -->
+          <ng-container *ngIf="creative_type==='short_guides'">
+            <ul class="fw-list">
+              <li class="fw-item mb10" *ngFor="let data of resultData[creative_type];let i=index;">
+                <div><label class="w60 title">导航{{i+1}}:</label></div>
+                <div class="flex mt10">
+                  <label class="w60 title">标签名</label>
+                  <div>
+                    <input class="w200" nz-input placeholder="4-8个字符" [(ngModel)]="data.title" />
+                    <div class="error-tip mt5" *ngIf="errorTip.text.is_show&&isShowTextTip(data.title,4,8)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">请输入4-8个字符</span>
+                    </div>
+                  </div>
+                </div>
+                <ul class="mt10">
+                  <li class="pt10 pb10" [ngClass]="{'delete-back':inx+1>infoObj['short_guides'][device].min_link}" style="position: relative" *ngFor="let item of data.links;let inx=index;">
+                    <div class="flex">
+                      <label class="w120 title">子链{{inx+1}}: 链接文字:</label>
+                      <div>
+                        <input class="w200" nz-input [placeholder]="lengthLimit[creative_type]['text_'+device].min+'-'+lengthLimit[creative_type]['text_'+device].max+'个字符'" [(ngModel)]="item.text" />
+                        <div class="error-tip mt5" *ngIf="errorTip.text.is_show&&isShowTextTip(item.text,lengthLimit[creative_type]['text_'+device].min,lengthLimit[creative_type]['text_'+device].max)">
+                          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                          <span style="color: red;">{{'请输入'+lengthLimit[creative_type]['text_'+device].min+'-'+lengthLimit[creative_type]['text_'+device].max+'个字符' }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex mt10">
+                      <label class="w120 title">链接网址:</label>
+                      <div>
+                        <input class="w200" nz-input placeholder="以http://或https://开头的有效网址" [(ngModel)]="item.url" />
+                        <div class="error-tip mt5" *ngIf="errorTip.url.is_show&&isShowUrlTip(item.url)">
+                          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                          <span style="color: red;">{{errorTip.url.tip_text}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span class="delete-icon"><i nz-icon nzType="close" nzTheme="outline" (click)="deleteLink(data.links,inx)"></i></span>
+                  </li>
+                  <div class="flex mt10" *ngIf="data.links.length<infoObj['short_guides'][device].max_link">
+                    <label class="w120 title"></label>
+                    <div>
+                      <button nz-button class="mr8 add-btn" nzType="primary" [nzSize]="'small'" (click)="addLink(data.links)">
+                        <i nz-icon nzType="plus" nzTheme="outline"></i><span>继续添加子链</span>
+                      </button>
+                    </div>
+                  </div>
+                </ul>
+                <ng-container *ngIf="i+1>infoObj[creative_type][device].min_length">
+                  <button nz-button class="add-btn delete-btn" nzType="default"  (click)="deleteParams(resultData[creative_type],i)">删除</button>
+                </ng-container>
+              </li>
+              <li class="fw-item mb10" style="text-align: center" *ngIf="resultData[creative_type].length<infoObj[creative_type][device].max_length">
+                <button nz-button class="mt50 add-btn" nzType="primary" [nzSize]="'small'" (click)="addParams(resultData[creative_type])">
+                  <i nz-icon nzType="plus" nzTheme="outline"></i><span>继续添加导航</span>
+                </button>
+              </li>
+            </ul>
+          </ng-container>
+          <!--凤舞列表 -->
+          <ng-container *ngIf="creative_type==='lists'">
+            <ul>
+              <nz-table class="mt10" #basicTable nzSize="small" [nzShowPagination]="false" [nzData]="resultData[creative_type]">
+                <thead>
+                <tr>
+                  <th nzWidth="220px">商品名称</th>
+                  <th nzWidth="200px">商品描述(选填)</th>
+                  <th nzWidth="200px">描述</th>
+                  <th nzWidth="140px">点击标签</th>
+                  <th nzWidth="200px">链接网址</th>
+                  <th nzWidth="60px"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let data of resultData[creative_type];let i=index;">
+                  <td>
+                    <input nzSize="small" class="w200" nz-input placeholder="2-28个字符" [(ngModel)]="data.title"/>
+                    <div class="error-tip mt5" *ngIf="errorTip.title.is_show&&isShowTextTip(data.title,2,28)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">请输入2-28个字符</span>
+                    </div>
+                  </td>
+                  <td>
+                    <input nzSize="small" class="w200" nz-input placeholder="2-12个字符" [(ngModel)]="data.description" />
+                    <div class="error-tip mt5" *ngIf="errorTip.description.is_show&&isShowTextTip(data.description,2,12)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">请输入2-12个字符</span>
+                    </div>
+                  </td>
+                  <td>
+                    <input nzSize="small" class="w200" nz-input placeholder="2-12个字符" [(ngModel)]="data.text" />
+                    <div class="error-tip mt5" *ngIf="errorTip.text.is_show&&isShowTextTip(data.text,2,12)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">请输入2-12个字符</span>
+                    </div>
+                  </td>
+                  <td>
+                    <nz-select nzSize="small" class="w120" [(ngModel)]="data.clicktitle">
+                      <nz-option *ngFor="let text of buttonText" [nzValue]="text" [nzLabel]="text"></nz-option>
+                    </nz-select>
+                  </td>
+                  <td>
+                    <input nzSize="small" class="w200" nz-input placeholder="以http://或https://开头的有效网址" [(ngModel)]="data.url" />
+                    <div class="error-tip mt5" *ngIf="errorTip.url.is_show&&isShowUrlTip(data.url)">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{errorTip.url.tip_text}}</span>
+                    </div>
+                  </td>
+                  <td><button *ngIf="i>3" class="add-btn" style="color: #666" nzType="default"  (click)="deleteParams(resultData[creative_type],i)">删除</button></td>
+                </tr>
+                </tbody>
+              </nz-table>
+              <div *ngIf="resultData[creative_type].length<infoObj[creative_type][device].max_length">
+                <button nz-button class="mt10 add-btn" nzType="primary" [nzSize]="'small'" (click)="addParams(resultData[creative_type])">
+                  <i nz-icon nzType="plus" nzTheme="outline"></i><span>继续添加商品</span>
+                </button>
+              </div>
+            </ul>
+          </ng-container>
+          <!--凤舞寻客-->
+          <ng-container *ngIf="creative_type==='potential'">
+            <ul class="fw-list">
+              <li style="padding: 20px">
+                <div class="flex mt10">
+                  <label class="w80 title">寻客标题:</label>
+                  <div>
+                    <input class="w200" nz-input placeholder="最多36个字符" [(ngModel)]="resultData[creative_type]['title']" />
+                    <div class="error-tip mt5" *ngIf="errorTip.title.is_show">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">请最多输入36个字符且不能为空</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex mt10">
+                  <label class="w80 title">1. 联系方式:</label>
+                  <span>必填</span>
+                </div>
+                <div class="flex mt10">
+                  <label class="w80 title">2. 您的称呼:</label>
+                  <div>
+                  <nz-switch [ngModel]="resultData[creative_type]['name']==1" (ngModelChange)="switchChange($event,resultData[creative_type],'name')"></nz-switch>
+                  </div>
+                </div>
+                <div class="flex mt10">
+                  <label class="w80 title">3. 所在地区:</label>
+                  <div>
+                  <nz-switch [ngModel]="resultData[creative_type]['areas']==1" (ngModelChange)="switchChange($event,resultData[creative_type],'areas')"></nz-switch>
+                  </div>
+                </div>
+                <div class="flex mt10">
+                  <label class="w80 title">4. 自定义项:</label>
+                  <div>
+                  <nz-switch [ngModel]="isOther"></nz-switch>
+                  </div>
+                </div>
+                <div class="flex mt10">
+                  <div class="others" *ngFor="let item of resultData[creative_type]['others'];let inx=index;">
+                    <div class="flex mt10">
+                      <label class="w80 title ft13">自定义项{{inx+1}}:</label>
+                      <div>
+                      <input class="w200" nz-input placeholder="4-8个字符" [(ngModel)]="item.key" />
+                        <div class="error-tip mt5" *ngIf="errorTip.other_title.is_show&&isShowTextTip(item.key,4,8)">
+                          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                          <span style="color: red;">{{errorTip.other_title.tip_text}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex mt10">
+                      <label class="w80 title ft13">内容:</label>
+                      <div>
+                      <textarea class="w200" rows="4" placeholder="每行填写一项，每项最多16个字符。可填写1-20项，第一项为默认选项。" nz-input [ngModel]="item.value.join('\n')" (ngModelChange)="otherValueChange($event,item)"></textarea>
+                        <div class="error-tip mt5" *ngIf="errorTip.other_desc.is_show&&otherValueErr[inx]">
+                          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                          <span style="color: red;">{{errorTip.other_desc.tip_text}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <ng-container *ngIf="inx>0">
+                      <span style="top: 2px;right: 5px" nzSize="small" class="add-btn delete-btn" nzType="default"  (click)="deleteParams(resultData[creative_type]['others'],inx)"><i nz-icon nzType="close" nzTheme="outline"></i></span>
+                    </ng-container>
+                  </div>
+                </div>
+                <div *ngIf="resultData[creative_type]['others'].length<3">
+                  <button nz-button class="mt10 add-btn" nzType="primary" [nzSize]="'small'" (click)="addOthers(resultData[creative_type]['others'])">
+                    <i nz-icon nzType="plus" nzTheme="outline"></i><span>继续添加自定义项</span>
+                  </button>
+                </div>
+                <div class="flex mt20">
+                  <label class="w80 title">5. 行动按钮:</label>
+                  <div>
+                    <input class="w200" nz-input placeholder="2-4个汉字" [(ngModel)]="resultData[creative_type]['button']" />
+                    <div class="error-tip mt5" *ngIf="errorTip.text.is_show">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">请输入2-4个汉字</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex mt20">
+                  <label class="w80 title">建议填写:</label>
+                  <div>
+                    <ng-container *ngFor="let text of ['立即预约','立即体验','免费注册','快速报价','免费申请','在线报名']">
+                      <span class="action-btn" [ngClass]="{'active':button_text===text}" (click)="button_text=text;resultData[creative_type]['button']=text;">{{text}}</span>
+                    </ng-container>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </ng-container>
+        </div>
+      </div>
+      <div>
+<!--        <app-fengwu-preview [data]="resultData[creative_type]" [type]="creative_type"></app-fengwu-preview>-->
+      </div>
+    </div>
+
+    <div class="pull-right mt20">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submit" [nzSize]="'small'" (click)="doSave()">
+        <span>完成</span>
+      </button>
+    </div>
+  </div>
+
+</div>

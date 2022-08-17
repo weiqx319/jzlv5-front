@@ -1,0 +1,205 @@
+<div class="optimization-list-nav">
+  <div class="optimization-list-nav-col">
+    <div class="optimization-list-nav-btn">
+      <button nz-button class="mr8" [nzType]="'default'" [nzSize]="'small'" (click)="$event.srcElement.blur();createFolderModal(content)">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加</span>
+      </button>
+      <ng-template #content>
+        <div class="mt10 mb10 ml50">
+          <label  class="w100 text-right inline-block">名称:</label>
+          <div class="w200 ml8 inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   [(ngModel)]="addFolderSetting.folder_name"
+                   placeholder="请输入名称">
+          </div>
+        </div>
+
+        <div class="text-right">
+          <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelCreate()">
+            <span>取消</span>
+          </button>
+          <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="creating" (click)="createFolder()">
+            <span>下一步</span>
+          </button>
+        </div>
+
+      </ng-template>
+
+        <button nz-button [nzType]="'default'" [nzSize]="'small'"  nz-popconfirm [nzPopconfirmTitle]="'您确定删除分组吗?'" (nzOnConfirm)="delFolder()" [nzPopconfirmPlacement]="'bottomLeft'" class="mr8">
+          <i nz-icon nzType="close" nzTheme="outline"></i><span>删除</span>
+        </button>
+
+      <button class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="$event.srcElement.blur();changeField()">
+        <i nz-icon nzType="bars" nzTheme="outline"></i><span>修改列</span>
+      </button>
+
+      <button class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="$event.srcElement.blur();editNameBtn()">
+       <i nz-icon nzType="edit" nzTheme="outline"></i><span>编辑名称</span>
+      </button>
+      <div class="inline-block ml8 fs12">
+        <app-table-query-show [summary_type]="viewTableData.summary_type" [filterConditions] = "allFilterOption" [dataRange]="viewTableData['data_range']" [conditions]="viewTableData['condition']" (changed)="reloadData()"></app-table-query-show>
+      </div>
+    </div>
+    <div class="optimization-right">
+      <div class="optimization-time inline-block ml8" (click)="changeDate()">
+        <div class="time-content pl8 pr8">
+          <span>{{timeDesc}}</span>
+        </div>
+        <div class="time-icon">
+          <i nz-icon nzType="calendar" nzTheme="outline"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="optimization-list-data mt36">
+  <div class="view-table" [ngStyle]="{'height':tableHeight+'px'}">
+    <ngx-datatable
+      #viewTable
+      class="jzl"
+      [rows]="rows"
+      [loadingIndicator]="loadingIndicator"
+      [columns]="columns"
+      [columnMode]="'force'"
+      [headerHeight]="44"
+      [footerHeight]="40"
+      [rowHeight]="rowHeight"
+      [count]="pageInfo.currentPageCount"
+      [scrollbarV]="true"
+      [scrollbarH]="true"
+      [externalPaging]="true"
+      [externalSorting]="true"
+      [virtualization]="true"
+      [sorts]="defaultSortItems"
+      [sortType]="'single'"
+      (sort)="sortView($event)"
+      (resize)="refreshTableSize()"
+      [reorderable]="reorderable"
+      [messages]="dataMessages"
+      [selected]="selected"
+      [selectionType]="'checkbox'"
+      (select)='onSelect($event)' >
+
+      <!--<ngx-datatable-column [width]="300" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">-->
+      <ng-template #chkHeader ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+        <label
+          class="datatable-checkbox" [ngClass]="{selectedCurrent:selectedType=='current' && selected.length>0}">
+          <a nz-dropdown [nzDropdownMenu]="menu">
+            <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"/>
+          </a>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu nzSelectable>
+            <li nz-menu-item (click)="selectedChange('current',allRowsSelected,selectFn)">
+              <a>选择当前页</a>
+            </li>
+            <li nz-menu-item  (click)="selectedChange('all',allRowsSelected,selectFn)">
+              <a>选择全部</a>
+            </li>
+          </ul>
+          </nz-dropdown-menu>
+
+
+        </label>
+      </ng-template>
+      <ng-template #chkCell ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+        <label
+          class="datatable-checkbox">
+          <input type="checkbox" [checked]="isSelected" (change)="singleSelectedChange(onCheckboxChangeFn,$event)"/>
+        </label>
+      </ng-template>
+      <ng-template #chkCell ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+        <label
+          class="datatable-checkbox">
+          <input type="checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"/>
+        </label>
+      </ng-template>
+
+      <ng-template #filterHeader ngx-datatable-header-template  let-column="column" let-value="value" let-sortFn="sortFn">
+      <span class="datatable-header-cell-wrapper" (click)="sortFn()">
+          <span class="datatable-header-cell-label"> {{column.name}}</span>
+      </span>
+        <app-filter [filterType]="column.data['filterType']" [filterKey]="column.data['filterKey']" [(filterResult)]="column.data['filterResult']" [extraOption]="column.data['extraOption']"  [filterOption]="column.data['filterOption']" (submit)="reloadData()"></app-filter>
+      </ng-template>
+
+      <ng-template #folderNameTpl let-row="row"  ngx-datatable-cell-template>
+        <a [ngClass]="{'up-color': row.overdue_detail_count*1 > 0}" [routerLink]="['../detail/',row.folder_id]">{{row.folder_name}}</a>
+
+      </ng-template>
+
+
+
+      <ng-template #rateCell ngx-datatable-cell-template let-value="value">
+        <ng-container *ngIf="value == '10000000.00'">
+          +∞
+        </ng-container>
+        <ng-container *ngIf="value == '-10000000.00'">
+          -∞
+        </ng-container>
+        <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00' && value!= null && value!=''">
+          {{ value + '%'}}
+        </ng-container>
+      </ng-template>
+
+
+      <ng-template #rateCellColor ngx-datatable-cell-template let-value="value">
+        <ng-container *ngIf="value == '10000000.00'">
+          <span>+∞</span>
+        </ng-container>
+        <ng-container *ngIf="value == '-10000000.00'">
+          <span>-∞</span>
+        </ng-container>
+        <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00'">
+          <span [ngClass]="{'up-color':value>0,'down-color':value<0}">{{ value + '%'}}</span>
+        </ng-container>
+      </ng-template>
+      <ng-template #cellColor ngx-datatable-cell-template let-value="value">
+        <span [ngClass]="{'up-color':value>0,'down-color':value<0}">{{ value }}</span>
+      </ng-template>
+
+      <ng-template #creativeCell let-row="row"  ngx-datatable-cell-template>
+        <div class="create-title">{{row['pub_creative_title']}}</div>
+        <div class="create-desc">{{row['pub_creative_description1']}}</div>
+        <div class="create-desc">{{row['pub_creative_description2']}}</div>
+        <div class="create-title-url">{{row['pc_display_url']!=''?row['pc_display_url']:row['wap_display_url']}}</div>
+      </ng-template>
+
+      <!--</ngx-datatable-column>-->
+
+      <ngx-datatable-footer>
+        <ng-template  ngx-datatable-footer-template>
+          <div class="page-count">
+            共{{pageInfo.allCount}}条
+          </div>
+          <div class="page-size-select">
+            <select [(ngModel)]="pageInfo.pageSize" (ngModelChange)="changePageSize($event)">
+              <option *ngFor="let sizeList of pageInfo.pageSizeList" [value]="sizeList.key">{{sizeList.name}}</option>
+            </select>
+          </div>
+          <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="pageInfo.currentPage"
+            [size]="pageInfo.pageSize"
+            [count]="pageInfo.allCount"
+            [hidden]="!((pageInfo.allCount / pageInfo.pageSize) > 1)"
+            (change)="changePage($event)">
+          </datatable-pager>
+        </ng-template>
+      </ngx-datatable-footer>
+    </ngx-datatable>
+  </div>
+
+
+
+  <div class="optimization-empty-content" *ngIf="!rows.length && !viewTableData.single_condition.length && !loadingIndicator">
+    <div class="dashboard-empty-content-desc">
+      <button nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="createFolderModal(content)">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加分组</span>
+      </button>
+      <div class="dashboard-empty-content-hint mt30">您还未添加分组，点击按钮添加分组</div>
+    </div>
+  </div>
+</div>

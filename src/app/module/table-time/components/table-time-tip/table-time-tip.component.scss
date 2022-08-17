@@ -1,0 +1,39 @@
+.module-time{
+  display: flex;
+  display: -webkit-flex;
+  cursor: pointer;
+}
+.time-content{
+  height: 20px;
+  line-height:1.5;
+  border:1px solid #e4e4e4;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+
+.time-content.normal{
+  height: 30px;
+  line-height: 30px;
+}
+
+.module-icon.normal{
+  height: 30px;
+  line-height: 30px;
+}
+
+.time-icon{
+  border-left:none;
+}
+
+.bln{
+  border-left: none;
+}
+
+.brn{
+  border-right: none;
+}
+
+.bdn{
+  border: none;
+}

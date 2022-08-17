@@ -1,0 +1,474 @@
+<div>
+  <h3>批量编辑创意</h3>
+  <div class="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 mr8 inline-block">
+        <span>定时设置:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left noCheckbox ">
+      <nz-radio-group
+        [(ngModel)]="cronSetting">
+        <label class="mr20"
+               nz-radio
+               [nzValue]="'now'">
+          <span>立即执行</span>
+        </label>
+        <label nz-radio
+               [nzValue]="'current'">
+          <span>自定义</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="inpRow_right pull-left" *ngIf="cronSetting == 'current'">
+      <nz-date-picker
+        [nzShowTime]="{ nzFormat: 'HH:mm' }"
+        [nzDisabledDate]="disabledDate"
+        nzFormat="yyyy-MM-dd HH:mm"
+        nzPlaceHolder="请选择时间"
+        [nzSize]="'small'"
+        [(ngModel)] = "cronSettingTime"
+      ></nz-date-picker>
+    </div>
+
+
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" [ngClass]="{disabled:editingOriginalityData['pause']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['pause']['is_edit']">
+        <span>投放状态:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left" >
+      <nz-radio-group [nzSize]="'small'"
+                      [(ngModel)]="editingOriginalityData['pause']['value']"
+                      [nzDisabled]="!editingOriginalityData['pause']['is_edit']">
+        <label class="mr20" nz-radio [nzValue]="false" >
+          <span>开启</span>
+        </label>
+        <label nz-radio [nzValue]="true">
+          <span>暂停</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div *ngIf="!publisher_model['hasForeignPublisher']" class="inpRow mt10" [ngClass]="{disabled:editingOriginalityData.batch_update_item['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData.batch_update_item['is_edit']">
+        <span>修改范围:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left mr30">
+      <nz-select style="width: 200px;"
+                 [nzDisabled]="!editingOriginalityData.batch_update_item['is_edit']"
+                 [(ngModel)]="editingOriginalityData.batch_update_item['batch_item_type']"
+                 nzPlaceHolder="请选择修改范围"
+                 [nzSize]="'small'"
+      >
+        <nz-option [nzLabel]="'标题'" [nzValue]="1"></nz-option>
+        <nz-option [nzLabel]="'描述1'" [nzValue]="2"></nz-option>
+        <nz-option [nzLabel]="'描述2'" [nzDisabled]="has_shanma" [nzValue]="3"></nz-option>
+        <nz-option [nzLabel]="'标题和描述'" [nzValue]="4"></nz-option>
+      </nz-select>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div *ngIf="!publisher_model['hasForeignPublisher']" class="inpRow mt10" [ngClass]="{disabled:editingOriginalityData.batch_update_item['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w102 mr8 inline-block">
+        <span>修改方式:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <nz-radio-group [(ngModel)]="editingOriginalityData.batch_update_item['modify_type']" [nzDisabled]="!editingOriginalityData.batch_update_item['is_edit']">
+        <div>
+          <div class="h20">
+            <label class="inline-block mr2"
+                   nz-radio [nzValue]="1">
+              <span>查找替换</span>
+            </label>
+          </div>
+        </div>
+        <ng-container *ngIf="editingOriginalityData.batch_update_item['modify_type'] === 1">
+          <div class="mt2">
+            <span class="inline-block w70 text-right">查找：</span>
+            <input nz-input style="width: 340px;"
+                   disabled="{{!editingOriginalityData.batch_update_item['is_edit']}}"
+                   [(ngModel)]="editingOriginalityData.batch_update_item['search']"
+                   placeholder=""
+                   [nzSize]="'small'">
+          </div>
+          <div class="mt4">
+            <span class="inline-block w70 text-right">替换：</span>
+            <input nz-input style="width: 340px;"
+                   disabled="{{!editingOriginalityData.batch_update_item['is_edit']}}"
+                   [(ngModel)]="replace_value"
+                   placeholder=""
+                   [nzSize]="'small'">
+          </div>
+        </ng-container>
+
+        <div class="mt5">
+          <label class="inline-block mr2"
+                 nz-radio [nzValue]="2">
+            <span>在现有文字前面增加</span>
+          </label>
+        </div>
+        <div class="mt2" *ngIf="editingOriginalityData.batch_update_item['modify_type'] === 2">
+          <span class="inline-block w70 text-right">增加：</span>
+          <input nz-input style="width: 340px;"
+                 disabled="{{!editingOriginalityData.batch_update_item['is_edit']}}"
+                 [(ngModel)]="add_before"
+                 placeholder=""
+                 [nzSize]="'small'">
+        </div>
+        <div class="mt2">
+          <label class="inline-block mr2"
+                 nz-radio [nzValue]="3">
+            <span>在现有文字后面增加</span>
+          </label>
+        </div>
+        <div class="mt2" *ngIf="editingOriginalityData.batch_update_item['modify_type'] === 3">
+          <span class="inline-block w70 text-right">增加：</span>
+          <input nz-input style="width: 340px;"
+                 disabled="{{!editingOriginalityData.batch_update_item['is_edit']}}"
+                 [(ngModel)]="add_after"
+                 placeholder=""
+                 [nzSize]="'small'">
+        </div>
+        <div class="mt2">
+          <label class="inline-block mr2"
+                 nz-radio [nzValue]="4">
+            <span>全部替换</span>
+          </label>
+        </div>
+        <ng-container *ngIf="editingOriginalityData.batch_update_item['modify_type'] === 4">
+          <div class="mt2" *ngIf="editingOriginalityData.batch_update_item['batch_item_type'] === 1 || editingOriginalityData.batch_update_item['batch_item_type'] === 4">
+            <div><span class="inline-block w70 text-right" *ngIf="editingOriginalityData.batch_update_item['batch_item_type'] === 4">标题：</span>
+              <span class="inline-block w70 text-right" *ngIf="editingOriginalityData.batch_update_item['batch_item_type'] === 1">修改为：</span>
+              <input nz-input style="width: 340px;"
+                     disabled="{{!editingOriginalityData.batch_update_item['is_edit']}}"
+                     [(ngModel)]="creative_title"
+                     (click) ="changeInput('pub_creative_title')"
+                     (ngModelChange)="modifyChange('creative_title')"
+                     placeholder=""
+                     [nzSize]="'small'">
+              <i nz-icon nzType="question-circle" nzTheme="outline"
+                 nz-popover
+                 *ngIf="publisher_model['publisherCount'] > 1"
+                 [ngClass]="{c8c8c8:!editingOriginalityData.batch_update_item['is_edit']}"
+                 [nzPopoverContent]="stableTemplate"
+                 nzPopoverPlacement="right"
+                 class="ml8"
+                 style="color: #f09200"></i>
+              <!--同媒体-->
+              <ng-container *ngIf="publisher_model['publisherCount'] === 1">
+                 <span class="ml8">({{tips.length.pub_creative_title}}/{{creativeTitleRange[publisher_model['publisher_array'][0]['value'] * 1]['max']}}）</span>
+              </ng-container>
+              <!--跨媒体-->
+              <ng-container *ngIf="publisher_model['publisherCount'] > 1">
+                <span class="ml8">({{tips.length.pub_creative_title}}/{{creativeTitleRange['morePublisher']['max']}}）</span>
+              </ng-container>
+
+            </div>
+            <div class="mt2" *ngIf="editingOriginalityData.batch_update_item['is_edit'] && tips.pub_creative_title">
+                <span class="wroning ml70" [ngClass]="{clSave:iswraing}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['titlePrompt']}}</span>
+            </div>
+          </div>
+          <div class="mt4" *ngIf="editingOriginalityData.batch_update_item['batch_item_type'] === 2 || editingOriginalityData.batch_update_item['batch_item_type'] === 4">
+            <div>
+              <span class="inline-block w70 text-right" *ngIf="editingOriginalityData.batch_update_item['batch_item_type'] === 4">描述1：</span>
+              <span class="inline-block w70 text-right" *ngIf="editingOriginalityData.batch_update_item['batch_item_type'] === 2">修改为：</span>
+
+              <input nz-input style="width: 340px;"
+                     disabled="{{!editingOriginalityData.batch_update_item['is_edit']}}"
+                     [(ngModel)]="creative_discription1"
+                     (click) ="changeInput('pub_creative_description1')"
+                     (ngModelChange)="modifyChange('creative_discription1')"
+                     placeholder=""
+                     [nzSize]="'small'">
+              <i nz-icon nzType="question-circle" nzTheme="outline"
+                 nz-popover
+                 *ngIf="publisher_model['publisherCount'] > 1"
+                 [ngClass]="{c8c8c8:!editingOriginalityData.batch_update_item['is_edit']}"
+                 [nzPopoverContent]="discription1Template"
+                 nzPopoverPlacement="right"
+                 class="ml8"
+                 style="color: #f09200"></i>
+              <!--同媒体-->
+              <ng-container *ngIf="publisher_model['publisherCount'] === 1">
+                <span class="ml8">({{tips.length.pub_creative_description1}}/{{discription1Range[publisher_model['publisher_array'][0]['value'] * 1]['max']}}）</span>
+              </ng-container>
+              <!--跨媒体-->
+              <ng-container *ngIf="publisher_model['publisherCount'] > 1">
+                <span class="ml8">({{tips.length.pub_creative_description1}}/{{discription1Range['morePublisher']['max']}}）</span>
+              </ng-container>
+            </div>
+            <div class="mt2" *ngIf="editingOriginalityData.batch_update_item['is_edit'] && tips.pub_creative_description1">
+                <span class="wroning ml70" [ngClass]="{clSave:iswraing}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['discription1Prompt']}}</span>
+            </div>
+          </div>
+          <!--神马无此字段-->
+          <div class="mt4" *ngIf="!has_shanma && (editingOriginalityData.batch_update_item['batch_item_type'] === 3 || editingOriginalityData.batch_update_item['batch_item_type'] === 4)">
+            <div>
+              <span class="inline-block w70 text-right" *ngIf="editingOriginalityData.batch_update_item['batch_item_type'] === 4">描述2：</span>
+              <span class="inline-block w70 text-right" *ngIf="editingOriginalityData.batch_update_item['batch_item_type'] === 3">修改为：</span>
+
+              <input nz-input style="width: 340px;"
+                    disabled="{{!editingOriginalityData.batch_update_item['is_edit']}}"
+                    [(ngModel)]="creative_discription2"
+                    (click) ="changeInput('pub_creative_description2')"
+                     (ngModelChange)="modifyChange('creative_discription2')"
+                    placeholder=""
+                    [nzSize]="'small'">
+              <i nz-icon nzType="question-circle" nzTheme="outline"
+                nz-popover
+                 *ngIf="publisher_model['publisherCount'] > 1"
+                [ngClass]="{c8c8c8:!editingOriginalityData.batch_update_item['is_edit']}"
+                [nzPopoverContent]="discription2Template"
+                 nzPopoverPlacement="right"
+                class="ml8"
+                style="color: #f09200"></i>
+              <!--同媒体-->
+              <ng-container *ngIf="publisher_model['publisherCount'] === 1">
+                <span class="ml8">({{tips.length.pub_creative_description2}}/{{discription2Range[publisher_model['publisher_array'][0]['value'] * 1]['max']}}）</span>
+              </ng-container>
+              <!--跨媒体-->
+              <ng-container *ngIf="publisher_model['publisherCount'] > 1">
+                <span class="ml8">({{tips.length.pub_creative_description2}}/{{discription2Range['morePublisher']['max']}}）</span>
+              </ng-container>
+           </div>
+            <div class="mt2" *ngIf="editingOriginalityData.batch_update_item['is_edit'] && tips.pub_creative_description2">
+                <span class="wroning ml70" [ngClass]="{clSave:iswraing}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['discription2Prompt']}}</span>
+            </div>
+          </div>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--标题-->
+  <ng-template #stableTemplate>
+    <div class="w220">
+      <p class="mt2">百度：9~50个字符</p>
+      <p class="mt2">搜狗：8~50个字符</p>
+      <p class="mt2">360：&nbsp;1~50个字符</p>
+      <p class="mt2">神马：16~70个字符</p>
+      <p class="mt5" style="color: darkred">跨媒体操作时，字符范围16～50个字符</p>
+    </div>
+  </ng-template>
+  <!--描述1-->
+  <ng-template #discription1Template>
+    <div class="w220">
+      <p class="mt2">百度：9~80个字符</p>
+      <p class="mt2">搜狗：8~80个字符</p>
+      <p class="mt2">360：&nbsp;1~80个字符</p>
+      <p class="mt2">神马：16~136个字符</p>
+      <p class="mt5" style="color: darkred">跨媒体操作时，字符范围16～80个字符</p>
+    </div>
+  </ng-template>
+  <!--描述2-->
+  <ng-template #discription2Template>
+    <div class="w220">
+      <p class="mt2">百度：9~80个字符</p>
+      <p class="mt2">搜狗：8~80个字符</p>
+      <p class="mt2">360：&nbsp;1~80个字符</p>
+      <p class="mt5" style="color: darkred">跨媒体操作时，字符范围9～80个字符</p>
+    </div>
+  </ng-template>
+
+  <div *ngIf="!publisher_model['hasForeignPublisher'] && !has_shanma" class="inpRow mt10"  [ngClass]="{disabled:editingOriginalityData.pc_destination_url['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData.pc_destination_url['is_edit']">
+        <span>访问URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <nz-radio-group [(ngModel)]="editingOriginalityData.pc_destination_url['modify_type']" [nzDisabled]="!editingOriginalityData.pc_destination_url['is_edit']">
+        <div>
+          <div class="color">
+            <label nz-radio
+                   [nzValue]="1">
+              <span>将URL修改为:</span>
+            </label>
+          </div>
+          <div style="width: 400px;">
+              <textarea placeholder="输入Url"
+                        *ngIf="editingOriginalityData.pc_destination_url['is_edit']"
+                        [(ngModel)]="batchPcUrlModifyValue"
+                        (click) ="changeInput('pc_destination_url')"
+                        (ngModelChange)="contentChange('batchPcUrlModifyValue', true)"
+                        class="titleColor w400 border"  rows="5"></textarea>
+            <textarea placeholder="输入Url" *ngIf="!editingOriginalityData.pc_destination_url['is_edit']" disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+            <i class="tip">({{tips.length.batchPcUrlModifyValue}}/1024)</i>
+            <ng-container *ngIf="editingOriginalityData.pc_destination_url['is_edit'] && editingOriginalityData.pc_destination_url['modify_type'] === 1 && tips.pc_destination_url">
+              <span style=" position: absolute;display: inline-block;left: 392px;width: 200px;top: 25px;" class="wroning ml20" [ngClass]="{clSave:iswraing}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['pcDestinationUrlPrompt']}}</span>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="mt5">
+          <div>
+            <label nz-radio [nzValue]="2">
+              <span>查找和替换URL:</span>
+            </label>
+          </div>
+          <div class="searchP pl16 mb10">
+            <div class="pull-left mr5">
+              <i>查找:</i>
+            </div>
+            <input nz-input style="width: 352px"
+                   [(ngModel)]="editingOriginalityData.pc_destination_url['search']"
+                   disabled="{{!editingOriginalityData.pc_destination_url['is_edit']}}"
+                   [nzSize]="'small'">
+            <ng-container *ngIf="editingOriginalityData.pc_destination_url['is_edit'] && editingOriginalityData.pc_destination_url['modify_type'] === 2" >
+                  <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!editingOriginalityData.pc_destination_url['search']">
+                    <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>查找内容不能为空</span>
+            </ng-container>
+          </div>
+          <div class="searchP pl16">
+            <div class="pull-left mr5">
+              <i>替换:</i>
+            </div>
+            <input nz-input style="width: 352px"
+                   [(ngModel)]="batchPcUrlSearchValue"
+                   disabled="{{!editingOriginalityData.pc_destination_url['is_edit']}}"
+                   (click) ="changeInput('pc_destination_url_search')"
+                   (ngModelChange)="contentChange('batchPcUrlSearchValue', true)"
+                   [nzSize]="'small'">
+            <ng-container *ngIf="editingOriginalityData.pc_destination_url['is_edit'] && editingOriginalityData.pc_destination_url['modify_type'] === 2 && tips.pc_destination_url_search">
+                  <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!batchPcUrlSearchValue">
+                    <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>替换内容不能为空</span>
+            </ng-container>
+          </div>
+        </div>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" *ngIf="!publisher_model['hasForeignPublisher'] && !has_shanma"  [ngClass]="{disabled:editingOriginalityData['pc_display_url']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['pc_display_url']['is_edit']">
+        <span>显示URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+          <textarea placeholder="输入Url"
+                    *ngIf="editingOriginalityData['pc_display_url']['is_edit']"
+                    [(ngModel)]="editingOriginalityData['pc_display_url']['value']"
+                    (click) ="changeInput('pc_display_url')"
+                    (ngModelChange)="contentChange('pc_display_url')"
+                    class="titleColor w400 border"  rows="5"></textarea>
+        <textarea placeholder="输入Url" *ngIf="!editingOriginalityData['pc_display_url']['is_edit']" [(ngModel)]="editingOriginalityData['pc_display_url']['value']"  disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+        <i class="tip positionLeft">({{tips.length.pc_display_url}}/36)</i>
+        <ng-container *ngIf="editingOriginalityData['pc_display_url']['is_edit'] && tips.pc_display_url">
+              <span style=" position: absolute;display: inline-block;left: 392px;width: 200px;top: 25px;" class="wroning ml20" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['pcDisplayUrlPrompt']}}</span>
+        </ng-container>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" *ngIf="!publisher_model['hasForeignPublisher']" [ngClass]="{disabled:editingOriginalityData['wap_destination_url']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['wap_destination_url']['is_edit']">
+        <span>移动访问URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <nz-radio-group [(ngModel)]="editingOriginalityData['wap_destination_url']['modify_type']"  [nzDisabled]="!editingOriginalityData['wap_destination_url']['is_edit']">
+        <div>
+          <div>
+            <label nz-radio
+                   [nzValue]="1">
+              <span>将URL修改为:</span>
+            </label>
+          </div>
+          <div style="width: 400px;">
+              <textarea placeholder="输入Url"
+                        *ngIf="editingOriginalityData['wap_destination_url']['is_edit']"
+                        [(ngModel)]="batchMobileUrlModifyValue" class="titleColor w400 border"
+                        (click) ="changeInput('wap_destination_url')"
+                        (ngModelChange)="contentChange('batchMobileUrlModifyValue', true)"
+                        rows="5"></textarea>
+            <textarea placeholder="输入Url" *ngIf="!editingOriginalityData['wap_destination_url']['is_edit']"  disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+            <i class="tip">({{tips.length['batchMobileUrlModifyValue']}}/1024)</i>
+            <!-- <ng-container *ngIf="editingOriginalityData.wap_destination_url['modify_type'] === 1">
+                 <span style=" position: absolute;display: inline-block;right: -135px;top: 25px;"
+                       class="wroning ml20"
+                       [ngClass]="{clSave:iswraing}"
+                       *ngIf="originalityCheck['wapDestinationUrlPrompt'].length > 1024"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['wapDestinationUrlPrompt']}}</span>
+             </ng-container>-->
+            <ng-container *ngIf="editingOriginalityData['wap_destination_url']['is_edit'] && editingOriginalityData.wap_destination_url['modify_type'] === 1 && tips['wap_destination_url']">
+              <span style=" position: absolute;display: inline-block;left: 392px;width: 200px;top: 25px;" class="wroning ml20" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['wapDestinationUrlPrompt']}}</span>
+            </ng-container>
+          </div>
+        </div>
+        <div class="mt5">
+          <div>
+            <label nz-radio [nzValue]="2">
+              <span>查找和替换URL:</span>
+            </label>
+          </div>
+          <div class="searchP pl16 mb10">
+            <div class="pull-left mr5">
+              <i>查找:</i>
+            </div>
+            <input nz-input style="width: 352px"
+                   [(ngModel)]="editingOriginalityData['wap_destination_url']['search']"
+                   disabled="{{!editingOriginalityData['wap_destination_url']['is_edit']}}"
+                   [nzSize]="'small'">
+            <ng-container *ngIf="editingOriginalityData['wap_destination_url']['is_edit'] && editingOriginalityData.wap_destination_url['modify_type'] === 2">
+                  <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!editingOriginalityData['wap_destination_url']['search']">
+                    <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>查找内容不能为空</span>
+            </ng-container>
+          </div>
+          <div class="searchP pl16">
+            <div class="pull-left mr5">
+              <i>替换:</i>
+            </div>
+            <input nz-input style="width: 352px"
+                   [(ngModel)]="batchMobileUrlSearchValue"
+                   disabled="{{!editingOriginalityData['wap_destination_url']['is_edit']}}"
+                   (click) ="changeInput('wap_destination_url_search')"
+                   (ngModelChange)="contentChange('batchMobileUrlSearchValue', true)"
+                   [nzSize]="'small'">
+            <ng-container *ngIf="editingOriginalityData['wap_destination_url']['is_edit'] && editingOriginalityData.wap_destination_url['modify_type'] === 2 && tips.wap_destination_url_search">
+                  <span class="wroning ml20" [ngClass]="{clSave:iswraing}">
+                    <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['wapDestinationUrlPrompt']}}</span>
+            </ng-container>
+          </div>
+        </div>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--移动显示Url-->
+  <div class="inpRow mt10" *ngIf="!publisher_model['hasForeignPublisher']" [ngClass]="{disabled:editingOriginalityData['wap_display_url']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['wap_display_url']['is_edit']">
+        <span>移动显示URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+          <textarea placeholder="输入Url" *ngIf="editingOriginalityData['wap_display_url']['is_edit']"
+                    [(ngModel)]="editingOriginalityData['wap_display_url']['value']"
+                    (click) ="changeInput('wap_display_url')"
+                    (ngModelChange)="contentChange('wap_display_url')"
+                    class="titleColor w400 border"  rows="5"></textarea>
+        <textarea placeholder="输入Url" *ngIf="!editingOriginalityData['wap_display_url']['is_edit']" [(ngModel)]="editingOriginalityData['wap_display_url']['value']" disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+        <i class="tip positionLeft">({{tips.length.wap_display_url}}/36)</i>
+        <ng-container *ngIf="editingOriginalityData['wap_display_url']['is_edit'] && tips['wap_display_url']">
+              <span style=" position: absolute;display: inline-block;left: 392px;width: 200px;top: 25px;" class="wroning ml20" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['wapDisplayUrlPrompt']}}</span>
+        </ng-container>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+</div>

@@ -1,0 +1,237 @@
+$edit-background-F6F6F6:#F6F6F6;
+$edit-cannot-click:#c8c8c8;
+$edit-Subtitle:#404040;
+$edit-title-000:#000;
+$edit-menu-electted-font-56acef:#56acef;
+$edit-menu-selected-background-EEF2F7:#EEF2F7;
+$edit-border-clor:#e4e4e4;
+$edit-form-fff:#fff;
+$edit-transparent:transparent;
+$edit-save-btn:#588AA5;
+.flexFooter{
+  height: 40px;
+  position: fixed;
+  bottom: 30px;
+  left: 0px;
+  background: $edit-form-fff;
+  width: 100%;
+  text-align: center;
+  line-height: 40px;
+}
+.flexFooter .edSave{
+  color: $edit-form-fff;
+  background: $edit-save-btn;
+  margin-left: 10px;
+}
+.flexLeft ul{
+  border: 1px solid $edit-border-clor;
+  background: $edit-form-fff;
+}
+.flexLeft ul li{
+  height: 28px;
+  line-height: 28px;
+  padding-left: 10px;
+  box-sizing: border-box;
+  color: $edit-Subtitle;
+  cursor: pointer;
+}
+.flexLeft ul li:hover{
+  background: #EEF2F7;
+  color: #56acef !important;
+}
+.menuSle{
+  background: $edit-menu-selected-background-EEF2F7;
+  color: $edit-menu-electted-font-56acef !important;
+}
+
+.conDiv{
+  height: calc(100vh - 80px - 70px - 60px);
+  overflow: hidden;
+  background:$edit-background-F6F6F6;
+  i{
+    font-style: normal;
+  }
+  .conSon{
+    max-height: calc(100vh - 40px - 40px);
+    overflow-y: scroll;
+  }
+  .h20{
+    height: 20px;
+  }
+  h3{
+    font-size: 12px;
+    margin-top: 16px;
+    margin-bottom: 15px;
+    color: $edit-title-000;
+  }
+  textarea{
+    padding: 5px;
+    box-sizing: border-box;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    background:$edit-form-fff;
+  }
+  .not-allowed{cursor:not-allowed;}
+  .transparent {
+    background: $edit-transparent !important;
+  }
+  .inpRow .inpRow_left{
+    //margin-right: 5px;
+  }
+  .inpRow  .titleLa span{
+    text-align: right;
+    float: right;
+    color: $edit-Subtitle;
+  }
+  .tishi{
+    margin-left: 24px;
+  }
+  .disabled{
+    span , i{
+      color: $edit-cannot-click !important;
+    }
+  }
+  .cantClick{
+    .inpRow{
+      span{
+        color:$edit-cannot-click !important;
+      }
+      i{
+        color:$edit-cannot-click !important;
+      }
+      .inpRow_right{
+        .advancedStting{
+          background: $edit-transparent ;
+        }
+      }
+    }
+    button{
+      background: $edit-transparent !important;
+      color: $edit-cannot-click !important;
+    }
+  }
+  .djustmentSigle {
+    span{
+      color:$edit-cannot-click !important;
+    }
+    i{
+      color:$edit-cannot-click !important;
+    }
+    .inpRow_right{
+      .advancedStting{
+        background: $edit-transparent ;
+      }
+    }
+  }
+  .dimensionTableDiv{
+    width: 700px;
+    padding-bottom: 53px;
+    background: #fff;
+    border: 1px solid #e4e4e4;
+  }
+  .dimensionTableDiv table{
+    width: 100%;
+    text-align: left;
+  }
+  .dimensionTableDiv table thead tr span{
+    font-weight: 500;
+    color: $edit-Subtitle;
+  }
+  .dimensionTableDiv table thead tr th:nth-of-type(1){
+    width: 25%;
+  }
+
+  .dimensionTableDiv table thead tr th:last-child{
+    width: 35%;
+  }
+  .dimensionTableDiv table tr th{
+    background: $edit-menu-selected-background-EEF2F7;
+  }
+  .dimensionTableDiv table tr th,.dimensionTableDiv table tr td{
+    padding:0px 8px;
+    box-sizing: border-box;
+    height: 25px;
+  }
+  .dimensionTableDiv table tr td:nth-of-type(1) span{
+    display: inline-block;
+    width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-style: normal;
+  }
+  .tdWidth,.tdWidth span{
+    width: auto !important;
+  }
+  .dimensionTableDiv table tbody tr:nth-child(even) td{
+    background: $edit-background-F6F6F6;
+  }
+  .border{
+    border:1px solid $edit-border-clor !important;
+  }
+  textarea{
+    padding: 5px;
+    box-sizing: border-box;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+  }
+  .c8c8c8{
+    color: #c8c8c8 !important;
+  }
+  .transparent{
+    background: transparent !important;
+  }
+  .noCheckbox div{
+    color: $edit-Subtitle;
+  }
+  .gradeDiv {
+    height: 4px;
+    background: linear-gradient(to right, #f6f6f6, #57b5ff);
+    width: 200px;
+    margin-top: 8px;
+    div{
+      margin-top: -8px;
+      float: left;
+      label{
+        height: 34px;
+        position: relative;
+        .spanText{
+          position: absolute;
+          left: 0px;
+          top: 18px;
+        }
+      }
+    }
+    .modelDiv{
+      margin-left: 23%;
+    }
+    .lastDiv{
+      float: right;
+      margin-right: -28px;
+    }
+  }
+  .grade_no_click {
+    background: linear-gradient(to right, #f6f6f6, #b7dffd) !important;
+  }
+}
+
+
+.clear{
+  clear: both;
+}
+.clSave span{
+  visibility: visible !important;
+}
+.clSave{
+  visibility: visible !important;
+}
+.wroning span{
+  color: #f9c137;
+  visibility: hidden;
+}
+.wroning{
+  color: #f9c137;
+  visibility: hidden;
+}

@@ -1,0 +1,115 @@
+$color-56acef:#56acef !default;
+$color-404040:#404040 !default;
+$color-e4e4e4:#e4e4e4 !default;
+$color-fff:#fff !default;
+.lh12{
+  line-height: 12px;
+}
+.bookmark-list{
+  position: fixed;
+  top: 116px;
+  right: 0px;
+  z-index:999;
+}
+
+.mark-tab-btn{
+  transition: none;
+  width:110px;
+  line-height: 18px;
+  text-align: left;
+  color: $color-fff;
+  //background-color: $color-56acef;
+  border-radius: 2px 0 0 2px !important;
+}
+.sidebar-show .mark-tab-btn{
+  width: 200px;
+  text-align:left;
+}
+.right-sidebar{
+  width: 200px;
+  z-index: 2;
+  display: none;
+}
+.sidebar-show .right-sidebar{
+  display: block;
+}
+.mark-add-tab{
+  height: 36px;
+
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  background-color: $color-fff;
+  border-bottom:1px solid $color-e4e4e4;
+}
+.mark-lists{
+  list-style:none;
+  height: calc(100% - 36px);
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  .mark-selected{
+    background-color:#f6f6f6;
+  }
+}
+.hover-show{
+  display: none;
+}
+.mark-item{
+  position: relative;
+  //height: 30px;
+  //
+  //display: flex;
+  //justify-content:space-between;
+  //align-items:center;
+  background-color:$color-fff;
+  color:$color-404040;
+  cursor: pointer;
+  padding: 5px 8px;
+
+  .mark-item-name{
+    color:$color-56acef;
+    text-decoration: underline;
+    width:100%;
+    display: inline-block;
+    overflow: hidden;
+    white-space:nowrap;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+  }
+
+  .active{
+    color: $color-56acef !important;
+  }
+  .mark-item-desc{
+    font-size: 10px;
+    line-height: 14px;
+  }
+
+  .mark-actions{
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    color: $color-56acef !important;
+  }
+
+}
+.mark-item.showOption:hover{
+  //background-color: #ecf6fe;
+  .hover-show{
+    display: inline-block;
+  }
+  .mark-item-name{
+    width: 124px;
+    padding-right: 8px;
+  }
+  .mark-item-desc a{
+    width:100%;
+    display: inline-block;
+    color: $color-404040;
+    overflow: hidden;
+    white-space:nowrap;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+  }
+}

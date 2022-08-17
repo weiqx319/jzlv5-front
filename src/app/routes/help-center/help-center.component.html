@@ -1,0 +1,31 @@
+<div class="help-container">
+  <div class="help-content">
+    <div class="help-container-left">
+      <div class="logoDiv" *ngIf="productInfo['logo_help_white']"><img alt="" src="{{productInfo['logo_help_white']}}"><span style="margin-left: -15px;">帮助中心</span></div>
+      <ul>
+        <li *ngFor="let menu of leftMenu" [ngClass]="{'active': currentMenu === menu['term_taxonomy_id']}"><a (click)="clickMenu(menu['term_taxonomy_id'], menu['name'])"><span class="inline-block catClass">{{menu['name']}}</span> <!--<span class="ml8 count">({{menu['count']}})</span>--></a></li>
+      </ul>
+    </div>
+    <div class="help-container-right" [ngStyle]="{'width': rightWith + 'px'}">
+      <div class="help-container-right-nav">
+        <div class="navDiv" [ngStyle]="{'max-width': rightWith - 250 + 'px'}">
+          <span>帮助中心</span>
+          <ng-container>
+            -> <span>{{catName}}</span>
+          </ng-container>
+          <ng-container *ngIf="articleName">
+            -> <span>{{articleName}}</span>
+          </ng-container>
+        </div>
+
+        <div class="help-container-right-nav-question"><a (click)="jumpHome()">返回首页</a></div>
+        <div class="help-container-right-nav-question"><a (click)="questionFeedback()">我要反馈问题</a></div>
+      </div>
+      <div class="help-container-right-contain">
+        <router-outlet></router-outlet>
+      </div>
+
+    </div>
+
+  </div>
+</div>

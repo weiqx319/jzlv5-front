@@ -1,0 +1,23 @@
+.batch-delay{
+  .delay-contain{
+
+    .delay-content{
+      display: flex;
+      justify-content: flex-end;
+      width: 410px;
+      .delay-item{
+        overflow: hidden;
+        .delay-title{
+          width: 96px;
+          text-align: right;
+          height: 21px;
+          line-height: 21px;
+        }
+      }
+
+    }
+    .delay-footer{
+      text-align: center;
+    }
+  }
+}

@@ -1,0 +1,203 @@
+<ng-container *ngIf="materialsData">
+  <nz-drawer
+    [nzBodyStyle]="{ overflow: 'auto' }"
+    [nzMaskClosable]="false"
+    [nzWidth]="920"
+    [nzVisible]="true"
+    [nzTitle]="materialsData['material_name']"
+    (nzOnClose)="close(false)"
+  >
+    <div class="materials-detail-wrapper">
+      <div class="materials-detail-left" [ngClass]="{vertical_layout: isVertical, horizontal_layout: !isVertical}">
+<!--        <div class="mr10 image-box" *ngIf="show_type==='video'||show_type==='video_report'">-->
+<!--          <img src="{{ materialsData['preview_img'] }}" [ngClass]="{vertical_video_bytedance: isVertical, horizontal_video_bytedance: !isVertical}">-->
+<!--          <nz-upload [nzCustomRequest]="uploadImage" [nzAccept]="'.png,.jpg,.jpeg'"-->
+<!--                     [nzBeforeUpload]="beforeUpload"-->
+<!--                     [nzLimit] = 1-->
+<!--                     [nzName]="'files'"-->
+<!--                     [nzShowUploadList]="false"-->
+<!--                     [ngClass]="{vertical_upload_box: isVertical, horizontal_upload_box: !isVertical}"-->
+<!--                     class="upload_box"-->
+<!--          >-->
+<!--            <button nz-button><i nz-icon nzType="upload"></i><span>修改封面图</span></button>-->
+<!--          </nz-upload>-->
+<!--        </div>-->
+        <video *ngIf="show_type==='video_report'" [ngClass]="{vertical_video: isVertical, horizontal_video: !isVertical}" [src]="videoUrl" controls="controls" controlslist="nodownload"></video>
+        <video *ngIf="show_type==='video'" [ngClass]="{vertical_video: isVertical, horizontal_video: !isVertical}" poster="{{materialsData['preview_img']}}" [src]="materialsData['preview_video']" controls="controls" controlslist="nodownload"></video>
+        <div style="text-align: center;" *ngIf="show_type==='video'&&materialsData['is_jump']">
+<!--          <img [src]="materialsData['preview_img']">-->
+          <div class="mt10">
+            <a class="play-icon-big" target="_blank" [href]="materialsData['preview_video']">预览视频</a>
+          </div>
+
+        </div>
+        <div style="text-align: center;" *ngIf="show_type!=='video'">
+          <img [src]="materialsData['preview_img']">
+        </div>
+      </div>
+      <div class="materials-detail-right">
+        <div class="right-header">
+          <label class="w100">基本信息</label>
+          <div class="pull-right">
+<!--            <button class="btn-jzl ml8" nz-button [nzType]="'primary'">-->
+<!--              <span>复制素材链接</span>-->
+<!--            </button>-->
+            <button class="btn-jzl ml8" nz-button [nzType]="'primary'" (click)="doSave()">
+              <span>保存</span>
+            </button>
+            <button class="btn-jzl ml8" nz-button [nzType]="'default'" (click)="doDelete()">
+              <span>删除</span>
+            </button>
+          </div>
+        </div>
+        <div class="right-content">
+          <ul>
+<!--            <li class="lab-row mt20">-->
+<!--              <label>文件名称:</label>-->
+<!--              <div>-->
+<!--                <p style="line-height: 30px;" class="w300 ml8">{{materialsData['material_name']}}</p>-->
+<!--              </div>-->
+<!--            </li>-->
+
+            <li class="lab-row mt20">
+              <label>标识:</label>
+              <div>
+                <label class="w300" style="line-height: 30px;">{{defaultData['material_md5']}}</label>
+              </div>
+            </li>
+            <li class="lab-row mt20">
+              <label>素材名称:</label>
+              <div>
+                <input class="w300" nz-input [(ngModel)]="defaultData['material_name']" />
+              </div>
+            </li>
+            <li class="lab-row mt20">
+              <label>素材制作时间:</label>
+              <div>
+                <nz-date-picker class="w300" [(ngModel)]="material_make_time" nzFormat="yyyy-MM-dd"></nz-date-picker>
+              </div>
+            </li>
+            <ng-container *ngIf="show_type==='video'">
+              <li class="lab-row mt20">
+                <label>导演:</label>
+                <div>
+                  <nz-select class="w300"
+                             [(ngModel)]="defaultData['director_id']"
+                             [nzPlaceHolder]="'请选择编导'"
+                             nzShowSearch>
+                    <nz-option
+                      *ngFor="let option of choreographerList"
+                      [nzLabel]="option.name"
+                      [nzValue]="option.key">
+                    </nz-option>
+                  </nz-select>
+                </div>
+              </li>
+              <li class="lab-row mt20">
+                <label>摄影:</label>
+                <div>
+                  <nz-select class="w300"
+                             [(ngModel)]="defaultData['camerist_id']"
+                             [nzPlaceHolder]="'请选择摄影'"
+                             nzShowSearch>
+                    <nz-option
+                      *ngFor="let option of photographList"
+                      [nzLabel]="option.name"
+                      [nzValue]="option.key">
+                    </nz-option>
+                  </nz-select>
+                </div>
+              </li>
+              <li class="lab-row mt20">
+                <label>剪辑:</label>
+                <div>
+                  <nz-select class="w300"
+                             [(ngModel)]="defaultData['movie_editor_id']"
+                             [nzPlaceHolder]="'请选择剪辑'"
+                             nzShowSearch>
+                    <nz-option
+                      *ngFor="let option of clipList"
+                      [nzLabel]="option.name"
+                      [nzValue]="option.key">
+                    </nz-option>
+                  </nz-select>
+                </div>
+              </li>
+            </ng-container>
+            <li class="lab-row mt20">
+              <label>标签:</label>
+              <div>
+                <nz-select class="w300"
+                           nzMode="tags"
+                           [(ngModel)]="defaultData['material_tags']"
+                           [nzPlaceHolder]="'请填写或选择标签'"
+                           nzShowSearch>
+                  <nz-option
+                    *ngFor="let option of tagsList"
+                    [nzLabel]="option.name"
+                    [nzValue]="option.key">
+                  </nz-option>
+                </nz-select>
+              </div>
+            </li>
+            <li class="lab-row mt20" *ngIf="show_type!=='video'">
+              <label>尺寸:</label>
+              <div>
+                <p style="line-height: 30px;" class="w300 ml8">{{defaultData['image_width']+'×'+defaultData['image_height']}}</p>
+              </div>
+            </li>
+            <li class="lab-row mt20">
+              <label>大小:</label>
+              <div>
+                <p style="line-height: 30px;" class="w300 ml8">{{defaultData['size']}}</p>
+              </div>
+            </li>
+            <li class="lab-row mt20">
+              <label>创建时间:</label>
+              <div>
+                <p style="line-height: 30px;" class="w300 ml8">{{defaultData['create_time']}}</p>
+              </div>
+            </li>
+            <ng-container *ngIf="currentManagerUser.role_id === 1 ||currentManagerUser.role_id === 3">
+              <li class="lab-row mt20">
+                <label>审核状态:</label>
+                <div>
+                  <nz-select class="w300"
+                             [(ngModel)]="defaultData['material_status']"
+                             nzShowSearch>
+                    <nz-option [nzLabel]="'待审核'" [nzValue]="0" nzHide></nz-option>
+                    <nz-option [nzLabel]="'通过'" [nzValue]="1"></nz-option>
+                    <nz-option [nzLabel]="'未通过'" [nzValue]="-1"></nz-option>
+                  </nz-select>
+                </div>
+              </li>
+              <li class="lab-row mt20">
+                <label>审核建议:</label>
+                <div>
+                  <input class="w300" nz-input [(ngModel)]="defaultData['confirm_suggest']" />
+                </div>
+              </li>
+            </ng-container>
+            <ng-container *ngIf="currentManagerUser.role_id !== 1 &&currentManagerUser.role_id !== 3">
+              <li class="lab-row mt20">
+                <label>审核状态:</label>
+                <div>
+                  <label class="w300" style="line-height: 30px;">{{defaultData['material_status']>0?'通过':defaultData['material_status']==0?'未审核':'未通过'}}</label>
+                </div>
+              </li>
+              <li class="lab-row mt20">
+                <label>审核建议:</label>
+                <div>
+                  <label class="w300" style="line-height: 30px;">{{defaultData['confirm_suggest']}}</label>
+                </div>
+              </li>
+            </ng-container>
+
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nz-drawer>
+</ng-container>
+
+

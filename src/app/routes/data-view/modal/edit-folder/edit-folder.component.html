@@ -1,0 +1,85 @@
+<!--优化设置-->
+<div>
+  <div *ngIf="parentData.selected_data.length === 1">
+    <h3 *ngIf="summaryType==='keyword'">编辑: <span>{{showSingleKeywordData['pub_keyword']}}</span>（属于:{{publisherOption[showSingleKeywordData['publisher_id']]}}/{{showSingleKeywordData['pub_account_name']}}、{{showSingleKeywordData['pub_campaign_name']}}、{{showSingleKeywordData['pub_adgroup_name']}}）</h3>
+    <h3 *ngIf="summaryType==='campaign'">编辑: <span>{{campaignInfo['pub_campaign_name']}}</span>（属于:{{publisherOption[campaignInfo['publisher_id']]}}/{{campaignInfo['pub_account_name']}}）</h3>
+    <h3 *ngIf="summaryType==='adgroup'">编辑: <span>{{groupData['pub_adgroup_name']}}</span>（属于:{{publisherOption[groupData['publisher_id']]}}/{{groupData['pub_account_name']}}、{{groupData['pub_campaign_name']}}）</h3>
+    <h3 *ngIf="summaryType==='account'">编辑: <span>{{accountInfo['pub_account_name']}}</span>（属于:{{publisherOption[accountInfo['publisher_id']]}}）</h3>
+  </div>
+  <h3 *ngIf="parentData.selected_data.length > 1">批量编辑</h3>
+
+  <!--选择分组-->
+  <div class="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w106 mr8 inline-block">
+        <span>选择分组:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs noCheckbox">
+      <nz-radio-group [(ngModel)]="folderData.action">
+        <div>
+          <div class="h20 pull-left">
+            <label class="mr0" nz-radio
+                   [nzValue]="2">
+              <span>新建分组:</span>
+            </label>
+          </div>
+          <input nz-input style="width: 200px;"
+                 [(ngModel)]="folderData.folder_name"
+                 disabled="{{folderData.action !== 2}}"
+                 placeholder="输入分组名称"
+                 [nzSize]="'small'">
+          <i  nz-icon nzType="question-circle" nzTheme="outline"
+             nz-popover
+             [nzPopoverContent]="optimizationGroupTemplate"
+              nzPopoverPlacement="right"
+             class="ml8"
+             style="color: #f09200"></i>
+          <ng-container *ngIf="folderData.action === 2">
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!folderData.folder_name"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入分组名称</span>
+          </ng-container>
+        </div>
+        <ng-template #optimizationGroupTemplate>
+          <div style="max-width:304px;">
+            <p>每个分组可加入20万个关键词，如您选择的关键词超过20万，将会按照关键词id提取前20万个关键词加入分组</p>
+          </div>
+        </ng-template>
+
+        <div class="mt10">
+          <div class="h20 pull-left">
+            <label class="mr0"
+                   nz-radio
+                   [nzValue]="1">
+              <span>加入分组:</span>
+            </label>
+          </div>
+          <nz-select style="width: 200px;"
+                     [nzSize]="'small'"
+                     nzPlaceHolder="请选择分组"
+                     [nzDisabled]="folderData.action !== 1"
+                     [(ngModel)]="folderData.folder_id">
+            <nz-option *ngFor="let option of folderList"
+                       nzCustomContent
+                       [nzLabel]="option.folder_name"
+                       [nzValue]="option.folder_id">
+              <i class="pull-right" style="line-height: 1.5">{{option.detail_count}}</i>{{option.folder_name}} </nz-option>
+          </nz-select>
+          <i nz-icon nzType="question-circle" nzTheme="outline"
+             nz-popover
+             [nzPopoverContent]="optimizationGroupTemplate"
+             nzPopoverPlacement="right"
+             class="ml8"
+             style="color: #f09200"></i>
+          <ng-container *ngIf="folderData.action === 1">
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!folderData.folder_id"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择分组</span>
+          </ng-container>
+        </div>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+
+
+  <p class="mt14" *ngIf="iswraing" style="color: red;">{{tishi}}</p>
+
+</div>

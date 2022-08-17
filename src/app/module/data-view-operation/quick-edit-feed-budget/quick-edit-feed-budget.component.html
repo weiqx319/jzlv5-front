@@ -1,0 +1,119 @@
+<div class="lab-row">
+  <div class="mb20" *ngIf="publisherId == 6 && summaryType == 'account'">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w60 mr8 inline-block">
+        <span>定时设置:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left noCheckbox ">
+      <nz-radio-group
+        [(ngModel)]="editBudgetParam.cron_setting_type" (ngModelChange)="cronSettingChange()">
+        <label class="mr20"
+               nz-radio
+               [nzValue]="'now'">
+          <span>立即执行</span>
+        </label>
+        <label nz-radio
+               [nzValue]="'current'">
+          <span>自定义</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="inpRow_right pull-left" *ngIf="editBudgetParam.cron_setting_type == 'current'">
+      <nz-date-picker
+        [nzShowTime]="{ nzFormat: 'HH:mm' }"
+        [nzDisabledDate]="disabledDate"
+        nzFormat="yyyy-MM-dd HH:mm"
+        nzPlaceHolder="请选择时间"
+        [nzSize]="'small'"
+        [(ngModel)] = "editBudgetParam.cron_setting_time"
+        (ngModelChange)="changeCronTime()"
+      ></nz-date-picker>
+    </div>
+  </div>
+  <div class="inpRow mt10" *ngIf="publisherId!==24">
+    <nz-radio-group [(ngModel)]="editBudgetParam.budgetRadio" (ngModelChange)="budgetRadioChange($event)">
+      <div style="display: inline-block;">
+        <div class="h20 pull-left">
+          <label nz-radio
+                 [nzValue]="1">
+            <span *ngIf="!(summaryType =='adgroup' && publisherId == 7)">每日</span>
+          </label>
+        </div>
+        <nz-input-number [(ngModel)]="editBudgetParam.budget"
+                         (ngModelChange)="budgetChange($event)"
+                         [nzDisabled]="editBudgetParam.budgetRadio != 1"
+                         [nzSize]="'small'">
+        </nz-input-number>
+        <span class="ml5">元</span>
+        <ng-container *ngIf="editBudgetParam.budgetRadio == 1">
+          <span [ngClass]="{'up-color': editBudgetParam.iswraing}" class="ml5" style="color: #afabab">{{editBudgetParam.budgetRanges[summaryType][editBudgetParam.publisherId]['extraInfo']}}</span>
+        </ng-container>
+      </div>
+      <div class="ed_shotinp mt5" *ngIf="publisherId == 6 && summaryType == 'account'">
+        <div class="h20 pull-left">
+          <label nz-radio [nzValue]="3">
+            <span>将预算:</span>
+          </label>
+        </div>
+        <nz-select class="w100 mr5"
+                   [nzDisabled]="editBudgetParam.budgetRadio != 3"
+                   [(ngModel)]="editBudgetParam.action"
+                   [nzSize]="'small'"
+                   nzPlaceHolder="请选择">
+          <nz-option
+            *ngFor="let option of priceArray"
+            [nzLabel]="option.name"
+            [nzValue]="option.value">
+          </nz-option>
+        </nz-select>
+        <nz-input-number class="numberInput mr5 w96"
+                         [nzDisabled]="editBudgetParam.budgetRadio != 3"
+                         [(ngModel)]="editBudgetParam.price"
+                         [nzSize]="'small'">
+        </nz-input-number>
+        <span class="ml5">%</span>
+        <ng-container *ngIf="editBudgetParam.budgetRadio === 3">
+          <span class="wroning ml20" [ngClass]="{'up-color': editBudgetParam.iswraing}" *ngIf="editBudgetParam.iswraing">
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>出价比例不能为空</span>
+        </ng-container>
+      </div>
+      <div class="mt5" *ngIf="!(summaryType =='adgroup' && publisherId == 7)">
+        <label
+          nz-radio
+          [nzValue]="2">
+          <span>不限定</span>
+        </label>
+      </div>
+    </nz-radio-group>
+  </div>
+  <div class="lab-row-xhs" *ngIf="publisherId===24">
+    <label><span class="redStart">*</span>预算:</label>
+    <div>
+      <nz-radio-group class="ml8 mb10" [nzSize]="'small'"
+                      [(ngModel)]="xhsBudgetParams.budget_type"
+                      (ngModelChange)="emitData()">
+        <ng-container *ngFor="let option of xhsBudgetParams.budget_type_sub">
+          <label nz-radio-button [nzValue]="option.value">
+            <span>{{option.label}}</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+      <div class="ml8" *ngIf="xhsBudgetParams.budget_type=== 2">
+        <nz-input-number [(ngModel)]="xhsBudgetParams.budget"
+                         (ngModelChange)="emitData()"
+                         [nzMin]="50"
+                         [nzSize]="'small'">
+        </nz-input-number>
+        <span class="ml5">元</span>
+        <div class="error-tip mt8" *ngIf="checkErrorTip.xhs_budget.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.xhs_budget.tip_text }}</span>
+        </div>
+        <div class="mt5">
+          <label nz-checkbox [(ngModel)]="xhsBudgetParams.smart_switch" (ngModelChange)="emitData()">开启节假日预算上涨，上涨幅度在20%以内<br/><span style="color:#888">(节假日平台流量上涨，避免节假日错失优质流量)</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

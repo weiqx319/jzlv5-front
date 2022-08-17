@@ -1,0 +1,202 @@
+<div class="ranking-log-list-nav">
+  <div class="ranking-log-nav-col">
+    <div class="ranking-log-nav-btn">
+      <ng-container *ngIf="publishId === 3">
+        <nz-select class="w80"
+                   [nzSize]="'small'"
+                   [(ngModel)]="keywordCondition.filter_filed"
+                   (ngModelChange) = "changeKeyword(keywordCondition.filter_filed)"
+                   [nzPlaceHolder]="'不设置'">
+          <nz-option
+            *ngFor="let item of keywordSelect.publish3 "
+            [nzLabel]="item.name"
+            [nzValue]="item.value">
+          </nz-option>
+        </nz-select>
+      </ng-container>
+      <ng-container *ngIf="publishId != 3">
+        <nz-select class="w86"
+                   [nzSize]="'small'"
+                   [(ngModel)]="keywordCondition.filter_filed"
+                   (ngModelChange) = "changeKeyword(keywordCondition.filter_filed)"
+                   [nzPlaceHolder]="'不设置'">
+          <nz-option
+            *ngFor="let item of keywordSelect.publishElse "
+            [nzLabel]="item.name"
+            [nzValue]="item.value">
+          </nz-option>
+        </nz-select>
+      </ng-container>
+
+      <div class="pull-left mr10">
+        <div>
+          <nz-input-group
+            style="width: 150px;"
+            [nzSize]="'small'"
+            nzSearch
+            [nzSuffix]="suffixIconButton">
+            <input [(ngModel)]="keywordCondition.filter_value" type="text" nz-input placeholder="输入搜索">
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <button
+              style="background: transparent; border:none;"
+              [nzSize]="'small'"
+              (click)="onSearch($event)"
+              nz-button nzType="primary"
+              nzSearch><i nz-icon nzType="search" nzTheme="outline" class="search_i" style="color:rgba(0,0,0,.65);font-size: 12px" ></i></button>
+          </ng-template>
+        </div>
+      </div>
+
+      <div class="pull-left mr20">
+        <label class="titleLa inline-block"
+               [(ngModel)]='keywordCondition.exactness'
+               [nzDisabled]="keywordCondition.filter_filed === 'ranking_domains'"
+               nz-checkbox>
+          <span>精确</span>
+        </label>
+      </div>
+      <div class="pull-left mr8">
+        <span style="font-style: normal">优化结果：</span>
+        <nz-select class="w102"
+                   [nzSize]="'small'"
+                   [(ngModel)]="keywordCondition.result_type"
+                   (ngModelChange) = 'changeResult()'
+                   [nzPlaceHolder]="'全部'">
+          <nz-option
+            *ngFor="let item of optimizationResult"
+            [nzLabel]="item.name"
+            [nzValue]="item.value">
+          </nz-option>
+        </nz-select>
+      </div>
+
+
+      <button class="manage-add mr8 background" nz-button [nzType]="'default'" (click)="download()"  [nzSize]="'small'" >
+       <i nz-icon nzType="download" nzTheme="outline"></i><span>下载</span>
+      </button>
+      <button class="manage-add mr8 background" nz-button [nzType]="'default'" (click)="refresh()" [nzSize]="'small'" >
+        <i nz-icon nzType="sync" nzTheme="outline"></i><span>刷新</span>
+      </button>
+    </div>
+  </div>
+  <div>
+    <nz-range-picker (ngModelChange)="logTimeChange($event)" [(ngModel)]="logTime" [nzDisabledDate]="disabledLogDate"  [nzFormat]="'yyyy/MM/dd'" [nzAllowClear]="false"  [nzSize]="'small'" class="ml8"></nz-range-picker>
+  </div>
+</div>
+<div class="ranking-log-data">
+    <nz-table #nzTable [nzData]="rows"
+              [nzSize]="'small'"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageInfo.pageSize"
+              [(nzPageIndex)] = "pageInfo.currentPage"
+              (nzPageSizeChange)="refreshData()"
+              (nzPageIndexChange)="refreshData()"
+              [nzShowSizeChanger] = true
+              [nzTotal]="pageInfo.allCount"
+              [nzLoading]="dataLoading"
+              [nzShowTotal]="totalTemplate"
+              [nzScroll]="{ y: tableHeight+'px',x:'2200px'}">
+      <thead>
+      <tr>
+        <th style="padding-left: 30px !important;" [nzWidth]="'140px'">完成时间</th>
+        <th [nzWidth]="'100px'" >竞价结果</th>
+        <th [nzWidth]="'166px'" >关键词</th>
+        <th [nzWidth]="'66px'" >当前出价</th>
+        <th [nzWidth]="'97px'" >当前排名</th>
+        <th [nzWidth]="'66px'" >出价变化</th>
+        <th [nzWidth]="'66px'" >调整出价</th>
+        <th [nzWidth]="'66px'" >原始出价</th>
+        <th [nzWidth]="'80px'" >原始排名</th>
+        <th [nzWidth]="'80px'" >目标排名</th>
+        <th [nzWidth]="'80px'" >出价范围</th>
+        <th [nzWidth]="'150px'" >第一位</th>
+        <th [nzWidth]="'150px'" >第二位</th>
+        <th [nzWidth]="'150px'" >第三位</th>
+        <th [nzWidth]="'150px'" >第四位</th>
+        <th [nzWidth]="'80px'" >模式</th>
+        <th [nzWidth]="'100px'" >地域</th>
+        <th [nzWidth]="'166px'" >单元</th>
+        <th [nzWidth]="'166px'" >计划</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-template ngFor let-row [ngForOf]="nzTable.data">
+        <tr>
+          <td style="padding-left: 30px !important;" >{{row.log_time}}</td>
+          <td (click)="row.expand = !row.expand">
+            {{row.ranking_result}}
+            <a *ngIf="row.data.length>0">
+              <i nz-icon [nzType]="!!row.expand?'up':'down'" nzTheme="outline"></i>
+            </a>
+          </td>
+          <td>{{row.pub_keyword}}</td>
+          <td class="text-right">{{ (row['curr_price']==null||row['curr_price']==0)?'-':(row['curr_price']|number:'.2-2') }}</td>
+          <td>{{row.ranking_code}}</td>
+          <td class="text-right">
+            {{(row['operation_amount']==null||row['operation_amount']==0)?'-':(row['operation_amount']>0?('+'+(row['operation_amount'])):(row['operation_amount']))}}
+            <ng-container>
+              <i  nz-icon nzType="arrow-down" nzTheme="outline" *ngIf="row.operation_amount<0" [ngClass]="{'down-color':row.operation_amount<0,'up-color':row.operation_amount>0}"></i>
+              <i  nz-icon nzType="arrow-up" nzTheme="outline" *ngIf="row.operation_amount>0" [ngClass]="{'down-color':row.operation_amount<0,'up-color':row.operation_amount>0}"></i>
+            </ng-container>
+
+
+
+          </td>
+          <td class="text-right">{{(row['readjust_price']==row['curr_price']||row['readjust_price']==0)?'-':(row['readjust_price']|number:'.2-2')}}</td>
+          <td>{{row.init_price}}</td>
+          <td>{{row.init_ranking_code}}</td>
+          <td>{{row.ranking_range}}</td>
+          <td>{{row.price_range}}</td>
+          <td>{{row['ranking_1']==null?'-':row['ranking_1']}}</td>
+          <td>{{row['ranking_2']==null?'-':row['ranking_2']}}</td>
+          <td>{{row['ranking_3']==null?'-':row['ranking_3']}}</td>
+          <td>{{row['ranking_4']==null?'-':row['ranking_4']}}</td>
+          <td>{{row.ranking_model}}</td>
+          <td>{{row.ranking_region}}</td>
+          <td>{{row.pub_adgroup_name}}</td>
+          <td>{{row.pub_campaign_name}}</td>
+
+        </tr>
+
+        <ng-container *ngFor="let subDetail of row.data">
+          <tr *ngIf="row.expand" style="background-color: #f6f6f6 !important;">
+            <td style="padding-left: 30px !important;" >{{subDetail.log_time}}</td>
+            <td colspan="2">{{subDetail['ranking_result']}}</td>
+            <td class="text-right">{{ (subDetail['curr_price']==null||subDetail['curr_price']==0)?'-':(subDetail['curr_price']|number:'.2-2') }}</td>
+            <td>
+              {{  subDetail['ranking_code']==null?'-':subDetail['ranking_code'] }}
+              <i nz-icon nzType="picture" nzTheme="outline" class="ml2" *ngIf="subDetail['html_id'] !== '' && getDiffHour(subDetail['last_modify_time']) <= 10 && subDetail['html_status'] !== '2'" (click)="seeView(subDetail, row)" style="cursor: pointer;" title="查看实况页面"></i>
+              <i nz-icon nzType="loading" nzTheme="outline"  *ngIf="subDetail['realLoading']"></i>
+            </td>
+            <td class="text-right">
+              {{(subDetail['operation_amount']==null||subDetail['operation_amount']==0)?'-':(subDetail['operation_amount']>0?('+'+(subDetail['operation_amount'])):(subDetail['operation_amount']))}}
+              <ng-container>
+                <i  nz-icon nzType="arrow-down" nzTheme="outline" *ngIf="row.operation_amount<0" [ngClass]="{'down-color':row.operation_amount<0,'up-color':row.operation_amount>0}"></i>
+                <i  nz-icon nzType="arrow-up" nzTheme="outline" *ngIf="row.operation_amount>0" [ngClass]="{'down-color':row.operation_amount<0,'up-color':row.operation_amount>0}"></i>
+              </ng-container>
+            </td>
+            <td class="text-right">{{(subDetail['readjust_price']==subDetail['curr_price']||subDetail['readjust_price']==0)?'-':(subDetail['readjust_price']|number:'.2-2')}}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{subDetail['ranking_1']==null?'-':subDetail['ranking_1']}}</td>
+            <td>{{subDetail['ranking_2']==null?'-':subDetail['ranking_2']}}</td>
+            <td>{{subDetail['ranking_3']==null?'-':subDetail['ranking_3']}}</td>
+            <td>{{subDetail['ranking_4']==null?'-':subDetail['ranking_4']}}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </ng-container>
+
+      </ng-template>
+      <ng-template #totalTemplate let-total>
+        共 {{total}} 条
+      </ng-template>
+      </tbody>
+    </nz-table>
+
+</div>

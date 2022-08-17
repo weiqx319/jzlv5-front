@@ -1,0 +1,22 @@
+<div>
+  <div class="fixed-condition-manage">
+    <ul nz-menu nzMode="horizontal">
+      <ng-container *ngFor="let tabItem of sectionTabList">
+        <li nz-menu-item [nzSelected]="activeType === tabItem.type" (click)="changeTabItem(tabItem)">{{tabItem.title}}</li>
+      </ng-container>
+    </ul>
+  </div>
+  <div class="content-section-manage">
+    <ng-container *ngIf="activeType === 'list'">
+      <!-- <router-outlet></router-outlet> -->
+      <app-black-group-list></app-black-group-list>
+    </ng-container>
+    <ng-container *ngIf="activeType === 'log'">
+      <app-black-word-log></app-black-word-log>
+    </ng-container>
+    <ng-container *ngIf="activeType === 'download'">
+      <app-black-word-download></app-black-word-download>
+    </ng-container>
+  </div>
+</div>
+

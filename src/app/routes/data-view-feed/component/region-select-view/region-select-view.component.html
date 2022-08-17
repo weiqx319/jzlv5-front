@@ -1,0 +1,84 @@
+<div class="region-content" #region style="position: relative;">
+  <div class="region-cross">
+    <div class="select-china">
+      <label nz-checkbox [(ngModel)]="allSelectChina" (ngModelChange)="chinaSelect()">
+        <span>中国</span>
+      </label>
+    </div>
+    <div class="select-china-right"></div>
+  </div>
+  <div class="region-cross" *ngFor="let key of getKeys(region_across)">
+    <ng-container *ngIf="key !== 'the_abroad'">
+      <div class="region-cross-desc">
+        <label nz-checkbox [(ngModel)]="region_across[key].is_selected" (ngModelChange)="regionSelect(key)">
+          <span>{{region_across[key].name}}:</span>
+        </label>
+      </div>
+      <div class="region-cross-province">
+        <div class="region-cross-province-desc pl20" appToggleCity *ngFor="let province of region_across[key].sub;let p_index = index;">
+          <div>
+            <label nz-checkbox [(ngModel)]="province.is_selected" (ngModelChange)="provinceSelect(province, p_index, key)" [nzIndeterminate]="province.is_one_selected">
+              <!--  <span><a [ngClass]="{blue: province.is_one_selected}" title="{{'我爱'+province.name}}">{{province.name}}</a></span>
+               --> <span><a title="{{'我爱'+province.name}}">{{province.name}}</a></span>
+            </label>
+          </div>
+          <ng-container *ngIf="province.sub.length">
+            <div class="city-content">
+              <div class="region-cross-city">
+                <div class="region-cross-city-desc pl20" *ngFor="let city of province.sub;let c_index = index;">
+                  <label nz-checkbox [(ngModel)]="city.is_selected" (ngModelChange)="citySelect(city, c_index, p_index, key)">
+                    <span>{{city.name}}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="region-cross" *ngIf="publisher === 1 || publisher === 2">
+    <div class="select-china">
+      <label nz-checkbox [(ngModel)]="allSelectAbroad" (ngModelChange)="abroadSelect()">
+        <span>国外</span>
+      </label>
+    </div>
+    <div class="select-china-right"></div>
+  </div>
+  <div class="region-cross" *ngIf="publisher === 1 || publisher === 2">
+    <!--<div class="region-cross-desc">
+      <label nz-checkbox [(ngModel)]="region_across['the_abroad'].is_selected" (ngModelChange)="regionSelect('the_abroad')">
+        <span>{{region_across['the_abroad'].name}}:</span>
+      </label>
+    </div>-->
+    <div class="region-cross-province">
+      <div class="region-cross-province-desc" appToggleCity *ngFor="let province of region_across['the_abroad'].sub;let p_index = index;">
+        <div>
+          <label nz-checkbox [(ngModel)]="province.is_selected" (ngModelChange)="provinceSelect(province, p_index, 'the_abroad')" [nzIndeterminate]="province.is_one_selected">
+            <span><a>{{province.name}}</a></span>
+          </label>
+        </div>
+        <ng-container *ngIf="province.sub.length">
+          <div class="city-content">
+            <div class="region-cross-city">
+              <div class="region-cross-city-desc pl20" *ngFor="let city of province.sub;let c_index = index;">
+                <label nz-checkbox [(ngModel)]="city.is_selected" (ngModelChange)="citySelect(city, c_index, p_index, 'the_abroad')">
+                  <span>{{city.name}}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!is_hidden" style="position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    opacity: .5;
+    background: #ccc;
+    z-index: 9999;
+    cursor: not-allowed;"></div>
+</div>

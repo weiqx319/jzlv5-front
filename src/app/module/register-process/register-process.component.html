@@ -1,0 +1,13 @@
+<div class="register-process-container" *ngIf="companyPubAccountNum === 0 && isShowRegisterProcess">
+  <div class="imgBox">
+    <img [src]="imgPath[imgIndex]"/>
+    <div class="imgOperate">
+      <div class="mr30 img-operate-btn" *ngIf="imgIndex > 0 && imgIndex < imgPath.length - 1" (click)="goToImgPath(false)"><<上一步</div>
+      <div class="img-operate-btn" *ngIf="imgIndex < imgPath.length - 1" (click)="goToImgPath(true)">下一步>></div>
+      <div *ngIf="imgIndex === imgPath.length - 1" class="img-btn-box">
+        <div class="mr30 img-operate-btn" (click)="goToFirst()">回看</div>
+        <div class="img-operate-btn" (click)="hideRegisterProcess()">开启{{productInfo['name']}}之旅</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+<div class="launch-rpa-contents">
+  <div class="launch-rpa-operation">
+    <div class="header-left">
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="createChannel()">
+        <i nz-icon nzType="plus"></i><span> 新建调起URL</span>
+      </a>
+    </div>
+    <div class="header-right">
+      <nz-input-group class="w200" [nzSuffix]="suffixIconSearch">
+        <input type="text" nz-input placeholder="调起URL名称" [(ngModel)]="searchName" (blur)="refreshData(true)"/>
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div>
+  </div>
+  <div class="pt20">
+    <nz-table #basicTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzShowTotal]="totalItemTemplate"
+              [nzSize]="'small'"
+              [nzData]="apiSearchData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzNoResult]="noResultTd"
+              [nzScroll]="{ x: '940px', y: noResultHeight + 'px' }">
+      <thead>
+      <tr>
+        <th nzWidth="200px" nzLeft="">调起URL名称</th>
+        <th nzWidth="120px" nzLeft="">操作</th>
+        <th nzWidth="100px">账号ID</th>
+        <th nzWidth="200px">账号</th>
+        <th nzWidth="200px">调起URL链接</th>
+        <th nzShowSort nzWidth="200px">创建时间</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngFor="let data of basicTable.data">
+        <tr>
+          <td nzLeft="">{{data.app_na_url_name}}</td>
+          <td nzLeft="">
+            <a href="javascript:" (click)="editLaunchChannel(data)">编辑</a>
+            <span class="ml4 mr4">|</span>
+            <a href="javascript:" (click)="editLaunchChannel(data,true)">复制</a>
+            <span class="ml4 mr4">|</span>
+            <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteLaunchChannel(data)"
+               nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click" href="javascript:">删除</a>
+          </td>
+          <td>{{data.pub_account_id}}</td>
+          <td>{{data.pub_account_name}}</td>
+          <td>
+            <span class="tooltip-box" [nzTooltipTitle]="data.app_na_url" nz-tooltip>
+              {{data.app_na_url}}
+            </span>
+          </td>
+          <td>{{data.create_time}}</td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+
+
+  <ng-template #noResultTd >
+    <div class="table-no-result" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+      <div class="table-no-result-content">
+        <div class="mt8">无数据</div>
+      </div>
+    </div>
+  </ng-template>
+
+</div>
+<app-global-template></app-global-template>
+
+

@@ -1,0 +1,90 @@
+<div class="border extensionPeriod mt5">
+  <div class="topItem">
+    <span class="borderRight" [ngClass]="{selected:dateOption ==='working_day'}" (click)="changeItem('working_day')">工作日</span>
+    <span class="borderRight" [ngClass]="{selected:dateOption ==='Weekend'}" (click)="changeItem('Weekend')">周末</span>
+    <span class="borderRight" [ngClass]="{selected:dateOption ==='all'}" (click)="changeItem('all')">全部</span>
+    <span [ngClass]="{selected:dateOption ==='reset'}" (click)="changeItem('reset')">重置</span>
+    <div>
+      <i>生效时段</i>
+      <i>暂停时段</i>
+    </div>
+  </div>
+  <div class="schedule-setting">
+    <div class="poperation-area" (mouseleave)="operatiomMouseleave()" (mouseup)="operationAreaMouseup($event)">
+      <div class="grid-layer">
+        <div style="text-align: center"
+             [ngClass]="{selecte_void: item['box_selection'] === 3 , selecte: item['selected'] === 1 , hover:item['showBorder'] && !showSelectFrame, is_half: timeDimension===0.5}"
+             *ngFor="let item of timeArray"
+             [ngStyle]="{'left':item.x+'px' , 'top':item.y+'px','text-align':'center','z-index':'1'}">
+          <ng-container *ngIf="item['selected'] && showCoefficient">{{item['coefficient']}}</ng-container>
+
+        </div>
+
+        <div style="text-align: center"
+             (click)="_testClick()"
+             *ngFor="let item of timeArray"
+             (mousedown)="operationAreaMousedown(item, $event)"
+             [ngStyle]="{'left':item.x+'px' , 'top':item.y+'px','text-align':'center','z-index':'2','opacity':0,  is_half: timeDimension===0.5}"
+             (mouseenter) ="timeMoseenter(item , $event)"
+             (mouseout)="timeMoseOut(item)">
+
+        </div>
+
+      </div>
+      <div class="extension-frame" *ngIf="!publicState.isHidden && !showSelectFrame " [ngStyle]="{'left':publicState.time['x']+'px' , 'top':publicState.time['y']+ publicState['space'] +'px'}">
+        <p>
+          <span class="mr10">{{publicState['weekName']}} </span>
+          <span>{{publicState['startTime']}}</span>
+          <span class="ml5 mr5">-</span>
+          <span>{{publicState['endTime']}}</span>
+        </p>
+        <p *ngIf="showCoefficient">
+          <span class="mr10">系数:</span>
+          <span>{{publicState['coefficient']}}</span>
+        </p>
+      </div>
+
+      <div class="enter-setting-time-layer"
+           [ngStyle]="{'left':publicState['enter_setting_time_layer_x'] +'px' , 'top':publicState['enter_setting_time_layer_y'] +'px'}"
+           *ngIf="showSelectFrame">
+        <nz-radio-group [(ngModel)]="launch" ngClass="mb10">
+          <div>
+            <label class="mr20" nz-radio [nzValue]="true" style="vertical-align:top">
+              <span>投放</span>
+            </label>
+            <ng-container *ngIf="showCoefficient">
+              <span>出价系数:</span>
+              <nz-input-number style="width: 55px;" [(ngModel)]="coefficient"
+                               [nzSize]="'small'">
+              </nz-input-number>
+            </ng-container>
+
+
+          </div>
+          <div>
+            <label nz-radio [nzValue]="false">
+              <span>不投放</span>
+            </label>
+          </div>
+        </nz-radio-group>
+        <div>
+          <button nz-button [nzType]="'primary'" (click)="_launchSure()" class="mr14">
+            <span>确定</span>
+          </button>
+          <button nz-button [nzType]="'default'" (click)="_launchCancel()" >
+            <span>取消</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="axis-y-area">
+      <div *ngFor="let weekItem of getDateList(0, 24)">{{weekItem}}</div>
+    </div>
+    <div class="axis-x-area">
+      <div *ngFor="let weekItem of weekNameArray">{{weekItem}}</div>
+    </div>
+
+  </div>
+  <div *ngIf="!is_mask" class="mask-layer"></div>
+</div>
+

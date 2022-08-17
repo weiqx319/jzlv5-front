@@ -1,0 +1,19 @@
+<div class="batch-add-container">
+  <div style="color: #f09200;">
+    <p>※ 请输入或粘贴您想添加的地域，一行一个，并按省市顺序，由大到小填写</p>
+    <p>※ 批量输入的内容中，匹配成功的将自动为您勾选，未匹配成功的只作提示</p>
+    <p *ngIf="divisionType === 'province'">※ 例1：北京，例2：辽宁-沈阳</p>
+    <p *ngIf="divisionType === 'city'">※ 例1：一线城市，例2：一线城市-北京</p>
+  </div>
+  <div class="mt10 wp100 textarea-box" style="padding: 6px">
+    <textarea style="min-height: 250px" nzAutosize rows="4" nz-input placeholder="请输入搜索名称，同时搜索多个用换行或者/或者空格隔开" [(ngModel)]="searchText"></textarea>
+    <div style="text-align: right">
+      <span *ngIf="noHaveText.length>0" style="float: left;line-height: 30px;font-size: 12px" class="redStart ml8">
+        以上内容未匹配到
+      </span>
+      <button class="mt10 mr10" nzSize="default" nz-button (click)="onCancel()">取消</button>
+      <button class="mt10" nzSize="default" nz-button nzType="primary" (click)="addSearchOption()">添加</button>
+    </div>
+  </div>
+</div>
+

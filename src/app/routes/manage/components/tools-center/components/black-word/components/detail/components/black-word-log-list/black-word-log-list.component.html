@@ -1,0 +1,22 @@
+<div class="message-container">
+  <div class="fixed-condition-manage page-condition-header">
+    <a class="back-button" routerLink="/manage/tools/black_word/list/black_group_list" [queryParams]="{type:'log'}"><i nz-icon nzType="left" nzTheme="outline"></i>返回筛查日志列表页</a>
+    <div class="content-title">任务ID: {{ taskId }}</div>
+  </div>
+  <div class="fixed-condition-manage">
+    <ul nz-menu nzMode="horizontal">
+      <ng-container *ngFor="let tabItem of sectionTabList">
+        <li nz-menu-item [nzSelected]="activeType === tabItem.type" (click)="changeTabItem(tabItem)">{{tabItem.title}}</li>
+      </ng-container>
+    </ul>
+  </div>
+  <div class="content-section-manage">
+    <ng-container *ngIf="activeType === 'keyword'">
+      <app-keyword-detail></app-keyword-detail>
+    </ng-container>
+    <ng-container *ngIf="activeType === 'creative'">
+      <app-creative-detail></app-creative-detail>
+    </ng-container>
+  </div>
+</div>
+

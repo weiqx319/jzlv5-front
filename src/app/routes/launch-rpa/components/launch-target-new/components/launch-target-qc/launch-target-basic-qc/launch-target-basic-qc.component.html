@@ -1,0 +1,83 @@
+<div class="add-target-template-container" *ngIf="!getting">
+  <nz-spin [nzSpinning]="getting">
+    <div class="target-setting pr20" [ngStyle]="{'height':tableHeight +'px'}">
+      <nz-card class="basic_info" nzTitle="基本信息">
+        <div class="form-content">
+          <div class="lab-row mb20">
+            <label><span class="redStart">*</span>定向包名称:</label>
+            <input nz-input
+                   class="w200 ml8"
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="defaultData.audience_template_name"
+                   placeholder="请输入定向包名称">
+          </div>
+          <div class="lab-row mb20">
+            <label>定向包描述:</label>
+            <textarea nz-input
+                      class="w200 ml8"
+                      type="'textarea'"
+                      rows="3"
+                      [(ngModel)]="defaultData.audience_desc"
+                      placeholder="请输入定向包描述">
+            </textarea>
+          </div>
+          <div class="lab-row mb20">
+            <label><span class="redStart">*</span>定向包类型:</label>
+            <nz-radio-group
+              class="ml8"
+              [nzSize]="'small'"
+              [(ngModel)]="defaultData.promotion_way"
+              (ngModelChange)="landingTypeChange();"
+            >
+              <ng-container *ngFor="let item of landingTypeList">
+                <label nz-radio-button [nzValue]="item.key" [nzDisabled]="((targetType !== 'basic')||promotionWay) && defaultData.promotion_way !== item.key">
+                  <span>{{item.name}}</span>
+                </label>
+              </ng-container>
+            </nz-radio-group>
+          </div>
+        </div>
+      </nz-card>
+
+      <!--      <nz-card *ngIf="targetType==='basic' || targetType==='basicEdit'" class="basic_info mt20" nzTitle="投放范围">-->
+      <!--        <div class="form-content">-->
+      <!--          <div class="lab-row mb20">-->
+      <!--            <label><span class="redStart">*</span>投放范围:</label>-->
+      <!--            <div class="ml8">-->
+      <!--              <div>-->
+      <!--                <label nz-checkbox>优先选广告位</label>-->
+      <!--              </div>-->
+      <!--              <div class="mt10">-->
+      <!--                <label nz-checkbox>通投智选</label>-->
+      <!--              </div>-->
+      <!--              <div class="mt10">-->
+      <!--                <label nz-checkbox>按指定位置：</label>-->
+      <!--                <nz-checkbox-group [(ngModel)]="checkOptionsOne"></nz-checkbox-group>-->
+      <!--              </div>-->
+      <!--              <div class="mt10">-->
+      <!--                <label nz-checkbox>穿山甲：</label>-->
+      <!--                <nz-checkbox-group [(ngModel)]="checkOptionsTwo"></nz-checkbox-group>-->
+      <!--              </div>-->
+      <!--            </div>-->
+
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </nz-card>-->
+
+      <nz-card class="basic_info mt20" nzTitle="用户定向">
+        <app-target-basic-template-qc [curAccountList]="curAccountList" [curAudienceData]="curAudienceData" [isLaunchPackage]="isLaunchPackage" [promotion_way]="defaultData.promotion_way" [targetSource]="defaultData" [targetType]="targetType" [errorTipAry]="errorTipAry"></app-target-basic-template-qc>
+      </nz-card>
+    </div>
+  </nz-spin>
+
+
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saveing" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

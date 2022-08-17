@@ -1,0 +1,100 @@
+<div class="container">
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="manage-operation">
+      <div class="manage-header-left">
+        <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addAdvertiser()" *ngIf="(authState$|async)?.user.company_type===3">
+         <i nz-icon nzType="plus" nzTheme="outline"></i><span>创建广告主</span>
+        </a>
+        <ng-container *ngIf="filter_result_array.length>0">
+          <div class="inline-block" style="vertical-align: middle;">
+            <div class="filter-trash pull-left" *ngIf="filter_result_array.length>1" (click)="clearFilter()">
+              <i nz-icon nzType="delete" nzTheme="outline"></i>
+            </div>
+            <div class="filter-desc pull-left">
+              <span *ngFor="let filter of filter_result_array;let i = index;">
+                {{filter.name}}{{filter.op}}{{filter.value}}
+                <span class="filter-delete ml8" (click)="deleteFilter(i)"><i nz-icon nzType="close" nzTheme="outline"></i></span>
+                <span *ngIf="i < filter_result_array.length-1">；</span>
+              </span>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="manage-table manage-no-result-table">
+      <nz-table #nzTable
+                nzShowSizeChanger
+                [nzPageSizeOptions]="[30,50,100,500]"
+                [nzSize]="'default'"
+                [nzData]="data"
+                [nzFrontPagination]="false"
+                [(nzPageSize)]="pageSize"
+                [(nzPageIndex)]="currentPage"
+                (nzPageIndexChange)="refreshData()"
+                (nzPageSizeChange)="refreshData(true)"
+                [nzTotal]="total"
+                [nzLoading]="loading"
+                [nzShowTotal]="totalItemTemplate"
+                [nzScroll]="{ y: noResultHeight+'px' }">
+        <thead>
+        <tr>
+          <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll($event)">
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>广告主名称</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'advertiser_name',name:'广告主名称'}" [(filterResult)]="filterResult['advertiser_name']" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>广告主ID</span>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>所属事业部</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'department',name:'所属事业部'}" [(filterResult)]="filterResult['department']" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>网站域名</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'web_domain',name:'网站域名'}" [(filterResult)]="filterResult['web_domain']" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>所属行业</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'advertiser_type',name:'所属行业'}" [(filterResult)]="filterResult['advertiser_type']" [filterOption]="filterAdvertiserTypeOption" (submit)="doFilter()"></app-filter>
+          </th>
+
+          <th [nzWidth]="'200px'"><span>包含账户</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of data">
+          <td nzShowCheckbox [(nzChecked)]="data.checked" [nzDisabled]="data.disabled" (nzCheckedChange)="_refreshStatus($event)">
+          </td>
+          <td>
+            <a (click)="editAdvertiser(data.cid)">{{data.advertiser_name}}</a>
+          </td>
+          <td>{{data.cid}}</td>
+          <td>{{data.department}}</td>
+          <td>{{data.web_domain}}</td>
+          <td>{{advertiserTypeRelation['advertiser_type_'+data.advertiser_type]}}</td>
+
+          <td><span *ngFor="let i of data.pub_list; let inde = index">{{i.pub_account_name}} <ng-container *ngIf="inde !==data.pub_list.length -1 ">,</ng-container></span></td>
+        </tr>
+        <tr *ngIf="data.length===0">
+          <td #noResultTd [attr.colspan]="6"  [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+            <div class="table-no-result">
+              <div class="table-no-result-content">
+                <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addAdvertiser()">
+                 <i nz-icon nzType="plus" nzTheme="outline"></i><span>创建广告主</span>
+                </button>
+                <div class="mt8">您还未创建广告主，点击按钮创建广告主</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+    </div>
+  </div>
+</div>
+

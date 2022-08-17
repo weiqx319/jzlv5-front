@@ -1,0 +1,130 @@
+.app-module-condition {
+  .app-module-operations {
+    .app-module-operations-right {
+      .btn-icon {
+        width: 40px;
+        text-align: center;
+      }
+
+      .active-icon {
+        background-color: #338aff;
+        color: #fff;
+      }
+    }
+  }
+}
+
+.displayNone {
+  display: none !important;
+}
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.view-card {
+  display: flex;
+  flex-wrap: wrap;
+  //justify-content: space-around;
+  overflow: auto;
+
+  .no-data {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-item {
+    width: 25%;
+    min-width: 240px;
+    height: 260px;
+    padding: 5px;
+
+    .card-item-box {
+      height: 100%;
+      border: 1px solid rgb(228, 228, 228);
+      padding: 5px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+
+      .card-item-title {
+        height: 22px;
+        line-height: 22px;
+        .title {
+          display: inline-block;
+          max-width: 100%;
+        }
+      }
+
+      .card-item-img {
+        flex: 1;
+        border-top: 1px dashed #dcdcdc;
+        border-bottom: 1px dashed #dcdcdc;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .card-item-footer {
+        height: 24px;
+        line-height: 24px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 920px) {
+  .view-card {
+    justify-content: space-around;
+  }
+}
+
+@media screen and (min-width: 920px) and (max-width: 1160px) {
+  .view-card {
+    .card-item {
+      width: 33.3%;
+    }
+  }
+}
+
+.card-template {
+  .ant-popover-arrow {
+    background: rgba(0, 0, 0, 0.8);
+    z-index: -1;
+  }
+
+  .theme2 .ant-popover-inner-content,
+  .ant-popover-inner {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  .card-detail {
+    padding: 5px;
+    color: #fff;
+
+    .card-detail-item {
+      line-height: 22px;
+      display: flex;
+
+      label {
+        width: 40px;
+        text-align: right;
+      }
+
+      p {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.card-page {
+  .ant-pagination {
+    text-align: right;
+  }
+}

@@ -1,0 +1,119 @@
+<div class="condition-wrapper">
+  <!--商品ID-->
+  <div class="condition-item">
+    <span class="label">商品ID</span>
+    <div class="condition-content">
+      <input nz-input [(ngModel)]="searchParams.item_id" nzSize="default"/>
+    </div>
+  </div>
+  <!--商品名称-->
+  <div class="condition-item">
+    <span class="label">商品名称</span>
+    <div class="condition-content">
+      <input nz-input [(ngModel)]="searchParams.title" nzSize="default"/>
+    </div>
+  </div>
+
+  <!--类目-->
+  <div class="condition-item">
+    <span class="label">类目</span>
+    <div class="condition-content">
+      <nz-cascader
+        class="content"
+        [nzOptions]="itemCategoryList"
+        [(ngModel)]="searchParams.categories"
+        nzShowSearch='NzShowSearchOptions'
+        [nzLabelProperty]="'name'"
+        [nzValueProperty]="'id'"
+        nzPlaceHolder="请选择"
+        (ngModelChange)="onChanges($event)">
+      </nz-cascader>
+    </div>
+  </div>
+  <!--类目-->
+  <div class="condition-item">
+    <span class="label">状态</span>
+    <div class="condition-content">
+      <nz-select
+        class="content"
+        nzPlaceHolder="请选择"
+        nzShowSearch
+        [(ngModel)]="searchParams.product_status"
+      >
+        <nz-option *ngFor="let status of statusList" [nzLabel]="status.label" [nzValue]="status.value"></nz-option>
+      </nz-select>
+    </div>
+  </div>
+
+  <div class="condition-item">
+    <button class="ml8" nz-button [nzType]="'default'" (click)="resetSearchData()">
+      <span>重置</span></button>
+    <button class="ml8" nz-button [nzType]="'primary'" (click)="saveSearchData()">
+      <span>搜索</span></button>
+  </div>
+</div>
+<div >
+  <nz-table
+      #nzTable
+      nzShowSizeChanger
+      [nzPageSizeOptions]="[30,50,100,500]"
+      [nzSize]="'small'"
+      [nzData]="apiData"
+      [nzFrontPagination]="false"
+      [(nzPageSize)]="pageSize"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="refreshData()"
+      (nzPageSizeChange)="refreshData(true)"
+      [nzTotal]="total"
+      [nzLoading]="loading"
+      [nzScroll]="{ x: '1000px', y: noResultHeight+'px' }"
+  >
+    <thead>
+    <tr>
+      <th nzWidth="62px" nzLeft class="jzlCheckboxHeader">
+        <a>
+          <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)"
+                 [nzIndeterminate]="indeterminate" disabled></label>
+        </a>
+      </th>
+      <th [nzWidth]="'300px'"><span>商品信息</span></th>
+      <th [nzWidth]="'150px'"><span>类目</span></th>
+      <th [nzWidth]="'100px'"><span>30天销量</span></th>
+      <th [nzWidth]="'100px'"><span>好评率</span></th>
+      <th [nzWidth]="'100px'"><span>库存</span></th>
+      <th [nzWidth]="'200px'"><span>创建时间</span></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of apiData">
+      <td nzLeft nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event,data)" [nzDisabled]="data.product_status!==1"></td>
+      <td>
+        <div class="goods-table-body">
+          <div class="goods-table-body-front">
+            <img class="goods-table-body-front-img" [src]="data.image_url[0]">
+          </div>
+          <div class="goods-table-body-info">
+            <span class="goods-table-body-info-title">{{data.title}}</span>
+            <span class="goods-table-body-info-id">ID：{{data.item_id}}</span>
+            <span class="goods-table-body-info-price">价格：<span class="goods-table-body-info-price-b">￥{{data.max_price}}</span></span>
+          </div>
+        </div>
+      </td>
+      <td>{{ data.category_name }}</td>
+      <td>{{ data.last_30d_sales_cnt }}</td>
+      <td>{{ data.norm_good_comment_rate }}%</td>
+      <td>{{ data.stock }}</td>
+      <td>{{ data.create_time }}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <div class="button-controller">
+    <button class="ml8" nz-button [nzType]="'default'"  (click)="cancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" (click)="save()">
+      <span>确定</span>
+    </button>
+  </div>
+</div>
+<app-global-template></app-global-template>

@@ -1,0 +1,9 @@
+<div class="creative-video">
+  <img src="{{ imgUrl }}" class="mr8" [ngClass]="{vertical_video: isVertical, horizontal_video: !isVertical}" />
+  <video controls="controls"
+         controlslist="nodownload"
+         poster="{{imgUrl}}"
+         [ngClass]="{vertical_video: isVertical, horizontal_video: !isVertical}"
+         src="{{ videoUrl }}"></video>
+</div>
+

@@ -1,0 +1,18 @@
+<div class="optimization-nav-tab">
+  <div class="optimization-nav-menu">
+    <ng-container *ngFor="let tab of optimizationTab">
+      <div class="optimization-type" (click)="changeActive(tab.key)" [ngClass]="{'active':activeType===tab.key}">{{tab.name}}</div>
+      <div class="ml10"></div>
+    </ng-container>
+  </div>
+</div>
+<ng-container *ngIf="activeType === 'details'">
+  <app-optimization-group-details [tableHeight]="tableHeight"></app-optimization-group-details>
+</ng-container>
+
+<ng-container *ngIf="activeType === 'tpl'">
+  <app-optimization-group-tpl [tableHeight]="tableHeight"></app-optimization-group-tpl>
+</ng-container>
+
+
+

@@ -1,0 +1,39 @@
+<div class="lab-row">
+  <!--<span class="row-title">关键词出价：</span>-->
+  <ng-container *ngIf="publisherId == 17 && summaryType == 'adgroup'">
+    <div class="ed_shotinp mt5">
+      <div class="h20 pull-left">
+        <label class="inline-block w90">出价类型:</label>
+      </div>
+      <nz-select style=" width: 145px;"
+                 [(ngModel)]="bidStage"
+                 [nzSize]="'small'"
+                 nzPlaceHolder="'请选择'">
+        <nz-option
+          *ngFor="let option of priceTypeArray"
+          [nzLabel]="option.label"
+          [nzValue]="option.key">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="ed_shotinp mt5">
+      <div class="h20 pull-left">
+        <label class="inline-block w90">出价修改为:</label>
+      </div>
+      <nz-input-number style=" width: 145px; border-radius: 2px;"
+                       [(ngModel)]="price"
+                       [nzSize]="'small'">
+      </nz-input-number><span class="ml5">元</span>
+      <div class="clear"></div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="publisherId != 17">
+    <nz-input-number style="width: 232px"
+                     [(ngModel)]="price"
+                     [nzSize]="'small'">
+    </nz-input-number>
+    <span class="ml5">元</span>
+  </ng-container>
+</div>
+

@@ -1,0 +1,201 @@
+<div class="priview-wrapper" *ngIf="previewData">
+  <div class="priview-title"><span class="title">预览区</span>
+    <div>
+      <div class="preview-num-row"><p class="preview-num"><span>推广计划总数：</span><span class="num">{{campainNum}}</span></p>
+        <p class="preview-num"><span>单元总数：</span><span class="num">{{adgroupNum}}</span></p></div>
+      <button class="ml8" nz-button nzType="primary" (click)="doSave()">批量提交审核</button>
+<!--      <button class="ml8" nz-button nzType="primary">再次提交审核</button>-->
+      <i *ngIf="allDataShow" class="ml8 arrow" nz-icon nzType="caret-down" nzTheme="outline" (click)="changeAllShow()"></i>
+      <i *ngIf="!allDataShow" class="ml8 arrow" nz-icon nzType="caret-up" nzTheme="outline" (click)="changeAllShow()"></i>
+  </div>
+  </div>
+  <div class="priview-container">
+    <div class="adgroup" *ngFor="let account of objectKeys(previewData);let accountIndex=index">
+      <div class="adgroup-header">
+        <div class="account"> 账户{{accountIndex+1}}：{{accountsMap[account]}}</div>
+        <div class="priview-title-right">
+          <span class="adgroup-header-info" style="display: none;"> 本次共创建
+          <span class="num">0</span> 个推广计划， <span class="num">0</span> 个推广单元，其中 <span
+          class="error_num">0</span> 个推广计划创建失败， <span class="error_num">0</span> 个推广单元创建失败。 </span>
+          <span class="adgroup-header-info"> 推广计划数量： <span class="num"> {{previewData[account].length}} </span></span>
+          <span class="adgroup-header-info"> 推广单元数量： <span class="num"> {{adgroupNumObj[account]}} </span></span>
+          <i *ngIf="previewData[account]['isShow']" class="ml8 arrow" nz-icon nzType="caret-down" nzTheme="outline" (click)="previewData[account]['isShow']=false"></i>
+          <i *ngIf="!previewData[account]['isShow']" class="ml8 arrow" nz-icon nzType="caret-up" nzTheme="outline" (click)="previewData[account]['isShow']=true"></i>
+        </div>
+      </div>
+      <div *ngIf="previewData[account]['isShow']">
+        <nz-table
+          #basicTable nzBordered
+          [nzData]="previewData[account]"
+          [nzShowPagination]="false"
+          [nzScroll]="{x:'1960px'}"
+        >
+          <thead>
+          <tr>
+            <th nzWidth="300px">推广计划</th>
+            <th [colSpan]="4">推广单元</th>
+            <th [colSpan]="5">创意</th>
+            <th [colSpan]="1">操作</th>
+          </tr>
+          <tr>
+            <th nzWidth="300px">推广计划信息</th>
+            <th nzWidth="200px">单元名称</th>
+            <th nzWidth="150px">出价</th>
+            <th nzWidth="150px">定向包</th>
+            <th nzWidth="150px">转化</th>
+            <th nzWidth="200px">创意名称</th>
+            <th nzWidth="150px">创意素材</th>
+            <th nzWidth="200px">创意标题</th>
+            <th nzWidth="150px">落地页</th>
+            <th nzWidth="150px">调起URL</th>
+            <th nzWidth="80px">操作</th>
+          </tr>
+          </thead>
+          <tbody>
+          <ng-container *ngFor="let campaign of previewData[account];let campaignIndex=index">
+            <tr *ngFor="let data of campaign['adgroup_struct'];let adgroupIndex=index">
+              <td [rowSpan]="campaign['adgroup_struct'].length" *ngIf="adgroupIndex==0">
+                <div>
+                  <p class="ellipsis">名称：<a nz-tooltip [nzTooltipTitle]="campaign.campaign_name" (click)="openSignleEdit(campaign,'campaign_name')">{{campaign.campaign_name}}</a></p>
+                  <p>日预算：<a (click)="openSignleEdit(campaign,'day_budget','budget')">{{campaign.day_budget==0?'不限':'日预算'+campaign.budget+'元'}}</a></p>
+                  <p>推广日期：{{campaign.date_type==0?'长期投放':campaign.start_date+'-'+campaign.end_date}}</p>
+                  <div><label class="pull-left">推广时段：</label>
+                    <span *ngIf="campaign.schedule_type==0">全部时段</span>
+                  <ul class="pull-left" *ngIf="campaign.schedule_type==1">
+                    <li *ngFor="let item of campaign.schedule">周{{weekMap[item['week_day']]}}：{{item['start_hour']}}-{{item['end_hour']}}时</li>
+                  </ul>
+                  </div>
+                </div>
+              </td>
+              <td><p class="ellipsis"><a nz-tooltip [nzTooltipTitle]="data.adgroup_name" (click)="openSignleEdit(data,'adgroup_name')">{{data.adgroup_name}}</a></p></td>
+              <td>出价：<a *ngIf="data.bid_method==1" (click)="openSignleEdit(data,'bid')">{{data['bid_type']==3?data.ocpc_bid:data.bid}} 元/{{data['bid_type']==3?'转化':data['bid_type']==1?'点击':'曝光'}}</a>
+                <a *ngIf="data.bid_method!=1" (click)="openSignleEdit(data,'ocpc_bid_range')">{{data['ocpc_bid_range'].join('-')}} 元/{{data['bid_type']==3?'转化':data['bid_type']==1?'点击':'曝光'}}</a>
+              </td>
+              <td><p class="ellipsis" nz-tooltip [nzTooltipTitle]="data.audience_name">{{data.audience_name}}</p></td>
+              <td><p class="ellipsis" nz-tooltip [nzTooltipTitle]="data.app_trans_name">{{data.app_trans_name}}</p></td>
+              <td>
+                <p class="ellipsis title-box" nz-tooltip [nzTooltipTitle]="title" *ngFor="let title of data.creative.creative_name_lst">{{title}}</p>
+              </td>
+              <td>
+                <a (click)="openMaterialShow(materialTemplate,data)">已选{{data.creativeInfo['image']||0}}张图片，{{data.creativeInfo['video']||0}}个视频</a>
+              </td>
+              <td>
+                <p class="ellipsis title-box" nz-tooltip [nzTooltipTitle]="title" *ngFor="let title of data.titles">{{title}}</p>
+              </td>
+              <td><p class="ellipsis" nz-tooltip [nzTooltipTitle]="data.ip_url_name">{{data.ip_url_name}}</p></td>
+              <td><p class="ellipsis" nz-tooltip [nzTooltipTitle]="data.na_url_name">{{data.na_url_name}}</p></td>
+              <td><a nz-popconfirm [nzPopconfirmTitle]="'是否确认删除?'" (nzOnConfirm)="deleteAdgroup(campaign['adgroup_struct'],adgroupIndex)">删除</a></td>
+            </tr>
+          </ng-container>
+          </tbody>
+        </nz-table>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-container *ngIf="singleEditVisible">
+  <nz-modal
+    [(nzVisible)]="singleEditVisible"
+    nzTitle="提示"
+    (nzOnCancel)="handleCancel()"
+    (nzOnOk)="handleOk()"
+  >
+    <div class="single-edit-container">
+      <div class="lab-row mb20 w100p" *ngIf="editType==='campaign_name'">
+        <label>推广计划名称:</label>
+        <div>
+          <input class="w300 ml8" nz-input type="text" [(ngModel)]="editData.campaign_name">
+        </div>
+      </div>
+      <div class="lab-row mb20 w100p" *ngIf="editType==='adgroup_name'">
+        <label>单元名称:</label>
+        <div>
+          <input class="w300 ml8" nz-input type="text" [(ngModel)]="editData.adgroup_name">
+        </div>
+      </div>
+      <div class="lab-row mb20 w100p" *ngIf="editType==='bid'">
+        <label>出价:</label>
+        <nz-input-number
+          class="w300 ml8 mr8"
+          [nzMin]="0.1"
+          [nzMax]="9999.99"
+          [nzPrecision]="2"
+          [(ngModel)]="editData.bid">
+        </nz-input-number><label>元</label>
+      </div>
+      <div class="lab-row mb20 w100p" *ngIf="editType==='ocpc_bid_range'">
+        <label>出价:</label>
+        <nz-input-number
+          class="w100 ml8 mr8"
+          [nzMin]="0.1"
+          [nzMax]="9998.99"
+          [nzPrecision]="2"
+          [(ngModel)]="editData.ocpc_bid_range[0]"
+        >
+        </nz-input-number> -
+        <nz-input-number
+          class="w100 ml8 mr8"
+          [nzMin]="editData.ocpc_bid_range[0]"
+          [nzMax]="9999.99"
+          [nzPrecision]="2"
+          [(ngModel)]="editData.ocpc_bid_range[1]"
+        >
+        </nz-input-number><label>元</label>
+      </div>
+      <ng-container *ngIf="editType==='day_budget'">
+        <!--预算-->
+        <div class="lab-row mb20 w100p">
+          <label>预算:</label>
+          <nz-radio-group
+            class="ml8"
+            [(ngModel)]="editData.day_budget"
+          >
+            <ng-container>
+              <label nz-radio-button [nzValue]="0"><span>不限</span></label>
+              <label nz-radio-button [nzValue]="1"><span>日预算</span></label>
+            </ng-container>
+          </nz-radio-group>
+          <ng-container *ngIf="editData.day_budget == '1'">
+            <nz-input-number
+              class="w200 ml8 mr8"
+              [nzMin]="100"
+              [nzMax]="1000000"
+              [nzPrecision]="2"
+              [(ngModel)]="editData.budget"
+            >
+            </nz-input-number>
+            <label>元</label>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+  </nz-modal>
+</ng-container>
+<ng-template #materialTemplate let-data="data">
+  <nz-carousel class="w100p" [nzEffect]="'scrollx'">
+    <ng-container *ngFor="let info of materialsData">
+      <ng-container *ngIf="info.css_type!==102&&info.css_type!==104&&info.list.length>0">
+        <div style="display: flex;justify-content: center;" nz-carousel-content *ngFor="let material of info.list">
+          <div style="height: 300px;text-align: center;">
+            <ng-container *ngIf="info.type==='image'">
+              <img style="height: 100%;max-width: 550px" [src]="material['preview_img']">
+            </ng-container>
+            <ng-container *ngIf="info.type==='video'">
+              <video style="height: 100%;max-width: 550px" [poster]="material['preview_img']" [src]="material['preview_video']" controls="controls"></video>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="(info.css_type===102||info.css_type===104)&&info.list.length>0">
+        <ng-container *ngFor="let list of info.list">
+          <div style="display: flex;justify-content: center;" nz-carousel-content *ngFor="let material of list['materials']">
+            <div style="height: 300px;text-align: center;">
+              <img style="height: 100%;max-width: 550px" [src]="material['preview_img']">
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </nz-carousel>
+</ng-template>
+

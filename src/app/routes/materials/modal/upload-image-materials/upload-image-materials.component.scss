@@ -1,0 +1,50 @@
+.upload-image-materials-container {
+
+  .form-content {
+    //max-height: 350px;
+    //padding-bottom: 30px;
+    //overflow: auto;
+
+    .lab-row{
+      display: flex;
+      margin-bottom: 2px;
+    }
+
+    .lab-row > label:first-child{
+      width: 80px;
+      text-align: right;
+      display: inline-block;
+    }
+  }
+
+  .form-btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  .height20{
+    height: 20px !important;
+  }
+
+  .progressDiv{
+    margin-right: 25px;
+    width: 82%;
+  }
+  .zhushi{
+    display: inline-block;
+    margin-top: 3px;
+    position: absolute;
+    left: 170px;
+
+  }
+
+  .datePicker .ant-calendar-picker-input {
+    width: 200px;
+  }
+
+  .errorRed{
+    color: red;
+  }
+
+}

@@ -1,0 +1,46 @@
+.add-android-link-box {
+  .url-content {
+    display: flex;
+    overflow: auto;
+    padding-right: 30px;
+
+    .url-label {
+      display: inline-block;
+      width: 100px;
+      text-align: right;
+    }
+
+    .url-list {
+      .url-list-item {
+        display: flex;
+        align-items: center;
+
+        &>i {
+          color: #f04134;
+          cursor: pointer;
+        }
+
+        .form-content {
+          display: flex;
+          align-items: center;
+          width: 650px;
+
+          .w_full {
+            flex: 1;
+          }
+        }
+      }
+    }
+  }
+
+  .tag-content {
+    display: flex;
+    margin-left: 78px;
+  }
+
+  .form-btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+}

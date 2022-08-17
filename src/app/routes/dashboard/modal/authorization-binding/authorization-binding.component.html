@@ -1,0 +1,51 @@
+<div class="new-dashboard-content">
+  <div *ngIf="adverList.length">
+    <div>
+      <div class="pull-left w100 text-right mr10">
+        账户名称:
+      </div>
+      <div class="pull-left">
+        <p>{{accountInfo['pub_account_name']}}</p>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="mt10">
+      <div class="pull-left  w100 text-right mr10">
+        媒体:
+      </div>
+      <div class="pull-left">
+        <p>{{publisherOption[accountInfo['publisher_id']]}}</p>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="mt10">
+      <div class="pull-left  w100 text-right mr10">
+        选择广告主:
+      </div>
+      <div class="pull-left">
+        <nz-select class="w200 mr5"
+                   [(ngModel)]="parm['cid']"
+                   [nzSize]="'small'"
+                   nzPlaceHolder="'请选择'">
+          <nz-option
+            *ngFor="let option of adverList"
+            [nzLabel]="option.advertiser_name"
+            [nzValue]="option.cid">
+          </nz-option>
+        </nz-select>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="text-center mt20">
+      <button class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelForm()">取消</button>
+      <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'"  (click)="sureBinding()">确认</button>
+    </div>
+  </div>
+  <div *ngIf="!adverList.length">
+    <p class="text-center">您目前没有被指派广告主，请联系管理员指派相应广告主！</p>
+    <div class="text-center mt20">
+      <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'"  (click)="sureContack()">确认</button>
+    </div>
+  </div>
+
+</div>

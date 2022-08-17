@@ -1,0 +1,77 @@
+<div class="android-download-link-container">
+  <div class="materials-list-nav">
+    <div class="materials-list-nav-col">
+      <div class="materials-list-nav-btn">
+        <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addLink();">
+          <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加安卓下载链接</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="materials-list-data">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'small'"
+              [nzData]="[{}]"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ y: noResultHeight+'px' }"
+    >
+      <thead>
+      <tr>
+        <th [nzWidth]="'100px'">
+          <span>备注</span>
+        </th>
+        <th [nzWidth]="'400px'">
+          <span>链接</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>应用包名</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>APP名称</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td>
+          {{ data.app_url_name }}
+        </td>
+        <td>
+          {{ data.app_url }}
+        </td>
+        <td>
+          {{ data.app_name }}
+        </td>
+        <td>
+          {{ data.app_label }}
+        </td>
+        <td>
+          <a href="javascript:" (click)="editLink(data)">修改</a>
+          <span class="ml4 mr4">|</span>
+           <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteAppUrlType(data)" [nzPopconfirmPlacement]="'bottomLeft'">删除</a>
+        </td>
+      </tr>
+      <tr *ngIf="!apiData.length && !loading">
+        <td [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height':(noResultHeight-10)+'px'}">
+          <div style="text-align: center">
+            无数据展示
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>

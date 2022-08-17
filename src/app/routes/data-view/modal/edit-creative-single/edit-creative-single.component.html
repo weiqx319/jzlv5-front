@@ -1,0 +1,351 @@
+<!--编辑创意1-->
+<div>
+  <h3>编辑: <span>{{parentData.selected_data[0].pub_creative_title}}</span>（属于:{{parentData.selected_data[0].publisher}}/{{parentData.selected_data[0].pub_account_name}}/{{parentData.selected_data[0].pub_campaign_name}}/{{parentData.selected_data[0].pub_adgroup_name}}）</h3>
+  <div class="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 mr8 inline-block">
+        <span>定时设置:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left noCheckbox ">
+      <nz-radio-group
+        [(ngModel)]="cronSetting">
+        <label class="mr20"
+               nz-radio
+               [nzValue]="'now'">
+          <span>立即执行</span>
+        </label>
+        <label nz-radio
+               [nzValue]="'current'">
+          <span>自定义</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="inpRow_right pull-left" *ngIf="cronSetting == 'current'">
+      <nz-date-picker
+        [nzShowTime]="{ nzFormat: 'HH:mm' }"
+        [nzDisabledDate]="disabledDate"
+        nzFormat="yyyy-MM-dd HH:mm"
+        nzPlaceHolder="请选择时间"
+        [nzSize]="'small'"
+        [(ngModel)] = "cronSettingTime"
+      ></nz-date-picker>
+    </div>
+
+
+    <div class="clear"></div>
+  </div>
+  <!--投放状态-->
+  <div class="inpRow mt10"  [ngClass]="{disabled:editingOriginalityData['pause']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['pause']['is_edit']">
+        <span>投放状态:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <nz-radio-group
+        [(ngModel)]="editingOriginalityData['pause']['value']"
+        [nzDisabled]="!editingOriginalityData['pause']['is_edit']">
+        <label class="mr20"
+               nz-radio
+               [nzValue]="false">
+          <span>开启</span>
+        </label>
+        <label nz-radio
+               [nzValue]="true">
+          <span>暂停</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--创意标题-->
+  <div class="inpRow mt10"  *ngIf="publishId !== 10"[ngClass]="{disabled:editingOriginalityData['pub_creative_title']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['pub_creative_title']['is_edit']">
+        <span>创意标题:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left longInput">
+      <div>
+        <input #creativeTitle nz-input style="width: 400px;"
+               disabled="{{!editingOriginalityData['pub_creative_title']['is_edit']}}"
+               (keydown)="posCursor('pub_creative_title')"
+               (keyup)="posCursor('pub_creative_title')"
+               (mousedown)="posCursor('pub_creative_title')"
+               (mouseup)="posCursor('pub_creative_title')"
+               [(ngModel)]="editingOriginalityData['pub_creative_title']['value']"
+               placeholder="输入创意标题"
+               (click) ="changeInput('pub_creative_title')"
+               (ngModelChange)="contentChange('pub_creative_title')"
+               [nzSize]="'small'">
+        （{{tips.length['pub_creative_title']}}/
+        <i *ngIf="!publishId">50</i>
+        <i *ngIf="publishId">{{creativeTitleRange[publishId]['max']}}</i>
+        ）
+        <span [ngClass]="{origina_background:!editingOriginalityData['pub_creative_title']['is_edit']}"
+              (click)="add('pub_creative_title')"
+              class="wordeCount">关键词{{'{'}}{{'}'}}</span>
+        <i nz-icon nzType="question-circle" nzTheme="outline"
+           nz-popover
+           [nzPopoverContent]="OriginalityKeywordTemplate"
+           nzPopoverPlacement="bottom"
+           class="ml8"
+           [ngClass]="{c8c8c8:!editingOriginalityData['pub_creative_title']['is_edit']}"
+           style="color: #f09200"></i>
+        <span [ngClass]="{origina_background:!editingOriginalityData['pub_creative_title']['is_edit']}"
+              (click)="addArea('pub_creative_title')"
+              class="wordeCount ml10">地域{{'{'}}{{'}'}} </span>
+        <i nz-icon nzType="question-circle" nzTheme="outline"
+           nz-popover
+           [nzPopoverContent]="OriginalityRegionTemplate"
+           nzPopoverPlacement="bottom"
+           class="ml8"
+           [ngClass]="{c8c8c8:!editingOriginalityData['pub_creative_title']['is_edit']}"
+           style="color: #f09200"></i>
+      </div>
+      <div *ngIf="editingOriginalityData['pub_creative_title']['is_edit'] && tips.length['pub_creative_title'] && (tips.length['pub_creative_title'] < creativeTitleRange[publishId]['min'])" class="mt2">
+          <span class="wroning clSave">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>还需要输入{{creativeTitleRange[publishId]['min'] - tips.length['pub_creative_title']}}个字符</span>
+      </div>
+      <div *ngIf="editingOriginalityData['pub_creative_title']['is_edit'] && tips.length['pub_creative_title'] && tips.check['pub_creative_title']" class="mt2">
+        <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词不能为空</span>
+      </div>
+      <div *ngIf="editingOriginalityData['pub_creative_title']['is_edit'] && editingOriginalityData['pub_creative_title']['is_edit'] && tips.pub_creative_title" class="mt2">
+        <span class="wroning" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['titlePrompt']}}</span>
+      </div>
+
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--描述1-->
+  <div class="inpRow mt10" *ngIf="publishId !== 10" [ngClass]="{disabled:editingOriginalityData['pub_creative_description1']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['pub_creative_description1']['is_edit']">
+        <span>描述1:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left longInput">
+      <div>
+        <input #description1 nz-input style="width: 400px;"
+               disabled="{{!editingOriginalityData['pub_creative_description1']['is_edit']}}"
+               (keydown)="posCursor('pub_creative_description1')"
+               (keyup)="posCursor('pub_creative_description1')"
+               (mousedown)="posCursor('pub_creative_description1')"
+               (mouseup)="posCursor('pub_creative_description1')"
+               [(ngModel)]="editingOriginalityData['pub_creative_description1']['value']"
+               (click) ="changeInput('pub_creative_description1')"
+               (ngModelChange)="contentChange('pub_creative_description1')"
+               placeholder=""
+               [nzSize]="'small'">
+        （{{tips.length['pub_creative_description1']}}/
+        <i *ngIf="!publishId">80</i>
+        <i *ngIf="publishId">{{discription1Range[publishId]['max']}}</i>
+        ）
+        <span [ngClass]="{origina_background:!editingOriginalityData['pub_creative_description1']['is_edit']}" (click)="add('pub_creative_description1')" class="wordeCount">关键词{{'{'}}{{'}'}}</span>
+        <i nz-icon nzType="question-circle" nzTheme="outline"
+           nz-popover
+           [nzPopoverContent]="OriginalityKeywordTemplate"
+           nzPopoverPlacement="bottom"
+           class="ml8"
+           [ngClass]="{c8c8c8:!editingOriginalityData['pub_creative_description1']['is_edit']}"
+           style="color: #f09200"></i>
+
+        <div *ngIf="editingOriginalityData['pub_creative_description1']['is_edit'] && tips.length['pub_creative_description1'] && (tips.length['pub_creative_description1'] < discription1Range[publishId]['min'])" class="mt2">
+          <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>还需要输入{{discription1Range[publishId]['min'] - tips.length['pub_creative_description1']}}个字符</span>
+        </div>
+        <div *ngIf="editingOriginalityData['pub_creative_description1']['is_edit'] && tips.length['pub_creative_description1'] && tips.check['pub_creative_description1']" class="mt2">
+          <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词不能为空</span>
+        </div>
+        <div *ngIf="editingOriginalityData['pub_creative_description1']['is_edit'] && tips.pub_creative_description1" class="mt2">
+              <span class="wroning" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['discription1Prompt']}}</span>
+         </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--描述2（选填）-->
+  <div class="inpRow mt10" *ngIf="publishId !== 4 && publishId !== 10" [ngClass]="{disabled:editingOriginalityData['pub_creative_description2']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['pub_creative_description2']['is_edit']">
+        <span>描述2(选填):</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left longInput">
+      <div>
+        <input #description2 nz-input style="width: 400px;"
+               disabled="{{!editingOriginalityData['pub_creative_description2']['is_edit']}}"
+               (keydown)="posCursor('pub_creative_description2')"
+               (keyup)="posCursor('pub_creative_description2')"
+               (mousedown)="posCursor('pub_creative_description2')"
+               (mouseup)="posCursor('pub_creative_description2')"
+               [(ngModel)]="editingOriginalityData['pub_creative_description2']['value']"
+               (click) ="changeInput('pub_creative_description2')"
+               (ngModelChange)="contentChange('pub_creative_description2')"
+               placeholder=""
+               [nzSize]="'small'">
+        （{{tips.length['pub_creative_description2']}}/
+        <i *ngIf="!publishId">80</i>
+        <i *ngIf="publishId">{{discription2Range[publishId]['max']}}</i>）
+        <span [ngClass]="{origina_background:!editingOriginalityData['pub_creative_description2']['is_edit']}" (click)="add('pub_creative_description2')" class="wordeCount">关键词{{'{'}}{{'}'}}</span>
+        <i nz-icon nzType="question-circle" nzTheme="outline"
+           nz-popover
+           [nzPopoverContent]="OriginalityKeywordTemplate"
+           nzPopoverPlacement="bottom"
+           class="ml8"
+           [ngClass]="{c8c8c8:!editingOriginalityData['pub_creative_title']['is_edit']}"
+           style="color: #f09200"></i>
+        <div *ngIf="editingOriginalityData['pub_creative_description2']['is_edit'] && tips.pub_creative_description2" class="mt2">
+           <span class="wroning" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['discription2Prompt']}}</span>
+        </div>
+        <div *ngIf="editingOriginalityData['pub_creative_description2']['is_edit'] && tips.length['pub_creative_description2'] && (tips.length['pub_creative_description2'] < discription2Range[publishId]['min'])" class="mt2">
+          <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>还需要输入{{discription2Range[publishId]['min'] - tips.length['pub_creative_description2']}}个字符</span>
+        </div>
+        <div *ngIf="tips.length['pub_creative_description2'] && tips.check['pub_creative_description2']" class="mt2">
+          <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词不能为空</span>
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--访问Url-->
+  <div class="inpRow mt10" *ngIf="publishId !== 4 && publishId!==10" [ngClass]="{disabled:editingOriginalityData['pc_destination_url']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['pc_destination_url']['is_edit']">
+        <span>访问URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+        <textarea placeholder="输入Url" *ngIf="editingOriginalityData['pc_destination_url']['is_edit']"
+                  [(ngModel)]="editingOriginalityData['pc_destination_url']['value']"
+                  (click) ="changeInput('pc_destination_url')"
+                  (ngModelChange)="contentChange('pc_destination_url')"
+                  class="titleColor w400 border"  rows="5"></textarea>
+        <textarea placeholder="输入Url" *ngIf="!editingOriginalityData['pc_destination_url']['is_edit']" [(ngModel)]="editingOriginalityData['pc_destination_url']['value']"  disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+        <i class="tip positionLeft">({{tips.length['pc_destination_url']}}/1024)</i>
+        <ng-container *ngIf="editingOriginalityData['pc_destination_url']['is_edit'] && tips.pc_destination_url">
+              <span style=" position: absolute;display: inline-block;right: -212px;top: 25px;width: 200px;" class="wroning ml20" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['pcDestinationUrlPrompt']}}</span>
+        </ng-container>
+
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--显示Url-->
+  <div class="inpRow mt10" *ngIf="publishId !== 4 && publishId!==10" [ngClass]="{disabled:editingOriginalityData['pc_display_url']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['pc_display_url']['is_edit']">
+        <span>显示URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+        <textarea placeholder="输入Url"
+                  *ngIf="editingOriginalityData['pc_display_url']['is_edit']"
+                  [(ngModel)]="editingOriginalityData['pc_display_url']['value']"
+                  (click) ="changeInput('pc_display_url')"
+                  (ngModelChange)="contentChange('pc_display_url')"
+                  class="titleColor w400 border"  rows="5"></textarea>
+        <textarea placeholder="输入Url" *ngIf="!editingOriginalityData['pc_display_url']['is_edit']" [(ngModel)]="editingOriginalityData['pc_display_url']['value']"  disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+        <i class="tip positionLeft">({{tips.length['pc_display_url']}}/36)</i>
+        <ng-container *ngIf="editingOriginalityData['pc_display_url']['is_edit'] && tips.pc_display_url">
+              <span style=" position: absolute;display: inline-block;right: -212px;top: 25px;width: 200px;" class="wroning ml20" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['pcDisplayUrlPrompt']}}</span>
+        </ng-container>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--移动访问Url-->
+  <div class="inpRow mt10" *ngIf="publishId !== 10" [ngClass]="{disabled:editingOriginalityData['wap_destination_url']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['wap_destination_url']['is_edit']">
+        <span>移动访问URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+        <textarea placeholder="输入Url"
+                  *ngIf="editingOriginalityData['wap_destination_url']['is_edit']"
+                  [(ngModel)]="editingOriginalityData['wap_destination_url']['value']"
+                  (click) ="changeInput('wap_destination_url')"
+                  (ngModelChange)="contentChange('wap_destination_url')"
+                  class="titleColor w400 border"  rows="5"></textarea>
+        <textarea placeholder="输入Url" *ngIf="!editingOriginalityData['wap_destination_url']['is_edit']" [(ngModel)]="editingOriginalityData['wap_destination_url']['value']" disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+        <i class="tip positionLeft">({{tips.length['wap_destination_url']}}/1024)</i>
+        <ng-container *ngIf="editingOriginalityData['wap_destination_url']['is_edit'] && tips['wap_destination_url']">
+              <span style=" position: absolute;display: inline-block;right: -212px;top: 25px;width: 200px;" class="wroning ml20" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['wapDestinationUrlPrompt']}}</span>
+        </ng-container>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--移动显示Url-->
+  <div *ngIf="publishId !== 10" class="inpRow mt10" [ngClass]="{disabled:editingOriginalityData['wap_display_url']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['wap_display_url']['is_edit']">
+        <span>移动显示URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+        <textarea placeholder="输入Url" *ngIf="editingOriginalityData['wap_display_url']['is_edit']"
+                  [(ngModel)]="editingOriginalityData['wap_display_url']['value']"
+                  (click) ="changeInput('wap_display_url')"
+                  (ngModelChange)="contentChange('wap_display_url')"
+                  class="titleColor w400 border"  rows="5"></textarea>
+        <textarea placeholder="输入Url" *ngIf="!editingOriginalityData['wap_display_url']['is_edit']" [(ngModel)]="editingOriginalityData['wap_display_url']['value']" disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+        <i class="tip positionLeft">({{tips.length['wap_display_url']}}/36)</i>
+        <ng-container *ngIf="editingOriginalityData['wap_display_url']['is_edit'] && tips['wap_display_url']">
+              <span style=" position: absolute;display: inline-block;right: -212px;top: 25px;width: 200px;" class="wroning ml20" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['wapDisplayUrlPrompt']}}</span>
+        </ng-container>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--标记-->
+  <!-- <div class="inpRow mt10" *ngIf="publishId === 1" [ngClass]="{disabled:editingOriginalityData['tabs']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox [(ngModel)]="editingOriginalityData['tabs']['is_edit']">
+        <span>标记:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <nz-select style="width: 200px;"
+                 [(ngModel)]="tabItem"
+                 nzPlaceHolder="请选择标记"
+                 [nzSize]="'small'"
+                 [nzDisabled]="!editingOriginalityData['tabs']['is_edit']"
+      >
+        <nz-option
+          *ngFor="let item of tabs"
+          [nzLabel]="item.name"
+          [nzValue]="item.value">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="clear"></div>
+  </div> -->
+  <ng-template #OriginalityKeywordTemplate>
+    <div style="max-width: 380px;">
+      <h4>什么是关键词通配符？</h4>
+      <p style="line-height: 20px;" class="mt10">作为通配符的关键词在创意展示时会获得飘红，从而吸引更多网民关注。此外，插入通配符的创意在展现时，将以网民搜索的关键词替代通配符关键词，而
+        不是所有创意都飘红一样的关键词，从而增强网民搜索词、关键词和创意之间的相关性作为通配符的关键词会放在大括号里作为标志。</p>
+    </div>
+  </ng-template>
+  <ng-template #OriginalityRegionTemplate>
+    <div style="max-width: 380px;">
+      <h4>什么是地域通配符？</h4>
+      <p style="line-height: 20px;" class="mt10">在您的创意标题前插入{{'{'}}投放地域{{'}'}}，搜索用户会根据所在位置看到不一样的地域信息，帮您过滤非必要地域人群，增加精准地域人群的创意点击，同时，
+        地域信息飘红显示，可吸引更所网民关注。{{'{'}}投放地域{{'}'}}将作为地域通配符的标志，无需替换成具体地域。（地域通配符仅支持在标题前插入一次，插入后，
+        系统会适当的调整地域通配符的展现及在创意中所处的位置，以保障您的推广结果语句通顺可以吸引用户点击。）</p>
+    </div>
+  </ng-template>
+</div>

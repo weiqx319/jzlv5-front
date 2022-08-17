@@ -1,0 +1,121 @@
+.mb12 {
+  margin-bottom: 12px;
+}
+.c5d5d5d {
+  color: #5d5d5d;
+}
+.help-container {
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+  .clear {
+    clear: both;
+  }
+  .help-header {
+    width: 100%;
+    height: 55px;
+    padding-left: 27px;
+    padding-right: 35px;
+    display: flex;
+    display: -webkit-flex;
+    justify-content: space-between;
+    align-items: center;
+    .help-header-left {
+      font-size: 18px;
+      height: 100%;
+    }
+    .help-header-right {
+      font-size: 14px;
+    }
+  }
+  .help-content {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    .help-container-left {
+      width: 180px;
+      flex: 0 0 180px;
+      .logoDiv {
+        height: 60px;
+        line-height: 60px;
+        background: #0a223a;
+        color: #fff;
+        font-size: 14px;
+        text-align: center;
+
+        img {
+          width: 124px;
+          margin-top: -3px;
+          margin-left: -26px;
+        }
+      }
+      ul {
+        height: calc(100vh - 60px);
+        border: 1px solid #e4e4e4;
+        background: #eef2f7;
+        li {
+          position: relative;
+          height: 40px;
+          line-height: 40px;
+          text-align: center;
+          color: #5d5d5d;
+          //padding-left: 37px;
+          font-size: 14px;
+          //padding-right: 15px;
+          a {
+            color: #5d5d5d;
+          }
+          .catClass {
+            //width: 115px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+          .count {
+            position: absolute;
+          }
+        }
+        .active {
+          background-color: #fff;
+          a {
+            color: #56acef !important;
+          }
+        }
+      }
+    }
+
+    .help-container-right {
+      overflow: hidden;
+      flex: auto;
+      .help-container-right-nav {
+        height: 60px;
+        background: rgba(250, 250, 250, 1);
+        border-bottom: 2px solid #0a223a;
+        line-height: 60px;
+        font-size: 14px;
+        padding: 0 15px;
+        .navDiv {
+          display: inline-block;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+        .help-container-right-nav-question {
+          float: right;
+          margin-right: 20px;
+          font-size: 12px;
+        }
+      }
+      .help-container-right-contain {
+        height: calc(100vh - 40px);
+        overflow-y: scroll;
+        padding: 8px 20px 20px 20px;
+      }
+    }
+  }
+}

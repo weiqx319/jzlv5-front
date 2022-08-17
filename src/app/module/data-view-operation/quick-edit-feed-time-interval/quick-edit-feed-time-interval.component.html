@@ -1,0 +1,24 @@
+<div class="lab-row pl20 mb20 w100p">
+  <label><span class="redStart">*</span>推广时段:</label>
+  <div>
+    <nz-radio-group class="ml8" [nzSize]="'small'"
+                    [(ngModel)]="schedule_time_type"
+                    (ngModelChange)="emitData()">
+      <ng-container *ngFor="let option of schedule_time_type_sub">
+        <label nz-radio-button [nzValue]="option.value">
+          <span>{{option.label}}</span>
+        </label>
+      </ng-container>
+    </nz-radio-group>
+    <ng-container *ngIf="schedule_time_type === 2">
+      <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.time_series.is_show">
+        <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+        <span style="color: red;">{{ checkErrorTip.time_series.tip_text }}</span>
+      </div>
+      <app-edit-schedule [outFormat]="'string'" [timeDimension]="1"
+                         [parentTimeDate]="time_series"
+                         [showCoefficient]="showCoefficient"
+                         (dateSelected)="dateDate($event)"></app-edit-schedule>
+    </ng-container>
+  </div>
+</div>

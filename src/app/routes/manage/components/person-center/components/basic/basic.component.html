@@ -1,0 +1,141 @@
+<div class="basic-setting">
+  <ng-container *ngIf="currentType=='basic'">
+    <div class="fixed-condition-manage">
+      <ul nz-menu nzMode="horizontal">
+        <li nz-menu-item nzSelected>个人资料</li>
+      </ul>
+    </div>
+    <div class="content-section-manage">
+      <div class="jzl_card_body" *ngIf="currentUser">
+        <div class="lab-row user-info">
+          <span>用户名：</span>
+          <span>{{currentUser.user_name}}</span>
+        </div>
+        <div class="lab-row user-info">
+          <span>投放项目：</span>
+          <span>{{roleTypeRelation['role_'+currentUser.role_id]}}</span>
+        </div>
+        <div class="lab-row user-info">
+          <span>手机：</span>
+          <span>{{currentUser.mobile}}</span>
+        </div>
+        <div class="lab-row user-info">
+          <span>邮箱：</span>
+          <span>{{currentUser.email}}</span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+ <!-- <div class="jzl_card mt8">
+    <div class="jzl_card_head">
+      <span>使用信息</span>
+    </div>
+    <div class="jzl_card_body">
+      <div class="lab-row">
+        <span>使用版本：</span>
+        <span>高级版</span>
+      </div>
+      <div class="lab-row">
+        <span>使用期限：</span>
+        <span>2018-01-08至2019-01-08</span>
+      </div>
+      <div class="lab-row">
+        <span>使用媒体：</span>
+        <span>百度，360</span>
+      </div>
+      <div class="lab-row">
+        <span>当前消耗：</span>
+        <span>200W</span>
+      </div>
+      <div class="lab-row">
+        <span>购买消耗：</span>
+        <span>500W</span>
+      </div>
+    </div>
+
+
+  </div>-->
+  <ng-container *ngIf="currentType == 'password'">
+    <div class="fixed-condition-manage">
+      <ul nz-menu nzMode="horizontal">
+        <li nz-menu-item nzSelected>密码管理</li>
+      </ul>
+    </div>
+    <div class="content-section-manage">
+      <div class="section-content-container">
+        <div class="jzl_card_head_actions">
+          <a (click)="passwordUpdateStatus=true">
+           <i nz-icon nzType="edit" nzTheme="outline"></i>
+          </a>
+        </div>
+        <div class="jzl_card_body">
+          <form nz-form [formGroup]="passwordForm" role="form">
+            <nz-form-item class="lab-row user-info">
+              <span>现有密码：</span>
+              <div class="w200 ml8" style="display: inline-block">
+                <input nz-input class="w100p"
+                       [formControlName]="'old_password'"
+                       placeholder="******"
+                       [ngClass]="{'not-allowed':!passwordUpdateStatus}"
+                       type="password"
+                       [nzSize]="'default'"
+                       [(ngModel)]="passwordSetting.old_password">
+              </div>
+              <ng-container *ngIf="getFormControl('old_password').dirty&&getFormControl('old_password').errors &&passwordUpdateStatus">
+                  <div class='ant-form-item-explain error-tip' *ngIf="getFormControl('old_password').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入密码</div>
+                <div class='ant-form-item-explain error-tip' *ngIf="getFormControl('old_password').errors?.minlength"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>密码长度不能少于6位</div>
+                <div class='ant-form-item-explain error-tip' *ngIf="getFormControl('old_password').errors?.serverError"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>当前密码不正确</div>
+              </ng-container>
+            </nz-form-item>
+
+            <nz-form-item class="lab-row user-info">
+              <span>新密码：</span>
+              <div class="w200 ml8" style="display: inline-block">
+                <input nz-input class="w100p"
+                       [formControlName]="'user_password'"
+                       placeholder="******"
+                       [ngClass]="{'not-allowed':!passwordUpdateStatus}"
+                       type="password"
+                       [nzSize]="'default'"
+                       [(ngModel)]="passwordSetting.user_password">
+              </div>
+              <ng-container *ngIf="getFormControl('user_password').dirty&&getFormControl('user_password').errors && passwordUpdateStatus">
+                  <div class='ant-form-item-explain error-tip' *ngIf="getFormControl('user_password').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入密码</div>
+                <div class='ant-form-item-explain error-tip' *ngIf="getFormControl('user_password').errors?.pattern"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>密码必须符合大写字母、小写字母、加数字、特殊符号组合形式，长度不能少于8位</div>
+              </ng-container>
+            </nz-form-item>
+            <nz-form-item class="lab-row user-info">
+              <span>确认密码：</span>
+              <div class="w200 ml8" style="display: inline-block">
+                <input nz-input
+                       class="w100p"
+                       [formControlName]="'confirm'"
+                       [(ngModel)]="passwordSetting.confirm"
+                       placeholder="******"
+                       type="password"
+                       [ngClass]="{'not-allowed':!passwordUpdateStatus}"
+                       [nzSize]="'default'">
+              </div>
+              <ng-container *ngIf="getFormControl('confirm').dirty&&getFormControl('confirm').errors && passwordUpdateStatus">
+                  <div class='ant-form-item-explain error-tip' *ngIf="getFormControl('confirm').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请确认密码！</div>
+                <div class='ant-form-item-explain error-tip'
+                      *ngIf="!(getFormControl('confirm').errors?.required) && getFormControl('confirm').errors?.equal"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>两次输入的密码不匹配！</div>
+              </ng-container>
+            </nz-form-item>
+
+            <div *ngIf="passwordUpdateStatus" class="ml100">
+              <button class="ml8" nz-button type="button" [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+                <span>取消</span>
+              </button>
+              <button class="ml8" nz-button type="button" [nzType]="'primary'" [nzSize]="'default'" [disabled]="!passwordForm.valid" (click)="updatePassword()">
+                <span>确定</span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

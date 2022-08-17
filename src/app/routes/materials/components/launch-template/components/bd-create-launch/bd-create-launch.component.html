@@ -1,0 +1,560 @@
+<ng-container *ngIf="!structConfigLoading">
+  <div class="common-setting" *ngIf="!isNext">
+    <div class="common-setting-content" [ngStyle]="{'height':tableHeight - 40 +'px'}">
+      <div class="form-card mt10 mb10">
+        <div class="sub_title mb10">计划类型</div>
+        <div class="form-content">
+          <div class="lab-row mb20">
+            <label>营销目标:</label>
+            <nz-radio-group
+              class="ml8"
+              [nzSize]="'small'"
+              [(ngModel)]="commonSetting.campaign_type_setting.marketing_target">
+              <ng-container *ngFor="let option of structConfig['campaign_type_setting']['marketing_target']['sub']">
+                <label nz-radio-button nzValue="{{option['value']}}" [nzDisabled]="option['value'] !== 'catalogue' || fromNext">
+                  <span>{{ option['label'] }}</span>
+                </label>
+              </ng-container>
+            </nz-radio-group>
+          </div>
+          <ng-container *ngIf="commonSetting.campaign_type_setting.marketing_target === 'catalogue'">
+            <div class="lab-row mb20">
+              <label>投放目标:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="commonSetting.campaign_type_setting.launch_target">
+                <ng-container *ngFor="let option of structConfig['campaign_type_setting']['launch_target']['sub']">
+                  <label nz-radio-button nzValue="{{option['value']}}" [nzDisabled]="fromNext">
+                    <span>{{ option['label'] }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <ng-container *ngIf="commonSetting.campaign_type_setting.launch_target === 'app'">
+              <div class="lab-row mb20">
+                <label>操作系统:</label>
+                <nz-radio-group
+                  class="ml8"
+                  [nzSize]="'small'"
+                  [(ngModel)]="commonSetting.campaign_type_setting.operating_system">
+                  <ng-container *ngFor="let option of structConfig['campaign_type_setting']['operating_system']['sub']">
+                    <label nz-radio-button nzValue="{{option['value']}}" [nzDisabled]="fromNext">
+                      <span>{{ option['label'] }}</span>
+                    </label>
+                  </ng-container>
+                </nz-radio-group>
+              </div>
+              <ng-container *ngIf="commonSetting.campaign_type_setting.operating_system === 'android'">
+                <div class="lab-row mb20">
+                  <label>应用来源:</label>
+                  <nz-checkbox-group
+                    class="ml8"
+                    [(ngModel)]="appSource"
+                    (ngModelChange)="appSourceChange();">
+                  </nz-checkbox-group>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+      <div class="form-card mt10 mb10">
+        <div class="sub_title mb10">流量选择</div>
+        <div class="form-content">
+          <div class="lab-row mb20">
+            <label>投放流量:</label>
+            <nz-radio-group
+              class="ml8"
+              [nzSize]="'small'"
+              [(ngModel)]="commonSetting.position_info.flow_type">
+              <ng-container *ngFor="let option of structConfig['position_info']['flow_type']['sub']">
+                <label nz-radio-button nzValue="{{option['value']}}"
+                       [nzDisabled]="(option['value'] !== '2' && commonSetting.campaign_type_setting.marketing_target === 'catalogue' && commonSetting.campaign_type_setting.operating_system === 'android' && commonSetting.campaign_type_setting.app_source.length === 1 && commonSetting.campaign_type_setting.app_source.indexOf('down_url') !== -1) || fromNext">
+                  <span>{{ option['label'] }}</span>
+                </label>
+              </ng-container>
+            </nz-radio-group>
+          </div>
+          <ng-container *ngIf="commonSetting.position_info.flow_type === '2'">
+            <div class="lab-row mb20">
+              <label>流量范围:</label>
+              <nz-checkbox-group
+                class="ml8"
+                [(ngModel)]="flowRange"
+                (ngModelChange)="flowRangeChange();">
+              </nz-checkbox-group>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="commonSetting.position_info.flow_type === '0' || (commonSetting.position_info.flow_type === '2' && commonSetting.position_info.flow_range.indexOf('8') === -1)">
+            <div class="lab-row mb20">
+              <label>投放版位:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="commonSetting.position_info.product_types">
+                <ng-container *ngFor="let option of structConfig['position_info']['product_types']['sub']">
+                  <label nz-radio-button nzValue="{{option['value']}}" [nzDisabled]="fromNext">
+                    <span>{{ option['label'] }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-btns">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+        <span>取消</span>
+      </button>
+        <button class="mr8" nz-popconfirm  [nzPopconfirmTitle]="'重置后, 会清空之前的设置, 您确定重置吗?'" (nzOnConfirm)="doReset()" [nzPopconfirmPlacement]="'topRight'" nz-button [nzType]="'default'" [nzSize]="'small'">
+          <span>重置</span>
+        </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submiting" [nzSize]="'small'" (click)="doNext()">
+        <span>下一步</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="create-launch-container-bd" *ngIf="isNext">
+    <div class="create-launch-left pl5" [ngStyle]="{'height':tableHeight +'px'}">
+      <nz-anchor [nzContainer]="'#anchorContent'" [nzOffsetTop]="30">
+        <ng-container *ngFor="let anchor of anchorList;">
+          <nz-link nzHref="{{anchor.key}}" nzTitle="{{anchor.name}}">
+            <nz-link *ngFor="let sub of anchor.sub;"
+                     nzHref="{{sub.key}}"
+                     nzTitle="{{sub.name}}"></nz-link>
+          </nz-link>
+        </ng-container>
+      </nz-anchor>
+    </div>
+    <div class="create-launch-right" [ngStyle]="{'width':tableWidth +'px'}">
+      <div class="form-content">
+        <div id="anchorContent" class="setting-box " [ngStyle]="{'height':tableHeight - 40 +'px'}">
+          <div id="create_launch" class="basic-setting setting-block pl20">
+            <div class="sub_title mb10"><span>选择素材</span><span class="sub_title_desc ml40">先选择要投放的创意样式、创意素材、创意标题，在计划可以设置新建单元的个数，系统会自动分配素材和标题组合创意到单元</span></div>
+            <div class="basic-card">
+              <div class="lab-row mb20 w100p">
+                <label>创意样式:</label>
+                <nz-radio-group
+                  class="ml8"
+                  [nzSize]="'small'"
+                  [(ngModel)]="material_style"
+                  (ngModelChange)="materialStyleChange();">
+                  <ng-container *ngFor="let option of materialStyle">
+                    <label nz-radio-button nzValue="{{option['value']}}">
+                      <span>{{ option['label'] }}</span>
+                    </label>
+                  </ng-container>
+                </nz-radio-group>
+              </div>
+              <div class="lab-row mb20 w100p">
+                <label id="select_materials">创意素材:</label>
+                <nz-radio-group
+                  class="ml8"
+                  [nzSize]="'small'"
+                  [(ngModel)]="creative_material"
+                  (ngModelChange)="creativeMaterialChange();">
+                  <label nz-radio-button [nzValue]="0">
+                    <span>使用商品库</span>
+                  </label>
+                  <label nz-radio-button
+                         [nzValue]="1"
+                         [nzDisabled]="['502','503','518','521','517','514','513','506','507','519','523','516','515','504','505'].indexOf(material_style) !== -1">
+                    <span>本地素材库</span>
+                  </label>
+                </nz-radio-group>
+                <ng-container *ngIf="creative_material === 1">
+                  <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addMaterials()">
+                    <span>素材库</span>
+                  </button>
+                  <p>已选择<span class="ml5" style="color: red;">{{materialSlt.length}}</span></p>
+                </ng-container>
+
+                <span class="sub_title_desc ml40">本地素材库为{{productInfo['name']}}平台素材库，如果使用需要先上传素材到{{productInfo['name']}}素材库</span>
+              </div>
+              <div class="lab-row mb20 w100p" *ngIf="['524','526','525','527'].indexOf(material_style) === -1">
+                <label id="select_documents">创意标题:</label>
+                <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addDocuments()">
+                  <span>添加标题</span>
+                </button>
+                <p>已选择<span class="ml5" style="color: red;">{{titleSlt.length}}</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="basic-setting setting-block mt20  ">
+
+              <ng-container *ngIf="(['524', '525', '526', '527'].indexOf(material_style) === -1 && titleSlt.length && (creative_material === 0 || (creative_material === 1 && materialSlt.length)))
+                                    || (['524', '525', '526', '527'].indexOf(material_style) !== -1 && (creative_material === 0 || (creative_material === 1 && materialSlt.length)))">
+                <div class="sub_title mb10 pl20" id="select_accounts"><span>选择帐号</span><span
+                  class="sub_title_desc ml40">可以将选择的素材和标题同时新建到多个账号</span></div>
+                <div class="basic-card">
+                  <div class="lab-row mb20 pl20 w100p">
+                    <label>选择账号:</label>
+                    <nz-select class="w_full ml8"
+                               [nzSize]="'small'"
+                               [nzMode]="'multiple'"
+                               [(ngModel)]="accounts"
+                               [nzPlaceHolder]="'请选择'"
+                               (ngModelChange)="accountChange($event)"
+                               nzShowSearch>
+                      <nz-option
+                        *ngFor="let option of accountsList"
+                        [nzLabel]="option.pub_account_name"
+                        [nzValue]="option.pub_account_id">
+                      </nz-option>
+                    </nz-select>
+                  </div>
+                </div>
+              </ng-container>
+
+          <ng-container *ngIf="accounts.length">
+            <nz-tabset  [nzSize]="'small'" [nzType]="'card'" [(nzSelectedIndex)]="curAccountIndex" (nzSelectChange)="currentTabChange('campaign');">
+              <nz-tab  *ngFor="let account of accountsAry; let accountIndex = index;" [nzTitle]="titleTemplate">
+                <ng-template #titleTemplate>
+
+                  <div><span [ngStyle]="{'color': errorTipAry[accountIndex]['has_error']? 'red' : '#1890ff' }">{{ account.basic.pub_account_name }}</span>
+                    <!--                  <i *ngIf="accountsAry.length > 1" nz-icon nzType="close" class="ant-tabs-close-x" (click)="closeTab(accountIndex, accountsAry, errorTipAry, 'account')"></i>-->
+                  </div>
+                </ng-template>
+                <div class="lab-tip mt5 ml8 pl20" *ngIf="account.basic['account_enable_campaign_count'] !== undefined">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+                  <span>该账户下总共还能新建 <b>{{account.basic['account_enable_campaign_count']}}</b> 个计划</span>
+                </div>
+                <div class="error-tip mt5 ml8 pl20" *ngIf="errorTipAry[accountIndex]['account_enable_campaign_count'] && errorTipAry[accountIndex]['account_enable_campaign_count'].is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ errorTipAry[accountIndex]['account_enable_campaign_count'].tip_text }}</span>
+                </div>
+                <!--<div class="lab-tip mt5 ml8" *ngIf="account.basic['account_enable_count'] !== undefined">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+                  <span>该账户下今天还能新建 <b>{{account.basic['account_enable_count']}}</b> 个单元</span>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="errorTipAry[accountIndex]['account_enable_count'] && errorTipAry[accountIndex]['account_enable_count'].is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ errorTipAry[accountIndex]['account_enable_count'].tip_text }}</span>
+                </div>-->
+                <ng-container *ngIf="accountsAry.length > 1">
+                  <button class="mt20 ml20" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="copyCurAccountParams(account, accountsAry, errorTipAry[accountIndex])">
+                    <span>复制参数到其他账号</span>
+                  </button>
+                  <span class="sub_title_desc ml40">可以将该账号下当前页面新建的所有计划、单元、创意复制到其他选择的账号</span>
+                </ng-container>
+
+                <div class="place-holder-div mt20" id="campaign_start"></div>
+
+                <nz-tabset class="mt40" [nzSize]="'small'" [nzType]="'card'" [(nzSelectedIndex)]="curCampaignIndex" (nzSelectChange)="currentTabChange('adgroup');">
+                  <nz-tab *ngFor="let campaign of account.campaign; let campaignIndex = index;" [nzTitle]="titleTemplate">
+                    <ng-template #titleTemplate>
+                      <div><span [ngStyle]="{'color': errorTipAry[accountIndex].campaign[campaignIndex]['has_error']? 'red' : '#1890ff' }">计划{{ campaignIndex + 1}}</span>
+                        <i *ngIf="account.campaign.length > 1" nz-icon nzType="close" class="ant-tabs-close-x" (click)="closeTab(campaignIndex, account.campaign, errorTipAry[accountIndex].campaign, 'campaign')"></i>
+                      </div>
+                    </ng-template>
+                    <div class="form-card mt10 mb10">
+                      <div id="copy_campaign" class="sub_title mb10 pl20">复制计划</div>
+                      <div class="form-card mb10">
+                        <div class="lab-row mb20">
+                          <label>复制计划:</label>
+                          <div class="ml8">
+                            <button class="mr8 ml5" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="copyCurrent(campaign, account.campaign, errorTipAry[accountIndex].campaign, 'campaign')">
+                              <span>复制计划</span>
+                            </button>
+                            <span class="sub_title_desc ml40">可以在当前账号下复制该计划当前页面新建的所有单元、创意</span>
+                          </div>
+                        </div>
+
+                        <ng-container *ngIf="campaignIndex === curCampaignIndex">
+                          <app-bd-campaign-section
+                            [chan_pub_id]="account.basic.chan_pub_id"
+                            [data]="campaign.basic"
+                            [errorTip]="errorTipAry[accountIndex].campaign[campaignIndex]['basic']"
+                            [structConfig]="structConfig"
+                            [appSource]="appSource"
+                            [campaignDisabledAry]="campaignDisabled[account.basic.chan_pub_id]"
+                            [materialStyle]="material_style"
+                            [creativeMaterial]="creative_material"
+                            (adgroupNum)="changeAdgroupNum()"
+                            (pubCampaignId)="updateCampaignDisabledStatus(account.basic.chan_pub_id, account.campaign);"
+                          >
+                          </app-bd-campaign-section>
+                        </ng-container>
+                      </div>
+                    </div>
+
+                    <div id="adgroup_start" class="place-holder-div mt20"></div>
+
+                    <!--单元部分-->
+                    <ng-container *ngIf="campaign.basic.adgroup_num">
+                      <nz-tabset class="mt40" [nzSize]="'small'" [nzType]="'card'" [(nzSelectedIndex)]="curAdgroupIndex" (nzSelectChange)="curAdgroupTabChange(campaign);">
+                        <nz-tab *ngFor="let adgroup of campaign.adgroup; let adgroupIndex = index;" [nzTitle]="titleTemplate">
+                          <ng-template #titleTemplate>
+                            <div><span [ngStyle]="{'color': errorTipAry[accountIndex].campaign[campaignIndex].adgroup[adgroupIndex]['has_error']? 'red' : '#1890ff' }">单元{{ adgroupIndex + 1}}</span>
+                              <i *ngIf="campaign.adgroup.length > 1" nz-icon nzType="close" class="ant-tabs-close-x" (click)="closeTab(adgroupIndex, campaign.adgroup, errorTipAry[accountIndex].campaign[campaignIndex].adgroup, 'adgroup')"></i>
+                            </div>
+                          </ng-template>
+                          <!--单元设置-->
+                          <div class="form-card mt10 mb10">
+                            <div id="adgroup_setting" class="sub_title mb10 pl20">单元设置</div>
+                            <div class="form-card mb10">
+                              <div class="lab-row mb20">
+                                <label id="copy_adgroup">复制单元:</label>
+                                <div class="ml8">
+                                  <ng-container *ngIf="campaign.adgroup.length > 1">
+                                    <button class="mr8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="copyAdgroupParams(adgroup, campaign.adgroup)">
+                                      <span>复制参数到其他单元</span>
+                                    </button>
+                                  </ng-container>
+                                  <button class="mr8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="copyCurrent(adgroup, campaign.adgroup, errorTipAry[accountIndex].campaign[campaignIndex].adgroup, 'adgroup')">
+                                    <span>复制此单元</span>
+                                  </button>
+                                </div>
+                              </div>
+<!--                              <div class="lab-row mb20">-->
+<!--                                <label>投放模板:</label>-->
+<!--                                <nz-select class="w200 ml8"-->
+<!--                                           [nzSize]="'small'"-->
+<!--                                           [(ngModel)]="adgroup.launch_template_id"-->
+<!--                                           [nzPlaceHolder]="'请选择'"-->
+<!--                                           (ngModelChange)="launchTemplateChange($event, adgroup)"-->
+<!--                                           nzShowSearch>-->
+<!--                                  <nz-option-->
+<!--                                    *ngFor="let option of launchTemplateList"-->
+<!--                                    [nzLabel]="option.launch_template_name"-->
+<!--                                    [nzValue]="option.launch_template_id">-->
+<!--                                  </nz-option>-->
+<!--                                </nz-select>-->
+<!--                              </div>-->
+                              <ng-container *ngIf="adgroupIndex === curAdgroupIndex">
+                                <app-bd-adgroup-section
+                                  [data]="adgroup.basic"
+                                  [errorTip]="errorTipAry[accountIndex].campaign[campaignIndex].adgroup[adgroupIndex]['basic']"
+                                  [chan_pub_id]="account.basic.chan_pub_id"
+                                  [structConfig]="structConfig"
+                                  [flowRange]="flowRange"
+                                  [positionInfo]="adgroup.position_info"
+                                  [campaignTypeSetting]="commonSetting.campaign_type_setting">
+                                </app-bd-adgroup-section>
+                              </ng-container>
+                            </div>
+
+                            <div class="place-holder-div mt20 pl20"></div>
+                            <!--定向设置-->
+                            <div class="form-card mb10 pl20">
+                              <div id="target_setting" class="sub_title mb10">用户定向</div>
+                              <div class="form-card mb10">
+                                <div class="lab-row mb20">
+                                  <label>本地模板:</label>
+                                  <nz-select class="w200 ml8"
+                                             [nzSize]="'small'"
+                                             [(ngModel)]="adgroup.audience_template_id"
+                                             [nzPlaceHolder]="'请选择'"
+                                             (ngModelChange)="localTemplateChange($event, adgroup)"
+                                             nzShowSearch>
+                                    <nz-option
+                                      *ngFor="let option of localTemplateList"
+                                      [nzLabel]="option.audience_template_name"
+                                      [nzValue]="option.audience_template_id">
+                                    </nz-option>
+                                  </nz-select>
+                                </div>
+                              </div>
+                              <ng-container *ngIf="adgroupIndex === curAdgroupIndex && reInitTarget">
+                                <app-bd-target-setting
+                                  [structConfig]="structConfig['audience_setting']"
+                                  [chan_pub_id]="account.basic.chan_pub_id"
+                                  [targetSource]="adgroup"
+                                  [catalogId]="adgroup.basic.catalog_id"
+                                  [campaignTypeSetting]="commonSetting.campaign_type_setting"
+                                  [curGroupFlag]="curGroupFlag">
+                                </app-bd-target-setting>
+                              </ng-container>
+                              <div class="lab-row w100p">
+                                <label> </label>
+                                <span class="sub_title_desc">闪投API暂不支持Android版本、IOS版本、手机品牌、APP行为、运营商、机型价格等设置项</span>
+                              </div>
+                            </div>
+
+                            <div class="place-holder-div mt20"></div>
+
+                            <ng-container *ngIf="adgroup.position_info.flow_type === '0' || (adgroup.position_info.flow_type === '2' && adgroup.position_info.flow_range.indexOf('8') === -1)">
+
+
+                              <div class="form-card mb10 pl20">
+                                <div id="select_product_types" class="sub_title mb10"><span>投放位置</span><span class="sub_title_desc ml40">如果修改投放位置请返回上一步操作</span></div>
+                                <div class="basic-card">
+                                  <div class="lab-row mb20 w100p">
+                                    <label>投放版位:</label>
+                                    <nz-radio-group
+                                      class="ml8"
+                                      [nzSize]="'small'"
+                                      [nzDisabled]="true"
+                                      [ngModel]="adgroup.position_info.product_types">
+                                      <ng-container *ngFor="let option of structConfig['position_info']['product_types']['sub']">
+                                        <label nz-radio-button nzValue="{{option['value']}}">
+                                          <span>{{ option['label'] }}</span>
+                                        </label>
+                                      </ng-container>
+                                    </nz-radio-group>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="place-holder-div mt20"></div>
+
+                            </ng-container>
+
+
+
+
+
+
+
+                            <div class="form-card mb10 pl20">
+                              <div id="idea_type" class="sub_title mb10">生成方式</div>
+                              <div class="basic-card">
+                                <div class="lab-row mb20 w100p">
+                                  <label>创意方式:</label>
+                                  <nz-radio-group
+                                    class="ml8"
+                                    [nzSize]="'small'"
+                                    [(ngModel)]="adgroup.creative.basic.idea_type">
+                                    <ng-container *ngFor="let option of structConfig['creative_basic']['idea_type']['sub']">
+                                      <label nz-radio-button [nzValue]="option['value']" [nzDisabled]="option['value'] === 1">
+                                        <span>{{ option['label'] }}</span>
+                                      </label>
+                                    </ng-container>
+                                  </nz-radio-group>
+                                </div>
+                              </div>
+                            </div>
+
+
+                            <div class="place-holder-div mt20"></div>
+
+                            <div class="form-card mb10 pl20">
+                              <div id="user_portrait" class="sub_title mb10">品牌头像</div>
+                              <div class="basic-card">
+                                <div class="lab-row mb20 w100p">
+                                  <label><span class="redStart">*</span>用户头像:</label>
+                                  <div class="ml8">
+                                    <div class="mb10" *ngIf="adgroup.creative.basic.user_portrait_materials_url">
+                                      <img [src]="adgroup.creative.basic.user_portrait_materials_url" />
+                                    </div>
+                                    <div class="error-tip mt5 ml8" *ngIf="errorTipAry[accountIndex].campaign[campaignIndex].adgroup[adgroupIndex].creative.basic.user_portrait.is_show">
+                                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                                      <span style="color: red;">{{ errorTipAry[accountIndex].campaign[campaignIndex].adgroup[adgroupIndex].creative.basic.user_portrait.tip_text }}</span>
+                                    </div>
+                                    <div>
+                                      <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="uploadMaterials()">
+                                        <i nz-icon nzType="plus" nzTheme="outline"></i><span>上传头像</span>
+                                      </button>
+                                      <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addMaterials('userImage',adgroup.creative.basic,999,accountIndex,campaignIndex,adgroupIndex)">
+                                        <i nz-icon nzType="select" nzTheme="outline"></i><span>选择头像</span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="lab-row mb20 w100p">
+                                  <label><span class="redStart">*</span>品牌名称:</label>
+                                  <div>
+                                    <input nz-input
+                                           class="w200 ml8 mr8"
+                                           [nzSize]="'small'"
+                                           type="text"
+                                           [(ngModel)]="adgroup.creative.basic.brand"
+                                           placeholder="请输入1-8个字的品牌名称">
+                                    <span>{{adgroup.creative.basic.brand.length}}/8</span>
+                                    <div class="error-tip mt5 ml8" *ngIf="errorTipAry[accountIndex].campaign[campaignIndex].adgroup[adgroupIndex].creative.basic.brand.is_show">
+                                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                                      <span style="color: red;">{{ errorTipAry[accountIndex].campaign[campaignIndex].adgroup[adgroupIndex].creative.basic.brand.tip_text }}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+
+                            <div class="place-holder-div mt20"></div>
+                            <!--创意部分-->
+                            <div class="form-card mb10 pl20">
+                              <div id="creative_setting" class="sub_title mb10">创意样式</div>
+                              <div class="basic-card">
+                                <div class="lab-row mb20 w100p">
+                                  <label>创意样式:</label>
+                                  <nz-radio-group
+                                    class="ml8"
+                                    [nzSize]="'small'"
+                                    [(ngModel)]="adgroup.creative.basic.material_style">
+                                    <ng-container *ngFor="let option of materialStyle">
+                                      <label nz-radio-button nzValue="{{option['value']}}" *ngIf="adgroup.creative.basic.material_style === option['value']">
+                                        <span>{{ option['label'] }}</span>
+                                      </label>
+                                    </ng-container>
+                                  </nz-radio-group>
+                                </div>
+                              </div>
+                              <div id="title_materials">
+                                <nz-tabset [nzSize]="'small'" [nzType]="'card'" [(nzSelectedIndex)]="curCreativeIndex">
+                                  <nz-tab *ngFor="let creative of adgroup.creative.detail; let creativeIndex = index;" [nzTitle]="titleTemplate">
+                                    <ng-template #titleTemplate>
+                                      <div><span [ngStyle]="{'color': errorTipAry[accountIndex].campaign[campaignIndex].adgroup[adgroupIndex].creative.detail[creativeIndex]['has_error']? 'red' : '#1890ff' }">创意{{ creativeIndex + 1}}</span>
+                                        <i *ngIf="adgroup.creative.detail.length > 1" nz-icon nzType="close" class="ant-tabs-close-x" (click)="closeTab(creativeIndex, adgroup.creative.detail, [],'creative')"></i>
+                                      </div>
+                                    </ng-template>
+                                    <div class="form-card mb10 mt20">
+                                      <div class="lab-row mb20">
+                                        <label id="copy_creative">复制创意:</label>
+                                        <div class="ml8">
+                                          <button class="mr8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="copyCurrent(creative, adgroup.creative.detail, errorTipAry[accountIndex].campaign[campaignIndex].adgroup[adgroupIndex].creative.detail, 'creative')">
+                                            <span>复制此创意</span>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <ng-container *ngIf="creativeIndex === curCreativeIndex">
+                                      <app-bd-creative-section
+                                        [data]="creative.basic"
+                                        [errorTip]="errorTipAry[accountIndex].campaign[campaignIndex].adgroup[adgroupIndex].creative.detail[creativeIndex]['basic']"
+                                        [materialStyle]="material_style"
+                                        [bidType]="adgroup.basic.bid_type"
+                                        [campaignTypeSetting]="commonSetting.campaign_type_setting"
+                                        [positionInfo]="commonSetting.position_info"></app-bd-creative-section>
+
+                                      <ng-container *ngFor="let item of creative.material_list">
+                                        <app-material-image [row]="item"></app-material-image>
+                                      </ng-container>
+                                    </ng-container>
+                                  </nz-tab>
+                                </nz-tabset>
+                              </div>
+                            </div>
+                          </div>
+                        </nz-tab>
+                      </nz-tabset>
+                    </ng-container>
+                  </nz-tab>
+                </nz-tabset>
+              </nz-tab>
+            </nz-tabset>
+          </ng-container>
+          </div>
+
+        </div>
+      </div>
+      <div class="form-btns">
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+          <span>取消</span>
+        </button>
+        <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submiting" [nzSize]="'small'" (click)="doPrev()">
+          <span>上一步</span>
+        </button>
+        <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submiting" [nzSize]="'small'" (click)="doSave()">
+          <span>完成</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+

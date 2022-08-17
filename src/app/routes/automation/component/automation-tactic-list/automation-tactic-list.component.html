@@ -1,0 +1,94 @@
+<div class="fixed-condition-manage page-condition-header">
+  <div class="app-module-operations" >
+    <div class="app-module-operations-left">
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" routerLink="../guide">
+        <i nz-icon nzType="plus"></i><span>新建策略</span>
+      </a>
+    </div>
+  </div>
+</div>
+<div class="content-section-manage">
+  <nz-table #nzTable
+            nzShowSizeChanger
+            [nzPageSizeOptions]="[30,50,100,500]"
+            [nzSize]="'small'"
+            [nzData]="[{}]"
+            [nzFrontPagination]="false"
+            [(nzPageSize)]="pageSize"
+            [(nzPageIndex)]="currentPage"
+            (nzPageIndexChange)="refreshData()"
+            (nzPageSizeChange)="refreshData(true)"
+            [nzTotal]="total"
+            [nzLoading]="loading"
+            [nzShowTotal]="globalTemplate.totalItemTemplate"
+            [nzScroll]="{ x: '1000px', y: noResultHeight+'px' }"
+  >
+    <thead>
+    <tr>
+      <!-- <th nzWidth="62px" nzLeft class="jzlCheckboxHeader">
+        <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)" [nzIndeterminate]="indeterminate"></label>
+      </th> -->
+      <th nzLeft [nzWidth]="'100px'">
+        <span>状态</span>
+      </th>
+      <th nzLeft [nzWidth]="'200px'">
+        <span>策略名称</span>
+        <app-filter [filterType]="'multiValue'" [filterKey]="{key:'tactic_name',name:'策略名称',type:'multiValue'}" [(filterResult)]="filterResult['tactic_name']" (submit)="doFilter()"></app-filter>
+      </th>
+      <th nzLeft [nzWidth]="'200px'">
+        <span>策略描述</span>
+        <app-filter [filterType]="'multiValue'" [filterKey]="{key:'tactic_desc',name:'策略描述',type:'multiValue'}" [(filterResult)]="filterResult['tactic_des']" (submit)="doFilter()"></app-filter>
+      </th>
+      <th [nzWidth]="'100px'">
+        <span>应用层级</span>
+        <app-filter [filterType]="'singleList'" [filterKey]="{key:'tactic_level',name:'应用层级',type:'singleList'}" [(filterResult)]="filterResult['tactic_level']" [filterOption]="tacticLevelList" (submit)="doFilter()"></app-filter>
+      </th>
+      <th [nzWidth]="'100px'">
+        <span>应用实体类型</span>
+        <app-filter [filterType]="'singleList'" [filterKey]="{key:'tactic_entity_type',name:'应用实体类型',type:'singleList'}" [(filterResult)]="filterResult['tactic_entity_type']" [filterOption]="entityTypeList" (submit)="doFilter()"></app-filter>
+      </th>
+      <th [nzWidth]="'200px'">
+        <span>最后一次修改时间</span>
+      </th>
+      <th [nzWidth]="'200px'">
+        <span>操作</span>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of apiData">
+      <!-- <td nzLeft nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)"></td> -->
+      <td nzLeft ><nz-switch
+            nz-tooltip
+            [nzTooltipTitle]="data.paused?'点击开启':'点击暂停'"
+            [(ngModel)]="!data.paused"
+            (ngModelChange)="changeTacticStatus(data)"
+            [nzLoading]="data.status_loading">
+          </nz-switch>
+      </td>
+      <td nzLeft><a (click)="editTactic(data.tactic_id)">{{ data.tactic_name }}</a></td>
+      <td nzLeft [innerHtml]="data.tactic_desc"></td>
+      <td>{{ tacticLevelObj[data.tactic_level] }}</td>
+      <td>{{ data.tactic_entity_type === 1 ? '按条件筛选':'指定实体' }}</td>
+      <td>{{ data.last_modify_time }}</td>
+      <td>
+        <a href="javascript:" (click)="editTactic(data.tactic_id)">修改</a>
+        <span class="ml4 mr4">|</span>
+        <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteTactic(data)" nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzTrigger="click" href="javascript:">删除</a>
+        <span class="ml4 mr4">|</span>
+        <a href="javascript:" (click)="checkTacticEntities(data)">查看实体</a>
+        <span class="ml4 mr4">|</span>
+        <a href="javascript:" (click)="checkTacticLog(data)">查看日志</a>
+      </td>
+    </tr>
+    <tr *ngIf="!apiData.length && !loading">
+      <td [attr.colspan]="12" [ngStyle]="{'background-color':'#f6f6f6','height':(noResultHeight-10)+'px'}">
+        <div style="text-align: center">暂无数据</div>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <app-global-template></app-global-template>
+</div>
+
+

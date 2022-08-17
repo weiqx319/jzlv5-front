@@ -1,0 +1,258 @@
+<div class="materials-manage-modal mb20">
+  <div class="pl10 pr30" nz-row [nzGutter]="16">
+    <div nz-col class="lab-row-materials mb20" [nzSpan]="12">
+      <label style="width: 80px">广告主:</label>
+      <div>
+        <nz-select class="w240" [(ngModel)]="defaultData['cid']" [nzPlaceHolder]="'请选择广告主'">
+          <nz-option *ngFor="let option of advertiserList" [nzValue]="option['key']" [nzLabel]="option['name']"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div nz-col class="lab-row-materials mb20" [nzSpan]="12">
+      <label style="width: 80px"><span class="redStart">*</span>媒体:</label>
+      <div>
+        <nz-select class="w240" [(ngModel)]="defaultData['publisher_id']" (ngModelChange)="publisherChange()" [nzPlaceHolder]="'请选择媒体'">
+          <nz-option *ngFor="let option of mediaList" [nzValue]="option['key']" [nzLabel]="option['name']"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div nz-col class="lab-row-materials mb20" [nzSpan]="12">
+      <label style="width: 80px">标签:</label>
+      <div>
+        <nz-select class="w240" nzMode="tags" nzPlaceHolder="请输入或选择标签" [(ngModel)]="defaultData.material_tags">
+          <nz-option *ngFor="let option of tagsList" [nzValue]="option['key']" [nzLabel]="option['name']"></nz-option>
+        </nz-select>
+<!--        <input nz-input-->
+<!--               class="w240"-->
+<!--               type="text"-->
+<!--               [(ngModel)]="defaultData.material_tags"-->
+<!--               (input)="onInput($event)"-->
+<!--               placeholder="请输入标签，标签之间以空格分隔">-->
+      </div>
+    </div>
+    <div nz-col class="lab-row-materials mb20" [nzSpan]="12">
+      <label style="width: 80px">制作时间:</label>
+      <div>
+        <nz-date-picker
+          class="w240"
+          nzFormat="yyyy-MM-dd"
+          [nzAllowClear]="false"
+          nzPlaceHolder="请选择素材制作时间"
+          [(ngModel)]="defaultData.material_make_time">
+        </nz-date-picker>
+      </div>
+    </div>
+    <ng-container *ngIf="show_type==='video'">
+      <div nz-col class="lab-row-materials mb20" [nzSpan]="12">
+        <label style="width: 80px">编导:</label>
+        <nz-select class="w240"
+                   [(ngModel)]="defaultData.director_id"
+                   [nzPlaceHolder]="'请选择编导'"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of choreographerList"
+            [nzLabel]="option.name"
+            [nzValue]="option.key">
+          </nz-option>
+        </nz-select>
+      </div>
+      <div nz-col class="lab-row-materials mb20" [nzSpan]="12">
+        <label style="width: 80px">摄影:</label>
+        <nz-select class="w240"
+                   [(ngModel)]="defaultData.camerist_id"
+                   [nzPlaceHolder]="'请选择摄影'"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of photographList"
+            [nzLabel]="option.name"
+            [nzValue]="option.key">
+          </nz-option>
+        </nz-select>
+      </div>
+      <div nz-col class="lab-row-materials mb20" [nzSpan]="12">
+        <label style="width: 80px">剪辑:</label>
+        <nz-select class="w240"
+                   [(ngModel)]="defaultData.movie_editor_id"
+                   [nzPlaceHolder]="'请选择剪辑'"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of clipList"
+            [nzLabel]="option.name"
+            [nzValue]="option.key">
+          </nz-option>
+        </nz-select>
+      </div>
+    </ng-container>
+<!--    <ng-container *ngIf="show_type!=='logo'">-->
+<!--      <div nz-col class="lab-row-materials mb20" [nzSpan]="12">-->
+<!--        <label style="width: 80px">添加标签:</label>-->
+<!--        <div>-->
+<!--          <nz-select class="w240" nzMode="tags" [(ngModel)]="defaultData['advertiser']">-->
+<!--            <nz-option *ngFor="let option of advertiserList" [nzValue]="option['key']" [nzLabel]="option['name']"></nz-option>-->
+<!--          </nz-select>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </ng-container>-->
+  </div>
+<!--  <div class="pl20 pr20">-->
+<!--    <nz-upload-->
+<!--      nzType="drag"-->
+<!--      [nzCustomRequest]="customReq"-->
+<!--      [nzAccept]="show_type==='video'?'.mp4,.mpeg,.3gp,.avi':'.img,.png,.jpg,.jpeg'"-->
+<!--      [nzBeforeUpload]="beforeUpload"-->
+<!--      [nzMultiple]="true"-->
+<!--      [(nzFileList)]="fileList"-->
+<!--      [nzName]="'files'">-->
+
+<!--      <p class="ant-upload-drag-icon">-->
+<!--        <i nz-icon nzType="inbox"></i>-->
+<!--      </p>-->
+<!--      <p class="ant-upload-text">将文件拖到此处，或<a>点击上传</a></p>-->
+<!--      <p class="ant-upload-hint">-->
+<!--        <span *ngIf="show_type!=='video'">支持格式:.img,.png,.jpg,.jpeg</span>-->
+<!--        <span *ngIf="show_type==='video'">支持格式:.mp4,.mpeg,.3gp,.avi</span>-->
+<!--      </p>-->
+<!--    </nz-upload>-->
+<!--  </div>-->
+  <ng-container *ngIf="show_type==='video'">
+    <div class="lab-row-materials mb20" style="position:relative;">
+      <label class="ml10" style="width: 80px">素材文件:</label>
+      <nz-upload *ngIf="!saving"
+                 [nzCustomRequest]="customReq"
+                 [nzAccept]="'.mp4,.mpeg,.3gp,.avi'"
+                 [nzBeforeUpload]="beforeUpload"
+                 (click)="changeBtn()"
+                 [nzMultiple]="true"
+                 [nzName]="'files'">
+        <button nz-button class="mt2 pull-left height20">
+          <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+        </button>
+      </nz-upload>
+      <button *ngIf="saving" nz-button class="mt2 pull-left height20">
+        <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+      </button>
+      <span class="ml8">*支持格式:.mp4,.mpeg,.3gp,.avi</span>
+    </div>
+
+    <div class="lab-row-materials mb10" *ngIf="fileList.length>0">
+      <span>本次共选择 {{fileList.length}} 个视频, {{fileUploadSuccess}} 个可用</span>
+    </div>
+    <div class="lab-row-materials mb10" *ngIf="fileList.length>0">
+
+      <nz-table #basicTable [nzData]="fileList" [nzSize]="'default'" [nzShowPagination]="true" [nzPageSize]="10" [nzFrontPagination]="true" style="width: 100%">
+        <thead>
+        <tr>
+          <th [nzWidth]="'200px'">视频</th>
+          <th [nzWidth]="'200px'">名称</th>
+          <th [nzWidth]="'200px'">原名称</th>
+          <th>-</th>
+          <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let i = index;">
+          <td><img width="150" src="{{data.imgSrc}}"/></td>
+          <td> <input nz-input type="text" placeholder="素材名称" [nzSize]="'small'" style="width: 160px;"
+                      [(ngModel)]="data.title" />
+          <td><span title="{{ data.originMaterialName }}">{{ data.originMaterialName }}</span> </td>
+          <td [ngClass]="{errorRed:data.checkStatus>0}">{{ data.message }}</td>
+          <td> <i nz-icon nzType="close" nzTheme="outline" (click)="deleteFile(data,i)"></i> </td>
+
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+    <div class="lab-row-materials mb10" *ngIf="resultMessage">
+      <p style="color: red;">{{resultMessage}}</p>
+    </div>
+
+    <div class="lab-row-materials mb10">
+      <div *ngIf="(uploading || exception === 'exception') && fileList.length" class="m1020 progressDiv">
+        <nz-progress [nzStatus]="exception" [nzPercent]="speed" nzSize="small"></nz-progress>
+      </div>
+    </div>
+    <div class="lab-row-materials mb10" *ngIf="resultMessage">
+      <p style="color: red;">{{resultMessage}}</p>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="show_type!=='video'">
+    <div class="lab-row-materials mb10" style="position:relative;">
+      <label class="ml10" style="width: 80px">素材文件:</label>
+      <nz-upload *ngIf="!saving"
+                 [nzCustomRequest]="customReq"
+                 [nzAccept]="'.img,.png,.jpg,.jpeg'"
+                 [nzBeforeUpload]="beforeUpload"
+                 (click)="changeBtn()"
+                 [nzMultiple]="true"
+                 [nzName]="'files'">
+        <button nz-button class="mt2 pull-left height20">
+          <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+        </button>
+      </nz-upload>
+      <button *ngIf="saving" nz-button class="mt2 pull-left height20">
+        <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+      </button>
+      <span class="ml8">*请上传.img,.png,.jpg,.jpeg文件</span>
+    </div>
+    <div class="lab-row-materials mb10" *ngIf="imgFileList.length>0">
+      <span>本次共选择 {{imgFileList.length}} 张图片, {{fileUploadSuccess}} 张可用</span>
+    </div>
+    <div class="lab-row-materials mb10" *ngIf="imgFileList.length>0">
+
+      <nz-table #basicTable [nzData]="imgFileList" [nzSize]="'default'" [nzShowPagination]="true" [nzPageSize]="10" [nzFrontPagination]="true" style="width: 100%">
+        <thead>
+        <tr>
+          <th [nzWidth]="'200px'">图片</th>
+          <th [nzWidth]="'100px'">名称</th>
+          <th>大小</th>
+          <th>尺寸</th>
+          <th>-</th>
+          <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let i = index;">
+          <td><img width="150" src="{{data.imageData}}"/></td>
+          <td> <input nz-input type="text" placeholder="文件名称" [nzSize]="'small'" style="width: 160px;" [disabled]="data.checkStatus>0 || !data.uploadStatus "
+                      [(ngModel)]="data.title" />
+          <td style="width: 95px" [ngClass]="{errorRed:data.checkStatus==2}">{{ data.size }}
+            <i nz-icon nzType="question-circle" nzTheme="outline"
+               nz-popover
+               [nzPopoverContent]="cardDetail" nzPopoverPlacement="bottom"
+               class="ml8"
+               style="color: #f09200"></i></td>
+          <td style="width: 95px" [ngClass]="{errorRed:data.checkStatus==1}">{{ data.width }}x{{data.height}}
+            <i nz-icon nzType="question-circle" nzTheme="outline"
+               nz-popover
+               [nzPopoverContent]="cardDetail" nzPopoverPlacement="bottom"
+               class="ml8"
+               style="color: #f09200"></i></td>
+          <td [ngClass]="{errorRed:data.checkStatus>0}">{{ data.message }}</td>
+          <td> <i nz-icon nzType="close" nzTheme="outline" (click)="deleteFile(data,i)"></i> </td>
+
+        </tr>
+        </tbody>
+      </nz-table>
+
+      <ng-template #cardDetail>
+        <div *ngFor="let imageShowFormat of imageSizeShowList" style="display: flex">
+          <span style="margin-right:10px; display:inline-block;width: 60px;text-align: right">{{ imageShowFormat.width_specific ? imageShowFormat.width_specific + ' : ' + imageShowFormat.height_specific :  imageShowFormat.width + 'x' + imageShowFormat.height }}</span>
+          <span>限制 {{imageShowFormat.size}}KB</span>
+          <span class="ml10 w90">{{ imageShowFormat.width_specific ? '上限' + imageShowFormat.max_size[0] + 'x' + imageShowFormat.max_size[1] : ''}}</span>
+          <span class="ml10 w90">{{ imageShowFormat.width_specific ? '下限' + imageShowFormat.min_size[0] + 'x' + imageShowFormat.min_size[1] : ''}}</span>
+        </div>
+      </ng-template>
+    </div>
+    <div class="lab-row-materials mb10" *ngIf="resultMessage">
+      <p style="color: red;">{{resultMessage}}</p>
+    </div>
+  </ng-container>
+</div>
+<div class="button-controller mb10">
+  <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+    <span>取消</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="doSave()">
+    <span>上传</span>
+  </button>
+</div>

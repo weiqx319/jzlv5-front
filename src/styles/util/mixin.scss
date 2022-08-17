@@ -1,0 +1,9 @@
+@mixin title-height($value) {
+  height: #{$value}px;
+  line-height: #{$value}px;
+}
+
+@mixin title-height-border($value,$border) {
+  height: #{$value}px;
+  line-height:#{($value - $border)}px;
+}

@@ -1,0 +1,31 @@
+<nz-badge *ngIf="data?.length === 0" [nzDot]="dot">
+  <ng-template #content><i nz-icon nzType="bell" nzTheme="outline"></i></ng-template>
+</nz-badge>
+<ng-container *ngIf="data?.length > 0"
+            >
+  <div nz-popover [nzPopoverVisible]="popoverVisible" (nzPopoverVisibleChange)="onVisibleChange($event)" nzPopoverTrigger="click"
+       nzPopoverPlacement="bottomRight"
+       nzPopoverOverlayClassName="ad-notice-icon-con" class="item">
+    <nz-badge  [nzDot]="dot">
+      <ng-template #content><i nz-icon nzType="bell" nzTheme="outline"></i></ng-template>
+    </nz-badge>
+  </div>
+  <ng-template #nzTemplate>
+    <nz-spin [nzSpinning]="loading">
+      <nz-tabset nzSize="'small'">
+        <nz-tab *ngFor="let detail of data">
+          <ng-template #nzTabHeading>
+            {{detail.title}}
+          </ng-template>
+          <div *ngIf="detail.list?.length === 0; else listTpl" class="not-found">
+            <img *ngIf="detail.emptyImage" src="{{detail.emptyImage}}" alt="not found" />
+            <p>{{detail.emptyText || '无通知'}}</p>
+          </div>
+          <ng-template #listTpl>
+            <div class="clear">{{ detail.clearText || '清空' }}</div>
+          </ng-template>
+        </nz-tab>
+      </nz-tabset>
+    </nz-spin>
+  </ng-template>
+</ng-container>

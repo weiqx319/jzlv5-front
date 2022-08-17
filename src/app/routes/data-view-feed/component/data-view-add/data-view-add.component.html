@@ -1,0 +1,38 @@
+<div class="conDiv">
+  <!--左边菜单start-->
+  <div class="flexLeft w200 pull-left pt16 pl30 pr20">
+    <ng-container *ngIf="newMenuList.length > 1">
+      <ul>
+        <li
+          *ngFor="let item of newMenuList"
+          [ngClass]="{
+            menuSle: item.key === currentSelectedMenu,
+            disable: !item.is_show
+          }"
+          (click)="changeSelectedMenu(item)"
+        >
+          {{ item.name }}
+        </li>
+      </ul>
+    </ng-container>
+  </div>
+  <!--左边菜单end-->
+  <div class="conSon ml200">
+    <div class="mb400"></div>
+  </div>
+</div>
+<!--footer start-->
+<div class="flexFooter border">
+  <button nz-button [nzType]="'default'" (click)="_cancel()" class="mr10">
+    <span>取消</span>
+  </button>
+  <button
+    nz-button
+    [nzLoading]="saveing"
+    [nzType]="'primary'"
+    (click)="_save()"
+  >
+    <span>保存</span>
+  </button>
+</div>
+<!--footer end-->

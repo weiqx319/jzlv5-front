@@ -1,0 +1,14 @@
+.lab-row{
+  //padding: 16px 8px;
+  margin-top: 10px;
+  //@include title-height(24);
+
+  .row-title{
+    display: inline-block;
+    width: 80px;
+    text-align: right;
+  }
+}
+.tips{
+  padding: 5px;
+}

@@ -1,0 +1,16 @@
+<div class="jzl_report_chart">
+  <div class="jzl_report_chart_head">
+    <span>{{chartTitle}}</span>
+    <div class="jzl_report_chart_head_actions">
+      <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="editChart()">
+       <i nz-icon nzType="edit" nzTheme="outline"></i><span>编辑</span>
+      </button>
+      <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="delChart()">
+        <i nz-icon nzType="close" nzTheme="outline"></i><span>删除</span>
+      </button>
+    </div>
+  </div>
+  <div class="jzl_report_char_body">
+    <img  width="100%" [src]="charDemoImgurl">
+  </div>
+</div>

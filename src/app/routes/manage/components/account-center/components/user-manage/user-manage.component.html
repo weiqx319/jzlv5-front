@@ -1,0 +1,256 @@
+<div class="container">
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="manage-header-left">
+      <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addUser()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>创建用户</span>
+      </a>
+      <ng-container *ngIf="(currentManagerUser.role_id==1||currentManagerUser.role_id==3)&&_indeterminate && show_type==='table'">
+        <a class="manage-add mr8" nz-popconfirm  [nzPopconfirmTitle]="'确定要删除所选用户？'" (nzOnConfirm)="deleteUser()" nz-button [nzType]="'default'" [nzSize]="'default'">
+          <i nz-icon nzType="delete" nzTheme="outline"></i><span>删除用户</span>
+        </a>
+      </ng-container>
+      <ng-container *ngIf="(currentManagerUser.role_id==1||currentManagerUser.role_id==3)&&(!_indeterminate || show_type!=='table')">
+        <a class="manage-add disabled-status mr8" nz-button [nzType]="'default'" [nzSize]="'default'">
+          <i nz-icon nzType="delete" nzTheme="outline"></i><span>删除用户</span>
+        </a>
+      </ng-container>
+      <ng-container *ngIf="!_indeterminate || show_type!=='table'">
+        <button class="manage-pause disabled-status mr8" nz-button [nzType]="'default'" [nzSize]="'default'">
+          <i nz-icon nzType="pause" nzTheme="outline"></i><span>停用用户</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="_indeterminate && show_type==='table'">
+          <button class="manage-pause mr8" nz-popconfirm [nzPopconfirmTitle]="'用户停用之后该用户不可登录，管理员可再次开启用户。'" (nzOnConfirm)="stopUser()" [nzPopconfirmPlacement]="'bottomLeft'" nz-button [nzType]="'default'" [nzSize]="'default'">
+            <i nz-icon nzType="pause" nzTheme="outline"></i><span>停用用户</span>
+          </button>
+      </ng-container>
+      <ng-container *ngIf="!_indeterminate || show_type!=='table'">
+        <button class="manage-start disabled-status mr8" nz-button [nzType]="'default'" [nzSize]="'default'">
+          <i nz-icon nzType="caret-right" nzTheme="outline"></i><span>开启用户</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="_indeterminate && show_type==='table'">
+          <button class="manage-start mr8" nz-popconfirm [nzPopconfirmTitle]="'确定要开启这些用户吗？'" (nzOnConfirm)="startUser()" [nzPopconfirmPlacement]="'bottomLeft'" nz-button [nzType]="'default'" [nzSize]="'default'">
+            <i nz-icon nzType="caret-right" nzTheme="outline"></i><span>开启用户</span>
+          </button>
+      </ng-container>
+      <ng-container *ngIf="(show_type!=='table' || !is_to_oper_optimizer) && currentManagerUser.role_id!=3">
+        <button class="manage-distribute disabled-status mr8" nz-button [nzType]="'default'" [nzSize]="'default'">
+          <span>分配给{{productInfo['name'] === '大搜家' ? '营销总监/服务商负责人' : '优化经理'}}</span>
+        </button>
+      </ng-container>
+      <ng-template #addTemplate>
+        <div class="mt5">
+          <span>将选中的{{productInfo['name'] === '大搜家' ? '营销经理/服务商优化师' : '优化师'}}分配给：</span>
+          <nz-select class="w200 mt8" [nzSize]="'default'" [nzPlaceHolder]="'请选择' + (productInfo['name'] === '大搜家' ? '营销总监/服务商负责人' : '优化经理')"  [(ngModel)]="selectedOptimizerManager" [nzShowSearch]="true">
+            <nz-option
+              *ngFor="let option of optimizerManagerList"
+              [nzLabel]="option.name"
+              [nzValue]="option.id">
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="mt14 mb14 pop-footer">
+          <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="clickPopCancel()">
+            <span>取消</span>
+          </button>
+          <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="!selectedOptimizerManager" (click)="addToOptimizerManager()">
+            <span>确定</span>
+          </button>
+        </div>
+      </ng-template>
+      <ng-container *ngIf="show_type==='table' && is_to_oper_optimizer">
+        <button class="manage-distribute mr8"
+                [nzSize]="'default'"
+                nz-button
+                nz-popover
+                [(nzPopoverVisible)]="visible"
+                nzPopoverPlacement="bottomLeft"
+                nzPopoverTrigger="click"
+                (click)="openPop()"
+                [nzPopoverContent]="addTemplate">
+          <span>分配给{{productInfo['name'] === '大搜家' ? '营销总监/服务商负责人' : '优化经理'}}</span>
+        </button>
+      </ng-container>
+    </div>
+    <div class="manage-header-right">
+      <button class="manage-table-icon mr8 pull-left" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="downloadUsersList()">
+        <i nz-icon nzType="download" nzTheme="outline"></i>
+      </button>
+      <nz-radio-group [(ngModel)]="show_type" nzSize="default">
+        <label nz-radio-button nzValue="table" style="font-size: 16px;"><i nz-icon nzType="appstore" nzTheme="outline"></i></label>
+        <label nz-radio-button nzValue="chart" style="font-size: 16px;"><i nz-icon nzType="line-chart" nzTheme="outline"></i></label>
+      </nz-radio-group>
+      <!-- <button class="manage-table-icon ml8 pull-left" [ngClass]="{'manage-active-icon':show_type === 'table'}" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="show_type='table'">
+        <i nz-icon nzType="appstore" nzTheme="outline"></i>
+      </button>
+      <button class="manage-tree pull-left" [ngClass]="{'manage-active-icon':show_type === 'chart'}" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="show_type='chart'">
+        <i nz-icon nzType="line-chart" nzTheme="outline"></i>
+      </button> -->
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="manage-table manage-no-result-table" *ngIf="show_type === 'table'">
+      <nz-table #nzTable
+                nzShowSizeChanger
+                [nzPageSizeOptions]="[30,50,100,500]"
+                [nzSize]="'default'"
+                [nzData]="apiData"
+                [nzFrontPagination]="false"
+                [(nzPageSize)]="pageSize"
+                [(nzPageIndex)]="currentPage"
+                (nzPageIndexChange)="refreshData()"
+                (nzPageSizeChange)="refreshData(true)"
+                [nzTotal]="total"
+                [nzLoading]="loading"
+                [nzShowTotal]="totalItemTemplate"
+                [nzScroll]="{ x: '1000px', y: noResultHeight+'px' }"
+                >
+        <thead>
+          <tr>
+            <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" [nzIndeterminate]="_indeterminate" (nzCheckedChange)="_checkAll($event)">
+            </th>
+            <th [nzWidth]="'200px'">
+              <span>角色</span>
+              <app-filter [filterType]="'operSingleList'" [filterKey]="{key:'role_id',name:'角色'}" [(filterResult)]="filterResult['role_id']" [filterOption]="filterRoleOption" (submit)="doFilter()"></app-filter>
+            </th>
+            <th [nzWidth]="'200px'" nzShowSort (nzSortOrderChange)="sort({key:$event,value:'user_name' })"><span>用户名</span>
+              <app-filter [filterType]="'multiValue'" [filterKey]="{key:'user_name',name:'用户名'}" [(filterResult)]="filterResult['user_name']" (submit)="doFilter()"></app-filter>
+            </th>
+            <th [nzWidth]="'200px'"><span>邮箱</span>
+              <app-filter [filterType]="'multiValue'" [filterKey]="{key:'email',name:'邮箱'}" [(filterResult)]="filterResult['email']" (submit)="doFilter()"></app-filter>
+            </th>
+            <th [nzWidth]="'200px'">
+              <span>数据角色</span>
+            </th>
+            <th [nzWidth]="'200px'">
+              <span>状态</span>
+              <app-filter [filterType]="'singleList'" [filterKey]="{key:'is_use',name:'状态'}" [(filterResult)]="filterResult['is_use']" [filterOption]="filterIsUseOption" (submit)="doFilter()"></app-filter>
+            </th>
+            <th [nzWidth]="'200px'">
+              <span>操作</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of apiData">
+            <td nzShowCheckbox   [nzDisabled]="data.disabled" [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)">
+            </td>
+            <td>
+              {{roleTypeRelation['role_'+data.role_id]}}
+            </td>
+            <td *ngIf="data.role_id>1">
+              <a (click)="editUser(data.user_id)">{{data.user_name}}</a>
+            </td>
+            <td *ngIf="data.role_id === 1">
+              {{data.user_name}}
+            </td>
+            <td>{{data.email}}</td>
+            <td>{{data.data_role_ids_name | arrJoin :' | ' }}</td>
+            <td>{{data.is_use>0?'有效':'无效'}}</td>
+            <td *ngIf="data.role_id=== 1" style="color: #c8c8c8">编辑密码<span class="ml8 mr8">|</span>编辑用户<span class="ml8 mr8">|</span>编辑数据角色</td>
+
+            <td *ngIf="data.role_id > 1" style="color: #c8c8c8">
+              <a (click)="editPassword(data.user_id)">编辑密码</a>
+              <span class="ml8 mr8">|</span>
+              <a (click)="editUser(data.user_id)">编辑用户</a>
+              <ng-container *ngIf="currentManagerUser.role_id === 1">
+                <span class="ml8 mr8">|</span>
+                <a (click)="editDataRole(data)">编辑数据角色</a>
+              </ng-container>
+            </td>
+          </tr>
+          <tr *ngIf="!apiData.length && !loading">
+            <td [attr.colspan]="7" [ngStyle]="{'background-color':'#f6f6f6','height':(noResultHeight-10)+'px'}">
+              <div style="text-align: center">
+                无数据展示
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+    </div>
+    <div class="treeDiv" *ngIf="show_type === 'chart'">
+      <div class="rollDiv" [ngClass]="{noList:myObject.user_list.length==0 && myObject.ad_list.length==0}">
+        <div class="treeLeft">
+          <p class="administrators redBorder framePublicStyle">{{myObject.user_name}}</p>
+        </div>
+        <div class="treeRight">
+          <div class="rightItemGroup" *ngFor="let onlyOne of myObject.ad_list">
+            <div class="itemDiv">
+              <div class="item">
+                <p class="line"></p>
+                <p class="optimize orangeBorder framePublicStyle noOptimize" ></p>
+                <p class="itemAdvert grayBorder"><a style="color: #404040;cursor: context-menu;" title="{{onlyOne.adDesc}}"><i>{{onlyOne.adDesc}}</i></a></p>
+                <div class="clear"></div>
+              </div>
+            </div>
+            <div class="clear"></div>
+          </div>
+
+          <div class="rightItemGroup" *ngFor="let oneUserList of myObject.user_list">
+            <ng-container *ngIf="oneUserList.role_id == 3">
+              <p class="optimizeManager greenBorder greenBorder framePublicStyle">{{oneUserList.user_name}}</p>
+              <div class="itemDiv">
+                <div class="item">
+                  <p class="line"></p>
+                  <p class="optimize orangeBorder framePublicStyle noOptimize"></p>
+                  <div class="adDiv noyouhuaDiv">
+                    <p class="itemAdvert grayBorder" *ngFor="let oneUserListofad_list of oneUserList.ad_list">
+                      <a style="color: #404040;cursor: context-menu;" title="{{oneUserListofad_list.adDesc}}"><i>{{oneUserListofad_list.adDesc}}</i></a></p>
+                  </div>
+
+                  <div class="clear"></div>
+                </div>
+                <div class="item" *ngFor="let oneUserListUserList of oneUserList.user_list">
+                  <p class="line"></p>
+                  <p class="optimize orangeBorder framePublicStyle">{{oneUserListUserList.user_name}}</p>
+                  <div class="adDiv youhuaDiv">
+                    <p class="itemAdvert grayBorder" *ngFor="let adList of oneUserListUserList.ad_list">
+                      <a style="color: #404040;cursor: context-menu;"  title="{{adList.adDesc}}"><i>{{adList.adDesc}}</i></a>
+                    </p>
+                  </div>
+                  <!--<p class="itemAdvert grayBorder" *ngFor="let adList of oneUserListUserList.ad_list">{{adList.adDesc}}</p>-->
+                  <div class="clear"></div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="oneUserList.role_id == 4">
+              <div class="itemDiv">
+                <div class="item">
+                  <p class="line" style="  margin-bottom: -18px;"></p>
+                  <p class="optimize orangeBorder framePublicStyle">{{oneUserList.user_name}}</p>
+                  <div class="adDiv">
+                    <p class="itemAdvert grayBorder" style="margin-bottom: 18px;" *ngFor="let adList of oneUserList.ad_list">
+                      <a style="color: #404040;cursor: context-menu;"  title="{{adList.adDesc}}"><i>{{adList.adDesc}}</i></a>
+                    </p>
+                 <!--   <p class="itemAdvert grayBorder" *ngFor="let adList of oneUserList.ad_list">
+                      <a style="color: #404040;cursor: context-menu;"  title="{{adList.adDesc}}"><i>{{adList.adDesc}}</i></a>
+                     </p>-->
+                  </div>
+
+                  <div class="clear"></div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="oneUserList.role_id == 2">
+              <p class="optimizeManager greenBorder blueBorder framePublicStyle">{{oneUserList.user_name}}</p>
+              <div class="itemDiv minWidth">
+                <div class="item customerManagerStyle" *ngIf="!oneUserList.ad_list.length"></div>
+                <div class="item customerManagerStyle" *ngFor="let customAD of oneUserList.ad_list">
+                  <p class="line"></p>
+                  <p class="optimize orangeBorder framePublicStyle noOptimize"></p>
+                  <p class="itemAdvert grayBorder"><a style="color: #404040;cursor: context-menu;"  title="{{customAD.adDesc}}"><i>{{customAD.adDesc}}</i></a></p>
+                  <div class="clear"></div>
+                </div>
+              </div>
+            </ng-container>
+            <div class="clear"></div>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<div class="upload-documents-container">
+  <div class="form-content">
+
+    <div class="lab-row">
+      <label>文案: </label>
+      <textarea #curTextArea nz-input
+                class="w_full ml8"
+                type ="'textarea'"
+                rows="4"
+                [(ngModel)]="titles"
+                placeholder="请输入文案, 以回车分割">
+      </textarea>
+    </div>
+    <div class="mt5 mb5" style="margin-left: 88px" *ngIf="publisherId!=1 && publisherId!=17">
+      <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+      <span>每条文案长度限制5-30个字, 且只能包含两个公共词包</span>
+    </div>
+    <div class="mt5 mb5" style="margin-left: 88px" *ngIf="publisherId==1">
+      <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+      <span>每条文案长度限制1-60个字</span>
+    </div>
+    <div class="mt5 mb5" style="margin-left: 88px" *ngIf="publisherId==17">
+      <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+      <span>每条文案长度限制10-45个字, 且只能包含一个公共词包</span>
+    </div>
+  </div>
+  <div class="tag-content mt8 mb8">
+    <div class="tag" *ngIf="publisherId!=1">
+      <ng-container *ngFor="let word of wordList;let i = index;">
+        <nz-tag class="mb8" (click)="addTags(word)">{{ word }}</nz-tag>
+      </ng-container>
+    </div>
+    <div class="tag" *ngIf="publisherId==1">
+      <ng-container *ngFor="let word of wordList;let i = index;">
+        <nz-tag class="mb8" (click)="addTags(word)">{{ word['name'] }}</nz-tag>
+      </ng-container>
+    </div>
+  </div>
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submit" [nzSize]="'small'" (click)="doSave()">
+      <span>保存</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<div class="materials-manage-modal">
+  <ul>
+<!--    <li class="lab-row mb20">-->
+<!--      <label>文件名称:</label>-->
+<!--      <div class="file-name-box">-->
+<!--        <p class="file-name ml8" *ngFor="let data of materialsData" [nzTooltipTitle]="data['material_name']" nzTooltipPlacement="top" nz-tooltip>-->
+<!--          {{data['material_name']}}-->
+<!--        </p>-->
+<!--      </div>-->
+<!--    </li>-->
+    <li class="lab-row mb20">
+      <label style="line-height: 30px;">广告主:</label>
+      <div>
+        <nz-select class="w240 ml8"
+                   [nzMaxTagCount]="1"
+                   [nzMaxTagPlaceholder]="tagPlaceHolder"
+                   nzMode="multiple"
+                   [nzPlaceHolder]="'请选择广告主'"
+                   [(ngModel)]="queryParams.cids"
+                   (ngModelChange)="changeSelected()"
+                   [nzDropdownRender]="renderCidTemplate"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of advertiserList"
+            [nzLabel]="option.name"
+            [nzValue]="option.key">
+          </nz-option>
+        </nz-select>
+        <ng-template #renderCidTemplate>
+          <div *ngIf="!allCheck" style="padding: 5px;text-align: center;">
+            <a style="font-size: 15px" (click)="checkAllType()">选择全部</a>
+          </div>
+          <div *ngIf="allCheck" style="padding: 5px;text-align: center;background-color: #e6f7ff;">
+            <a style="font-size: 15px" (click)="checkAllType()">选择全部</a>
+          </div>
+        </ng-template>
+      </div>
+    </li>
+<!--    <li class="lab-row mb20">-->
+<!--      <label>媒体:</label>-->
+<!--      <div>-->
+<!--        <nz-select class="w300" [nzPlaceHolder]="'请选择媒体'">-->
+<!--          <nz-option nzValue="jack" nzLabel="Jack"></nz-option>-->
+<!--        </nz-select>-->
+<!--      </div>-->
+<!--    </li>-->
+  </ul>
+  <!-- 多选超出限制提示模板 -->
+  <ng-template #tagPlaceHolder let-selectedList> 已选{{ selectedList.length+1 }}项</ng-template>
+
+  <div class="button-controller mb10">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="doSave()">
+      <span>确定</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,334 @@
+<!--账户批量编辑-->
+<div>
+  <h3>批量编辑账户</h3>
+  <p class="slow_360" *ngIf="(publisher_model['publisherCount'] === 1 && parentData.selected_data[0]['publisher_id'] * 1 === 3) || publisher_model['publisherCount'] > 1">360媒体的编辑操作同步到媒体端有一定时间的延迟，请耐心等待，请勿重复修改!</p>
+  <div class="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 mr8 inline-block">
+        <span>定时设置:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left noCheckbox ">
+      <nz-radio-group
+        [(ngModel)]="cronSetting">
+        <label class="mr20"
+               nz-radio
+               [nzValue]="'now'">
+          <span>立即执行</span>
+        </label>
+        <label nz-radio
+               [nzValue]="'current'">
+          <span>自定义</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="inpRow_right pull-left" *ngIf="cronSetting == 'current'">
+      <nz-date-picker
+        [nzShowTime]="{ nzFormat: 'HH:mm' }"
+        [nzDisabledDate]="disabledDate"
+        nzFormat="yyyy-MM-dd HH:mm"
+        nzPlaceHolder="请选择时间"
+        [nzSize]="'small'"
+        [(ngModel)] = "cronSettingTime"
+      ></nz-date-picker>
+    </div>
+
+
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" [ngClass]="{disabled:editing_accountData['budget']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w112 inline-block" nz-checkbox [(ngModel)]="editing_accountData['budget']['is_edit']">
+        <span>日预算修改为:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <nz-radio-group [(ngModel)]="budgetRadio" [nzDisabled]="!editing_accountData['budget']['is_edit']">
+        <div>
+          <div class="h20 pull-left">
+            <label nz-radio
+                   [nzValue]="1">
+              <span>每日</span>
+            </label>
+          </div>
+          <nz-input-number [(ngModel)]="budget"
+                           [nzDisabled]="!editing_accountData['budget']['is_edit']"
+                           (click) ="changeInput('budget')"
+                           [nzSize]="'small'">
+          </nz-input-number>
+          <span class="ml5">元</span>
+          <i nz-icon nzType="question-circle" nzTheme="outline"
+             nz-popover
+             *ngIf="publisher_model['publisherCount'] > 1"
+             [ngClass]="{c8c8c8:!editing_accountData['budget']['is_edit']}"
+             [nzPopoverContent]="stableTemplate"
+             nzPopoverPlacement="right"
+             class="ml8"
+             style="color: #f09200"></i>
+          <ng-container *ngIf=" editing_accountData['budget']['is_edit'] && budgetRadio === 1">
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="parentData.selected_data[0]['publisher_id'] * 1 === 3 && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于30 且 为10的倍数</span>
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="parentData.selected_data[0]['publisher_id'] * 1 === 4 && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于10</span>
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="(parentData.selected_data[0]['publisher_id'] * 1 === 1 || parentData.selected_data[0]['publisher_id'] * 1 === 2) && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于50</span>
+          </ng-container>
+          <ng-container *ngIf=" editing_accountData['budget']['is_edit'] && publisher_model['publisherCount'] > 1 && budgetRadio === 1">
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于50 且为10的倍数</span>
+          </ng-container>
+        </div>
+        <div class="mt5">
+          <label
+            nz-radio
+            [nzValue]="2">
+            <span>不限定</span>
+          </label>
+        </div>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <ng-template #stableTemplate>
+    <div class="w220">
+      <p class="mt2">百度：不能为空，且不低于50</p>
+      <p class="mt2">搜狗：不能为空，且不低于50</p>
+      <p class="mt2">360：&nbsp;不能为空，且不低于30</p>
+      <p class="mt2">神马：不能为空，且不低于10</p>
+      <p class="mt5" style="color: darkred">跨媒体操作时，最低出价为50 且为 10的倍数</p>
+    </div>
+  </ng-template>
+  <ng-template #negativeDataAdd>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">添加IP排除</span>
+      <p class="mt5">保留所选账户的原有IP排除不变，批量添加设置的Ip排除。</p>
+    </div>
+  </ng-template>
+
+  <ng-template #negativeDataDeleteCommon>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">删除公共部分IP排除</span>
+      <p class="mt5">将所选的账户的IP排除进行有选择的删除操作</p>
+    </div>
+  </ng-template>
+  <ng-template #negativeReplaceAll>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">全部替换IP排除</span>
+      <p class="mt5">将所选的账户全部替换更改为所设置的IP排除</p>
+    </div>
+  </ng-template>
+
+  <ng-template #negativeDelete>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">删除IP排除</span>
+      <p class="mt5">在所选账户的原有IP排除中查找所设置的IP排除，如果有对应IP排除则进行删除</p>
+    </div>
+  </ng-template>
+
+  <div class="inpRow mt5"
+       [ngClass]="{disabled:editing_accountData['exclude_ip']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w112 inline-block" nz-checkbox [(ngModel)]="editing_accountData['exclude_ip']['is_edit']">
+        <span>IP排除:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+
+        <nz-radio-group [(ngModel)]="editing_accountData.exclude_ip['edit_type']"
+                        [nzDisabled]="!editing_accountData['exclude_ip']['is_edit']">
+          <div>
+            <div>
+              <label class="mr20"
+                     nz-radio
+                     [nzValue]="'add'">
+                <span>添加IP排除</span>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   nz-popover
+                   [ngClass]="{c8c8c8:!editing_accountData['exclude_ip']['is_edit']}"
+                   [nzPopoverContent]="negativeDataAdd"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </label>
+            </div>
+            <div class="mb10 pl22" *ngIf="editing_accountData['exclude_ip']['is_edit'] && editing_accountData['exclude_ip']['edit_type'] === 'add'">
+              <p class="countTip"><span>注：</span> 百度：不超过300个 。搜狗：不超过200个 。360：不超过300个 。神马：不超过100个（神马媒体端IP排除数量上限为200个，因为神马API的限制，{{productInfo['name']}}平台每次提交神马IP排除上限为100个）。</p>
+              <div class="textareaDiv">
+                <div class="textarea-top">
+                  <span>IP排除({{tips.length.addValue}}/{{tips.exclude_ip_max_length}})</span>
+                  <span class="pull-right"><a (click)="deleteAll(excludeIpData, 'addValue', 'addValue')">全部删除</a></span>
+                </div>
+                <div class="textarea-content" [ngClass]="{'border-warning': tips.length['addValue'] > tips.exclude_ip_max_length}">
+                  <textarea placeholder="一个IP一行" [(ngModel)]="excludeIpData.addValue" (ngModelChange)="contentChange('addValue', excludeIpData.addValue)" class="titleColor"  rows="5"></textarea>
+                </div>
+              </div>
+              <p class="mt8 f09200" *ngIf="tips.length['addValue'] > tips.exclude_ip_max_length">词数最多为{{tips.exclude_ip_max_length}}个</p>
+
+            </div>
+          </div>
+          <div>
+            <div>
+              <label nz-radio
+                     [nzValue]="'delete_common'">
+                <span>删除公共部分IP排除</span>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   nz-popover
+                   [ngClass]="{c8c8c8:!editing_accountData['exclude_ip']['is_edit']}"
+                   [nzPopoverContent]="negativeDataDeleteCommon"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </label>
+            </div>
+            <div class="mt5 mb10 pl22" *ngIf="editing_accountData['exclude_ip']['is_edit'] && editing_accountData['exclude_ip']['edit_type'] === 'delete_common'">
+              <nz-transfer
+                [nzDataSource]="list"
+                nzShowSearch
+                [nzTitles]="['公共IP排除', '选中公共IP排除']"
+                [nzListStyle]="{'width.px': 250, 'height.px': 250}"
+                [nzRender]="render"
+                (nzChange)="changeIp($event)">
+                <ng-template #render let-item>
+                  {{item.title}}
+                </ng-template>
+              </nz-transfer>
+            </div>
+
+          </div>
+          <div>
+            <div>
+              <label nz-radio
+                     [nzValue]="'replace_all'">
+                <span>全部替换IP排除</span>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   nz-popover
+                   [ngClass]="{c8c8c8:!editing_accountData['exclude_ip']['is_edit']}"
+                   [nzPopoverContent]="negativeReplaceAll"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </label>
+            </div>
+
+            <div class="mb10 pl22" *ngIf="editing_accountData['exclude_ip']['is_edit'] && editing_accountData['exclude_ip']['edit_type'] === 'replace_all'">
+              <p class="countTip"><span>注：</span> 百度：不超过300个 。搜狗：不超过200个 。360：不超过300个 。神马：不超过100个（神马媒体端IP排除数量上限为200个，因为神马API的限制，{{productInfo['name']}}平台每次提交神马IP排除上限为100个）。</p>
+              <div class="textareaDiv">
+                <div class="textarea-top">
+                  <span>IP排除({{tips.length.replaceAllValue}}/{{tips.exclude_ip_max_length}})</span>
+                  <span class="pull-right"><a (click)="deleteAll(excludeIpData, 'replaceAllValue', 'replaceAllValue')">全部删除</a></span>
+                </div>
+                <div class="textarea-content" [ngClass]="{'border-warning': tips.length['replaceAllValue'] > tips.exclude_ip_max_length}">
+                  <textarea placeholder="一个IP一行" [(ngModel)]="excludeIpData.replaceAllValue" (ngModelChange)="contentChange('replaceAllValue', excludeIpData.replaceAllValue)" class="titleColor"  rows="5"></textarea>
+                </div>
+              </div>
+              <p class="mt8 f09200" *ngIf="tips.length['replaceAllValue'] > tips.exclude_ip_max_length">词数最多为{{tips.exclude_ip_max_length}}个</p>
+
+            </div>
+          </div>
+          <div>
+            <div>
+              <label nz-radio
+                     [nzValue]="'delete'">
+                <span>删除IP排除</span>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   nz-popover
+                   [ngClass]="{c8c8c8:!editing_accountData['exclude_ip']['is_edit']}"
+                   [nzPopoverContent]="negativeDelete"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </label>
+            </div>
+
+            <div class="mb10 pl22" *ngIf="editing_accountData['exclude_ip']['is_edit'] && editing_accountData['exclude_ip']['edit_type'] === 'delete'">
+              <p class="countTip"><span>注：</span> 百度：不超过300个 。搜狗：不超过200个 。360：不超过300个 。神马：不超过100个（神马媒体端IP排除数量上限为200个，因为神马API的限制，{{productInfo['name']}}平台每次提交神马IP排除上限为100个）。</p>
+              <div class="textareaDiv">
+                <div class="textarea-top">
+                  <span>IP排除({{tips.length.deleteValue}}/{{tips.exclude_ip_max_length}})</span>
+                  <span class="pull-right"><a (click)="deleteAll(excludeIpData, 'deleteValue', 'deleteValue')">全部删除</a></span>
+                </div>
+                <div class="textarea-content" [ngClass]="{'border-warning': tips.length['deleteValue'] > tips.exclude_ip_max_length}">
+                  <textarea placeholder="一个IP一行" [(ngModel)]="excludeIpData.deleteValue" (ngModelChange)="contentChange('deleteValue', excludeIpData.deleteValue)" class="titleColor"></textarea>
+                </div>
+              </div>
+              <p class="mt8 f09200" *ngIf="tips.length['deleteValue'] > tips.exclude_ip_max_length">词数最多为{{tips.exclude_ip_max_length}}个</p>
+
+            </div>
+          </div>
+
+
+        </nz-radio-group>
+
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" style="display: none" [ngClass]="{disabled:editing_accountData['dimensions']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w112  inline-block" nz-checkbox
+             [(ngModel)]="editing_accountData['dimensions']['is_edit']">
+        <span>维度:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left mr30 dimensionTableDiv" style="width: 600px;">
+      <table cellpadding="0" cellspacing="0">
+        <thead >
+        <tr>
+          <th ><span>维度名称</span></th>
+          <th >
+            <span>账户</span>
+              <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'设置该账户下所有的关键词的维度值'" [nzTooltipPlacement]="'topLeft'" class="ml5"  style="color: #f09200"></i>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of dimensionsData">
+          <td >
+            <span>{{data.name}}</span>
+          </td>
+          <td >
+            <div *ngIf="!data.state">
+              <ng-container *ngIf="!data.value">
+                <span class="c8c8c8">账户维度设置</span>
+              </ng-container>
+              <ng-container *ngIf="data.value">
+                <span>{{data.value}}</span>
+              </ng-container>
+              <i nz-icon nzType="edit" nzTheme="outline" class="dimensionsEdit"  *ngIf="editing_accountData['dimensions']['is_edit']" (click)="edit(data)"></i>
+              <i nz-icon nzType="edit" nzTheme="outline" class="dimensionsEdit"  *ngIf="!editing_accountData['dimensions']['is_edit']"></i>
+            </div>
+            <div class="dimension" *ngIf="data.state">
+              <input nz-input #input style="width: 40%;" [nzSize]="'small'" [(ngModel)]="data.value">
+              <button nz-button [nzType]="'primary'" (click)="sure(data)" >
+                <span>确定</span>
+              </button>
+              <button nz-button [nzType]="'default'" (click)="cancel_dimension(data)">
+                <span>取消</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <ng-template #negativContentTemplate>
+    <div style="max-width: 380px;" [ngSwitch]="summaryType">
+      输入框为选定
+      <span *ngSwitchCase="'campaign'">计划</span>
+      <span *ngSwitchCase="'adgroup'">单元</span>
+      <span *ngSwitchCase="'keyword'">关键词</span>
+      <span *ngSwitchCase="'account'">账户</span>
+      的公共否定词，修改将不会影响非公共部分。如果需要覆盖所有否定词，请选择“全部替换原有数据”。
+    </div>
+  </ng-template>
+  <!--精确否定词提示模板-->
+  <ng-template #exactContentTemplate>
+    <div style="max-width: 380px;" [ngSwitch]="summaryType">
+      输入框为选定
+      <span *ngSwitchCase="'campaign'">计划</span>
+      <span *ngSwitchCase="'adgroup'">单元</span>
+      <span *ngSwitchCase="'keyword'">关键词</span>
+      <span *ngSwitchCase="'account'">账户</span>
+      的公共精确否定词，修改将不会影响非公共部分。如果需要覆盖所有精确否定词，请选择“全部替换原有数据”。
+    </div>
+  </ng-template>
+</div>

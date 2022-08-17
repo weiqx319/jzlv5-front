@@ -1,0 +1,17 @@
+<div  class="safariItem" *ngFor="let item of all_items;let p_index = index;">
+  <label>
+    <i class="mr8" nz-icon [nzType]="item.open ? 'down' : 'right'" nzTheme="outline" (click)="item.open=!item.open"></i>
+    <i nz-icon nzTheme="outline" [nzType]="selected_item_obj[item.publisher_id] ? 'check-square' : 'minus-square'" [ngClass]="{'active-color':selected_item_obj[item.publisher_id]}" (click)="publisherChange(p_index)"></i>
+    <span class="ml8">{{item.publisher_name}}</span>
+  </label>
+  <ng-container *ngIf="item.open">
+    <div class="ml38">
+      <div *ngFor="let a_item of item.detail;let a_index = index;">
+        <label style="margin-left: 3px;">
+          <i nz-icon nzTheme="outline" [nzType]="selected_item_obj[a_item.publisher_id+'_'+a_item.chan_pub_id+'_'+a_item.pub_account_id] ? 'check-square' : 'minus-square'" [ngClass]="{'active-color':selected_item_obj[a_item.publisher_id+'_'+a_item.chan_pub_id+'_'+a_item.pub_account_id]}" (click)="accountChange(p_index, a_index)"></i>
+          <span class="ml8">{{a_item.pub_account_name}}</span>
+        </label>
+      </div>
+    </div>
+  </ng-container>
+</div>

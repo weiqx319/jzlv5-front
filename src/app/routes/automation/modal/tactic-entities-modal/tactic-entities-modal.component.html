@@ -1,0 +1,83 @@
+<div *ngIf="!apiData.length && resultStatus==='success';else tableTemplate">
+  该策略暂无实体，请到<a [routerLink]="'/data_view/feed/'+urlString" (click)="cancel()">{{tacticLevelName}}</a>层级下选择对应实体，加入该策略。
+</div>
+<ng-template #tableTemplate>
+  <div class="operation-container mb8">
+    <button class="btn-jzl mr8" nz-button [nzType]="'primary'" [disabled]="checked_ids.length==0" nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteEntities()" nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomLeft'" nzTrigger="click">
+      <i nz-icon nzType="delete" nzTheme="outline"></i><span>批量删除</span>
+    </button>
+  </div>
+  <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'small'"
+              [nzData]="[{}]"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ x: '1000px', y: noResultHeight+'px' }"
+  >
+    <thead>
+    <tr>
+      <th nzWidth="62px" nzLeft class="jzlCheckboxHeader">
+        <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)" [nzIndeterminate]="indeterminate"></label>
+      </th>
+      <th [nzWidth]="'150px'">
+        <span>{{tacticLevelName}}</span>
+        <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_'+tacticLevel+'_name',name:tacticLevelName,type:'multiValue'}" [(filterResult)]="filterResult['pub_'+tacticLevel+'_name']" (submit)="doFilter()"></app-filter>
+      </th>
+      <ng-container *ngIf="tacticLevel!=='account'">
+        <th [nzWidth]="'150px'">
+          <span>账户</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_account_name',name:'账户',type:'multiValue'}" [(filterResult)]="filterResult['pub_account_name']" (submit)="doFilter()"></app-filter>
+        </th>
+        <ng-container *ngIf="tacticLevel!=='campaign'">
+          <th [nzWidth]="'150px'">
+            <span>{{tacticLevelObj['campaign']}}</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_campaign_name',name:tacticLevelObj['campaign'],type:'multiValue'}" [(filterResult)]="filterResult['pub_campaign_name']" (submit)="doFilter()"></app-filter>
+          </th>
+          <ng-container *ngIf="tacticLevel!=='adgroup'">
+            <th [nzWidth]="'150px'">
+              <span>{{tacticLevelObj['adgroup']}}</span>
+              <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_adgroup_name',name:tacticLevelObj['adgroup'],type:'multiValue'}" [(filterResult)]="filterResult['pub_adgroup_name']" (submit)="doFilter()"></app-filter>
+            </th>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+      <th [nzWidth]="'100px'">
+        <span>操作</span>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of apiData">
+      <td nzLeft nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)"></td>
+      <td>{{data["pub_"+tacticLevel+"_name"]}}</td>
+      <ng-container *ngIf="tacticLevel!=='account'">
+        <td>{{data["pub_account_name"]}}</td>
+        <ng-container *ngIf="tacticLevel!=='campaign'">
+          <td>{{data["pub_campaign_name"]}}</td>
+          <ng-container *ngIf="tacticLevel!=='adgroup'">
+            <td>{{data["pub_adgroup_name"]}}</td>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+      <td>
+        <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteEntities(data)" nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzTrigger="click" href="javascript:">删除</a>
+      </td>
+    </tr>
+    <tr *ngIf="!apiData.length && !loading">
+      <td [attr.colspan]="12" [ngStyle]="{'background-color':'#f6f6f6','height':(noResultHeight-10)+'px'}">
+        <div style="text-align: center">{{resultStatus==='success'?'暂无数据':'数据获取失败'}}</div>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <!-- 表格显示总条数 -->
+  <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+</ng-template>

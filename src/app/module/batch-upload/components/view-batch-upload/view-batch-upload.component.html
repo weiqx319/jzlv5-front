@@ -1,0 +1,294 @@
+<div class="sub-company-content">
+  <div nz-form class="sub-company-form">
+    <nz-tabset [nzSize]="'small'" [nzTabPosition]="'top'"
+               [(nzSelectedIndex)]="selectedIndex">
+      <nz-tab *ngFor="let item of upload_method; let i = index;" [nzDisabled]="item.disabled" [nzTitle]="item.name" (nzClick)="tabClick($event)">
+        <ng-container *ngIf="i===1 && tableShow">
+          <div class="lab-row mb10 fontSize12 " >
+            <p style="color: red">为防止浏览器崩溃，超过1万条，建议使用文件上传（粘贴条数跟电脑配置相关，{{productInfo['name']}}不设置上限）</p>
+          </div>
+          <nz-spin [nzSpinning]="copyUploading">
+            <div class="lab-row mb10" *ngIf="summaryType!=='account' && publisherId!==24" >
+              <label>批量导入媒体:</label>
+              <nz-select  class="w150 ml8" [nzSize]="'small'" nzPlaceHolder="请选择媒体" [(ngModel)]="defaultPostData.deal_publisher_id" (ngModelChange)="refreshTableField($event)">
+                <nz-option [nzLabel]="publisher.name" [nzValue]="publisher.key" *ngFor="let publisher of publisherTypeList">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="lab-row mb10" *ngIf="summaryType!=='account' && publisherId!==24">
+              <label>&nbsp;&nbsp;&nbsp;根据ID更新:</label>
+              <div class="inline-block flex-auto ml8">
+                <nz-radio-group [nzSize]="'small'" [(ngModel)]="defaultPostData.by_id_update">
+                  <label nz-radio [nzValue]="0" >
+                    <span>否</span>
+                  </label>
+                  <label nz-radio [nzValue]="1">
+                    <span>是</span>
+                  </label>
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="lab-row mb10" *ngIf="(summaryType=='keyword' || summaryType=='creative') && defaultPostData.by_id_update!==1  && publisherId!==24" >
+              <label>新增单元出价:</label>
+              <div class="inline-block flex-auto ml8">
+                <input nz-input [nzSize]="'small'" [(ngModel)]="defaultPostData.max_price" placeholder="请输入">
+              </div>
+            </div>
+            <div class="lab-row mb10" *ngIf="defaultPostData.by_id_update!==1 && summaryType!=='account'&& uploadType!=='xhs_all'&&!(publisherId===24&&summaryType==='creative')" >
+              <label>&nbsp;&nbsp;&nbsp;已存在记录:</label>
+              <div class="inline-block flex-auto ml8">
+                <nz-radio-group [nzSize]="'small'" [(ngModel)]="defaultPostData.exist_update">
+                    <label nz-radio [nzValue]="1" >
+                      <span>更新</span>
+                    </label>
+                    <label nz-radio [nzValue]="0">
+                      <span>忽略</span>
+                    </label>
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="lab-row mb10" *ngIf="defaultPostData.by_id_update!==1 && summaryType!=='account' && publisherId!==24">
+              <label>&nbsp;&nbsp;&nbsp;不存在记录:</label>
+              <div class="inline-block flex-auto ml8">
+                <nz-radio-group [nzSize]="'small'" [(ngModel)]="defaultPostData.not_exist_add">
+                    <label nz-radio [nzValue]="1" >
+                      <span>新增</span>
+                    </label>
+                    <label nz-radio [nzValue]="0">
+                      <span>忽略</span>
+                    </label>
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="fontSize12 mb20" style="height:200px;overflow: hidden">
+              <hot-table
+                class="hot"
+                [data]="dataset"
+                [colHeaders]="true"
+                [rowHeaders]="true"
+                [contextMenu]="contextMenu">
+                <ng-container *ngFor="let col of tableField">
+                  <hot-column title="{{col}}"></hot-column>
+                </ng-container>
+              </hot-table>
+            </div>
+            <div class="error-tip mb10 fontSize12" *ngIf="checkErrorTip[summaryType+'_'+publisherId+(uploadType?'_'+uploadType:'')].is_show">
+              <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+              <span style="color: red;">{{ checkErrorTip[summaryType+'_'+publisherId+(uploadType?'_'+uploadType:'')].tip_text }}</span>
+            </div>
+            <div class="lab-row fontSize12" *ngIf="summaryType=='account'">
+              <p>备注1:	媒体、账户、预算为必填</p>
+              <ng-container *ngIf="publisherId!=6">
+                <p>备注2:	媒体匹配名称为:百度/搜狗/360/神马</p>
+                <p>备注3:	360媒体调整预算幅度每次需大于30且能被10整除</p>
+              </ng-container>
+            </div>
+            <div class="lab-row fontSize12" *ngIf="summaryType=='keyword'">
+              <ng-container *ngIf="publisherId!==24">
+                <p>备注1:	推广账户、推广计划、推广单元、关键词为必填</p>
+                <p>备注2:	计划、单元、关键词存在则修改,不存在则会依次新建</p>
+                <p>备注3:	计划设备类型为新建计划的设备类型,可选值为(计算机设备优先/移动设备优先),只作用于百度媒体</p>
+                <p>备注4: 拷贝上传请先将excel表格各列设为超出换行再复制,否则空列会出现串列情况</p>
+                <p *ngIf="defaultPostData.deal_publisher_id == 3">备注5：请根据账户媒体端的匹配方式设置，否则会上传失败</p>
+                <p *ngIf="defaultPostData.deal_publisher_id == 3">备注6：应用调起网址,只作用于360媒体,需要账户在360开通相应功能</p>
+              </ng-container>
+              <ng-container *ngIf="publisherId===24">
+                <ng-container *ngIf="uploadType==='xhs_all'">
+                  <p>备注1: 该功能可实现从计划到关键词的批量新建，不填写单元或关键词，则会忽略该层级，只处理上级层级</p>
+                  <p>备注2: 账户、计划、推广目的、投放模式为必填，且目前推广目的只能为笔记种草，投放模式可选值为[常规模式,智能托管]</p>
+                  <p>备注3: 推广计划日预算  可选值为[不限,自定义]，当选择自定义时，推广日预算必填 ，且常规模式预算需大于50，智能托管预算需大于100</p>
+                  <p>备注4: 单元的投放范围目前支持搜索推广，推广日期范围可选值为[不限,开始时间至结束时间], 如不限或2022-03-05至2022-04-20</p>
+                  <p>备注5: 单元的投放目标可选值为[点击量]</p>
+                  <p>备注6: 单元的推广地域格式为  全部, 北京#上海</p>
+                  <p>备注7: 单元的智能出价可选值为[开启，不开启]，默认为开启</p>
+                  <p>备注8: 单元的投放标的笔记ID、投放标的笔记URL至少填写一个，如果都填写以笔记ID为准</p>
+                  <p>备注9: 单元的投放标的笔记标题方便用户整理核对笔记，系统不会使用</p>
+                  <p>备注10: 单元的投放标的组件可选值为 [外链,私信,不使用]，当选择私信时，私信按钮方案必填 ，可选值为[立即咨询,立即参与,立即领取]</p>
+                  <p>备注11: 关键词出价范围为[0.3-999.99],匹配模式可选项为[精确,否定],当值为空或非精确时系统统一默认为短语</p>
+                </ng-container>
+                <ng-container *ngIf="uploadType!=='xhs_all'">
+                  <p>备注1: 账户、计划、单元、关键词、出价、匹配模式为必填</p>
+                  <p>备注2: 出价范围为[0.3-999.99]</p>
+                  <p>备注3: 匹配模式可选值为[精确,短语]，当值为空或非精确时系统统一默认为短语</p>
+                </ng-container>
+              </ng-container>
+            </div>
+            <div class="lab-row fontSize12" *ngIf="summaryType=='creative'">
+              <ng-container *ngIf="publisherId!==24">
+                <p>备注1:	推广账户、推广计划、推广单元、创意标题、创意描述1为必填</p>
+                <p>备注2:	计划、单元、创意存在则修改,不存在则会依次新建</p>
+                <p>备注3:	计划设备类型为新建计划的设备类型,可选值为(计算机设备优先/移动设备优先),只作用于百度媒体.</p>
+                <p>备注4: 拷贝上传请先将excel表格各列设为超出换行再复制,否则空列会出现串列情况.</p>
+                <p>备注5: 创意ID选填;只作用于创意修改,因为部分媒体支持同一单元下存在多个相同创意,如果不指定创意id,就会更新此单元下所有匹配到的相同创意;存在创意id,系统只更新此id匹配的创意</p>
+              </ng-container>
+              <ng-container *ngIf="publisherId===24">
+                <p>备注1: 账户、计划、单元为必填</p>
+                <p>备注2: 创意笔记ID、创意笔记URL至少填写一个，如果都填写以笔记ID为准</p>
+                <p>备注3: 创意笔记标题方便用户整理核对笔记，系统不会使用</p>
+                <p>备注4: 封面优选非必填，默认为启用，如不想启用，请填写不启用</p>
+                <p>备注5: 单元投放标的为型为外接笔记时,跳转链接必填，且须为合法的URL,需以http或https开头，且不能有空格</p>
+                <p>备注6: 单元投放标的为型为外接笔记时,按钮文案必填，可选值为[立即参与,立即购买,立即领取]</p>
+              </ng-container>
+            </div>
+
+            <div *ngIf="copyMessage.length">
+              <p *ngFor="let i of copyMessage" class="fontSize12" style="color: red; line-height: 20px;">{{i}}</p>
+            </div>
+          </nz-spin>
+        </ng-container>
+        <ng-container *ngIf="i===0">
+          <div class="sub-company-form-content fontSize12">
+            <div  class="upload-item">
+              <p style="color: red;" *ngIf="uploading">正在上传文件，请勿离开或者刷新此页面！</p>
+            </div>
+            <nz-spin [nzSpinning]="uploading">
+              <ng-container *ngIf="channelId==2 && publisherId==17">
+                <div class="lab-row mb10" style="display: flex">
+                  <label>&nbsp;定时设置:</label>
+                  <div class="ml20">
+                    <nz-radio-group [nzSize]="'small'" [(ngModel)]="defaultPostData.cron_setting">
+                      <label nz-radio [nzValue]="'now'">
+                        <span>立即执行</span>
+                      </label>
+                      <label nzDisabled nz-radio [nzValue]="'current'">
+                        <span>自定义</span>
+                      </label>
+                    </nz-radio-group>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="(channelId!=2 && publisherId!=6) || publisherId===24 ">
+                <div class="lab-row mb10" *ngIf="summaryType!=='account' && publisherId!==24">
+                  <label>批量导入媒体:</label>
+                  <nz-select class="w150 ml8" [nzSize]="'small'" nzPlaceHolder="请选择媒体"
+                             [(ngModel)]="defaultPostData.deal_publisher_id">
+                    <nz-option [nzLabel]="publisher.name" [nzValue]="publisher.key"
+                               *ngFor="let publisher of publisherTypeList">
+                    </nz-option>
+                  </nz-select>
+                </div>
+                <div class="lab-row mb10" *ngIf="summaryType!=='account' && publisherId!==24">
+                  <label>&nbsp;&nbsp;&nbsp;根据ID更新:</label>
+                  <div class="inline-block flex-auto ml8">
+                    <nz-radio-group [nzSize]="'small'" [(ngModel)]="defaultPostData.by_id_update">
+                      <label nz-radio [nzValue]="0">
+                        <span>否</span>
+                      </label>
+                      <label nz-radio [nzValue]="1">
+                        <span>是</span>
+                      </label>
+                    </nz-radio-group>
+                  </div>
+                </div>
+                <div class="lab-row mb10"
+                     *ngIf="(summaryType=='keyword' || summaryType=='creative') && defaultPostData.by_id_update!==1 && publisherId!==24">
+                  <label>新增单元出价:</label>
+                  <div class="inline-block flex-auto ml8">
+                    <input nz-input [nzSize]="'small'" [(ngModel)]="defaultPostData.max_price" placeholder="请输入">
+                  </div>
+                </div>
+                <div class="lab-row mb10" *ngIf="defaultPostData.by_id_update!==1 && summaryType!=='account'&& uploadType!=='xhs_all'&&!(publisherId===24&&summaryType==='creative')">
+                  <label>&nbsp;&nbsp;&nbsp;已存在记录:</label>
+                  <div class="inline-block flex-auto ml8">
+                    <nz-radio-group [nzSize]="'small'" [(ngModel)]="defaultPostData.exist_update">
+                      <label nz-radio [nzValue]="1">
+                        <span>更新</span>
+                      </label>
+                      <label nz-radio [nzValue]="0">
+                        <span>忽略</span>
+                      </label>
+                    </nz-radio-group>
+                  </div>
+                </div>
+                <div class="lab-row mb10" *ngIf="defaultPostData.by_id_update!==1 && summaryType!=='account' && publisherId!==24">
+                  <label>&nbsp;&nbsp;&nbsp;不存在记录:</label>
+                  <div class="inline-block flex-auto ml8">
+                    <nz-radio-group [nzSize]="'small'" [(ngModel)]="defaultPostData.not_exist_add">
+                      <label nz-radio [nzValue]="1">
+                        <span>新增</span>
+                      </label>
+                      <label nz-radio [nzValue]="0">
+                        <span>忽略</span>
+                      </label>
+                    </nz-radio-group>
+                  </div>
+                </div>
+              </ng-container>
+              <div class="upload-item">
+                <div class="upload-title">上传Excel:</div>
+                <div class="uploadDiv">
+                  <div class="overHidden">
+                    <nz-upload *ngIf="!uploading" class="pull-left"
+                               [nzCustomRequest]="customReq"
+                               [(nzFileList)]="fileList"
+                               [nzAccept]="'.xlsx,.xls,.csv'"
+                               [nzBeforeUpload]="beforeUpload"
+                               (click)="changeBtn()"
+                               [nzSize]="'small'"
+                               [nzLimit] = 1
+                               [nzName]="'files'">
+                      <button nz-button class="height20">
+                       <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+                      </button>
+                    </nz-upload>
+                    <button *ngIf="uploading" nz-button class="mt2 pull-left height20">
+                     <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+                    </button>
+                    <span class="zhushi">*请上传.xls或.xlsx文件或.csv文件</span>
+                  </div>
+                  <div class="mt8" *ngIf="channelId!=2 && publisherId !=6">
+                    <span><a (click)="downloadTemplate(summaryType)">下载参考模板</a></span>
+                  </div>
+                  <div class="mt8" *ngIf="channelId==2 && publisherId ==6&&summaryType==='account'">
+                    <span><a (click)="downloadTemplate(summaryType)">下载参考模板</a></span>
+                  </div>
+                  <div class="mt8" *ngIf="channelId==2 && publisherId ==6&&summaryType!=='account'">
+                    <span><a [href]="'https://share-down.s3.cn-north-1.amazonaws.com.cn/sem-template/%E4%B9%9D%E6%9E%9D%E5%85%B0-%E5%B9%BF%E7%82%B9%E9%80%9A%E6%89%B9%E9%87%8F%E6%96%B0%E5%BB%BA%E6%8A%95%E6%94%BE%E6%A8%A1%E6%9D%BF.xlsx?version='+versionDateTimestamp">下载参考模板</a></span>
+                  </div>
+                  <div class="mt8" *ngIf="publisherId ===24">
+                    <span>
+                      <a *ngIf="uploadType==='xhs_all'" [href]="'/api_file_template/小红书-全流程-导入模板.xlsx?version='+versionDateTimestamp">下载参考模板</a>
+                      <a *ngIf="uploadType!=='xhs_all'" [href]="'/api_file_template/小红书-'+xhsSummaryObj[summaryType]+'-导入模板.xlsx?version='+versionDateTimestamp">下载参考模板</a>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </nz-spin>
+            <div class="upload-item">
+              <div *ngIf="(uploading || exception === 'exception') && fileList.length" class="m1020 progressDiv">
+                <nz-progress [nzStatus]="exception" [nzPercent]="speed" nzSize="small"></nz-progress>
+              </div>
+            </div>
+            <div class="upload-item" *ngIf="resultMessage">
+              <p style="color: red;">{{resultMessage}}</p>
+            </div>
+          </div>
+        </ng-container>
+      </nz-tab>
+    </nz-tabset>
+
+    <div class="sub-company-form-footer">
+
+      <ng-container *ngIf="selectedIndex===1">
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelUpload()">
+          <span>取消</span>
+        </button>
+        <button class="ml8" [nzLoading]="copyUploading" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="handleUpload()">
+          <span>完成</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedIndex===0">
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelUpload()">
+          <span>取消</span>
+        </button>
+        <button class="ml8" *ngIf="!uploading" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="handleUpload()">
+          <span>完成</span>
+        </button>
+        <button class="ml8" *ngIf="uploading" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="uploading">
+          <span>上传中...</span>
+        </button>
+      </ng-container>
+
+    </div>
+  </div>
+</div>

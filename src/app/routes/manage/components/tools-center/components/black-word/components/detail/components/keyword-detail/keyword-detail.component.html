@@ -1,0 +1,96 @@
+<div class="message-container">
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <button class="mr8" nz-popconfirm nz-button [nzType]="'default'" [nzSize]="'default'"
+              [ngClass]="{'disabled-status': !isIndeterminate}"
+              [disabled]="!isIndeterminate"
+              (click)="stopKeyWord()">
+        <i nz-icon nzType="pause" nzTheme="outline"></i>暂停
+      </button>
+
+      <button class="mr8" nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="delKeyWord()" [nzPopconfirmPlacement]="'bottomLeft'" nz-button [nzType]="'default'" [nzSize]="'default'"
+              [ngClass]="{'disabled-status': !isIndeterminate}"
+              [disabled]="!isIndeterminate">
+        <i nz-icon nzType="close" nzTheme="outline"></i>删除
+      </button>
+
+      <button class="mr8" nz-popconfirm nz-button [nzType]="'default'" [nzSize]="'default'"
+              (click)="downloadDetail()">
+       <i nz-icon nzType="download" nzTheme="outline"></i>下载明细
+      </button>
+    </div>
+  </div>
+  <div class="table pt8">
+    <nz-table
+      #nzTable
+      nzShowSizeChanger
+      [nzPageSizeOptions]="[30,50,100,500]"
+      [nzSize]="'default'"
+      [nzData]="keywordList"
+      [nzFrontPagination]="false"
+      [(nzPageSize)]="pageSize"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="refreshData()"
+      (nzPageSizeChange)="refreshData(true)"
+      [nzTotal]="total"
+      [nzLoading]="loading"
+      [nzShowTotal]="totalItemTemplate"
+      [nzScroll]="{ x: '1200px', y: noResultHeight+'px' }"
+    >
+      <thead>
+      <tr>
+        <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="isAllChecked" [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="updateAllChecked($event)">
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>关键词</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_keyword',name:'关键词',type:'multiValue'}" [(filterResult)]="filterResult['pub_keyword']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>媒体</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'publisher_id',name:'媒体',type:'singleList'}" [(filterResult)]="filterResult['publisher_id']" [filterOption]="filterPublisherOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>账户</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>计划</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>单元</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>包含黑词</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>是否处理</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'operation_status',name:'是否处理',type:'singleList'}" [(filterResult)]="filterResult['operation_status']" [filterOption]="filterOperationStatusOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>处理操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of keywordList; let index = index;">
+        <td
+          nzShowCheckbox
+          [nzDisabled]="true || data.operation_status == '1'"
+          [(nzChecked)]="data.checked"
+          (nzCheckedChange)="checkedChange()"
+        ></td>
+        <td>
+          {{data.pub_keyword}}
+        </td>
+        <td>{{data.publisher_name}}</td>
+        <td>{{data.pub_account_name}}</td>
+        <td>{{data.pub_campaign_name}}</td>
+        <td>{{data.pub_adgroup_name}}</td>
+        <td>{{data.word_name}}</td>
+        <td>{{ operationStatusList[data.operation_status] }}</td>
+        <td>{{data.operation_message}}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>

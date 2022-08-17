@@ -1,0 +1,23 @@
+<div class="tencent-map-container">
+  <div class="tencent-map-search">
+  <nz-input-group [nzPrefix]="prefixTemplateUser">
+    <input nz-input [(ngModel)]="mapSearchValue" [placeholder]="'搜索地点，回车（Enter）键搜索'" nzBorderless (keyup.enter)="changeMapList()"/>
+  </nz-input-group>
+  </div>
+  <div class="tencent-map-search-container">
+    <div class="tencent-map-aside" *ngIf="suggestionList.length > 0">
+      <ul class="map-search-list">
+        <li class="map-search-list-item" *ngFor="let item of suggestionList let index = index" (click)="setSuggestion(item)">
+          <b>{{index + 1}}</b>
+          <div class="info">
+            <p class="tt">{{item.title}}</p>
+            <p class="des">{{item.address}}</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div id="map-container"></div>
+  </div>
+</div>
+
+<ng-template #prefixTemplateUser><i nz-icon nzType="search"></i></ng-template>

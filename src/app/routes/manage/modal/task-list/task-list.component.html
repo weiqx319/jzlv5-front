@@ -1,0 +1,152 @@
+<div>
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <app-table-query-show
+        [filterConditions]="filterData"
+        (changed)="refreshData()"
+      ></app-table-query-show>
+    </div>
+    <div class="manage-header-right">
+      <button class="mr8" nz-button nzType="default" [nzLoading]="loading" (click)="refreshData()">
+        <i nz-icon nzType="redo" nzTheme="outline"></i>刷新
+      </button>
+      <nz-range-picker
+        [nzFormat]="'yyyy/MM/dd'"
+        [ngModel]="dateValue"
+        (ngModelChange)="onDateChange($event)"
+        (nzOnCalendarChange)="onCalendarChange($event)"
+        [nzDisabledDate]="disabledEndDate"
+        [nzSize]="'default'"
+        [nzAllowClear]="false"
+        (nzOnOpenChange)="openDateChange($event)"
+      ></nz-range-picker>
+    </div>
+  </div>
+</div>
+
+<div class="manage-table manage-no-result-table pt8">
+  <nz-table
+    #nzTable
+    class="pt8"
+    nzShowSizeChanger
+    [nzPageSizeOptions]="[30, 50, 100, 500]"
+    [nzSize]="'default'"
+    [nzData]="taskListData"
+    [nzFrontPagination]="false"
+    [(nzPageSize)]="pageSize"
+    [(nzPageIndex)]="currentPage"
+    (nzPageIndexChange)="refreshData()"
+    (nzPageSizeChange)="refreshData(true)"
+    [nzTotal]="total"
+    [nzLoading]="loading"
+    [nzShowTotal]="totalItemTemplate"
+    [nzScroll]="{ y: noResultHeight + 'px' }"
+    class="task-table"
+  >
+    <thead>
+      <!-- <thead (nzSortChange)="sort($event)" nzSingleSort> -->
+      <tr>
+        <th [nzWidth]="'200px'">
+          <!-- <th [nzWidth]="'230px'" nzShowSort nzSortKey="create_time"> -->
+          <span>任务提交时间</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>广告主</span>
+          <app-filter
+            [filterType]="filterData['advertiser_name']['filterType']"
+            [filterKey]="filterData['advertiser_name']['filterKey']"
+            [(filterResult)]="filterData['advertiser_name']['filterResult']"
+            (submit)="doFilter()"
+          ></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>操作人</span>
+          <app-filter
+            [filterType]="filterData['user_name']['filterType']"
+            [filterKey]="filterData['user_name']['filterKey']"
+            [(filterResult)]="filterData['user_name']['filterResult']"
+            (submit)="doFilter()"
+          ></app-filter>
+        </th>
+        <th [nzWidth]="'250px'">
+          <span>任务ID</span>
+          <app-filter
+            [filterType]="filterData['task_id']['filterType']"
+            [filterKey]="filterData['task_id']['filterKey']"
+            [(filterResult)]="filterData['task_id']['filterResult']"
+            (submit)="doFilter()"
+          ></app-filter>
+        </th>
+        <th [nzWidth]="'230px'">
+          <span>任务描述</span>
+          <app-filter
+            [filterType]="filterData['task_desc']['filterType']"
+            [filterKey]="filterData['task_desc']['filterKey']"
+            [(filterResult)]="filterData['task_desc']['filterResult']"
+            (submit)="doFilter()"
+          ></app-filter>
+        </th>
+        <th [nzWidth]="'230px'">
+          <span>任务结果</span>
+          <app-filter
+            [filterType]="filterData['task_result']['filterType']"
+            [filterKey]="filterData['task_result']['filterKey']"
+            [(filterResult)]="filterData['task_result']['filterResult']"
+            (submit)="doFilter()"
+          ></app-filter>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>任务状态</span>
+          <app-filter
+            [filterType]="filterData['task_status']['filterType']"
+            [filterKey]="filterData['task_status']['filterKey']"
+            [(filterResult)]="filterData['task_status']['filterResult']"
+            [filterOption]="filterData['task_status']['filterOption']"
+            (submit)="doFilter()"
+          ></app-filter>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of taskListData">
+        <td>{{ data.create_time }}</td>
+        <td>{{ data.advertiser_name }}</td>
+        <td>{{ data.user_name }}</td>
+        <td>
+          <a
+            (click)="getTaskDetailById(data.task_id)"
+            >{{ data.task_id }}</a
+          >
+        </td>
+        <td>
+          <div class="text-ellis" title="{{data.task_desc}}">
+              {{ data.task_desc }}
+          </div>
+        </td>
+        <td>
+          <div class="text-ellis" title="{{data.task_result}}">
+              {{ data.task_result }}
+          </div>
+        </td>
+        <td>
+          {{ status_value_map[data.task_status] }}
+          <a (click)="downloadErrorFile(data)" *ngIf="data['error_file']">错误明细下载</a>
+          <ng-template #finishTime>
+            <span> 完成时间：{{ data.finish_time }} </span>
+          </ng-template>
+          <i nz-icon nzType="question-circle" nzTheme="outline"
+            *ngIf="data.task_status - 0 === 3"
+            nz-popover
+            [nzPopoverContent]="finishTime"
+             nzPopoverPlacement="right"
+            style="color: #f09200"
+          ></i>
+          <app-rollback class="ml10" *ngIf="channelId==1&&publisherId==0&&!!data.can_rollback" [rowData]="data"></app-rollback>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+</div>
+
+

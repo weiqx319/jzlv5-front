@@ -1,0 +1,488 @@
+   <div>
+      <h3>批量编辑计划</h3>
+     <p class="slow_360" *ngIf="(publisher_model['publisherCount'] === 1 && parentData.selected_data[0]['publisher_id'] * 1 === 3) || publisher_model['publisherCount'] > 1">360媒体的编辑操作同步到媒体端有一定时间的延迟，请耐心等待，请勿重复修改!</p>
+     <div class="inpRow mt10">
+       <div class="inpRow_left pull-left">
+         <label class="titleLa w110 mr8 inline-block">
+           <span>定时设置:</span>
+         </label>
+       </div>
+       <div class="inpRow_right pull-left noCheckbox ">
+         <nz-radio-group
+           [(ngModel)]="cronSetting">
+           <label class="mr20"
+                  nz-radio
+                  [nzValue]="'now'">
+             <span>立即执行</span>
+           </label>
+           <label nz-radio
+                  [nzValue]="'current'">
+             <span>自定义</span>
+           </label>
+         </nz-radio-group>
+       </div>
+       <div class="inpRow_right pull-left" *ngIf="cronSetting == 'current'">
+         <nz-date-picker
+           [nzShowTime]="{ nzFormat: 'HH:mm' }"
+           [nzDisabledDate]="disabledDate"
+           nzFormat="yyyy-MM-dd HH:mm"
+           nzPlaceHolder="请选择时间"
+           [nzSize]="'small'"
+           [(ngModel)] = "cronSettingTime"
+         ></nz-date-picker>
+       </div>
+
+
+       <div class="clear"></div>
+     </div>
+     <div class="inpRow mt10" [ngClass]="{disabled:campaign_edit_settingData['pause']['is_edit']}">
+        <div class="inpRow_left pull-left">
+          <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['pause']['is_edit']">
+            <span>投放状态:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left">
+          <nz-radio-group
+            [(ngModel)]="campaign_edit_settingData['pause']['value']"
+            [nzDisabled]="!campaign_edit_settingData['pause']['is_edit']">
+            <label class="mr20"
+                   nz-radio
+                   [nzValue]="false">
+              <span>开启</span>
+            </label>
+            <label
+              nz-radio
+              [nzValue]="true">
+              <span>暂停</span>
+            </label>
+          </nz-radio-group>
+        </div>
+        <div class="clear"></div>
+      </div>
+     <!--日预算修改为-->
+     <div class="inpRow mt10" [ngClass]="{disabled:campaign_edit_settingData['budget']['is_edit']}">
+       <div class="inpRow_left pull-left">
+         <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['budget']['is_edit']">
+           <span>日预算修改为:</span>
+         </label>
+       </div>
+       <div class="inpRow_right pull-left hasInputs">
+         <nz-radio-group [(ngModel)]="budgetRadio" [nzDisabled]="!campaign_edit_settingData['budget']['is_edit']">
+           <div>
+             <div class="h20 pull-left">
+               <label nz-radio
+                      [nzValue]="1">
+                 <span>每日</span>
+               </label>
+             </div>
+             <nz-input-number [(ngModel)]="budget"
+                              [nzDisabled]="!campaign_edit_settingData['budget']['is_edit']"
+                              (click) ="changeInput('budget')"
+                              [nzSize]="'small'">
+             </nz-input-number>
+             <span class="ml5">元</span>
+             <i nz-icon nzType="question-circle" nzTheme="outline"
+                nz-popover
+                *ngIf="publisher_model['publisherCount'] > 1"
+                [ngClass]="{c8c8c8:!campaign_edit_settingData['budget']['is_edit']}"
+                [nzPopoverContent]="stableTemplate"
+                nzPopoverPlacement="right"
+                class="ml8"
+                style="color: #f09200"></i>
+             <ng-container *ngIf="campaign_edit_settingData['budget']['is_edit'] && publisher_model['publisherCount'] === 1 && budgetRadio === 1">
+               <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="parentData.selected_data[0]['publisher_id'] * 1 === 3 && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于30</span>
+               <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="parentData.selected_data[0]['publisher_id'] * 1 === 4 && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于10</span>
+               <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="(parentData.selected_data[0]['publisher_id'] * 1 === 1 || parentData.selected_data[0]['publisher_id'] * 1 === 2) && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于50</span>
+             </ng-container>
+             <ng-container *ngIf="campaign_edit_settingData['budget']['is_edit'] && publisher_model['publisherCount'] > 1 && budgetRadio === 1">
+               <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于50</span>
+             </ng-container>
+
+           </div>
+           <div class="mt5">
+             <label
+               nz-radio
+               [nzValue]="2">
+               <span>不限定</span>
+             </label>
+           </div>
+         </nz-radio-group>
+       </div>
+       <div class="clear"></div>
+     </div>
+
+
+     <ng-template #stableTemplate>
+       <div class="w220">
+         <p class="mt2">百度：不能为空，且不低于50</p>
+         <p class="mt2">搜狗：不能为空，且不低于50</p>
+         <p class="mt2">360：&nbsp;不能为空，且不低于30</p>
+         <p class="mt2">神马：不能为空，且不低于10</p>
+         <p class="mt5" style="color: darkred">跨媒体操作时，最低出价为50</p>
+       </div>
+     </ng-template>
+     <!--不能跨媒体操作的-->
+     <div *ngIf="parentData.selected_data.length > 1 && publisher_model['publisherCount'] === 1">
+        <!--创意展现方式-->
+        <div class="inpRow mt10" *ngIf="parentData.selected_data[0]['publisher_id'] * 1 === 1 || parentData.selected_data[0]['publisher_id'] * 1 === 4" [ngClass]="{disabled:campaign_edit_settingData['show_prob']['is_edit']}">
+          <div class="inpRow_left pull-left">
+            <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['show_prob']['is_edit']">
+              <span>创意展现方式:</span>
+            </label>
+          </div>
+          <div class="inpRow_right pull-left">
+            <nz-radio-group [(ngModel)]="campaign_edit_settingData['show_prob']['value']"
+                            [nzDisabled]="!campaign_edit_settingData['show_prob']['is_edit']">
+              <label class="mr20"
+                     nz-radio
+                     [nzValue]="1">
+                <span>优选&nbsp; &nbsp;&nbsp; &nbsp;</span>
+              </label>
+              <label nz-radio
+                     [nzValue]="2">
+                <span>轮选</span>
+              </label>
+            </nz-radio-group>
+          </div>
+          <div class="clear"></div>
+        </div>
+     </div>
+
+
+     <ng-template #negativeDataAdd>
+       <div class="w300" style="padding:8px 8px 10px 8px;">
+         <span style="font-size: 14px; color: #000">添加短语否定关键词</span>
+         <p class="mt5">保留所选计划的原有否定关键词不变，批量追加设置的短语否定关键词</p>
+       </div>
+     </ng-template>
+
+     <ng-template #negativeDataDeleteCommon>
+       <div class="w300" style="padding:8px 8px 10px 8px;">
+         <span style="font-size: 14px; color: #000">删除公共部分短语否定关键词</span>
+         <p class="mt5">将所选的计划的公共否定关键词进行有选择的删除操作</p>
+       </div>
+     </ng-template>
+
+     <ng-template #negativeReplaceAll>
+       <div class="w300" style="padding:8px 8px 10px 8px;">
+         <span style="font-size: 14px; color: #000">全部替换短语否定关键词</span>
+         <p class="mt5">将所选的计划全部替换更改为所设置的否定关键词进</p>
+       </div>
+     </ng-template>
+
+     <ng-template #negativeDelete>
+       <div class="w300" style="padding:8px 8px 10px 8px;">
+         <span style="font-size: 14px; color: #000">删除短语否定关键词</span>
+         <p class="mt5">在所选计划的原有短语否定关键词中查找所设置的短语否定关键词，如果有对应否定关键词则进行删除</p>
+       </div>
+     </ng-template>
+
+     <ng-template #exactNegativeDataAdd>
+       <div class="w300" style="padding:8px 8px 10px 8px;">
+         <span style="font-size: 14px; color: #000">添加精确否定关键词</span>
+         <p class="mt5">保留所选计划的原有精确否定关键词不变，批量追加设置的精确否定关键词</p>
+       </div>
+     </ng-template>
+
+     <ng-template #exactNegativeDataDeleteCommon>
+       <div class="w300" style="padding:8px 8px 10px 8px;">
+         <span style="font-size: 14px; color: #000">删除公共部分精确否定关键词</span>
+         <p class="mt5">将所选的计划的公共精确否定关键词进行有选择的删除操作</p>
+       </div>
+     </ng-template>
+
+     <ng-template #exactNegativeReplaceAll>
+       <div class="w300" style="padding:8px 8px 10px 8px;">
+         <span style="font-size: 14px; color: #000">全部替换精确否定关键词</span>
+         <p class="mt5">将所选的计划全部替换更改为所设置的精确否定关键词</p>
+       </div>
+     </ng-template>
+
+     <ng-template #exactNegativeDelete>
+       <div class="w300" style="padding:8px 8px 10px 8px;">
+         <span style="font-size: 14px; color: #000">删除精确否定关键词</span>
+         <p class="mt5">在所选计划的原有精确否定关键词中查找所设置的精确否定关键词，如果有对应精确否定关键词则进行删除</p>
+       </div>
+     </ng-template>
+
+
+     <!--否定词-->
+     <div *ngIf="!publisher_model['hasForeignPublisher']" class="inpRow mt10" [ngClass]="{disabled:campaign_edit_settingData['negative_words']['is_edit']}">
+       <div class="inpRow_left pull-left">
+         <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['negative_words']['is_edit']">
+           <span>短语否定词:</span>
+         </label>
+       </div>
+       <div class="inpRow_right pull-left">
+         <div>
+
+           <nz-radio-group [(ngModel)]="campaign_edit_settingData.negative_words['edit_type']"
+                           [nzDisabled]="!campaign_edit_settingData['negative_words']['is_edit']">
+             <div>
+               <div>
+                 <label class="mr20"
+                        nz-radio
+                        [nzValue]="'add'">
+                   <span>添加短语否定关键词</span>
+                   <i nz-icon nzType="question-circle" nzTheme="outline"
+                      nz-popover
+                      [ngClass]="{c8c8c8:!campaign_edit_settingData['negative_words']['is_edit']}"
+                      [nzPopoverContent]="negativeDataAdd"
+                      nzPopoverPlacement="right"
+                      class="ml8"
+                      style="color: #f09200"></i>
+                 </label>
+               </div>
+               <div class="mb10 pl22" *ngIf="campaign_edit_settingData['negative_words']['is_edit'] && campaign_edit_settingData.negative_words['edit_type'] === 'add'">
+                 <p class="countTip"><span>注：</span> 百度：跟账户等级相关。年日均消费0~100元(一颗星)，数量不超过200个。年日均消费100~1200元(两颗星)，数量不超过400个。年日均消费1200以上(三颗星)，数量不超过500个。 360：短语否定词数量不超过200。神马、搜狗：短语否定词数量不超过300</p>
+                 <div class="textareaDiv">
+                   <div class="textarea-top">
+                     <span>短语否定关键词({{tips.length.addValue}}/{{tips.negativeData_max_length}})</span>
+                     <span class="pull-right"><a (click)="deleteAll(negativeData, 'addValue', 'addValue')">全部删除</a></span>
+                   </div>
+                   <div class="textarea-content" [ngClass]="{'border-warning': tips.length['addValue'] > tips.negativeData_max_length}">
+                     <textarea placeholder="一个否定词一行" [(ngModel)]="negativeData.addValue" (ngModelChange)="contentChange('addValue', negativeData.addValue)" class="titleColor"  rows="5"></textarea>
+                   </div>
+                 </div>
+                 <p class="mt8 f09200" *ngIf="tips.length['addValue'] > tips.negativeData_max_length">词数最多为{{tips.negativeData_max_length}}个</p>
+
+               </div>
+
+             </div>
+             <div>
+               <div>
+                 <label nz-radio
+                        [nzValue]="'delete_common'">
+                   <span>删除公共部分短语否定关键词</span>
+                   <i nz-icon nzType="question-circle" nzTheme="outline"
+                      nz-popover
+                      [ngClass]="{c8c8c8:!campaign_edit_settingData['negative_words']['is_edit']}"
+                      [nzPopoverContent]="negativeDataDeleteCommon"
+                      nzPopoverPlacement="right"
+                      class="ml8"
+                      style="color: #f09200"></i>
+                 </label>
+               </div>
+               <div class="mt5 mb10 pl22" *ngIf="campaign_edit_settingData['negative_words']['is_edit'] && campaign_edit_settingData.negative_words['edit_type'] === 'delete_common'">
+                 <nz-transfer
+                   [nzDataSource]="list['negativeWords']"
+                   nzShowSearch
+                   [nzTitles]="['公共短语否定词', '选中公共短语否定词']"
+                   [nzListStyle]="{'width.px': 250, 'height.px': 250}"
+                   [nzRender]="render"
+                   (nzChange)="changeNegativeWords($event)">
+                   <ng-template #render let-item>
+                     {{item.title}}
+                   </ng-template>
+                 </nz-transfer>
+               </div>
+
+             </div>
+             <div>
+               <div>
+                 <label nz-radio
+                        [nzValue]="'replace_all'">
+                   <span>全部替换短语否定关键词</span>
+                   <i nz-icon nzType="question-circle" nzTheme="outline"
+                      nz-popover
+                      [ngClass]="{c8c8c8:!campaign_edit_settingData['negative_words']['is_edit']}"
+                      [nzPopoverContent]="negativeReplaceAll"
+                      nzPopoverPlacement="right"
+                      class="ml8"
+                      style="color: #f09200"></i>
+                 </label>
+               </div>
+
+               <div class="mb10 pl22" *ngIf="campaign_edit_settingData['negative_words']['is_edit'] && campaign_edit_settingData.negative_words['edit_type'] === 'replace_all'">
+                 <p class="countTip"><span>注：</span> 百度：跟账户等级相关。年日均消费0~100元(一颗星)，数量不超过200个。年日均消费100~1200元(两颗星)，数量不超过400个。年日均消费1200以上(三颗星)，数量不超过500个。 360：短语否定词数量不超过200。神马、搜狗：短语否定词数量不超过300</p>
+                 <div class="textareaDiv">
+                   <div class="textarea-top">
+                     <span>短语否定关键词({{tips.length.replaceAllValue}}/{{tips.negativeData_max_length}})</span>
+                     <span class="pull-right"><a (click)="deleteAll(negativeData, 'replaceAllValue', 'replaceAllValue')">全部删除</a></span>
+                   </div>
+                   <div class="textarea-content" [ngClass]="{'border-warning': tips.length['replaceAllValue'] > tips.negativeData_max_length}">
+                     <textarea placeholder="一个否定词一行" [(ngModel)]="negativeData.replaceAllValue" (ngModelChange)="contentChange('replaceAllValue', negativeData.replaceAllValue)" class="titleColor"  rows="5"></textarea>
+                   </div>
+                 </div>
+                 <p class="mt8 f09200" *ngIf="tips.length['replaceAllValue'] > tips.negativeData_max_length">词数最多为{{tips.negativeData_max_length}}个</p>
+
+               </div>
+             </div>
+             <div>
+               <div>
+                 <label nz-radio
+                        [nzValue]="'delete'">
+                   <span>删除短语否定关键词</span>
+                   <i nz-icon nzType="question-circle" nzTheme="outline"
+                      nz-popover
+                      [ngClass]="{c8c8c8:!campaign_edit_settingData['negative_words']['is_edit']}"
+                      [nzPopoverContent]="negativeDelete"
+                      nzPopoverPlacement="right"
+                      class="ml8"
+                      style="color: #f09200"></i>
+                 </label>
+               </div>
+
+               <div class="mb10 pl22" *ngIf="campaign_edit_settingData['negative_words']['is_edit'] && campaign_edit_settingData.negative_words['edit_type'] === 'delete'">
+                 <p class="countTip"><span>注：</span> 百度：跟账户等级相关。年日均消费0~100元(一颗星)，数量不超过200个。年日均消费100~1200元(两颗星)，数量不超过400个。年日均消费1200以上(三颗星)，数量不超过500个。 360：短语否定词数量不超过200。神马、搜狗：短语否定词数量不超过300</p>
+                 <div class="textareaDiv">
+                   <div class="textarea-top">
+                     <span>短语否定关键词({{tips.length.deleteValue}}/{{tips.negativeData_max_length}})</span>
+                     <span class="pull-right"><a (click)="deleteAll(negativeData, 'deleteValue', 'deleteValue')">全部删除</a></span>
+                   </div>
+                   <div class="textarea-content" [ngClass]="{'border-warning': tips.length['deleteValue'] > tips.negativeData_max_length}">
+                     <textarea placeholder="一个否定词一行" [(ngModel)]="negativeData.deleteValue" (ngModelChange)="contentChange('deleteValue', negativeData.deleteValue)" class="titleColor"></textarea>
+                   </div>
+                 </div>
+                 <p class="mt8 f09200" *ngIf="tips.length['deleteValue'] > tips.negativeData_max_length">词数最多为{{tips.negativeData_max_length}}个</p>
+
+               </div>
+             </div>
+
+
+           </nz-radio-group>
+
+         </div>
+       </div>
+       <div class="clear"></div>
+     </div>
+     <!--精确否定词-->
+     <div *ngIf="!publisher_model['hasForeignPublisher']" class="inpRow mt10" [ngClass]="{disabled:campaign_edit_settingData['exact_negative_words']['is_edit']}">
+       <div class="inpRow_left pull-left">
+         <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['exact_negative_words']['is_edit']">
+           <span>精确否定词:</span>
+         </label>
+       </div>
+       <div class="inpRow_right pull-left">
+         <div>
+           <nz-radio-group [(ngModel)]="campaign_edit_settingData.exact_negative_words['edit_type']"
+                           [nzDisabled]="!campaign_edit_settingData['exact_negative_words']['is_edit']">
+             <div>
+               <div>
+                 <label class="mr20"
+                        nz-radio
+                        [nzValue]="'add'">
+                   <span>添加精确否定关键词</span>
+                   <i nz-icon nzType="question-circle" nzTheme="outline"
+                      nz-popover
+                      [ngClass]="{c8c8c8:!campaign_edit_settingData['exact_negative_words']['is_edit']}"
+                      [nzPopoverContent]="exactNegativeDataAdd"
+                      nzPopoverPlacement="right"
+                      class="ml8"
+                      style="color: #f09200"></i>
+                 </label>
+               </div>
+               <div class="mb10 pl22" *ngIf="campaign_edit_settingData['exact_negative_words']['is_edit'] && campaign_edit_settingData.exact_negative_words['edit_type'] === 'add'">
+                 <p class="countTip"><span>注：</span> 百度：跟账户等级相关。年日均消费0~100元(一颗星)，数量不超过400个。年日均消费100~1200元(两颗星)，数量不超过700个。年日均消费1200以上(三颗星)，数量不超过900个。 360：精确否定词数量不超过400。 神马、搜狗：精确否定词数量不超过300</p>
+                 <div class="textareaDiv">
+                   <div class="textarea-top">
+                     <span>精确否定关键词({{tips.length.exactAddValue}}/{{tips.exact_negativeData_max_length}})</span>
+                     <span class="pull-right"><a (click)="deleteAll(exactNegativeData, 'addValue', 'exactAddValue')">全部删除</a></span>
+                   </div>
+                   <div class="textarea-content" [ngClass]="{'border-warning': tips.length['exactAddValue'] > tips.exact_negativeData_max_length}">
+                     <textarea placeholder="一个否定词一行" [(ngModel)]="exactNegativeData.addValue" (ngModelChange)="contentChange('exactAddValue', exactNegativeData.addValue)" class="titleColor"  rows="5"></textarea>
+                   </div>
+                 </div>
+                 <p class="mt8 f09200" *ngIf="tips.length['exactAddValue'] > tips.exact_negativeData_max_length">词数最多为{{tips.exact_negativeData_max_length}}个</p>
+
+               </div>
+
+             </div>
+             <div>
+               <div>
+                 <label nz-radio
+                        [nzValue]="'delete_common'">
+                   <span>删除公共部分精确否定关键词</span>
+                   <i nz-icon nzType="question-circle" nzTheme="outline"
+                      nz-popover
+                      [ngClass]="{c8c8c8:!campaign_edit_settingData['exact_negative_words']['is_edit']}"
+                      [nzPopoverContent]="exactNegativeDataDeleteCommon"
+                      nzPopoverPlacement="right"
+                      class="ml8"
+                      style="color: #f09200"></i>
+                 </label>
+               </div>
+               <div class="mt5 mb10 pl22" *ngIf="campaign_edit_settingData['exact_negative_words']['is_edit'] && campaign_edit_settingData.exact_negative_words['edit_type'] === 'delete_common'">
+                 <nz-transfer
+                   [nzDataSource]="list['exactNegativeWords']"
+                   nzShowSearch
+                   [nzTitles]="['公共精确否定词', '选中公共精确否定词']"
+                   [nzListStyle]="{'width.px': 250, 'height.px': 250}"
+                   [nzRender]="render"
+                   (nzChange)="changeExactNegativeWords($event)">
+                   <ng-template #render let-item>
+                     {{item.title}}
+                   </ng-template>
+                 </nz-transfer>
+               </div>
+
+             </div>
+             <div>
+               <div>
+                 <label nz-radio
+                        [nzValue]="'replace_all'">
+                   <span>全部替换精确否定关键词</span>
+                   <i nz-icon nzType="question-circle" nzTheme="outline"
+                      nz-popover
+                      [ngClass]="{c8c8c8:!campaign_edit_settingData['exact_negative_words']['is_edit']}"
+                      [nzPopoverContent]="exactNegativeReplaceAll"
+                      nzPopoverPlacement="right"
+                      class="ml8"
+                      style="color: #f09200"></i>
+                 </label>
+               </div>
+
+               <div class="mb10 pl22" *ngIf="campaign_edit_settingData['exact_negative_words']['is_edit'] && campaign_edit_settingData.exact_negative_words['edit_type'] === 'replace_all'">
+                 <p class="countTip"><span>注：</span> 百度：跟账户等级相关。年日均消费0~100元(一颗星)，数量不超过400个。年日均消费100~1200元(两颗星)，数量不超过700个。年日均消费1200以上(三颗星)，数量不超过900个。 360：精确否定词数量不超过400。 神马、搜狗：精确否定词数量不超过300</p>
+                 <div class="textareaDiv">
+                   <div class="textarea-top">
+                     <span>精确否定关键词({{tips.length.exactReplaceAllValue}}/{{tips.exact_negativeData_max_length}})</span>
+                     <span class="pull-right"><a (click)="deleteAll(exactNegativeData, 'replaceAllValue', 'exactReplaceAllValue')">全部删除</a></span>
+                   </div>
+                   <div class="textarea-content" [ngClass]="{'border-warning': tips.length['exactReplaceAllValue'] > tips.exact_negativeData_max_length}">
+                     <textarea placeholder="一个否定词一行" [(ngModel)]="exactNegativeData.replaceAllValue" (ngModelChange)="contentChange('exactReplaceAllValue', exactNegativeData.replaceAllValue)" class="titleColor"  rows="5"></textarea>
+                   </div>
+                 </div>
+                 <p class="mt8 f09200" *ngIf="tips.length['exactReplaceAllValue'] > tips.exact_negativeData_max_length">词数最多为{{tips.exact_negativeData_max_length}}个</p>
+
+               </div>
+             </div>
+             <div>
+               <div>
+                 <label nz-radio
+                        [nzValue]="'delete'">
+                   <span>删除精确否定关键词</span>
+                   <i nz-icon nzType="question-circle" nzTheme="outline"
+                      nz-popover
+                      [ngClass]="{c8c8c8:!campaign_edit_settingData['exact_negative_words']['is_edit']}"
+                      [nzPopoverContent]="exactNegativeDelete"
+                      nzPopoverPlacement="right"
+                      class="ml8"
+                      style="color: #f09200"></i>
+                 </label>
+               </div>
+
+               <div class="mb10 pl22" *ngIf="campaign_edit_settingData['exact_negative_words']['is_edit'] && campaign_edit_settingData.exact_negative_words['edit_type'] === 'delete'">
+                 <p class="countTip"><span>注：</span> 百度：跟账户等级相关。年日均消费0~100元(一颗星)，数量不超过400个。年日均消费100~1200元(两颗星)，数量不超过700个。年日均消费1200以上(三颗星)，数量不超过900个。 360：精确否定词数量不超过400。 神马、搜狗：精确否定词数量不超过300</p>
+                 <div class="textareaDiv">
+                   <div class="textarea-top">
+                     <span>精确否定关键词({{tips.length.exactDeleteValue}}/{{tips.exact_negativeData_max_length}})</span>
+                     <span class="pull-right"><a (click)="deleteAll(exactNegativeData, 'deleteValue', 'exactDeleteValue')">全部删除</a></span>
+                   </div>
+                   <div class="textarea-content" [ngClass]="{'border-warning': tips.length['exactDeleteValue'] > tips.exact_negativeData_max_length}">
+                     <textarea placeholder="一个否定词一行" [(ngModel)]="exactNegativeData.deleteValue" (ngModelChange)="contentChange('exactDeleteValue', exactNegativeData.deleteValue)" class="titleColor"></textarea>
+                   </div>
+                 </div>
+                 <p class="mt8 f09200" *ngIf="tips.length['exactDeleteValue'] > tips.exact_negativeData_max_length">词数最多为{{tips.exact_negativeData_max_length}}个</p>
+
+               </div>
+             </div>
+
+           </nz-radio-group>
+         </div>
+       </div>
+       <div class="clear"></div>
+     </div>
+
+
+    </div>

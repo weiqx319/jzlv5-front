@@ -1,0 +1,33 @@
+.manage-top {
+  height: 20px;
+  // margin-top: 8px;
+  display: flex;
+}
+.manage-operation {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: space-between;
+}
+.manage-header-left{
+  display: flex;
+}
+.manage-active-icon {
+  background-color: #338aff;
+  color: #fff;
+}
+.table {
+  position: relative;
+}
+.table tbody tr {
+  cursor: pointer;
+}
+
+.table .msg_title {
+  position: relative;
+}
+.table .show-status {
+  position: absolute;
+  top: 50%;
+  margin-top: -11px;
+  left: -8px;
+}

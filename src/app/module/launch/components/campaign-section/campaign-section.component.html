@@ -1,0 +1,226 @@
+<div class="campaign-section-container">
+  <div class="form-content">
+    <div class="lab-row mb20 flexColumn">
+      <div class="lab-row mb10">
+        <label id="adgroup_num">
+          <ng-template #finishTime>
+            <span>默认计算公式: Max((总标题数/每计划标题数), (总素材数/每计划素材数))</span>
+            <br/>
+            <span>交叉组合计算公式: (总标题数/每计划标题数) * (总素材数/每计划素材数)</span>
+          </ng-template>
+          <i nz-icon nzType="question-circle" nzTheme="outline"
+            nz-popover
+            [nzPopoverContent]="finishTime"
+             nzPopoverPlacement="right"
+            class="mr5"
+            style="color: #f09200"
+          ></i>
+          组合计划:</label>
+        <input nz-input
+               class="w180 ml8 mr8"
+               [nzSize]="'small'"
+               disabled
+               type="number"
+               [(ngModel)]="data.adgroup_num">个
+      </div>
+      <div class="lab-row">
+        <label>是否交叉组合:</label>
+        <nz-radio-group
+          class="ml8"
+          [nzSize]="'small'"
+          [(ngModel)]="data.isCross"
+          (ngModelChange)="adgroupNumChange()"
+
+        >
+          <label nz-radio-button [nzValue]="true">
+            <span>是</span>
+          </label>
+          <label nz-radio-button [nzValue]="false">
+            <span>否</span>
+          </label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <div class="lab-row mb20">
+      <label><span class="redStart">*</span>每计划标题:</label>
+      <div>
+        <nz-input-number
+            class="w180 ml8 mr8"
+           [(ngModel)]="data.adgroup_title_num"
+           (ngModelChange)="adgroupNumChange()"
+           [nzMin]="1"
+           [nzMax]="titleLen>10? 10 : titleLen"
+           [nzPrecision]="2"
+           [nzSize]="'small'">
+        </nz-input-number>条
+        <div class="lab-tip mt5 ml8">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+          <span>不能超过所选标题数且最多10条</span>
+        </div>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.adgroup_title_num.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.adgroup_title_num.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="lab-row mb20">
+      <label><span class="redStart">*</span>每计划素材:</label>
+      <div>
+        <nz-input-number
+          class="w180 ml8 mr8"
+          [(ngModel)]="data.adgroup_material_num"
+          (ngModelChange)="adgroupNumChange()"
+          [nzMin]="1"
+          [nzMax]="materialLen>10? 10: materialLen"
+          [nzPrecision]="2"
+          [nzSize]="'small'">
+        </nz-input-number>个
+        <div class="lab-tip mt5 ml8">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+          <span>不能超过所选素材数且最多10个</span>
+        </div>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.adgroup_material_num.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.adgroup_material_num.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="lab-row mb20">
+      <label>广告组选择:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.campaign_select"
+        (ngModelChange)="campaignSltChanged($event);"
+      >
+        <label nz-radio-button [nzValue]="'已有广告组'">
+          <span>已有广告组</span>
+        </label>
+        <label nz-radio-button [nzValue]="'新建广告组'">
+          <span>新建广告组</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20">
+      <label><span class="redStart">*</span>广告组名称:</label>
+      <ng-container *ngIf="data.campaign_select === '新建广告组'">
+        <div>
+          <input nz-input
+                 class="w170 ml8 mr8"
+                 [nzSize]="'small'"
+                 type="text"
+                 [(ngModel)]="data.campaign_name"
+                 (ngModelChange)="campaignNameChange(data)"
+                 placeholder="请输入">
+          <span>{{campaignNameLength}}/50</span>
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.campaign_name.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.campaign_name.tip_text }}</span>
+          </div>
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.campaign_name_repeat.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.campaign_name_repeat.tip_text }}</span>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="data.campaign_select === '已有广告组'">
+        <div>
+          <nz-select class="w200 ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="data.pub_campaign_id"
+                     (ngModelChange)="pubCampaignIdChanged($event);"
+                     [nzPlaceHolder]="'请选择'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of campaignList[chan_pub_id]"
+              [nzLabel]="option.name"
+              [nzValue]="option.id"
+              [nzDisabled]="option['disabled'] && option.id !== data.pub_campaign_id">
+            </nz-option>
+          </nz-select>
+          <div class="lab-tip mt5 ml8" *ngIf="data.pub_campaign_id && data.campaign_enable_count !== undefined">
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+            <span>该广告组下总共还能新建 <b>{{data.campaign_enable_count}}</b> 个计划</span>
+          </div>
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.pub_campaign_id.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.pub_campaign_id.tip_text }}</span>
+          </div>
+          <div class="error-tip mt5 ml8" *ngIf="data.pub_campaign_id && errorTip.campaign_enable_count.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.campaign_enable_count.tip_text }}</span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div class="lab-row mb20">
+      <label id="landing_type">推广目的:</label>
+      <nz-select class="w200 ml8"
+                 [nzSize]="'small'"
+                 [(ngModel)]="data.landing_type"
+                 (ngModelChange)="landingTypeChange();"
+                 [nzDisabled]="data.campaign_select === '已有广告组'"
+                 [nzPlaceHolder]="'请选择'"
+                 nzShowSearch>
+        <nz-option
+          *ngFor="let option of landingTypeList"
+          [nzLabel]="option.name"
+          [nzValue]="option.key">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="lab-row mb20">
+      <label><span class="redStart">*</span>预算:</label>
+      <div>
+        <nz-radio-group
+          class="ml8"
+          [nzSize]="'small'"
+          [(ngModel)]="data.budget_slt"
+          [nzDisabled]="data.campaign_select === '已有广告组'"
+        >
+          <label nz-radio-button [nzValue]="'nolimt'">
+            <span>不限</span>
+          </label>
+          <label nz-radio-button [nzValue]="'budget'">
+            <span>日预算</span>
+          </label>
+        </nz-radio-group>
+        <ng-container *ngIf="data.budget_slt === 'budget'">
+          <nz-input-number
+            class="w100 ml8 mr8"
+            [(ngModel)]="data.budget"
+            [nzMin]="1000"
+            [nzMax]="9999999.99"
+            [nzPrecision]="2"
+            [nzDisabled]="data.campaign_select === '已有广告组'"
+            [nzSize]="'small'">
+          </nz-input-number>元
+          <div class="lab-tip mt5 ml8">
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+            <span>取值范围: 1000-9999999.99</span>
+          </div>
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.budget.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.budget.tip_text }}</span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="lab-row mb20">
+      <label>启用暂停:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.operation"
+        [nzDisabled]="data.campaign_select === '已有广告组'"
+      >
+        <label nz-radio-button [nzValue]="'enable'">
+          <span>启用</span>
+        </label>
+        <label nz-radio-button [nzValue]="'disable'">
+          <span>暂停</span>
+        </label>
+      </nz-radio-group>
+    </div>
+  </div>
+</div>

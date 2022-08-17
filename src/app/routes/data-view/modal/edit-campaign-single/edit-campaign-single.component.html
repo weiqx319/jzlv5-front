@@ -1,0 +1,322 @@
+<div>
+  <h3>编辑: <span>{{campaignInfo['pub_campaign_name']}}</span>（属于:{{publisherOption[campaignInfo['publisher_id']]}}/{{campaignInfo['pub_account_name']}}）</h3>
+  <p class="slow_360" *ngIf="publishId === 3">360媒体的编辑操作同步到媒体端有一定时间的延迟，请耐心等待，请勿重复修改!</p>
+  <div class="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 mr8 inline-block">
+        <span>定时设置:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left noCheckbox ">
+      <nz-radio-group
+        [(ngModel)]="cronSetting">
+        <label class="mr20"
+               nz-radio
+               [nzValue]="'now'">
+          <span>立即执行</span>
+        </label>
+        <label nz-radio
+               [nzValue]="'current'">
+          <span>自定义</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="inpRow_right pull-left" *ngIf="cronSetting == 'current'">
+      <nz-date-picker
+        [nzShowTime]="{ nzFormat: 'HH:mm' }"
+        [nzDisabledDate]="disabledDate"
+        nzFormat="yyyy-MM-dd HH:mm"
+        nzPlaceHolder="请选择时间"
+        [nzSize]="'small'"
+        [(ngModel)] = "cronSettingTime"
+      ></nz-date-picker>
+    </div>
+
+
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" [ngClass]="{disabled:campaign_edit_settingData['pause']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['pause']['is_edit']">
+        <span>投放状态:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left" style="height: 17px;">
+      <nz-radio-group
+        [(ngModel)]="campaign_edit_settingData['pause']['value']"
+        [nzDisabled]="!campaign_edit_settingData['pause']['is_edit']">
+        <label class="mr20"
+               nz-radio
+               [nzValue]="false">
+          <span>开启</span>
+        </label>
+        <label
+          nz-radio
+          [nzValue]="true">
+          <span>暂停</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--计划名称-->
+  <div class="inpRow mt10" [ngClass]="{disabled:campaign_edit_settingData['pub_campaign_name']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['pub_campaign_name']['is_edit']">
+        <span>计划名称:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <input nz-input style="width: 200px;"
+             disabled="{{!campaign_edit_settingData['pub_campaign_name']['is_edit']}}"
+             [(ngModel)]="campaign_edit_settingData.pub_campaign_name['value']"
+             placeholder="输入计划名称"
+             [nzSize]="'small'">
+      <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!campaign_edit_settingData.pub_campaign_name['value']"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>输入计划名称</span>
+
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--日预算-->
+  <div class="inpRow mt10" style="margin-bottom: -4px;" [ngClass]="{disabled:campaign_edit_settingData['budget']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['budget']['is_edit']">
+        <span>日预算:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <nz-radio-group [(ngModel)]="budgetRadio" [nzDisabled]="!campaign_edit_settingData['budget']['is_edit']">
+        <div>
+          <div class="h20 pull-left">
+            <label nz-radio
+                   [nzValue]="1">
+              <span>每日</span>
+            </label>
+          </div>
+
+          <nz-input-number [(ngModel)]="budget"
+                           [nzDisabled]="!campaign_edit_settingData['budget']['is_edit']"
+                           (click) ="changeInput('budget')"
+                           [nzSize]="'small'">
+          </nz-input-number>
+          <span class="ml5">元</span>
+          <ng-container *ngIf="campaign_edit_settingData['budget']['is_edit'] && budgetRadio === 1">
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="publishId === 3 && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于30</span>
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="publishId === 4 && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于10</span>
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="(publishId === 1 || publishId === 2) && tips.budget"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>日预算不能为空 且 不低于50</span>
+          </ng-container>
+
+        </div>
+        <div class="mt5">
+          <label
+            nz-radio
+            [nzValue]="2">
+            <span>不限定</span>
+          </label>
+        </div>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--创意展现方式-->
+  <div class="inpRow mt10" *ngIf="publishId === 1 || publishId === 4" [ngClass]="{disabled:campaign_edit_settingData['show_prob']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['show_prob']['is_edit']">
+        <span>创意展现方式:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <nz-radio-group [(ngModel)]="campaign_edit_settingData['show_prob']['value']"
+                      [nzDisabled]="!campaign_edit_settingData['show_prob']['is_edit']">
+        <label class="mr20"
+               nz-radio
+               [nzValue]="1">
+          <span>优选&nbsp; &nbsp;&nbsp; &nbsp;</span>
+        </label>
+        <label nz-radio
+               [nzValue]="2">
+          <span>轮选</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--设备类型-->
+  <div class="inpRow mt10" *ngIf="publishId === 1">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w108 mr10 inline-block">
+        <span>设备类型:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <p *ngIf="campaign_edit_settingData.bid_prefer.value === 2">移动优先</p>
+      <p *ngIf="campaign_edit_settingData.bid_prefer.value === 1">计算机优先</p>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" *ngIf="publishId === 3">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w108 mr10 inline-block">
+        <span>设备类型:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <p *ngIf="campaign_edit_settingData.device.value === 0">计算机+移动</p>
+      <p *ngIf="campaign_edit_settingData.device.value === 1">仅移动</p>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--计算机出价比例-->
+  <div class="inpRow mt10" *ngIf="publishId === 1 && campaign_edit_settingData.bid_prefer.value === 2"
+       [ngClass]="{disabled:campaign_edit_settingData['pc_price_ratio']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w120 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['pc_price_ratio']['is_edit']">
+        <span>计算机出价比例:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <nz-input-number
+        [(ngModel)]="campaign_edit_settingData['pc_price_ratio']['value']"
+        [nzDisabled]="!campaign_edit_settingData['pc_price_ratio']['is_edit']"
+        (click) ="changeInput('pc_price_ratio')"
+        [nzSize]="'small'">
+      </nz-input-number>
+      <ng-container *ngIf="campaign_edit_settingData['pc_price_ratio']['is_edit']">
+        <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.pc_price_ratio"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>计算机出价比例范围为 0~10.00，可保留小数点后两位</span>
+      </ng-container>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--移动出价比例-->
+  <div class="inpRow mt10" *ngIf="publishId === 2 || publishId === 3 ||  campaign_edit_settingData.bid_prefer.value === 1" [ngClass]="{disabled:campaign_edit_settingData['wap_price_ratio']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['wap_price_ratio']['is_edit']">
+        <span>移动出价比例:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInput">
+      <nz-input-number [(ngModel)]="campaign_edit_settingData['wap_price_ratio']['value']"
+                       [nzDisabled]="!campaign_edit_settingData['wap_price_ratio']['is_edit']"
+                       (click) ="changeInput('wap_price_ratio')"
+                       [nzSize]="'small'">
+      </nz-input-number>
+      <ng-container *ngIf="campaign_edit_settingData['wap_price_ratio']['is_edit']">
+        <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="publishId === 3 && tips.wap_price_ratio"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>出价比例范围为 0.1到 9.9 且保留一位小数。</span>
+        <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="publishId === 2 && tips.wap_price_ratio"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>出价比例范围为 0.10到100.00。</span>
+        <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="publishId=== 1 && tips.wap_price_ratio"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>出价比例范围为 0~10.00。</span>
+      </ng-container>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--否定词-->
+  <div *ngIf="publishId !== 10" class="inpRow mt10" [ngClass]="{disabled:campaign_edit_settingData['negative_words']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['negative_words']['is_edit']">
+        <span>否定词:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <p class="countTip" *ngIf="publishId === 1"><span>注：</span> 百度：跟账户等级相关。年日均消费0~100元(一颗星)，数量不超过200个。年日均消费100~1200元(两颗星)，数量不超过400个。年日均消费1200以上(三颗星)，数量不超过500个。</p>
+      <div class="w400">
+        <textarea [ngClass]="{'border-warning':tips.length.negative_words>tips.maxLength.negative_words[publishId]}"
+                  placeholder="一个否定词一行"
+                  *ngIf="campaign_edit_settingData['negative_words']['is_edit']"
+                  [(ngModel)]="negative_words"
+                  (click) ="changeInput('negative_words')"
+                  (ngModelChange)="contentChange('negative_words', negative_words)"
+                  class="titleColor w400 border"
+                  rows="5"></textarea>
+        <textarea placeholder="一个否定词一行"
+                  *ngIf="!campaign_edit_settingData['negative_words']['is_edit']"
+                  [(ngModel)]="negative_words"
+                  disabled="" readonly=""
+                  class="w400 border background not-allowed"
+                  rows="5"></textarea>
+        <i *ngIf="publishId !== 1" class="tip">({{tips.length.negative_words}}/{{tips.maxLength.negative_words[publishId]}})</i>
+        <i *ngIf="publishId === 1" class="tip">({{tips.length.negative_words}})</i>
+      </div>
+      <p class="mt5 f09200" *ngIf="campaign_edit_settingData['negative_words']['is_edit'] && tips.length.negative_words>tips.maxLength.negative_words[publishId]">否定词不能超过{{tips.maxLength.negative_words[publishId]}}个</p>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--精确否定词-->
+  <div *ngIf="publishId !== 10" class="inpRow mt10" [ngClass]="{disabled:campaign_edit_settingData['exact_negative_words']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="campaign_edit_settingData['exact_negative_words']['is_edit']">
+        <span>精确否定词:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <p class="countTip" *ngIf="publishId === 1"><span>注：</span> 百度：跟账户等级相关。年日均消费0~100元(一颗星)，数量不超过400个。年日均消费100~1200元(两颗星)，数量不超过700个。年日均消费1200以上(三颗星)，数量不超过900个。</p>
+      <div class="w400">
+        <textarea [ngClass]="{'border-warning':tips.length.exact_negative_words>tips.maxLength.exact_negative_words[publishId]}"
+                  placeholder="一个否定词一行"
+                  *ngIf="campaign_edit_settingData['exact_negative_words']['is_edit']"
+                  [(ngModel)]="exact_negative_words"
+                  (click) ="changeInput('exact_negative_words')"
+                  (ngModelChange)="contentChange('exact_negative_words', exact_negative_words)"
+                  class="titleColor w400 border"  rows="5"></textarea>
+        <textarea placeholder="一个否定词一行" *ngIf="!campaign_edit_settingData['exact_negative_words']['is_edit']" [(ngModel)]="exact_negative_words" disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+        <i *ngIf="publishId !== 1" class="tip">({{tips.length.exact_negative_words}}/{{tips.maxLength.exact_negative_words[publishId]}})</i>
+        <i *ngIf="publishId === 1" class="tip">({{tips.length.exact_negative_words}})</i>
+      </div>
+      <p class="mt5 f09200" *ngIf="campaign_edit_settingData['exact_negative_words']['is_edit'] && tips.length.exact_negative_words>tips.maxLength.exact_negative_words[publishId]">精确否定词不能超过{{tips.maxLength.exact_negative_words[publishId]}}个</p>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--维度-->
+  <div class="inpRow mt10" style="display: none" [ngClass]="{disabled:campaign_edit_settingData['dimensions']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w102 inline-block" nz-checkbox
+             [(ngModel)]="campaign_edit_settingData['dimensions']['is_edit']">
+        <span>维度:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left mr30 dimensionTableDiv">
+      <table cellpadding="0" cellspacing="0">
+        <thead >
+        <tr>
+          <th ><span>维度名称</span></th>
+          <th ><span>账户</span></th>
+          <th >
+            <span>计划</span>
+              <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'设置该计划下所有关键词的维度值'" [nzTooltipPlacement]="'topLeft'" class="ml5" style="color: #f09200"></i>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of dimensionsData">
+          <td >
+            <span>{{data.name}}</span>
+          </td>
+          <td >
+            <span>----</span>
+          </td>
+          <td >
+            <div *ngIf="!data.state">
+              <ng-container *ngIf="!data.value">
+                <span class="c8c8c8">单元维度设置</span>
+              </ng-container>
+              <ng-container *ngIf="data.value">
+                <span>{{data.value}}</span>
+              </ng-container>
+              <i nz-icon nzType="edit" nzTheme="outline" class="dimensionsEdit"  *ngIf="campaign_edit_settingData['dimensions']['is_edit']" (click)="edit(data)" ></i>
+              <i nz-icon nzType="edit" nzTheme="outline" class="dimensionsEdit"  *ngIf="!campaign_edit_settingData['dimensions']['is_edit']" ></i>
+            </div>
+            <div class="dimension" *ngIf="data.state">
+              <input nz-input #input style="width: 40%;" [nzSize]="'small'" [(ngModel)]="data.value">
+              <button nz-button [nzType]="'primary'" (click)="sure(data)" >
+                <span>确定</span>
+              </button>
+              <button nz-button [nzType]="'default'" (click)="cancel_dimension(data)">
+                <span>取消</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="clear"></div>
+  </div>
+</div>

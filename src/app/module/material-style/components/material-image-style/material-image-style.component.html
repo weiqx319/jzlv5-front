@@ -1,0 +1,15 @@
+<div class="mt4 mb4">
+  <p class="create-title" *ngIf="!imgUrl">
+    {{ title }}
+  </p>
+  <ng-container *ngIf="!jzlPreview && imgUrl">
+    <img src="{{ imgUrl }}" [ngClass]="{vertical_image: isVertical, horizontal_image: !isVertical}" />
+  </ng-container>
+
+  <ng-container *ngIf="jzlPreview">
+    <div class="image-content mt4" [ngStyle]="{'background-image': 'url('+imgUrl+')'}" *ngIf="imgUrl">
+
+    </div>
+  </ng-container>
+
+</div>

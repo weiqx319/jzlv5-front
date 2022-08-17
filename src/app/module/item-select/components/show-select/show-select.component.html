@@ -1,0 +1,61 @@
+<div *ngFor="let publisher_key of getKeys(selected_detail)">
+  <div class="item-content-display">
+    <label>
+      <ng-container *ngIf="selected_detail[publisher_key].detail">
+        <i class="mr8" nz-icon [nzType]="selected_detail[publisher_key].open ? 'down' : 'right'" nzTheme="outline" (click)="selected_detail[publisher_key].open=!selected_detail[publisher_key].open"></i>
+
+      </ng-container>
+      <span>{{getPublisherName(publisher_key)}}</span>
+    </label>
+
+    <i nz-icon class="active-color" type="close" nzTheme="outline" (click)="publisherClose(publisher_key)"></i>
+
+  </div>
+  <ng-container *ngIf="selected_detail[publisher_key].open&&selected_detail[publisher_key].detail">
+    <div class="ml20">
+      <div *ngFor="let account_key of getKeys(selected_detail[publisher_key].detail)">
+        <div class="item-content-display">
+          <label>
+            <ng-container *ngIf="selected_detail[publisher_key].detail[account_key].detail">
+              <i class="mr8" nz-icon [nzType]="selected_detail[publisher_key].detail[account_key].open ? 'down' : 'right'" nzTheme="outline" (click)="selected_detail[publisher_key].detail[account_key].open=!selected_detail[publisher_key].detail[account_key].open"></i>
+            </ng-container>
+            <span>{{getAccountName(publisher_key, account_key)}}</span>
+          </label>
+
+          <i nz-icon class="active-color" type="close" nzTheme="outline" (click)="accountClose(publisher_key, account_key)"></i>
+
+        </div>
+        <ng-container *ngIf="selected_detail[publisher_key].detail[account_key].open&&selected_detail[publisher_key].detail[account_key].detail">
+          <div class="ml20">
+            <div *ngFor="let campaign_key of getKeys(selected_detail[publisher_key].detail[account_key].detail)">
+              <div class="item-content-display">
+                <label>
+                  <ng-container *ngIf="selected_detail[publisher_key].detail[account_key].detail[campaign_key].detail">
+                    <i class="mr8" nz-icon [nzType]="selected_detail[publisher_key].detail[account_key].detail[campaign_key].open ? 'down' : 'right'" nzTheme="outline" (click)="selected_detail[publisher_key].detail[account_key].detail[campaign_key].open=!selected_detail[publisher_key].detail[account_key].detail[campaign_key].open"></i>
+                  </ng-container>
+                  <span>{{getCampaignName(publisher_key, account_key, campaign_key)}}</span>
+                </label>
+
+                <i nz-icon class="active-color" type="close" nzTheme="outline" (click)="campaignClose(publisher_key, account_key, campaign_key)"></i>
+
+              </div>
+              <ng-container *ngIf="selected_detail[publisher_key].detail[account_key].detail[campaign_key].open&&selected_detail[publisher_key].detail[account_key].detail[campaign_key].detail">
+                <div class="ml30">
+                  <div *ngFor="let group_key of getKeys(selected_detail[publisher_key].detail[account_key].detail[campaign_key].detail)">
+                    <div class="item-content-display">
+                      <label>
+                        <span>{{getGroupName(publisher_key, account_key, campaign_key, group_key)}}</span>
+                      </label>
+
+                      <i nz-icon class="active-color" type="close" nzTheme="outline" (click)="groupClose(publisher_key, account_key, campaign_key, group_key)"></i>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>

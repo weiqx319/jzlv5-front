@@ -1,0 +1,136 @@
+<div class="add-card-section-container" *ngIf="adgroup.delivery_range === 'DEFAULT' && (data.launch_positon === 'smart_inventory' || (data.launch_positon === 'inventory_type' && data.inventory_type.includes('INVENTORY_AWEME_FEED')) || (data.launch_positon === 'scene_inventory' && data.scene_inventory === 'VIDEO_SCENE'))">
+<!--  <div class="title">卡片模板</div>-->
+  <!--  <nz-spin [nzSpinning]="getting">-->
+  <div class="form-content">
+    <div class="target-setting">
+      <!--推广卡片-->
+      <div class="form-card mb10">
+        <div class="sub_title mb10">推广卡片</div>
+        <div class="promotion-card-container">
+          <div class="form-content">
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>模板列表:</label>
+              <div>
+                <nz-select class="w200 ml8"
+                           [nzSize]="'small'"
+                           [nzPlaceHolder]="'请选择'"
+                           [(ngModel)]="defaultArr.card_id"
+                           (ngModelChange)="changeCardTemplate($event)"
+                >
+                  <nz-option *ngFor="let item of cardTemplateList" [nzLabel]="item.promo_card_template_name" [nzValue]="item.promo_card_template_id"></nz-option>
+                </nz-select>
+                <div class="error-tip mt5 ml8" *ngIf="errorTip.card_id.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ errorTip.card_id.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>选择模板账户:</label>
+              <div>
+                <nz-select class="w200 ml8"
+                           [nzSize]="'small'"
+                           [nzPlaceHolder]="'请选择'"
+                           [(ngModel)]="defaultArr.chan_pub_id"
+                           (ngModelChange)="changeAccountTemplate($event)"
+                           [nzDisabled]="true"
+                >
+                  <nz-option *ngFor="let item of accountTemplate" [nzLabel]="item.pub_account_name" [nzValue]="item.chan_pub_id"></nz-option>
+                </nz-select>
+              </div>
+            </div>
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>下载类型:</label>
+              <div>
+                <nz-select class="w200 ml8"
+                           [nzSize]="'small'"
+                           [nzPlaceHolder]="'请选择'"
+                           [(ngModel)]="defaultArr.download_type"
+                           [nzDisabled]="true"
+                           (ngModelChange)="changeDownloadType($event)"
+                >
+                  <nz-option *ngFor="let item of downloadTypeList" [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+                </nz-select>
+              </div>
+            </div>
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>卡片主图:</label>
+              <div>
+                <div class="mb10 ml8" *ngIf="defaultArr.imgUrl">
+                  <img [src]="defaultArr.imgUrl" />
+                </div>
+                <div>
+                  <button class="ml8" [disabled]="true" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="uploadMaterials()">
+                    <span>上传主图</span>
+                  </button>
+                  <button class="ml8 mr8" [disabled]="true" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addMaterials('userImage',defaultArr)">
+                    <i nz-icon nzType="select" nzTheme="outline"></i><span>选择主图</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>卡片标题:</label>
+              <div>
+                <input class="w_full ml8" maxlength="7" nz-input nzSize="small" [disabled]="true" [(ngModel)]="defaultArr.promo_card_setting.product_description" [placeholder]="'请输入卡片标题'" (ngModelChange)="cardNameChange($event)">
+                <span class="ml8">{{cardNameLength}}/7</span>
+                <!--                  <div class="ml8 mt10">推荐名称：</div>-->
+              </div>
+            </div>
+
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>推广卖点:</label>
+              <div>
+                <button class="ml8" nz-button [disabled]="true"> + 推广卖点</button>
+                <span class="ml20"> 已选：{{pointsNumber}}/10</span>
+                <div class="ml8 mt5">当您选择多个卖点时，系统将默认为您开启针对推广卖点的优选投放</div>
+                <ng-container *ngFor="let item of defaultArr.promo_card_setting.product_points let index = index">
+                  <div class="w_full mt20">
+                    <input class="w305 ml8" nz-input nzSize="small" maxlength="9" [disabled]="true" [(ngModel)]="item.name" [placeholder]="'请输入推广卖点'" (ngModelChange)="sellingNameChange(item)">
+                    <span class="ml8">{{item.sellingPointsNameLength}}/9</span>
+                    <span class="ml20 delete" *ngIf="defaultArr.promo_card_setting.product_points.length > 1">×</span>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>行动号召:</label>
+              <div>
+                <nz-radio-group
+                  class="ml8"
+                  [nzSize]="'small'"
+                  [(ngModel)]="defaultArr.promo_card_setting.enable_personal_action"
+                  [nzDisabled]="true"
+                >
+                  <ng-container>
+                    <label nz-radio-button [nzValue]="true">
+                      <span>开启智能优选</span>
+                    </label>
+                  </ng-container>
+                  <ng-container>
+                    <label nz-radio-button [nzValue]="false">
+                      <span>关闭智能优选</span>
+                    </label>
+                  </ng-container>
+                </nz-radio-group>
+                <div class="mt5 ml8">系统将基于字节领先的技术能力和实时的投放数据，在每次抖音广告显示时，挑选最有利于转化的文案进行显示，帮助您提升转化能力。</div>
+                <div class="mt20">
+                  <nz-select class="w200 ml8"
+                             [nzSize]="'small'"
+                             [nzPlaceHolder]="'请选择'"
+                             [nzDisabled]="true"
+                             [(ngModel)]="defaultArr.promo_card_setting.call_to_action"
+                  >
+                    <nz-option *ngFor="let item of callToList" [nzLabel]="item" [nzValue]="item"></nz-option>
+                  </nz-select>
+                </div>
+                <div class="ml8 mt5">在无法使用智能优选的流量场景下，将使用上方文案展示给用户</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

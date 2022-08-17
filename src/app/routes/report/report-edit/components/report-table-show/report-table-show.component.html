@@ -1,0 +1,112 @@
+<div *ngIf="tableHeads.length>0">
+<div class="table-condition-tooltip pl8">
+  <span>{{tableConditionDesc}}</span>
+  <div class="button-position-edit">
+    <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="editTable()">
+     <i nz-icon nzType="edit" nzTheme="outline"></i><span>编辑</span>
+    </button>
+  </div>
+</div>
+<div class="view-table"  [ngStyle]="{'height':tableHeight+'px'}">
+  <ngx-datatable
+    #viewTable
+    class="jzl"
+    [loadingIndicator]="loadingIndicator"
+    [rows]="rows"
+    [columns]="tableHeads"
+    [columnMode]="'force'"
+    [headerHeight]="44"
+    [footerHeight]="0"
+    [rowHeight]="rowHeight"
+    [count]="rowCount"
+    [scrollbarV]="true"
+    [scrollbarH]="true"
+    [externalPaging]="true"
+    [externalSorting]="true"
+    [virtualization]="true"
+    [sortType]="'single'"
+    [messages]="dataMessages"
+  >
+
+    <ng-template #filterHeader ngx-datatable-header-template  let-column="column" let-value="value" let-sortFn="sortFn">
+      <span class="datatable-header-cell-wrapper" >
+          <span class="datatable-header-cell-label"> {{column.name}}</span>
+      </span>
+    </ng-template>
+
+    <ng-template #refreshRankingHeader ngx-datatable-header-template  let-column="column" let-value="value" let-sortFn="sortFn">
+      <span class="datatable-header-cell-wrapper" >
+          <span class="datatable-header-cell-label"> {{column.name}}</span>
+      </span>
+    </ng-template>
+
+    <ng-template #refreshRankingCell ngx-datatable-cell-template let-row="row" let-value="value">
+      <span>{{row['ranknow']?row['ranknow']:'未获取'}}</span>
+      <i nz-icon nzType="question-circle" nzTheme="outline" *ngIf="row['ranknow']"
+         nz-popover
+         [nzPopoverContent]="rankingtemplate"
+         nzPopoverPlacement="right"
+         [nzPopoverOverlayClassName]="'backColor'"
+         class="ml2"
+         style="color: #f09200"></i>
+      <ng-template #rankingtemplate>
+        <div class="mt8 mb8">
+          <p><span class="mr8">所属地域:</span><span>{{row['region_name']}}</span></p>
+          <p class="mt8"><span class="mr8">所属设备:</span><span>{{row['ranking_device']==2?'移动':'计算机'}}</span></p>
+          <p class="mt8"><span class="mr8">查询时间:</span><span>{{row['ranking_time']}}</span></p>
+        </div>
+      </ng-template>
+      <i nz-icon nzType="loading" nzTheme="outline"  *ngIf="row['rankingLoading']"></i>
+      <!--<img ng-src="assets/images/loading.gif" width="14px" ng-if="row[col.field]['loading']">-->
+      <!--<span ng-show="row[col.field]['ranknow'] || (row[col.field]['ranking_code'] && ((row[col.field]['ranking_code']/1000|number:0)!=0 || row[col.field]['ranking_code']==-1))" popover-template="'rankingPopoverTemplate.html'" popover-trigger="mouseenter" popover-placement="right"><a class="hand"><i class="jzl-icon-question-circle-o color-blue"></i></a></span>-->
+      <!--<i class="jzl-icon-refresh color-blue" ng-show="!row[col.field]['loading']" aria-hidden="true" title="刷新实时排名" ng-click="getRealTimeRanking(row,p_index)"></i>-->
+      <!--<i class="jzl-icon-refresh c-gray" ng-show="row[col.field]['loading']" aria-hidden="true" title="刷新实时排名"></i>-->
+    </ng-template>
+
+
+
+    <ng-template #rateCell ngx-datatable-cell-template let-value="value">
+      <ng-container *ngIf="value == '10000000.00'">
+        +∞
+      </ng-container>
+      <ng-container *ngIf="value == '-10000000.00'">
+        -∞
+      </ng-container>
+      <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00' && value!= null && value!=''">
+        {{ value + '%'}}
+      </ng-container>
+    </ng-template>
+
+    <ng-template #rateCellColor ngx-datatable-cell-template let-value="value">
+      <ng-container *ngIf="value == '10000000.00'">
+        <span class="up-color">+∞</span>
+      </ng-container>
+      <ng-container *ngIf="value == '-10000000.00'">
+        <span class="down-color">-∞</span>
+      </ng-container>
+      <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00'">
+        <span [ngClass]="{'up-color':value>0,'down-color':value<0}">{{ value + '%'}}</span>
+      </ng-container>
+    </ng-template>
+    <ng-template #cellColor ngx-datatable-cell-template let-value="value">
+      <span [ngClass]="{'up-color':value>0,'down-color':value<0}">{{ value }}</span>
+    </ng-template>
+
+    <ng-template #starTpl ngx-datatable-cell-template let-value="value">
+      <span class="star-conatainer">
+        <span class="star-active" [ngStyle]="{'width': value/10*70+'px'}"></span>
+      </span>
+    </ng-template>
+
+    <ng-template #creativeCell let-row="row"  ngx-datatable-cell-template>
+      <div class="create-title">{{row['pub_creative_title']}}</div>
+      <div class="create-desc">{{row['pub_creative_description1']}}</div>
+      <div class="create-desc">{{row['pub_creative_description2']}}</div>
+      <div class="create-title-url">{{row['pc_display_url']!=''?row['pc_display_url']:row['wap_display_url']}}</div>
+    </ng-template>
+
+  </ngx-datatable>
+</div>
+
+
+</div>

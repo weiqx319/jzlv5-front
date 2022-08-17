@@ -1,0 +1,14 @@
+
+<div class="lab-row">
+  <!--<span class="row-title">匹配模式：</span>-->
+  <nz-select style="width: 250px"
+             [nzSize]="'small'"
+             [(ngModel)]="match_type"
+             nzPlaceHolder="请选择匹配模式">
+    <nz-option
+      *ngFor="let option of matchTypeData"
+      [nzLabel]="option.name"
+      [nzValue]="option.value">
+    </nz-option>
+  </nz-select>
+</div>

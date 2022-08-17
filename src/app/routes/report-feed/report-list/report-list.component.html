@@ -1,0 +1,317 @@
+<div class="report-nav-tab">
+  <div class="report-nav-menu">
+    <ng-container *ngFor="let tab of reportTab">
+      <div class="report-type" (click)="changeActive(tab.key)" [ngClass]="{'active':activeType===tab.key}">{{tab.name}}</div>
+      <div class="ml10"></div>
+    </ng-container>
+  </div>
+</div>
+<ng-template #content>
+  <div class="text-center mt30">
+    <label>渠道:</label>
+    <nz-select class="w150 ml8" [nzSize]="'small'" [nzDisabled]="true" [(ngModel)]="addReportSetting.channel_id">
+      <nz-option [nzLabel]="'全部渠道'" [nzValue]="0"></nz-option>
+      <nz-option [nzLabel]="'SEM'" [nzValue]="1"></nz-option>
+      <nz-option [nzLabel]="'信息流'" [nzValue]="2"></nz-option>
+      <nz-option [nzLabel]="'应用市场'" [nzValue]="3"></nz-option>
+    </nz-select>
+  </div>
+  <div class="text-right">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelCreate()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="createReport()">
+      <span>下一步</span>
+    </button>
+  </div>
+
+</ng-template>
+
+<ng-container *ngIf="activeType === 'list'">
+<div class="report-list-nav">
+  <div class="report-list-nav-col">
+    <div class="report-list-nav-btn">
+      <a nz-button [nzType]="'default'" [nzSize]="'small'" (click)="createReportModal(content)">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>创建</span>
+      </a>
+
+        <button nz-button [nzType]="'default'" [nzSize]="'small'"  nz-popconfirm [nzPopconfirmTitle]="'确定要删除报表？'" (nzOnConfirm)="delReport()" [nzPopconfirmPlacement]="'bottomLeft'" class="ml10">
+          <i nz-icon nzType="close" nzTheme="outline"></i><span>删除</span>
+        </button>
+
+
+
+
+
+      <button nz-button [nzType]="'default'" [nzSize]="'small'" class="ml10" (click)="batchDownload()">
+       <i nz-icon nzType="download" nzTheme="outline"></i><span>下载</span>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="report-list-data mt36">
+  <div class="view-table" [ngStyle]="{'height':tableHeight+'px'}">
+    <ngx-datatable
+      #viewTable
+      class="jzl"
+      [rows]="rows"
+      [loadingIndicator]="loadingIndicator"
+      [columnMode]="'force'"
+      [headerHeight]="44"
+      [footerHeight]="40"
+      [rowHeight]="40"
+      [count]="pageInfo.currentPageCount"
+      [scrollbarV]="true"
+      [scrollbarH]="false"
+      [externalPaging]="true"
+      [externalSorting]="true"
+      [virtualization]="true"
+      [sortType]="'single'"
+      (sort)="sortView($event)"
+      [selected]="selected"
+      [selectionType]="'checkbox'"
+      (select)='onSelect($event)'
+      [messages]="dataMessages">
+
+      <ngx-datatable-column [width]="64" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+      <ng-template #chkHeader ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+        <label
+          class="datatable-checkbox">
+          <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"/>
+        </label>
+      </ng-template>
+      <ng-template #chkCell ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+        <label
+          class="datatable-checkbox">
+          <input type="checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"/>
+        </label>
+      </ng-template>
+      </ngx-datatable-column>
+
+
+    <ngx-datatable-column [width]="200"  name="生成时间" [canAutoResize]="false" [prop]="'finished_time'">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <ng-container *ngIf="row.status === 0">待生成</ng-container>
+        <ng-container *ngIf="row.status === 1">生成中</ng-container>
+        <ng-container *ngIf="row.status > 1">{{row.finished_time}}</ng-container>
+        <a class="ml8" (click)="showReportJobInfo(row)">查看更多</a>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="报表名称" [prop]="'report_name'">
+      <ng-template let-row="row"  ngx-datatable-cell-template>
+        <span *ngIf="row.source && row.source === 'conversion'">{{row.report_name}}</span>
+        <a *ngIf="row.source !== 'conversion'" (click)="jumpDetail(row.report_id)">{{row.report_name}}</a>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="格式" [prop]="'report_format'">
+      <ng-template let-row="row"  ngx-datatable-cell-template>
+        {{row.report_format=='excel'?'EXCEL':'PDF'}}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="报表数据类型" [prop]="'report_data_type'">
+      <ng-template let-row="row"  ngx-datatable-cell-template>
+        {{row.report_data_type==1?'图表':'纯数据类型'}}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="状态" [prop]="'report_status'">
+      <ng-template let-row="row"  ngx-datatable-cell-template>
+        {{reportStatusRelation["status_"+row.report_status]}}
+      </ng-template>
+    </ngx-datatable-column>
+      <ngx-datatable-column name="频率" [prop]="'report_freq'">
+      <ng-template let-row="row"  ngx-datatable-cell-template>
+        {{reportFreqTypeRelation[row.report_freq]}}
+        <span *ngIf="row.report_freq!=='now'">
+          {{row.show_cron_time}}
+        </span>
+      </ng-template>
+    </ngx-datatable-column>
+
+      <ngx-datatable-column name="接收邮箱"  [sortable]="false" [canAutoResize]="true" [draggable]="false" [resizeable]="true">
+        <ng-template let-row="row"  ngx-datatable-cell-template>
+          {{row.email_list}}
+        </ng-template>
+      </ngx-datatable-column>
+     <ngx-datatable-column name="操作" [width]="200"  [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+        <ng-template let-row="row"  ngx-datatable-cell-template>
+          <ng-container *ngIf="row.report_status !=2">
+            <i nz-icon nzType="caret-right" nzTheme="outline" class="hand down-ico-color mr8"   (click)="updateReportStatus(row,2)"></i>
+          </ng-container>
+          <ng-container *ngIf="row.report_status ==2">
+          <i nz-icon nzType="pause" nzTheme="outline" class="hand down-ico-color mr8" (click)="updateReportStatus(row,1)"></i>
+          </ng-container>
+
+          <i nz-icon nzType="close" nzTheme="outline" nz-popconfirm  [nzPopconfirmTitle]="'确定要删除报表？'" (nzOnConfirm)="delReport(row.report_id)" [nzPopconfirmPlacement]="'left'" class="hand down-ico-color mr8"></i>
+          <ng-container *ngIf="row.status === 2">
+            <i nz-icon nzType="download" nzTheme="outline" class="hand down-ico-color  mr8" (click)="downloadReport(row)"></i>
+          </ng-container>
+          <ng-container *ngIf="row.status === 2">
+            <i nz-icon nzType="eye" nzTheme="outline" class="hand down-ico-color mr8" (click)="seeReport(row)"></i>
+          </ng-container>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-footer>
+        <ng-template  ngx-datatable-footer-template>
+          <div class="page-count" *ngIf="pageInfo.loadingStatus == 'success'">
+            共{{pageInfo.allCount}}条
+          </div>
+          <div class="page-count" *ngIf="pageInfo.loadingStatus == 'pending'">
+            <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+          </div>
+          <div class="page-count" *ngIf="pageInfo.loadingStatus == 'error'">
+            总条数加载失败
+          </div>
+          <div class="page-size-select">
+            <select [(ngModel)]="pageInfo.pageSize" (ngModelChange)="changePageSize($event)">
+              <option *ngFor="let sizeList of pageInfo.pageSizeList" [value]="sizeList.key">{{sizeList.name}}</option>
+            </select>
+          </div>
+          <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="pageInfo.currentPage"
+            [size]="pageInfo.pageSize"
+            [count]="pageInfo.allCount"
+            [hidden]="!((pageInfo.allCount / pageInfo.pageSize) > 1)"
+            (change)="changePage($event)">
+          </datatable-pager>
+        </ng-template>
+      </ngx-datatable-footer>
+    </ngx-datatable>
+  </div>
+
+
+
+  <div class="report-empty-content"  *ngIf="!rows.length && !loadingIndicator&&!requestFailed">
+    <div class="dashboard-empty-content-desc">
+        <button nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="createReportModal(content)">
+         <i nz-icon nzType="plus" nzTheme="outline"></i><span>创建报表</span>
+        </button>
+      <div class="dashboard-empty-content-hint mt30">您还没有创建报表，请添加</div>
+    </div>
+  </div>
+</div>
+</ng-container>
+<ng-container *ngIf="activeType === 'tpl'">
+<div class="report-list-data mt8">
+  <div class="view-table" [ngStyle]="{'height':tableHeight+'px'}">
+    <ngx-datatable
+      #viewTable
+      class="jzl"
+      [rows]="rows"
+      [loadingIndicator]="loadingIndicator"
+      [columnMode]="'force'"
+      [headerHeight]="44"
+      [footerHeight]="40"
+      [rowHeight]="40"
+      [count]="tplPageInfo.currentPageCount"
+      [scrollbarV]="true"
+      [scrollbarH]="false"
+      [externalPaging]="true"
+      [externalSorting]="true"
+      [virtualization]="false"
+      [sortType]="'single'"
+      (sort)="sortView($event)"
+      [selected]="selected"
+      [selectionType]="'checkbox'"
+      (select)='onSelect($event)'
+      [messages]="dataMessages">
+
+      <ngx-datatable-column name="模板名称" [prop]="'report_name'">
+        <ng-template ngx-datatable-header-template let-value="value">
+          <span class="ml14 datatable-header-cell-wrapper">
+            <span class="datatable-header-cell-label">模板名称</span>
+          </span>
+        </ng-template>
+        <ng-template let-row="row"  ngx-datatable-cell-template>
+          <span class="ml14">{{row.report_name}}</span>
+        </ng-template>
+    </ngx-datatable-column>
+      <ngx-datatable-column name="频率" [prop]="'report_freq'">
+        <ng-template let-row="row"  ngx-datatable-cell-template>
+          {{reportFreqTypeRelation[row.report_freq]}}
+        </ng-template>
+      </ngx-datatable-column>
+    <ngx-datatable-column name="格式" [prop]="'report_format'">
+      <ng-template let-row="row"  ngx-datatable-cell-template>
+        {{row.report_format=='excel'?'EXCEL':'PDF'}}
+      </ng-template>
+    </ngx-datatable-column>
+
+      <ngx-datatable-column name="创建人" [prop]="'report_format'">
+        <ng-template let-row="row"  ngx-datatable-cell-template>
+          系统
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="操作" [width]="200"  [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+        <ng-template let-row="row"  ngx-datatable-cell-template>
+          <a (click)="createReoprtFromTpl(row['template_id'])">生成报表</a>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-footer>
+        <ng-template  ngx-datatable-footer-template>
+          <div class="page-count" *ngIf="tplPageInfo.loadingStatus == 'success'">
+            共{{tplPageInfo.allCount}}条
+          </div>
+          <div class="page-count" *ngIf="tplPageInfo.loadingStatus == 'pending'">
+            <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+          </div>
+          <div class="page-count" *ngIf="tplPageInfo.loadingStatus == 'error'">
+            总条数加载失败
+          </div>
+          <div class="page-size-select">
+            <select [(ngModel)]="tplPageInfo.pageSize" (ngModelChange)="changePageSize($event)">
+              <option *ngFor="let sizeList of tplPageInfo.pageSizeList" [value]="sizeList.key">{{sizeList.name}}</option>
+            </select>
+          </div>
+          <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="tplPageInfo.currentPage"
+            [size]="tplPageInfo.pageSize"
+            [count]="tplPageInfo.allCount"
+            [hidden]="!((tplPageInfo.allCount / tplPageInfo.pageSize) > 1)"
+            (change)="changePage($event)">
+          </datatable-pager>
+        </ng-template>
+      </ngx-datatable-footer>
+    </ngx-datatable>
+  </div>
+
+
+
+  <div class="report-empty-content"  *ngIf="!rows.length && !loadingIndicator&&!requestFailed">
+    <div class="dashboard-empty-content-desc">
+        <button nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="createReportModal(content)">
+         <i nz-icon nzType="plus" nzTheme="outline"></i><span>创建报表</span>
+        </button>
+      <div class="dashboard-empty-content-hint mt30">您还没有创建报表，请添加</div>
+    </div>
+  </div>
+</div>
+</ng-container>
+
+<ng-container *ngIf="activeType === 'biz_unit_report'">
+  <app-biz-effect-modal [tableHeight]="tableHeight - 28"></app-biz-effect-modal>
+</ng-container>
+<ng-container *ngIf="activeType === 'biz_unit_hours_report'">
+  <app-biz-hours-modal [tableHeight]="tableHeight - 28"></app-biz-hours-modal>
+</ng-container>
+<ng-container *ngIf="activeType === 'biz_unit_campaign_report'">
+  <app-biz-effect-modal [levelType]="'campaign'" [tableHeight]="tableHeight - 28"></app-biz-effect-modal>
+</ng-container>
+<ng-container *ngIf="activeType === 'biz_unit_adgroup_report'">
+  <app-biz-effect-modal [levelType]="'adgroup'" [tableHeight]="tableHeight - 28"></app-biz-effect-modal>
+</ng-container>
+<ng-container *ngIf="activeType === 'biz_unit_keyword_report'">
+  <app-biz-effect-modal [levelType]="'keyword'" [tableHeight]="tableHeight - 28"></app-biz-effect-modal>
+</ng-container>
+
+<ng-container *ngIf="activeType === 'responsible_account'">
+  <app-responsible-report [tableHeight]="tableHeight - 28"></app-responsible-report>
+</ng-container>

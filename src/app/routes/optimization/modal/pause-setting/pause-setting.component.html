@@ -1,0 +1,26 @@
+<div class="pause-content">
+  <h3 class="mb16">你确定要停止调价吗?</h3>
+  <nz-radio-group [nzSize]="'small'"
+                  [(ngModel)]="pause_setting['price_status']">
+    <div>
+      <label class="mb2" nz-radio [nzValue]="1" >
+        <span>保留关键词当前的价格</span>
+      </label>
+    </div>
+    <div>
+      <label nz-radio [nzValue]="2">
+        <span>恢复关键词原始价格</span>
+      </label>
+    </div>
+
+
+  </nz-radio-group>
+  <div class="pause-footer">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8"  nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

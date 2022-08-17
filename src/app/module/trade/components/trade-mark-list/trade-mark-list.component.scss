@@ -1,0 +1,117 @@
+.manage-operation {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: space-between;
+}
+.manage-table {
+  ::ng-deep .ant-table-small {
+    border: 0;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    .ant-table-body > table {
+      padding: 0px 0px;
+      border: 1px solid #e4e4e4 !important;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      border-radius: 2px;
+    }
+  }
+}
+.disabled-status {
+  background: rgba(250, 250, 250, 0.3);
+  color: rgba(64, 64, 64, 0.3);
+  border-color: rgba(228, 228, 228, 0.3);
+}
+.disabled-status:hover {
+  color: rgba(64, 64, 64, 0.3);
+}
+.custom-filter-dropdown {
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #e4e4e4;
+}
+.custom-filter-body {
+  min-height: 50px;
+}
+div.custom-filter-footer {
+  text-align: right;
+  padding: 0px;
+  border-top: none;
+  span {
+    height: 20px;
+    line-height: 1.5;
+    padding-left: 8px;
+    padding-right: 8px;
+    display: inline-block;
+    border: 1px solid #e4e4e4;
+    text-align: center;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    background-color: #fff;
+    color: #404040;
+  }
+  span:last-child {
+    color: #fff;
+    background-color: #56acef;
+  }
+}
+.filter-trash {
+  width: 30px;
+  height: 20px;
+  line-height: 1.5;
+  border: 1px solid #e4e4e4;
+  border-right: none;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  text-align: center;
+  cursor: pointer;
+}
+.filter-desc {
+  height: 20px;
+  line-height: 1.5;
+  padding-left: 8px;
+  padding-right: 8px;
+  background-color: #fff;
+  border: 1px solid #e4e4e4;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+.filter-delete {
+  color: #56acef;
+  cursor: pointer;
+}
+.table-no-result {
+  display: flex;
+  display: -webkit-flex;
+  justify-content: center;
+  align-items: center;
+}
+.table-no-result-content {
+  width: 210px;
+  text-align: center;
+}
+.manage-no-result-table {
+  ::ng-deep .ant-table-placeholder {
+    height: 0;
+    padding: 0px;
+  }
+}
+
+.trade-mark-copy-content {
+  .lab-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+  }
+  .lab-row > label:first-child {
+    width: 120px;
+    text-align: right;
+    display: inline-block;
+  }
+  .lab-row .add-label {
+    width: auto !important;
+  }
+}

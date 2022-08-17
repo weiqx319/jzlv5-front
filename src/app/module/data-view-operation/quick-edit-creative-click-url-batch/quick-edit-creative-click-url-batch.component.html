@@ -1,0 +1,6 @@
+<div class="quick-edit-creative-click-url-batch">
+  <div class="ed_shotinp mt5">
+    <input style=" width: 250px;" nz-input nzSize="small" placeholder="请输入监测链接" [(ngModel)]="click_monitor_url" (ngModelChange)="changeClickUrl()" />
+  </div>
+  <p style="margin-top: 8px; color: #f09200" *ngIf="is_warning">链接必填</p>
+</div>

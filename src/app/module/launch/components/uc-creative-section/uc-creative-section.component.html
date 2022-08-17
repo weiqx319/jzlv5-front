@@ -1,0 +1,135 @@
+<div class="uc-creative-section-container">
+  <!--共用设置-->
+  <div class="form-card mt10 mb10">
+    <div id="creative_setting" class="form-content mt10 mb10">
+      <!--创意样式-->
+      <div class="lab-row mb20 w100p">
+        <label>{{structConfig['style']['name']}}:</label>
+        <nz-radio-group
+          class="ml8"
+          [nzSize]="'small'"
+          [(ngModel)]="data.style"
+        >
+          <ng-container *ngFor="let option of structConfig['style']['sub']">
+            <label nz-radio-button [nzDisabled]="true" [nzValue]="option.value" *ngIf="option.value === materialType">
+              <span>{{option.label}}</span>
+            </label>
+          </ng-container>
+        </nz-radio-group>
+      </div>
+      <div class="lab-row mb20">
+        <label><span class="redStart">*</span>品牌头像:</label>
+        <div>
+          <div class="mb10 ml8" *ngIf="data.imgUrl">
+            <img style="max-width: 200px; max-height: 200px" [src]="data.imgUrl" />
+          </div>
+          <div>
+            <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="uploadMaterials()">
+              <span>上传主图</span>
+            </button>
+            <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addMaterials('userImage')">
+              <i nz-icon nzType="select" nzTheme="outline"></i><span>选择主图</span>
+            </button>
+            <div class="error-tip mt5 ml8" *ngIf="errorTip.logo_image_id.is_show">
+              <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+              <span style="color: red;">{{ errorTip.logo_image_id.tip_text }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lab-row mb20 w100p">
+        <label><span class="redStart">*</span>推广来源:</label>
+        <div>
+          <input class="w200 ml8" nz-input type="text" maxlength="16" placeholder="推广来源字符范围为1-16" [nzSize]="'small'" [(ngModel)]="data.source" (ngModelChange)="souceNameChange(data)">
+          <span class="ml10"> {{getSouceLength}} / 16</span>
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.source.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.source.tip_text }}</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="lab-row mb20 w100p" *ngIf="account.display">
+        <label><span class="redStart">*</span>创意分类:</label>
+        <div class="ml8">
+          <nz-input-group class="w200" [nzSuffix]="prefixTemplateUser">
+            <input type="text" [nzSize]="'small'" nz-input readonly [value]="selectNum" (click)="changeHidden()"/>
+          </nz-input-group>
+          <ng-template #prefixTemplateUser>
+            <i nz-icon nzType="down" *ngIf="!data.isHiddenSelect" nzTheme="outline"></i>
+            <i nz-icon nzType="up" *ngIf="data.isHiddenSelect" nzTheme="outline"></i>
+          </ng-template>
+          <div class="mt20" [hidden]="!data.isHiddenSelect">
+            <app-select-result [data]="data" [selectNum]="selectNum" [adgroup]="adgroup"></app-select-result>
+          </div>
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.industry.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.industry.tip_text }}</span>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="lab-row mb20 w100p" *ngIf="account.display">
+        <label><span class="redStart">*</span>创意标签:</label>
+        <div>
+          <div style="display: flex;">
+            <div class="w_full ml8 mr8">
+              <input
+                nz-input
+                [nzSize]="'small'"
+                type="text"
+                placeholder="最多20个标签，每个不超过10个字，可空格分隔"
+                [(ngModel)]="inputValue"
+              />
+              <div class="error-tip mt5 ml8" *ngIf="errorTip.label.is_show">
+                <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                <span style="color: red;">{{ errorTip.label.tip_text }}</span>
+              </div>
+            </div>
+            <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="AddTags()">
+              <span>添加</span>
+            </button>
+          </div>
+          <div class="mt20" style="display: flex;" *ngIf="data.label.length">
+            <div class="tags-box w_full ml8 mr8">
+              <div class="tags-box-title">
+                <span>已选</span>
+                <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="clearTags()">
+                  <span>清空</span>
+                </button>
+              </div>
+              <div class="tags-box-content">
+                <div *ngFor="let item of data.label; let index = index;">
+                  <span>{{item}}</span>
+                  <a style="color: red; float: right;"><i nz-icon nzType="close" nzTheme="outline" (click)="deleteTag(index)"></i></a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+<!--      <div class="lab-row mb20 w100p">-->
+<!--        <label>点击监测链接:</label>-->
+<!--        <input class="w_full ml8" nz-input type="text" placeholder="选填，请勿填写落地页链接或下载链接，如不需要该功能，建议置空" [nzSize]="'small'" [(ngModel)]="data.click_monitor_url">-->
+<!--      </div>-->
+      <!--展现方式-->
+      <div class="lab-row mb20 w100p">
+        <label>{{structConfig['show_mode']['name']}}:</label>
+        <nz-radio-group
+          class="ml8"
+          [nzSize]="'small'"
+          [(ngModel)]="data.show_mode"
+        >
+          <ng-container>
+            <label nz-radio-button [nzValue]="option.value" *ngFor="let option of structConfig['show_mode']['sub']">
+              <span>{{option.label}}</span>
+            </label>
+          </ng-container>
+        </nz-radio-group>
+      </div>
+
+    </div>
+  </div>
+

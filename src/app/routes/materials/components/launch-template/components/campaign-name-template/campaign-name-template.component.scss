@@ -1,0 +1,29 @@
+.campaign-name-template-container {
+  div.materials-list-nav{
+    width: 100%;
+  }
+  .materials-list-nav-col{
+    height: 36px;
+
+    display: flex;
+    align-items:center;
+    background-color: #fff;
+
+    .materials-list-nav-btn{
+
+      display: flex;
+      justify-content: flex-start;
+      button{
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+      }
+    }
+  }
+}
+
+.page {
+  .ant-pagination {
+    text-align: right;
+  }
+}

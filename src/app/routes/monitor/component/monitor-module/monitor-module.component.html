@@ -1,0 +1,21 @@
+<div class="optimization-detail-nav-tab">
+  <div class="optimization-detail-desc">
+    <div class="action-back" >
+      <a [routerLink]="'/monitor'">
+        <i nz-icon nzType="left" nzTheme="outline"></i><span>返回监控列表页</span>
+      </a>
+    </div>
+    <div *ngIf="monitorGroupInfo!=null"> <span>{{publisherOption[monitorGroupInfo['publisher_id']]}}:{{monitorGroupInfo['monitor_name']}}</span>  </div>
+  </div>
+  <div class="optimization-detail-nav-menu">
+    <ng-container *ngFor="let tab of monitorTab">
+      <div class="oper-type" [routerLink]="[tab.key]"  [routerLinkActive]="['active']">
+        {{tab.name}}
+      </div>
+      <div class="ml10"></div>
+    </ng-container>
+  </div>
+</div>
+<div class="optimization-detail">
+  <router-outlet></router-outlet>
+</div>

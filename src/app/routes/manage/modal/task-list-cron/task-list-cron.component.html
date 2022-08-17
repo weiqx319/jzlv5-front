@@ -1,0 +1,212 @@
+<div>
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <app-table-query-show
+        [filterConditions]="filterData"
+        (changed)="refreshData()"
+      ></app-table-query-show>
+    </div>
+    <div class="manage-header-right">
+      <button class="mr8" nz-button nzType="default" [nzLoading]="loading" (click)="refreshData()">
+        <i nz-icon nzType="redo" nzTheme="outline"></i>刷新
+      </button>
+      <nz-range-picker
+        [nzFormat]="'yyyy/MM/dd'"
+        [ngModel]="dateValue"
+        (ngModelChange)="onDateChange($event)"
+        (nzOnCalendarChange)="onCalendarChange($event)"
+        [nzDisabledDate]="disabledEndDate"
+        [nzSize]="'default'"
+        [nzAllowClear]="false"
+        (nzOnOpenChange)="openDateChange($event)"
+      ></nz-range-picker>
+    </div>
+  </div>
+  <div class="manage-table manage-no-result-table pt8">
+    <nz-table
+      #nzTable
+      class="pt8"
+      nzShowSizeChanger
+      [nzPageSizeOptions]="[30, 50, 100, 500]"
+      [nzSize]="'default'"
+      [nzData]="taskListData"
+      [nzFrontPagination]="false"
+      [(nzPageSize)]="pageSize"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="refreshData()"
+      (nzPageSizeChange)="refreshData(true)"
+      [nzTotal]="total"
+      [nzLoading]="loading"
+      [nzShowTotal]="totalItemTemplate"
+      [nzScroll]="{ y: noResultHeight + 'px' ,x:'2200px'}"
+      class="task-table"
+    >
+      <thead>
+        <!-- <thead (nzSortChange)="sort($event)" nzSingleSort> -->
+        <tr>
+          <th [nzWidth]="'150px'">
+            <!-- <th [nzWidth]="'230px'" nzShowSort nzSortKey="create_time"> -->
+            <span>任务提交时间</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>广告主</span>
+            <app-filter
+              [filterType]="filterData['advertiser_name']['filterType']"
+              [filterKey]="filterData['advertiser_name']['filterKey']"
+              [(filterResult)]="filterData['advertiser_name']['filterResult']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作人</span>
+            <app-filter
+              [filterType]="filterData['user_name']['filterType']"
+              [filterKey]="filterData['user_name']['filterKey']"
+              [(filterResult)]="filterData['user_name']['filterResult']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'250px'">
+            <span>任务ID</span>
+            <app-filter
+              [filterType]="filterData['task_id']['filterType']"
+              [filterKey]="filterData['task_id']['filterKey']"
+              [(filterResult)]="filterData['task_id']['filterResult']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作层级</span>
+            <app-filter
+              [filterType]="filterData['oper_level']['filterType']"
+              [filterKey]="filterData['oper_level']['filterKey']"
+              [(filterResult)]="filterData['oper_level']['filterResult']"
+              [filterOption]="filterData['oper_level']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'230px'">
+            <span>任务描述</span>
+            <app-filter
+              [filterType]="filterData['task_desc']['filterType']"
+              [filterKey]="filterData['task_desc']['filterKey']"
+              [(filterResult)]="filterData['task_desc']['filterResult']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'230px'">
+            <span>任务结果</span>
+            <app-filter
+              [filterType]="filterData['task_result']['filterType']"
+              [filterKey]="filterData['task_result']['filterKey']"
+              [(filterResult)]="filterData['task_result']['filterResult']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>任务状态</span>
+            <app-filter
+              [filterType]="filterData['task_status']['filterType']"
+              [filterKey]="filterData['task_status']['filterKey']"
+              [(filterResult)]="filterData['task_status']['filterResult']"
+              [filterOption]="filterData['task_status']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>定时状态</span>
+            <app-filter
+              [filterType]="filterData['cron_status']['filterType']"
+              [filterKey]="filterData['cron_status']['filterKey']"
+              [(filterResult)]="filterData['cron_status']['filterResult']"
+              [filterOption]="filterData['cron_status']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'280px'">
+            <span>定时时间</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of taskListData">
+          <td>{{ data.create_time }}</td>
+          <td>{{ data.advertiser_name }}</td>
+          <td>{{ data.user_name }}</td>
+          <td>
+            <a
+              (click)="getTaskDetailById(data.task_id)"
+              >{{ data.task_id }}</a
+            >
+          </td>
+          <td>
+            {{op_level_map[data.oper_level]}}
+          </td>
+          <td>
+            <div class="text-ellis" title="{{data.task_desc}}">
+                {{ data.task_desc }}
+            </div>
+          </td><td>
+            <div class="text-ellis" title="{{data.task_result}}">
+                {{ data.task_result }}
+            </div>
+          </td>
+          <td>
+            {{ status_value_map[data.task_status] }}
+            <a (click)="downloadErrorFile(data)" *ngIf="data['error_file']">错误明细下载</a>
+            <ng-template #finishTime>
+              <span> 完成时间：{{ data.finish_time }} </span>
+            </ng-template>
+            <i nz-icon nzType="question-circle" nzTheme="outline"
+              *ngIf="data.task_status - 0 === 3"
+              nz-popover
+              [nzPopoverContent]="finishTime"
+               nzPopoverPlacement="right"
+              style="color: #f09200"
+            ></i>
+            <app-rollback class="ml10" *ngIf="!!data.can_rollback" [rowData]="data"></app-rollback>
+          </td>
+          <td>
+            <span>{{ cron_status_map[data.cron_status] }}</span>
+            <a *ngIf="data.cron_status == 0" title="终止" class="editPriceBtn manage-start ml2"  (click)="cancelCron(data)">
+              <i nz-icon nzType="pause" nzTheme="outline" style="background: #f5dfb1;color: #ab8330;"  ></i>
+            </a>
+          </td>
+          <td>
+            <ng-container *ngIf="data.cron_status == 0">
+              <ng-container *ngIf="data.edit">
+                <nz-date-picker
+                  nzShowTime
+                  nzFormat="yyyy-MM-dd HH:mm:ss"
+                  nzPlaceHolder="请选择时间"
+                  [nzSize]="'default'"
+                  [(ngModel)] = "data.cron_setting_temp"
+                  [nzAllowClear]="false"
+                ></nz-date-picker>
+                <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'default'"
+                        (click)="editCronOk(data)">
+                  <span>保存</span>
+                </button>
+                <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="editCronCancel(data)">
+                  <span>取消</span>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="!data.edit">
+                <a class="editPriceBtn" (click)="editCronTime(data)"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a>
+                <span>{{ data.cron_setting }}</span>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="data.cron_status != 0">
+              {{ data.cron_setting }}
+            </ng-container>
+
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>
+
+
+

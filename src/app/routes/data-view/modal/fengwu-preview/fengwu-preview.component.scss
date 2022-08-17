@@ -1,0 +1,148 @@
+.fengwu-preview-container{
+  //凤舞橱窗
+  .windows-content{
+    .windows-item {
+      display: block;
+      float: left;
+      margin-right: 20px;
+      height: auto;
+      max-height: 115px;
+      position: relative;
+      width: 120px;
+    }
+    .windows-item:last-child{
+      margin-right: 0;
+    }
+    .windows-cover {
+      cursor: pointer;
+      height: 75px;
+      text-decoration: none;
+      width: 100%;
+      overflow: hidden;
+    }
+    .windows-title {
+      color: #1024ee;
+      display: block;
+      font-size: 13px;
+      height: 20px;
+      line-height: 20px;
+      overflow: hidden;
+      position: relative;
+      text-decoration: none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+      text-align: center;
+    }
+    .windows-price {
+      display: block;
+      height: 20px;
+      line-height: 20px;
+      width: 100%;
+      color: #c00;
+      text-decoration: none;
+      text-align: center;
+      font-size: 12px;
+    }
+  }
+  //凤舞寻客
+  .potential-content{
+    border: 1px solid #dadfe6;
+    margin: 0 10px;
+    font-size: 13px;
+    .potential-title {
+      border-bottom: 1px solid #dadfe6;
+      border-left: 4px solid #5889a5;
+      display: block;
+      height: 30px;
+      line-height: 30px;
+      padding-left: 10px;
+      color: #666;
+    }
+    .potential-item{
+      float: left;
+      margin: 12px 20px 0 0;
+
+      span{
+       display: inline-block;
+      }
+    }
+    .potential-item:nth-of-type(even) {
+      margin-right: 0;
+    }
+  }
+  //凤舞短子链
+  .links-content{
+    background-color: #f7f7f7;
+    margin: 10px;
+    padding: 12px;
+    word-break: break-word;
+    border-radius: 12px;
+
+    .short-links-list {
+      font-size: 13px;
+      line-height: 30px;
+      height: 40px;
+      overflow: hidden;
+      margin: 0 -5px;
+      .short-split-link {
+        display: block;
+        float: left;
+        width: 50%;
+        margin-top: 10px;
+        color: #000;
+
+        span {
+          display: block;
+          margin: 0 5px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-align: center;
+          background-color: #fff;
+          border-radius: 8px;
+        }
+      }
+    }
+    .alink {
+      display: block;
+      color: #000;
+      font-size: 19px;
+      width: 100%;
+      line-height: 29px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      max-height: 30px;
+    }
+    .links-desc {
+      margin-top: 5px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      color: #222;
+      font-size: 14px;
+      width: 100%;
+      line-height: 24px;
+      -webkit-line-clamp: 3;
+      max-height: 75px;
+      overflow: hidden;
+    }
+    .long-links-list{
+      border: 1px solid #d4d2d2;
+      margin-top: 10px;
+      padding: 10px;
+      span{
+        color: #999;
+        margin-right: 5px;
+      }
+    }
+    .link-title{
+      width: 60px;
+      display: inline-block;
+    }
+
+  }
+  .back_white{
+    background: #fff;
+  }
+}

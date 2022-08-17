@@ -1,0 +1,73 @@
+.uc-creative-section-container {
+  .form-content {
+    display: flex;
+    flex-wrap: wrap;
+
+    .lab-row {
+      width: 50%;
+      display: flex;
+
+      & > label:first-child{
+        width: 140px;
+        text-align: right;
+        display: inline-block;
+      }
+    }
+
+    .w100p {
+      width: 100%;
+    }
+
+    .ml50p {
+      margin-left: 50%;
+    }
+
+    .w_full {
+      width: 568px;
+    }
+  }
+}
+
+.tags-box {
+  border: 1px solid #d9d9d9;
+  min-height: 20px;
+
+  .tags-box-title {
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #d9d9d9;
+  }
+
+  .tags-box-content {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 0 10px 10px;
+
+    &>div {
+      width: 31%;
+      margin: 5px;
+      padding: 5px 8px;
+      background: #eee;
+    }
+  }
+}
+
+.ant-input-group-addon {
+  padding: 0;
+  border: 0;
+}
+
+.input-group-btn {
+  border-right: 0;
+}
+
+.extensionPeriod {
+  padding: 10px 0 !important;
+  margin-left: 0 !important;
+}
+
+.ant-dropdown-menu.ant-dropdown-menu-vertical{
+  width: 200px;
+}
+

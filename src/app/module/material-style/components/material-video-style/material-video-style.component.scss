@@ -1,0 +1,25 @@
+.vertical_video_bytedance {
+  width: 100px;
+  height: 180px;
+  display: inline-block;
+}
+
+.horizontal_video_bytedance {
+  width: 180px;
+  height: 100px;
+  display: inline-block;
+}
+
+.video {
+  .create-content {
+    position: relative;
+    .video-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 30px;
+      color: rgba(0,0,0,0.35);
+    }
+  }
+}

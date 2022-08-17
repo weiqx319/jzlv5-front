@@ -1,0 +1,1340 @@
+<div class="conversion-container mt20 mb20">
+  <div class="lab-row">
+    <label>数据来源:</label>
+    <nz-select class="w200 ml8" [nzSize]="'small'" [(ngModel)]="defaultConversion.conver_source_type"
+               [nzDisabled]="conversionDataId>0" (ngModelChange)="changeSource()">
+      <ng-container *ngFor="let item of  conversionSourceType ">
+        <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+      </ng-container>
+    </nz-select>
+    <!--第三方聊天工具显示推送方式-->
+    <nz-select *ngIf="defaultConversion.conver_source_type===2" class="w150 ml8" [(ngModel)]="im_push_type"
+               [nzSize]="'small'" [nzDisabled]="conversionDataId>0" (ngModelChange)="changePushType()">
+      <ng-container *ngFor="let item of conversionImType">
+        <nz-option [nzLabel]="item.name" [nzValue]="item.key" [nzDisabled]="item.disable">></nz-option>
+      </ng-container>
+    </nz-select>
+  </div>
+  <div class="lab-row mt10">
+    <label>广告主:</label>
+    <nz-select class="w200 ml8" [nzSize]="'small'" [nzPlaceHolder]="'请选择广告主'" [(ngModel)]="defaultConversion.cid"
+               (ngModelChange)="changeAdver()" [nzDisabled]="conversionDataId>0">
+      <ng-container *ngFor="let item of advertiserList">
+        <nz-option [nzLabel]="item.advertiser_name" [nzValue]="item.cid"></nz-option>
+      </ng-container>
+    </nz-select>
+  </div>
+  <div class="lab-row mt10">
+    <label>转化数据名称:</label>
+    <div class="w200 ml8">
+      <input nz-input
+             [nzSize]="'small'"
+             type="text"
+             disabled="{{conversionDataId>0}}"
+             [(ngModel)]="defaultConversion.conver_name"
+             placeholder="请输入名称">
+    </div>
+  </div>
+  <div class="lab-row mt10">
+    <label>转化数据备注:</label>
+    <div class="w200 ml8">
+       <textarea
+         nz-input
+         placeholder="备注"
+         [(ngModel)]="defaultConversion.conver_remarks"
+         [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+       ></textarea>
+    </div>
+  </div>
+
+  <div class="lab-row mt10">
+    <label>类型:</label>
+    <nz-radio-group [(ngModel)]="defaultConversion.conver_data_type" class="ml8" [nzDisabled]="conversionDataId>0">
+      <label nz-radio [nzValue]="1">
+        <span>整数类型</span>
+      </label>
+      <label nz-radio [nzValue]="2">
+        <span>小数类型</span>
+      </label>
+    </nz-radio-group>
+  </div>
+
+  <div class="lab-row mt10">
+    <label>是否默认:</label>
+    <nz-radio-group [(ngModel)]="defaultConversion.is_default" class="ml8">
+      <label nz-radio [nzValue]="1">
+        <span>是</span>
+      </label>
+      <label nz-radio [nzValue]="0">
+        <span>否</span>
+      </label>
+    </nz-radio-group>
+  </div>
+
+  <!--第三方聊天工具添加规则和转化逻辑-->
+  <ng-container *ngIf="defaultConversion.conver_source_type===2">
+    <!--转化公共部分设置(已经设置过隐藏设置)-->
+    <p class="text-center mt8" *ngIf="publicConversionDetail && publicConversionDetail['conver_detail_id']">
+      <a *ngIf="!showPublic" (click)="clickShowPublicBtn()">点击展开公共部分设置<i class="ml8" nz-icon nzType="caret-down"
+                                                                         nzTheme="outline"></i></a>
+      <a *ngIf="showPublic" (click)="clickShowPublicBtn()">点击收起公共部分设置<i class="ml8" nz-icon nzType="caret-up"
+                                                                        nzTheme="outline"></i></a>
+    </p>
+    <div class="mt10" style=" background: #f6f6f6;padding: 10px 0;" *ngIf="showPublic">
+      <!--是否区分大小写-->
+      <div class="lab-row mt10">
+        <label style="width: 160px">URL字段是否区分大小写
+          <i nz-icon nzType="question-circle" nzTheme="outline"
+             nz-popover
+             [nzPopoverContent]="'该设置项将作用于公共部分所有的URL字段,默认区分大小写'"
+             nzPopoverPlacement="right"
+             class="mr2"
+             style="color: #f09200"></i>:</label>
+        <nz-radio-group [(ngModel)]="defaultRule.is_match_case" class="ml8">
+          <label nz-radio [nzValue]="1">
+            <span>区分</span>
+          </label>
+          <label nz-radio [nzValue]="0">
+            <span>不区分</span>
+          </label>
+        </nz-radio-group>
+      </div>
+
+      <!--转化设备逻辑-->
+      <div class="lab-row mt10">
+        <label>转化设备逻辑:</label>
+        <div class="ml8 conversion-rule">
+          <label class="mb4" nz-checkbox [(ngModel)]="defaultRule.device_desc.is_valid">逻辑设置(选填)<i style="color: #f09200">可鼠标上下拖动调整优先级判断顺序</i></label>
+          <ng-container *ngIf="defaultRule.device_desc.is_valid">
+            <div style="min-width: 550px;" class="conversion-rule pl20 ml20 pr8 mb8 border">
+              <ul class="item-sort-define mt8 mb8" dnd-sortable-container [sortableData]="defaultRule.device_desc.rules">
+                <li *ngFor="let item of defaultRule.device_desc.rules;let index=index;" dnd-sortable
+                    [sortableIndex]="index" [dragData]="{index:index}">
+                  <label class="mb4" *ngIf="item['key']==='referer'" nz-checkbox
+                         [(ngModel)]="item.is_active">通过来源来判断</label>
+                  <label class="mb4" *ngIf="item['key']==='url_code'" nz-checkbox
+                         [(ngModel)]="item.is_active">通过Url标记来判断</label>
+                  <label class="mb4" *ngIf="item['key']==='chat_tool'" nz-checkbox
+                         [(ngModel)]="item.is_active">通过聊天工具提供的设备</label>
+                  <div *ngIf="item.key==='url_code' && item.is_active" style="min-width: 480px"
+                       class="pl20 ml20 pt8 pr8 mt8 mb8 border">
+                    <nz-radio-group [(ngModel)]="defaultRule.device_desc.data_url[0]">
+                      <label nz-radio [nzValue]="'lp'">着陆页URL</label>
+                      <div class="pl25 mt8" *ngIf="defaultRule.device_desc.data_url[0] === 'lp'">
+                        <div class="mb8 flex">
+                          <span>包含</span>
+                          <textarea class="ml8" [(ngModel)]="defaultRule.device_desc.url_code_values_lp[0].rules"></textarea>
+                          <nz-select class="w200 ml8" [nzSize]="'small'"
+                                     [nzPlaceHolder]="'请选择'"
+                                     [(ngModel)]="defaultRule.device_desc.url_code_values_lp[0].device"
+                                     nzShowSearch>
+                            <nz-option [nzLabel]="'pc'" [nzValue]="'pc'"></nz-option>
+                            <nz-option [nzLabel]="'wap'" [nzValue]="'wap'"></nz-option>
+                          </nz-select>
+                        </div>
+                        <p>其他的属于
+                          <span *ngIf="defaultRule.device_desc.url_code_values_lp[0].device==='wap'">pc</span>
+                          <span *ngIf="defaultRule.device_desc.url_code_values_lp[0].device==='pc'">wap</span>
+                        </p>
+                        <div class="mb8 mt4">
+                          <label nz-checkbox [(ngModel)]="defaultRule.device_desc.alternateLp">着陆页URL匹配不到使用对话页URL</label>
+                        </div>
+                      </div>
+                      <div>
+                        <label nz-radio [nzValue]="'tp'">对话页URL</label>
+                        <div class="pl25 mt8" *ngIf="defaultRule.device_desc.data_url[0] === 'tp'">
+                          <div class="mb8 flex">
+                            <span>包含</span>
+                            <textarea class="ml8"
+                                      [(ngModel)]="defaultRule.device_desc.url_code_values_tp[0].rules"></textarea>
+                            <nz-select class="w200 ml8" [nzSize]="'small'"
+                                       [nzPlaceHolder]="'请选择'"
+                                       [(ngModel)]="defaultRule.device_desc.url_code_values_tp[0].device"
+                                       nzShowSearch>
+                              <nz-option [nzLabel]="'pc'" [nzValue]="'pc'"></nz-option>
+                              <nz-option [nzLabel]="'wap'" [nzValue]="'wap'"></nz-option>
+                            </nz-select>
+                          </div>
+                          <p>其他的属于
+                            <span *ngIf="defaultRule.device_desc.url_code_values_tp[0].device==='wap'">pc</span>
+                            <span *ngIf="defaultRule.device_desc.url_code_values_tp[0].device==='pc'">wap</span>
+                          </p>
+                          <div class="mb8 mt4">
+                            <label nz-checkbox [(ngModel)]="defaultRule.device_desc.alternateTP">对话页URL匹配不到使用着陆页URL</label>
+                          </div>
+                        </div>
+                      </div>
+                    </nz-radio-group>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+          <!--<i style="color: #f09200">(可鼠标上下拖动调整优先级判断顺序)</i>-->
+        </div>
+      </div>
+      <!--转化所属媒体逻辑-->
+      <div class="lab-row mt10">
+        <label>转化所属媒体逻辑:</label>
+        <div class="ml8 conversion-rule">
+          <i style="color: #f09200">(可鼠标上下拖动调整优先级判断顺序)</i>
+          <ul class="item-sort-define mt8" dnd-sortable-container [sortableData]="defaultRule.media_desc.rules">
+            <li *ngFor="let item of defaultRule.media_desc.rules;let index=index;" dnd-sortable [sortableIndex]="index"
+                [dragData]="{index:index}">
+              <label class="mb4" *ngIf="item.key==='referer'" nz-checkbox [(ngModel)]="item.is_active">通过来源页判断</label>
+              <label class="mb4" *ngIf="item.key==='url_code'" nz-checkbox
+                     [(ngModel)]="item.is_active">通过Url标记来判断</label>
+              <div class="pl8 ml20 pt8 pr8 mt8 mb8 border" *ngIf="item.key==='url_code' && item.is_active">
+                <div class="pl25 mt8" style="min-width: 780px;">
+                  <cdk-virtual-scroll-viewport [itemSize]="68" [minBufferPx]="340" [maxBufferPx]="340" [style.height]="defaultRule.media_desc.url_code_values.length*68>340?'340px':defaultRule.media_desc.url_code_values.length*68+'px'">
+                    <div class="mb8 flex"
+                      *cdkVirtualFor="let keywordItem of defaultRule.media_desc.url_code_values; let index=index">
+                      <span>包含</span>
+                      <textarea class="ml8" [(ngModel)]="keywordItem.rules"></textarea>
+                      <nz-select class="w200 ml8" [nzSize]="'small'"
+                                 [nzPlaceHolder]="'请选择媒体'"
+                                 [(ngModel)]="keywordItem.product_key"
+                                 (ngModelChange)="changeJsMediaPublisher()"
+                                 nzShowSearch>
+                        <ng-container *ngFor="let item of publisherData">
+                          <nz-option [nzLabel]="item['name']" [nzValue]="item.key"></nz-option>
+                        </ng-container>
+                      </nz-select>
+                      <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml10"  *ngIf="defaultRule.media_desc.url_code_values.length>1"
+                         (click)="removeItemVirtualScroll(defaultRule.media_desc,'url_code_values', index, 'js_media')"></i>
+                      <i nz-icon nzType="plus" nzTheme="outline" class="delete-color ml10" *ngIf="index==defaultRule.media_desc.url_code_values.length-1"
+                         (click)="addItemVirtualScroll(defaultRule.media_desc,'url_code_values')"></i>
+                    </div>
+                  </cdk-virtual-scroll-viewport>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!--对应不到关键词逻辑-->
+      <div class="lab-row mt10">
+        <label *ngIf="menuService.currentChannelId===1">对应不到关键词逻辑:</label>
+        <label *ngIf="menuService.currentChannelId===2">对应不到创意逻辑:</label>
+        <div class="ml8 conversion-rule">
+          <nz-select class="w200" [nzSize]="'small'" [nzPlaceHolder]="'请选择'"
+                     [(ngModel)]="defaultRule.mismatched_keyword_desc.rules.miss_deal_rule">
+            <nz-option [nzLabel]="'对应不到关键词的过滤'" [nzValue]="'ignore'"></nz-option>
+            <nz-option [nzLabel]="'通过URL标识确定'" [nzValue]="'into_account'"></nz-option>
+          </nz-select>
+          <ng-container *ngIf="defaultRule.mismatched_keyword_desc.rules.miss_deal_rule === 'into_account'">
+            <div class="pl8 mt8 mb8">
+              <label>启用REFERER:</label>
+              <nz-radio-group [(ngModel)]="defaultRule.mismatched_keyword_desc.rules.referer_tag" class="ml8">
+                <label nz-radio [nzValue]="true">
+                  <span>是</span>
+                </label>
+                <label nz-radio [nzValue]="false">
+                  <span>否</span>
+                </label>
+              </nz-radio-group>
+            </div>
+            <div class="pl8 pr8 mt8 mb8 border">
+              <div class="pl14 mt8" style="min-width: 800px;">
+                <cdk-virtual-scroll-viewport [itemSize]="105" [minBufferPx]="420" [maxBufferPx]="420" [style.height]="defaultRule.mismatched_keyword_desc.rules.custom_miss_values.length*105>420?'420px':defaultRule.mismatched_keyword_desc.rules.custom_miss_values.length*105+'px'">
+                   <div class="mb8 pb8" style="height: 105px;"
+                     *cdkVirtualFor="let keywordItem of defaultRule.mismatched_keyword_desc.rules.custom_miss_values; let index=index">
+                    <div class="flex">
+                      <span>{{index+1}}，</span>
+                      <span>媒体</span>
+                      <nz-select class="w100 ml4" [nzSize]="'small'" [(ngModel)]="keywordItem.product_key"
+                                 (ngModelChange)="changeKeywordPublisher(keywordItem, keywordItem.chan_pub_id)">
+                        <ng-container *ngFor="let item of jsKeywordPublisher">
+                          <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+                        </ng-container>
+                      </nz-select>
+                      <span class="ml4">包含</span>
+                      <textarea class="ml4" style="width: 145px" [(ngModel)]="keywordItem.rules"></textarea>
+                      <span ngClass="ml4">且包含</span>
+                      <textarea class="ml4" style="width: 145px" [(ngModel)]="keywordItem.rules2"></textarea>
+                      <span ngClass="ml4">且不包含</span>
+                      <textarea class="ml4" style="width: 145px" [(ngModel)]="keywordItem.rules10"></textarea>
+                      <i *ngIf="defaultRule.mismatched_keyword_desc.rules.custom_miss_values.length>1"
+                         nz-icon nzType="close" nzTheme="outline" class="delete-color ml8 btn"
+                         (click)="removeItemVirtualScroll(defaultRule.mismatched_keyword_desc.rules, 'custom_miss_values',index)"></i>
+                      <i nz-icon nzType="plus" nzTheme="outline" class="delete-color ml10 btn"
+                         (click)="addItemVirtualScroll(defaultRule.mismatched_keyword_desc.rules,'custom_miss_values',index)"></i>
+                    </div>
+                    <div class="mt8 pl20">
+                      <span>归属账户</span>
+                      <nz-select class="ml4" style="width: 520px;" [nzSize]="'small'"
+                                 [nzPlaceHolder]="'请选择'"
+                                 [(ngModel)]="keywordItem.chan_pub_id"
+                                 nzShowSearch>
+                        <ng-container *ngFor="let item of accountObj['publisher_id_' + keywordItem.product_key]">
+                          <nz-option [nzLabel]="item.pub_account_name" [nzValue]="item.chan_pub_id"></nz-option>
+                        </ng-container>
+                      </nz-select>
+                    </div>
+
+                  </div>
+                </cdk-virtual-scroll-viewport>
+              </div>
+            </div>
+            <div class="mb4">
+              <label nz-checkbox [(ngModel)]="defaultRule.mismatched_keyword_desc.rules.into_account">归到默认户处理</label>
+              <div class="mt8 pl20 pt10 pb10 border" *ngIf="defaultRule.mismatched_keyword_desc.rules.into_account">
+                <cdk-virtual-scroll-viewport [itemSize]="27"  [minBufferPx]="270" [maxBufferPx]="270" [style.height]="defaultRule.mismatched_keyword_desc.rules.default_belong_values.length*27>270?'270px':defaultRule.mismatched_keyword_desc.rules.default_belong_values.length*27+'px'">
+                  <div class="mb8" *cdkVirtualFor="let defaultBelongValue of defaultRule.mismatched_keyword_desc.rules.default_belong_values; let index=index">
+                    <nz-select class="ml8" style="width: 180px;" [nzSize]="'small'"
+                               [nzPlaceHolder]="'选择媒体'"
+                               [(ngModel)]="defaultBelongValue.product_key"
+                               (ngModelChange)="changeDefaultBelongValueSlt(defaultBelongValue)"
+                               nzShowSearch>
+                      <ng-container *ngFor="let publish of publishItems">
+                        <nz-option [nzLabel]="publish.name" [nzValue]="publish.key" [nzDisabled]="publish.isSelected  && defaultBelongValue.publisher_id !== publish.key"></nz-option>
+                      </ng-container>
+                    </nz-select>
+                    <nz-select class="ml8" style="width: 340px;" [nzSize]="'small'"
+                               [nzPlaceHolder]="accountObj['publisher_id_' + defaultBelongValue.product_key] && accountObj['publisher_id_' + defaultBelongValue.product_key].length?'请选择账户':'无可用数据'"
+                               [(ngModel)]="defaultBelongValue.chan_pub_id"
+                               (ngModelChange)="changeAccount(accountObj['publisher_id_' + defaultBelongValue.product_key], 'publisher_id_' + defaultBelongValue.product_key, defaultBelongValue,defaultBelongValue.chan_pub_id)"
+                               nzShowSearch>
+                      <ng-container *ngFor="let item of accountObj['publisher_id_' + defaultBelongValue.product_key] ">
+                        <nz-option [nzLabel]="item.pub_account_name" [nzValue]="item.chan_pub_id"></nz-option>
+                      </ng-container>
+                    </nz-select>
+                    <nz-select class="ml8" style="width: 180px;" [nzSize]="'small'"
+                               [nzPlaceHolder]="'选择计划'"
+                               [(ngModel)]="defaultBelongValue.campaign_id"
+                               *ngIf="defaultBelongValue.virtual_account !== 1"
+                               nzShowSearch>
+                      <ng-container *ngFor="let compain of compainObj['publisher_id_' + defaultBelongValue.product_key] ">
+                        <nz-option [nzLabel]="compain.pub_campaign_name" [nzValue]="compain.pub_campaign_id"></nz-option>
+                      </ng-container>
+                    </nz-select>
+                    <i *ngIf="defaultRule.mismatched_keyword_desc.rules.default_belong_values.length>1"
+                       nz-icon nzType="close" nzTheme="outline" class="delete-color ml8 btn"
+                       (click)="removeItemVirtualScroll(defaultRule.mismatched_keyword_desc.rules,'default_belong_values', index, 'default_belong_values')"></i>
+                    <i *ngIf="index===defaultRule.mismatched_keyword_desc.rules.default_belong_values.length-1"
+                       nz-icon nzType="plus" nzTheme="outline" class="delete-color ml10 btn"
+                       (click)="addItemVirtualScroll(defaultRule.mismatched_keyword_desc.rules, 'default_belong_values')"></i>
+                  </div>
+                </cdk-virtual-scroll-viewport>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!--关键词转化追踪逻辑-->
+      <div class="lab-row mt10">
+        <label *ngIf="menuService.currentChannelId===1">关键词转化追踪逻辑:</label>
+        <label *ngIf="menuService.currentChannelId===2">创意转化追踪逻辑:</label>
+        <div class="ml8">
+          <span>使用{{productInfo['name']}}跟踪码</span>
+          <div class="mt5">
+            <label nz-checkbox
+                   [(ngModel)]="defaultRule.keyword_tracking_desc.use_wildcards">如果{{productInfo['name']}}跟踪码丢失则查看媒体通配符(选填)</label>
+          </div>
+        </div>
+      </div>
+      <!--转化时间逻辑-->
+      <div class="lab-row mt10">
+        <label>转化时间逻辑:</label>
+        <div class="w200 ml8">
+          <nz-select class="w200" [nzSize]="'small'" [nzPlaceHolder]="'请选择'"
+                     [(ngModel)]="defaultRule.conver_time_desc.rules">
+            <nz-option [nzLabel]="'访客进入落地页时间'" [nzValue]="'first_view_time'"></nz-option>
+            <nz-option [nzLabel]="'访客进入对话页时间'" [nzValue]="'talk_time'"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <!--业务单元转化逻辑-->
+      <div class="lab-row mt10">
+        <label>业务单元转化逻辑:</label>
+        <div class="ml8">
+          <label class="mb4" nz-checkbox [(ngModel)]="defaultRule.conver_biz_desc.is_valid">逻辑设置(选填)<i style="color: #f09200">可鼠标上下拖动调整优先级判断顺序</i></label>
+          <ng-container *ngIf="defaultRule.conver_biz_desc.is_valid">
+            <div class="conversion-rule pl20 ml20 pr8 mb8 border">
+              <!--<p>如果Url无法判断，则按照如下方式按照优先级处理 <i style="color: #f09200">(可鼠标上下拖动调整优先级判断顺序)</i></p>-->
+              <div>
+                <ul class="item-sort-define mt8" dnd-sortable-container
+                    [sortableData]="defaultRule.conver_biz_desc.rules">
+                  <li *ngFor="let item of defaultRule.conver_biz_desc.rules;let index=index;" dnd-sortable
+                      [sortableIndex]="index" [dragData]="{index:index}">
+                    <label class="mb4" nz-checkbox [(ngModel)]="item.is_active">{{unitName[item['key']]}}</label>
+                    <div *ngIf="item['key']==='url_code'&& item.is_active" style="min-width: 480px"
+                         class="pl20 ml20 pt8 pr8 mb8 border">
+                      <nz-radio-group [(ngModel)]="defaultRule.conver_biz_desc.data_url[0]">
+                        <div>
+                          <label nz-radio [nzValue]="'lp'">着陆页URL</label>
+                          <div class="ml20" *ngIf="defaultRule.conver_biz_desc.data_url[0]==='lp'">
+                            <div class="mb8 mt4">
+                              <label nz-checkbox
+                                     [(ngModel)]="defaultRule.conver_biz_desc.alternateLp">着陆页URL匹配不到使用对话页URL</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <label nz-radio [nzValue]="'tp'">对话页URL</label>
+                          <div class="pl25 mb8" *ngIf="defaultRule.conver_biz_desc.data_url[0]==='tp'">
+                            <label nz-checkbox [(ngModel)]="defaultRule.conver_biz_desc.alternateTP">对话页URL匹配不到使用着陆页URL</label>
+                          </div>
+                        </div>
+                      </nz-radio-group>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </ng-container>
+          <div>
+          </div>
+        </div>
+      </div>
+      <!--转化地域-->
+      <div class="lab-row mt10">
+        <label>转化地域:</label>
+        <div class="ml8">
+          <span>使用{{productInfo['name']}}IP库确定</span>
+        </div>
+      </div>
+
+      <!-- 转化描述 -->
+      <div class="lab-row mt10">
+        <label>转化描述:</label>
+        <div class="conversion-logic ml8" >
+          <ng-container *ngIf="conversionDescList.length">
+            <div *ngFor="let data of conversionDescForm;let index=index" class="conversion-logic-item mb8">
+              <ng-container *ngIf="conversionDescForm.length">
+                <nz-select class="w100" [nzSize]="'small'" [nzPlaceHolder]="'请选择'" [(ngModel)]="data.conversion_desc_key"  (ngModelChange)="onContentTypeChange()">
+                  <nz-option *ngFor="let desc of conversionDescList" [nzLabel]="desc.name" [nzValue]="desc.key" [nzDisabled]="desc.disabled"></nz-option>
+                </nz-select>
+                <nz-select class="w100 pl8" [nzSize]="'small'" [nzPlaceHolder]="'请选择'" [(ngModel)]="data.conversion_key">
+                  <nz-option *ngFor="let type of conversionContentTypeList" [nzLabel]="type.name" [nzValue]="type.key"></nz-option>
+                </nz-select>
+                <div class="opBtn-logic">
+                  <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"
+                     (click)="deleteDesc(index)"></i>
+                </div>
+              </ng-container>
+            </div>
+            <button class="add" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addDesc()">
+              <span>继续添加</span>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="!conversionDescList.length">
+            <span style="color:#0a223a">转化描述未设置</span>
+          </ng-container>
+        </div>
+      </div>
+      <!--去重过滤逻辑-->
+      <div class="lab-row mt10">
+        <label>去重过滤逻辑:</label>
+        <nz-radio-group [(ngModel)]="defaultRule.remove_duplication_desc.rules" class="ml8">
+          <label nz-radio [nzValue]="'no_distinct'">
+            <span>无去重</span>
+          </label>
+          <label nz-radio [nzValue]="'ip'">
+            <span>IP</span>
+          </label>
+          <label nz-radio [nzValue]="'guest_id'">
+            <span>访客身份</span>
+          </label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <!--转化逻辑设置-->
+    <div class="lab-row mt10" *ngIf="getHasConversionSetTypeRule()">
+      <label>转化逻辑设置:</label>
+      <div class="ml8" style="width: 68%">
+        <div class="conversion-logic">
+          <div class="conversion-logic-item mb8" *ngFor="let chatItem of chat_conversion_logic.rules;let index=index">
+            <div class="mb8 chat-item" *ngFor="let item of chatItem; let chatItemIndex=index"
+                 [ngClass]="{'flex': item.condition_type&&item.condition_type!==1, 'pl16': chatItemIndex===0}">
+              <span *ngIf="chatItemIndex!==0" class="mr4">且</span>
+              <nz-select class="w100" [nzSize]="'small'" [nzPlaceHolder]="'请选择'" [(ngModel)]="item.condition_type">
+                <ng-container *ngFor="let type of getContentTypeListByType(im_push_type) ">
+                  <nz-option [nzLabel]="type.name" [nzValue]="type.key"></nz-option>
+                </ng-container>
+              </nz-select>
+              <ng-container *ngIf="item.condition_type===1">
+                <nz-select class="ml4" style="width: 84px;" [nzSize]="'small'" [nzPlaceHolder]="'请选择'"
+                           [(ngModel)]="item.condition_details['type']">
+                  <nz-option [nzLabel]="'所有'" [nzValue]="'all'"></nz-option>
+                  <nz-option [nzLabel]="'客服'" [nzValue]="'kf'"></nz-option>
+                  <nz-option [nzLabel]="'访客'" [nzValue]="'guest'"></nz-option>
+                </nz-select>
+                <span class="ml8">对话信息数</span>
+                <nz-select class="ml4" style="width: 84px;" [nzSize]="'small'" [nzPlaceHolder]="'请选择'"
+                           [(ngModel)]="item.condition_details['match_type']">
+                  <ng-container *ngFor="let item of operator_name.operatorType ">
+                    <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+                  </ng-container>
+                </nz-select>
+                <input class="ml4 w60" nz-input
+                       [nzSize]="'small'"
+                       type="number"
+                       min="0"
+                       [(ngModel)]="item.condition_details['left_op']"
+                       placeholder="请输入">
+                <ng-container *ngIf="item.condition_details['match_type']===600">
+                  <span>至</span>
+                  <input class="w60 mt4" nz-input
+                         [nzSize]="'small'"
+                         type="number"
+                         min="0"
+                         [(ngModel)]="item.condition_details['right_op']"
+                         placeholder="请输入">
+                </ng-container>
+                <span class="ml4 mt4">条</span>
+              </ng-container>
+              <ng-container *ngIf="item.condition_type&&item.condition_type!==1">
+                <!--<span class="ml8">包含</span>-->
+                <nz-select class="ml4" style="width: 84px;" [nzSize]="'small'" [nzPlaceHolder]="'请选择'"
+                           [(ngModel)]="item.condition_details['match_type']">
+                  <ng-container *ngFor="let item of operator_name.relationType ">
+                    <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+                  </ng-container>
+                </nz-select>
+                <textarea class="ml8" *ngIf="item.condition_details['match_type']!==600&&item.condition_details['match_type']!==500"
+                          [(ngModel)]="item.condition_details['txt_list']"></textarea>
+              </ng-container>
+              <div class="opBtn" *ngIf="item.condition_type">
+                <i *ngIf="chatItem.length>1" nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"
+                   (click)="removeItem(chatItem, chatItemIndex, '', index)"></i>
+                <i *ngIf="chatItemIndex===chatItem.length-1" nz-icon nzType="plus" nzTheme="outline" class="delete-color ml10"
+                   (click)="addItem(chatItem, 'chatItem')"></i>
+              </div>
+            </div>
+            <div class="opBtn-logic">
+              <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"
+                 (click)="removeItem(chat_conversion_logic.rules, index, 'conversion_logic', index)"></i>
+            </div>
+          </div>
+          <button class="add" nz-button [nzType]="'default'" [nzSize]="'small'"
+                  (click)="addItem(chat_conversion_logic.rules, 'conversion_logic')">
+            <span>继续添加</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!--{{productInfo['name']}}JS跟踪码，接口api，接口excel上传添加规则-->
+  <ng-container *ngIf="defaultConversion.cid && (defaultConversion.conver_source_type === 3 || defaultConversion.conver_source_type === 4 || defaultConversion.conver_source_type === 5)">
+    <div class="mt10" style=" background: #f6f6f6;padding: 10px 0;">
+      <!--是否区分大小写-->
+      <div class="lab-row mt10">
+        <label style="width: 160px">URL字段是否区分大小写
+          <i nz-icon nzType="question-circle" nzTheme="outline"
+             nz-popover
+             [nzPopoverContent]="'该设置项将作用于公共部分所有的URL字段,默认区分大小写'"
+             nzPopoverPlacement="right"
+             class="mr2"
+             style="color: #f09200"></i>:</label>
+        <nz-radio-group [(ngModel)]="defaultRule.is_match_case" class="ml8">
+          <label nz-radio [nzValue]="1">
+            <span>区分</span>
+          </label>
+          <label nz-radio [nzValue]="0">
+            <span>不区分</span>
+          </label>
+        </nz-radio-group>
+      </div>
+      <ng-container *ngIf="defaultConversion.conver_source_type === 3">
+        <!--是否优先归属加追踪码页面-->
+        <div class="lab-row mt10">
+          <label style="width: 160px">是否优先归属加追踪码页面:</label>
+          <nz-radio-group [(ngModel)]="defaultRule.js_attribution_desc.js_keyword" class="ml8">
+            <label nz-radio [nzValue]="true">
+              <span>是</span>
+            </label>
+            <label nz-radio [nzValue]="false">
+              <span>否</span>
+            </label>
+          </nz-radio-group>
+        </div>
+        <!--归因页面-->
+        <div class="lab-row mt10">
+          <label style="width: 160px">归因页面:</label>
+          <nz-radio-group [(ngModel)]="defaultRule.js_attribution_desc.attribution_url" class="ml8">
+            <label nz-radio [nzValue]="'last_url'">
+              <span>归因为最后一次访问页面</span>
+            </label>
+            <label nz-radio [nzValue]="'first_url'">
+              <span>归因为7天内第一次访问页面</span>
+            </label>
+          </nz-radio-group>
+        </div>
+      </ng-container>
+      <!--转化设备逻辑-->
+      <div class="lab-row mt10">
+        <label>转化设备逻辑:</label>
+        <div class="ml8 conversion-rule">
+          <label class="mb4" nz-checkbox [(ngModel)]="defaultRule.device_desc.is_valid">逻辑设置(选填)<i style="color: #f09200">可鼠标上下拖动调整优先级判断顺序</i></label>
+          <ng-container *ngIf="defaultRule.device_desc.is_valid">
+            <div style="min-width: 550px;" class="conversion-rule pl20 ml20 pr8 mb8 border">
+              <ul class="item-sort-define mt8 mb8" dnd-sortable-container [sortableData]="defaultRule.device_desc.rules">
+                <li *ngFor="let item of defaultRule.device_desc.rules;let index=index;" dnd-sortable
+                    [sortableIndex]="index" [dragData]="{index:index}">
+                  <label class="mb4" *ngIf="item['key']==='referer'" nz-checkbox
+                         [(ngModel)]="item.is_active">通过来源来判断</label>
+                  <label class="mb4" *ngIf="item['key']==='url_code'" nz-checkbox
+                         [(ngModel)]="item.is_active">通过Url标记来判断</label>
+                  <label class="mb4" *ngIf="item['key']==='chat_tool'" nz-checkbox
+                         [(ngModel)]="item.is_active">通过聊天工具提供的设备</label>
+                  <div *ngIf="item.key==='url_code' && item.is_active" style="min-width: 480px"
+                       class="pl20 ml20 pt8 pr8 mt8 mb8 border">
+                    <nz-radio-group [(ngModel)]="defaultRule.device_desc.data_url[0]">
+                      <label nz-radio [nzValue]="'lp'">着陆页URL</label>
+                      <div class="pl25 mt8" *ngIf="defaultRule.device_desc.data_url[0] === 'lp'">
+                        <div class="mb8 flex">
+                          <span>包含</span>
+                          <textarea class="ml8" [(ngModel)]="defaultRule.device_desc.url_code_values_lp[0].rules"></textarea>
+                          <nz-select class="w200 ml8" [nzSize]="'small'"
+                                     [nzPlaceHolder]="'请选择'"
+                                     [(ngModel)]="defaultRule.device_desc.url_code_values_lp[0].device"
+                                     nzShowSearch>
+                            <nz-option [nzLabel]="'pc'" [nzValue]="'pc'"></nz-option>
+                            <nz-option [nzLabel]="'wap'" [nzValue]="'wap'"></nz-option>
+                          </nz-select>
+                        </div>
+                        <p>其他的属于
+                          <span *ngIf="defaultRule.device_desc.url_code_values_lp[0].device==='wap'">pc</span>
+                          <span *ngIf="defaultRule.device_desc.url_code_values_lp[0].device==='pc'">wap</span>
+                        </p>
+                        <div class="mb8 mt4">
+                          <label nz-checkbox [(ngModel)]="defaultRule.device_desc.alternateLp">着陆页URL匹配不到使用对话页URL</label>
+                        </div>
+                      </div>
+                      <div>
+                        <label nz-radio [nzValue]="'tp'">对话页URL</label>
+                        <div class="pl25 mt8" *ngIf="defaultRule.device_desc.data_url[0] === 'tp'">
+                          <div class="mb8 flex">
+                            <span>包含</span>
+                            <textarea class="ml8"
+                                      [(ngModel)]="defaultRule.device_desc.url_code_values_tp[0].rules"></textarea>
+                            <nz-select class="w200 ml8" [nzSize]="'small'"
+                                       [nzPlaceHolder]="'请选择'"
+                                       [(ngModel)]="defaultRule.device_desc.url_code_values_tp[0].device"
+                                       nzShowSearch>
+                              <nz-option [nzLabel]="'pc'" [nzValue]="'pc'"></nz-option>
+                              <nz-option [nzLabel]="'wap'" [nzValue]="'wap'"></nz-option>
+                            </nz-select>
+                          </div>
+                          <p>其他的属于
+                            <span *ngIf="defaultRule.device_desc.url_code_values_tp[0].device==='wap'">pc</span>
+                            <span *ngIf="defaultRule.device_desc.url_code_values_tp[0].device==='pc'">wap</span>
+                          </p>
+                          <div class="mb8 mt4">
+                            <label nz-checkbox [(ngModel)]="defaultRule.device_desc.alternateTP">对话页URL匹配不到使用着陆页URL</label>
+                          </div>
+                        </div>
+                      </div>
+                    </nz-radio-group>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+          <!--<i style="color: #f09200">(可鼠标上下拖动调整优先级判断顺序)</i>-->
+        </div>
+      </div>
+      <!--转化所属媒体逻辑-->
+      <div class="lab-row mt10">
+        <label>转化所属媒体逻辑:</label>
+        <div class="ml8 conversion-rule">
+          <i style="color: #f09200">(可鼠标上下拖动调整优先级判断顺序)</i>
+          <ul class="item-sort-define mt8" dnd-sortable-container [sortableData]="defaultRule.media_desc.rules">
+            <li *ngFor="let item of defaultRule.media_desc.rules;let index=index;" dnd-sortable [sortableIndex]="index"
+                [dragData]="{index:index}">
+              <label class="mb4" *ngIf="item.key==='referer'" nz-checkbox [(ngModel)]="item.is_active">通过来源页判断</label>
+              <label class="mb4" *ngIf="item.key==='url_code'" nz-checkbox
+                     [(ngModel)]="item.is_active">通过Url标记来判断</label>
+              <div class="pl8 ml20 pt8 pr8 mt8 mb8 border" *ngIf="item.key==='url_code' && item.is_active">
+                <div class="pl25 mt8" style="min-width: 780px;">
+                  <cdk-virtual-scroll-viewport [itemSize]="68" [minBufferPx]="340" [maxBufferPx]="340" [style.height]="defaultRule.media_desc.url_code_values.length*68>340?'340px':defaultRule.media_desc.url_code_values.length*68+'px'">
+                    <div class="mb8 flex"
+                      *cdkVirtualFor="let keywordItem of defaultRule.media_desc.url_code_values; let index=index">
+                      <span>包含</span>
+                      <textarea class="ml8" [(ngModel)]="keywordItem.rules"></textarea>
+                      <nz-select class="w200 ml8" [nzSize]="'small'"
+                                 [nzPlaceHolder]="'请选择媒体'"
+                                 [(ngModel)]="keywordItem.product_key"
+                                 (ngModelChange)="changeJsMediaPublisher()"
+                                 nzShowSearch>
+                        <ng-container *ngFor="let item of publisherData">
+                          <nz-option [nzLabel]="item['name']" [nzValue]="item.key"></nz-option>
+                        </ng-container>
+                      </nz-select>
+                      <i *ngIf="defaultRule.media_desc.url_code_values.length>1"
+                        nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"
+                        (click)="removeItemVirtualScroll(defaultRule.media_desc,'url_code_values', index, 'js_media')"></i>
+                      <i *ngIf="index===defaultRule.media_desc.url_code_values.length-1"
+                        nz-icon nzType="plus" nzTheme="outline" class="delete-color ml10"
+                        (click)="addItemVirtualScroll(defaultRule.media_desc,'url_code_values')"></i>
+
+                    </div>
+                  </cdk-virtual-scroll-viewport>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!--对应不到关键词逻辑-->
+      <div class="lab-row mt10">
+        <label *ngIf="menuService.currentChannelId===1">对应不到关键词逻辑:</label>
+        <label *ngIf="menuService.currentChannelId===2">对应不到创意逻辑:</label>
+        <div class="ml8 conversion-rule">
+          <nz-select class="w200" [nzSize]="'small'" [nzPlaceHolder]="'请选择'"
+                     [(ngModel)]="defaultRule.mismatched_keyword_desc.rules.miss_deal_rule">
+            <nz-option [nzLabel]="'对应不到关键词的过滤'" [nzValue]="'ignore'"></nz-option>
+            <nz-option [nzLabel]="'通过URL标识确定'" [nzValue]="'into_account'"></nz-option>
+          </nz-select>
+          <ng-container *ngIf="defaultRule.mismatched_keyword_desc.rules.miss_deal_rule === 'into_account'">
+            <div class="pl8 pr8 mt8 mb8 border">
+              <div class="pl14 mt8" style="min-width: 800px;">
+                <cdk-virtual-scroll-viewport [itemSize]="105" [minBufferPx]="420" [maxBufferPx]="420" [style.height]="defaultRule.mismatched_keyword_desc.rules.custom_miss_values.length*105>420?'420px':defaultRule.mismatched_keyword_desc.rules.custom_miss_values.length*105+'px'">
+                   <div class="mb8 pb8" style="height: 105px;"
+                     *cdkVirtualFor="let keywordItem of defaultRule.mismatched_keyword_desc.rules.custom_miss_values; let index=index">
+                    <div class="flex">
+                     <span>{{index+1}}，</span>
+                     <span>媒体</span>
+                     <nz-select class="w100 ml4" [nzSize]="'small'" [(ngModel)]="keywordItem.product_key"
+                                (ngModelChange)="changeKeywordPublisher(keywordItem, keywordItem.chan_pub_id)">
+                       <ng-container *ngFor="let item of jsKeywordPublisher">
+                         <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+                       </ng-container>
+                     </nz-select>
+                     <span class="ml4">包含</span>
+                     <textarea class="ml4" style="width: 145px" [(ngModel)]="keywordItem.rules"></textarea>
+                     <span ngClass="ml4">且包含</span>
+                     <textarea class="ml4" style="width: 145px" [(ngModel)]="keywordItem.rules2"></textarea>
+                     <span ngClass="ml4">且不包含</span>
+                     <textarea class="ml4" style="width: 145px" [(ngModel)]="keywordItem.rules10"></textarea>
+                     <i *ngIf="defaultRule.mismatched_keyword_desc.rules.custom_miss_values.length>1"
+                       nz-icon nzType="close" nzTheme="outline" class="delete-color ml8 btn"
+                       (click)="removeItemVirtualScroll(defaultRule.mismatched_keyword_desc.rules, 'custom_miss_values',index)"></i>
+                     <i nz-icon nzType="plus" nzTheme="outline" class="delete-color ml10 btn"
+                          (click)="addItemVirtualScroll(defaultRule.mismatched_keyword_desc.rules,'custom_miss_values',index)"></i>
+                   </div>
+                   <div class="mt8 pl20">
+                     <span>归属账户</span>
+                     <nz-select class="ml4" style="width: 520px;" [nzSize]="'small'"
+                                [nzPlaceHolder]="'请选择'"
+                                [(ngModel)]="keywordItem.chan_pub_id"
+                                nzShowSearch>
+                       <ng-container *ngFor="let item of accountObj['publisher_id_' + keywordItem.product_key]">
+                         <nz-option [nzLabel]="item.pub_account_name" [nzValue]="item.chan_pub_id"></nz-option>
+                       </ng-container>
+                     </nz-select>
+                   </div>
+                  </div>
+                </cdk-virtual-scroll-viewport>
+              </div>
+            </div>
+            <div class="mb4">
+              <label nz-checkbox [(ngModel)]="defaultRule.mismatched_keyword_desc.rules.into_account">归到默认户处理</label>
+              <div class="mt8 pl20 pt10 pb10 border" *ngIf="defaultRule.mismatched_keyword_desc.rules.into_account">
+                <cdk-virtual-scroll-viewport [itemSize]="27"  [minBufferPx]="270" [maxBufferPx]="270" [style.height]="defaultRule.mismatched_keyword_desc.rules.default_belong_values.length*27>270?'270px':defaultRule.mismatched_keyword_desc.rules.default_belong_values.length*27+'px'">
+                  <div class="mb8" *cdkVirtualFor="let defaultBelongValue of defaultRule.mismatched_keyword_desc.rules.default_belong_values; let index=index">
+                    <nz-select class="ml8" style="width: 180px;" [nzSize]="'small'"
+                             [nzPlaceHolder]="'选择媒体'"
+                             [(ngModel)]="defaultBelongValue.product_key"
+                             (ngModelChange)="changeDefaultBelongValueSlt(defaultBelongValue)"
+                             nzShowSearch>
+                    <ng-container *ngFor="let publish of publishItems">
+                      <nz-option [nzLabel]="publish.name" [nzValue]="publish.key" [nzDisabled]="publish.isSelected  && defaultBelongValue.publisher_id !== publish.key"></nz-option>
+                    </ng-container>
+                    </nz-select>
+                    <nz-select class="ml8" style="width: 340px;" [nzSize]="'small'"
+                               [nzPlaceHolder]="accountObj['publisher_id_' + defaultBelongValue.product_key] && accountObj['publisher_id_' + defaultBelongValue.product_key].length?'请选择账户':'无可用数据'"
+                               [(ngModel)]="defaultBelongValue.chan_pub_id"
+                               (ngModelChange)="changeAccount(accountObj['publisher_id_' + defaultBelongValue.product_key], 'publisher_id_' + defaultBelongValue.product_key, defaultBelongValue, defaultBelongValue.chan_pub_id)"
+                               nzShowSearch>
+                      <ng-container *ngFor="let item of accountObj['publisher_id_' + defaultBelongValue.product_key] ">
+                        <nz-option [nzLabel]="item.pub_account_name" [nzValue]="item.chan_pub_id"></nz-option>
+                      </ng-container>
+                    </nz-select>
+                    <nz-select class="ml8" style="width: 180px;" [nzSize]="'small'"
+                               [nzPlaceHolder]="'选择计划'"
+                               [(ngModel)]="defaultBelongValue.campaign_id"
+                               *ngIf="defaultBelongValue.virtual_account !== 1"
+                               nzShowSearch>
+                      <ng-container *ngFor="let compain of compainObj['publisher_id_' + defaultBelongValue.product_key] ">
+                        <nz-option [nzLabel]="compain.pub_campaign_name" [nzValue]="compain.pub_campaign_id"></nz-option>
+                      </ng-container>
+                    </nz-select>
+                    <i *ngIf="defaultRule.mismatched_keyword_desc.rules.default_belong_values.length>1"
+                       nz-icon nzType="close" nzTheme="outline" class="delete-color ml8 btn"
+                       (click)="removeItemVirtualScroll(defaultRule.mismatched_keyword_desc.rules,'default_belong_values', index, 'default_belong_values')"></i>
+                    <i *ngIf="index===defaultRule.mismatched_keyword_desc.rules.default_belong_values.length-1"
+                       nz-icon nzType="plus" nzTheme="outline" class="delete-color ml10 btn"
+                       (click)="addItemVirtualScroll(defaultRule.mismatched_keyword_desc.rules, 'default_belong_values')"></i>
+                  </div>
+                </cdk-virtual-scroll-viewport>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!--业务单元转化逻辑-->
+      <div class="lab-row mt10">
+        <label>业务单元转化逻辑:</label>
+        <div class="ml8">
+          <label class="mb4" nz-checkbox [(ngModel)]="defaultRule.conver_biz_desc.is_valid">逻辑设置(选填)<i style="color: #f09200">可鼠标上下拖动调整优先级判断顺序</i></label>
+          <ng-container *ngIf="defaultRule.conver_biz_desc.is_valid">
+            <div class="conversion-rule pl20 ml20 pr8 mb8 border">
+              <!--<p>如果Url无法判断，则按照如下方式按照优先级处理 <i style="color: #f09200">(可鼠标上下拖动调整优先级判断顺序)</i></p>-->
+              <div>
+                <ul class="item-sort-define mt8" dnd-sortable-container
+                    [sortableData]="defaultRule.conver_biz_desc.rules">
+                  <li *ngFor="let item of defaultRule.conver_biz_desc.rules;let index=index;" dnd-sortable
+                      [sortableIndex]="index" [dragData]="{index:index}">
+                    <label class="mb4" nz-checkbox [(ngModel)]="item.is_active">{{unitName[item['key']]}}</label>
+                    <div *ngIf="item['key']==='url_code'&& item.is_active" style="min-width: 480px"
+                         class="pl20 ml20 pt8 pr8 mb8 border">
+                      <nz-radio-group [(ngModel)]="defaultRule.conver_biz_desc.data_url[0]">
+                        <div>
+                          <label nz-radio [nzValue]="'lp'">着陆页URL</label>
+                          <div class="ml20" *ngIf="defaultRule.conver_biz_desc.data_url[0]==='lp'">
+                            <div class="mb8 mt4">
+                              <label nz-checkbox
+                                     [(ngModel)]="defaultRule.conver_biz_desc.alternateLp">着陆页URL匹配不到使用对话页URL</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <label nz-radio [nzValue]="'tp'">对话页URL</label>
+                          <div class="pl25 mb8" *ngIf="defaultRule.conver_biz_desc.data_url[0]==='tp'">
+                            <label nz-checkbox [(ngModel)]="defaultRule.conver_biz_desc.alternateTP">对话页URL匹配不到使用着陆页URL</label>
+                          </div>
+                        </div>
+                      </nz-radio-group>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </ng-container>
+          <div>
+          </div>
+        </div>
+      </div>
+      <!-- 转化描述 -->
+      <div class="lab-row mt10">
+        <label>转化描述:</label>
+        <div class="conversion-logic ml8" >
+          <ng-container *ngIf="conversionDescList.length">
+            <div *ngFor="let data of conversionDescForm;let index=index" class="conversion-logic-item mb8">
+              <ng-container *ngIf="conversionDescForm.length">
+                <nz-select class="w100" [nzSize]="'small'" [nzPlaceHolder]="'请选择'" [(ngModel)]="data.conversion_desc_key"  (ngModelChange)="onContentTypeChange()">
+                  <nz-option *ngFor="let desc of conversionDescList" [nzLabel]="desc.name" [nzValue]="desc.key" [nzDisabled]="desc.disabled"></nz-option>
+                </nz-select>
+                <div class="opBtn-logic">
+                  <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"
+                     (click)="deleteDesc(index)"></i>
+                </div>
+              </ng-container>
+            </div>
+            <button class="add" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addDesc()">
+              <span>继续添加</span>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="!conversionDescList.length">
+            <span style="color:#0a223a">转化描述未设置</span>
+          </ng-container>
+        </div>
+      </div>
+      <!--去重过滤逻辑-->
+      <div class="lab-row mt10">
+        <label>去重过滤逻辑:</label>
+        <nz-radio-group [(ngModel)]="defaultRule.remove_duplication_desc.rules" class="ml8">
+          <label nz-radio [nzValue]="'no_distinct'">
+            <span>无去重</span>
+          </label>
+          <label nz-radio [nzValue]="'ip'">
+            <span>IP</span>
+          </label>
+          <label nz-radio [nzValue]="'guest_id'">
+            <span>访客身份</span>
+          </label>
+        </nz-radio-group>
+      </div>
+    </div>
+  </ng-container>
+
+  <!--{{productInfo['name']}}接口参数-->
+  <div class="lab-row mt10"
+       *ngIf="defaultConversion.conver_source_type==2 && defaultConversion.cid && im_push_type === 1">
+    <label>{{productInfo['name']}}接口参数:</label>
+    <div class="conversion-wrap ml8">
+      <div class="conversion-row">
+        <span>请把下面的URL和Token粘贴到</span><a href="http://kf.53kf.com/?controller=login"
+                                         target="_blank">53KF</a><span>后台中</span>
+      </div>
+      <div class="conversion-row mt10">
+        <span>URL(服务地址):</span>
+        <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="copyData(jzlSetting.app_url)">
+          <span>复制URL</span>
+        </button>
+      </div>
+      <div class="conversion-row mt10">
+        <textarea nz-input [(ngModel)]="jzlSetting['app_url']" rows="2" readonly></textarea>
+      </div>
+      <div class="conversion-row mt10">
+        <span>Token(令牌):</span>
+        <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="copyData(jzlSetting.app_token)">
+          <span>复制Token</span>
+        </button>
+      </div>
+      <div class="conversion-row mt10">
+        <input nz-input
+               [nzSize]="'small'"
+               type="text"
+               placeholder="请输入"
+               [(ngModel)]="jzlSetting.app_token"
+               readonly>
+
+      </div>
+    </div>
+  </div>
+  <!--53KF接口参数-->
+  <div class="lab-row mt10"
+       *ngIf="defaultConversion.conver_source_type==2 && defaultConversion.cid && im_push_type === 1">
+    <label>53KF接口参数</label>
+    <div class="conversion-wrap ml8">
+      <div class="conversion-row">
+        <span>请登陆</span><a href="http://kf.53kf.com/?controller=login" target="_blank">53KF</a><span>后台获取</span>
+      </div>
+      <div class="conversion-api">
+        <div class="api-row" *ngFor="let apiSetting of chatApi53.apiSettings;let i = index;">
+          <label class="api-setting-text">APPID:</label>
+          <div class="w80 ml8" style="display: inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="apiSetting.app_id"
+                   [disabled]="apiSetting.valid===true"
+                   placeholder="请输入">
+
+          </div>
+          <label class="api-setting-text">APPSECRET:</label>
+          <div class="w80 ml8" style="display: inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="apiSetting.app_secret"
+                   [disabled]="apiSetting.valid===true"
+                   placeholder="请输入">
+
+          </div>
+          <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'"
+                  (click)="checkApiSettingValid(apiSetting)" [disabled]="apiSetting.valid===true">
+            <span>验证</span>
+          </button>
+          <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addApiSetting()">
+            <span>添加</span>
+          </button>
+          <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  (click)="removeApiSetting(i)"
+             *ngIf="chatApi53.apiSettings.length>1 && apiSetting.valid===false"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!--快商通接口-->
+  <div class="lab-row mt10"
+       *ngIf="defaultConversion.conver_source_type==2 && defaultConversion.cid && im_push_type === 12">
+    <label>快商通接口授权:</label>
+    <div class="conversion-wrap ml8" style="position: relative">
+      <div class="conversion-row">
+        <button class="add mb8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addAuthor()">
+          <i nz-icon nzType="plus" nzTheme="outline"></i><span>新增授权</span>
+        </button>
+      </div>
+      <label *ngIf="kstOauthList.length" style=" position: absolute;left: -60px;">授权列表:</label>
+      <div class="kst" *ngIf="kstOauthList.length">
+        <div class="api-row" *ngFor="let apiSetting of kstOauthList;let i = index;">
+          <label class="api-setting-text">公司ID:</label>
+          <div class="w ml8" style="display: inline-block">
+            <span>{{apiSetting.company_id}}</span>
+          </div>
+          <label class="api-setting-text ml16">公司名称:</label>
+          <div class="ml8" style="display: inline-block">
+            <span>{{apiSetting.company_name}}</span>
+          </div>
+          <div style="height: 20px;margin-top: 8px;">
+            <label class="api-setting-text pull-left">站点信息:</label>
+            <div class="ml8 siteContain pull-left">
+              <div class="itemSelect">
+                <div *ngIf="apiSetting['selected_site_name'][0] === '无可用列表'">
+                  <div class="item-desc"><a title="{{apiSetting['selected_site_name'].join('、')}}">{{apiSetting['selected_site_name'].join('、')}}</a>
+                  </div>
+                  <span class="item-arrow"><i nz-icon nzType="down" nzTheme="outline"></i></span>
+                </div>
+                <div *ngIf="apiSetting['selected_site_name'][0] !== '无可用列表'" (click)="titleClick(apiSetting, i)">
+                  <div class="item-desc"><a title="{{apiSetting['selected_site_name'].join('、')}}">{{apiSetting['selected_site_name'].join('、')}}</a>
+                  </div>
+                  <span class="item-arrow"><i nz-icon nzType="down" nzTheme="outline"></i></span>
+                </div>
+                <div class="siteCheckbox" *ngIf="apiSetting['is_show']">
+                  <div class="siteCheckboxBody">
+                    <nz-checkbox-group [(ngModel)]="apiSetting['site_list']"></nz-checkbox-group>
+                    <div class="mt20">
+                      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                              (click)="siteCancel(apiSetting)">
+                        <span>取消</span>
+                      </button>
+                      <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submitting" [nzSize]="'small'"
+                              (click)="siteSave(apiSetting)">
+                        <span>确认</span>
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!--易聊通接口-->
+  <div class="lab-row mt10"
+       *ngIf="defaultConversion.conver_source_type==2 && defaultConversion.cid && im_push_type === 5">
+    <label>易聊通接口:</label>
+    <div class="conversion-wrap ml8">
+      <div class="conversion-api">
+        <div class="api-row-ylt" style="min-height: 28px;display: flex"
+             *ngFor="let apiSetting of yltApiList.apiSettings;let i = index;"
+             (click)="uploadChange(i)" [ngClass]="{'h20': !apiSetting['fileList'].length}">
+          <div>
+            <label class="api-setting-text" style="float: left">认证证书:</label>
+            <div class="ml8" style="display: inline-block">
+              <nz-upload class="pull-left"
+                         [nzCustomRequest]="customReq"
+                         [(nzFileList)]="apiSetting['fileList']"
+                         [nzBeforeUpload]="beforeUpload"
+                         [nzSize]="'small'"
+                         [nzLimit]=1
+                         [nzName]="'files'">
+                <button nz-button style="height: 20px">
+                  <i nz-icon nzType="upload" nzTheme="outline"  ></i><span
+                  *ngIf="!apiSetting.id">上传文件</span><span *ngIf="apiSetting.id">重新上传文件</span>
+                </button>
+              </nz-upload>
+
+            </div>
+          </div>
+          <div class="ml20">
+            <label class="api-setting-text">公司ID:</label>
+            <div class="w80 ml8" style="display: inline-block">
+              <input nz-input
+                     [nzSize]="'small'"
+                     type="text"
+                     [(ngModel)]="apiSetting.comp_id"
+                     placeholder="请输入">
+
+            </div>
+          </div>
+          <div class="ml20">
+            <label class="api-setting-text">appID:</label>
+            <div class="w80 ml8" style="display: inline-block">
+              <input nz-input
+                     [nzSize]="'small'"
+                     type="text"
+                     [(ngModel)]="apiSetting.app_id"
+                     placeholder="请输入">
+
+            </div>
+          </div>
+          <div class="ml20">
+            <label class="api-setting-text">appSecret:</label>
+            <div class="w80 ml8" style="display: inline-block">
+              <input nz-input
+                     [nzSize]="'small'"
+                     type="text"
+                     [(ngModel)]="apiSetting.app_secret"
+                     placeholder="请输入">
+
+            </div>
+            <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'"
+                    (click)="checkYLTApiSettingValid(apiSetting)">
+              <span>保存</span>
+            </button>
+            <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addYLTApiSetting()">
+              <span>添加</span>
+            </button>
+            <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  (click)="removeApiSetting(i, yltApiList)"
+               *ngIf="yltApiList.apiSettings.length>1 && !apiSetting.id"></i>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!--七陌接口-->
+  <div class="lab-row mt10"
+       *ngIf="defaultConversion.conver_source_type==2 && defaultConversion.cid && im_push_type === 22">
+    <label>容联七陌接口:</label>
+    <div class="conversion-wrap ml8">
+      <div class="conversion-api">
+        <div class="api-row" *ngFor="let apiSetting of moorApiList.apiSettings;let i = index;">
+          <label class="api-setting-text">帐户ID:</label>
+          <div class="w100 ml8" style="display: inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="apiSetting.account_id"
+                   placeholder="请输入">
+
+          </div>
+          <label class="api-setting-text">APISECRET:</label>
+          <div class="w200 ml8" style="display: inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="apiSetting.api_secret"
+                   placeholder="请输入">
+
+          </div>
+          <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'"
+                  (click)="checkMoorApiSettingValid(apiSetting)">
+            <span>保存</span>
+          </button>
+          <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addMoorApiSetting()">
+            <span>添加</span>
+          </button>
+          <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  (click)="removeApiSetting(i, moorApiList)"
+             *ngIf="moorApiList.apiSettings.length>1 && !apiSetting.id"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+   <!--cep容联七陌聊天接口-->
+   <div class="lab-row mt10"
+   *ngIf="defaultConversion.conver_source_type==2 && defaultConversion.cid && im_push_type === 23">
+<label>cep容联七陌聊天接口:</label>
+<div class="conversion-wrap ml8">
+  <div class="conversion-api">
+    <div class="api-row" *ngFor="let apiSetting of cepMoorApiList.apiSettings;let i = index;">
+      <label class="api-setting-text">app_key:</label>
+      <div class="w100 ml8" style="display: inline-block">
+        <input nz-input
+               [nzSize]="'small'"
+               type="text"
+               [(ngModel)]="apiSetting.app_key"
+               placeholder="请输入">
+
+      </div>
+      <label class="api-setting-text"> secret_key:</label>
+      <div class="w200 ml8" style="display: inline-block">
+        <input nz-input
+               [nzSize]="'small'"
+               type="text"
+               [(ngModel)]="apiSetting.secret_key"
+               placeholder="请输入">
+
+      </div>
+      <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'"
+              (click)="checkCepMoorApiSettingValid(apiSetting)">
+        <span>保存</span>
+      </button>
+      <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addCepMoorApiSetting()">
+        <span>添加</span>
+      </button>
+      <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  (click)="removeApiSetting(i, cepMoorApiList)"
+         *ngIf="cepMoorApiList.apiSettings.length>1 && !apiSetting.id"></i>
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <!--商务通接口-->
+  <!--  <div class="lab-row mt10" *ngIf="defaultConversion.conver_source_type==2 && defaultConversion.cid && im_push_type === 4">
+      <label>商务通接口:</label>
+      <div class="conversion-wrap ml8" style="position: relative">
+        <div class="yiliaotong-content">
+          <div class="lab-row mb8">
+            <label>站点ID:</label>
+            <input nz-input
+                   class="w200 ml8"
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="defaultConversion.conver_name"
+                   placeholder="输入">
+          </div>
+          <div class="lab-row mb8">
+            <label>登录名:</label>
+            <input nz-input
+                   class="w200 ml8"
+                   [nzSize]="'small'"
+                   type="text"
+                   disabled="{{conversionDataId>0}}"
+                   [(ngModel)]="defaultConversion.conver_name"
+                   placeholder="输入">
+          </div>
+          <div class="lab-row mb8">
+            <label>密码:</label>
+            <input nz-input
+                   class="w200 ml8"
+                   [nzSize]="'small'"
+                   type="text"
+                   disabled="{{conversionDataId>0}}"
+                   [(ngModel)]="defaultConversion.conver_name"
+                   placeholder="输入">
+          </div>
+          <div class="mt20 text-right">
+            <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submitting" [nzSize]="'small'" (click)="doVerificationShangWuTong()">
+              <span>完成</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+   -->
+  <div class="lab-row mt10"
+       *ngIf="defaultConversion.conver_source_type==2 && defaultConversion.cid && im_push_type === 4">
+    <label>商务通接口:</label>
+    <div class="conversion-wrap ml8">
+      <div class="conversion-api">
+        <div class="api-row" *ngFor="let apiSetting of swtApiList.apiSettings;let i = index;">
+          <label class="api-setting-text">站点ID:</label>
+          <div class="w80 ml8" style="display: inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="apiSetting.site_id"
+                   placeholder="请输入">
+
+          </div>
+          <label class="api-setting-text">登录名:</label>
+          <div class="w80 ml8" style="display: inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="apiSetting.user_name"
+                   placeholder="请输入">
+
+          </div>
+          <label class="api-setting-text">密码:</label>
+          <div class="w80 ml8" style="display: inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="password"
+                   [(ngModel)]="apiSetting.password"
+                   placeholder="请输入">
+
+          </div>
+          <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'"
+                  (click)="checkKSTApiSettingValid(apiSetting)">
+            <span>保存</span>
+          </button>
+          <button class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addKSTApiSetting()">
+            <span>添加</span>
+          </button>
+          <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  (click)="removeApiSetting(i, swtApiList)"
+             *ngIf="swtApiList.apiSettings.length>1 && !apiSetting.id"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!--美洽接口-->
+  <div class="lab-row mt10"
+       *ngIf="defaultConversion.conver_source_type==2 && defaultConversion.cid && im_push_type === 14">
+    <label>美洽接口参数</label>
+    <div class="conversion-wrap ml8">
+      <!--<div class="conversion-row">-->
+      <!--<span>请登陆</span><a href="http://kf.53kf.com/?controller=login" target="_blank">53KF</a><span>后台获取</span>-->
+      <!--</div>-->
+      <div class="conversion-api">
+        <div class="api-row" *ngFor="let apiSetting of mqApiList.apiSettings;let i = index;">
+          <label class="api-setting-text">enterprise_id:</label>
+          <div class="w80 ml4" style="display: inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="apiSetting.enterprise_id"
+                   [disabled]="apiSetting.valid===true"
+                   placeholder="请输入">
+
+          </div>
+          <label class="api-setting-text">key:</label>
+          <div class="ml4" style="display: inline-block">
+            <nz-select class="w90" [nzSize]="'small'" [(ngModel)]="apiSetting.key"
+                       [nzDisabled]="apiSetting.valid">
+              <nz-option [nzLabel]="'conversations'" [nzValue]="'conversations'"></nz-option>
+              <nz-option [nzLabel]="'tickets'" [nzValue]="'tickets'"></nz-option>
+            </nz-select>
+          </div>
+          <label class="api-setting-text">app_id:</label>
+          <div class="w80 ml4" style="display: inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="apiSetting.app_id"
+                   [disabled]="apiSetting.valid===true"
+                   placeholder="请输入">
+
+          </div>
+          <label class="api-setting-text">sign:</label>
+          <div class="w80 ml4" style="display: inline-block">
+            <input nz-input
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="apiSetting.sign"
+                   [disabled]="apiSetting.valid===true"
+                   placeholder="请输入">
+
+          </div>
+          <button *ngIf="!apiSetting.valid" class="ml8 add" nz-button [nzType]="'default'" [nzSize]="'small'"
+                  (click)="sureMqApiSettingValid(apiSetting)">
+            <span>确认</span>
+          </button>
+          <i *ngIf="i===mqApiList.apiSettings.length-1" class="ml4 delete-color" nz-icon nzType="plus" nzTheme="outline" (click)="addMqApiSetting()"></i>
+          <i class="ml8 delete-color" nz-icon nzType="close" nzTheme="outline" (click)="removeMqApiSetting(i,apiSetting)"></i>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<!--  <div class="lab-row mt10" *ngIf="defaultConversion.conver_source_type === 2 && im_push_type !== 1">-->
+<!--    <p style="margin-left: 106px;">对接详细配置及转换设置请联系{{productInfo['name']}}工作人员，联系电话400-605-1902。</p>-->
+<!--  </div>-->
+  <div class="ml35 mb20">
+    <div class="lab-row mt10" *ngIf="defaultConversion.conver_source_type === 1" style="line-height: 14px;">
+      <i nz-icon nzType="question-circle" nzTheme="outline" class="ml8"  style="color: #f09200;"></i>
+      <span style="color: #f09200">您将使用{{productInfo['name']}}标准格式手工上传的方式来对接转化数据。</span>
+    </div>
+    <div class="lab-row mt10" *ngIf="defaultConversion.conver_source_type === 2" style="line-height: 14px;">
+      <i nz-icon nzType="question-circle" nzTheme="outline" class="ml8"  style="color: #f09200;"></i>
+      <span style="color: #f09200">您将使用第三方IM软件来对接转化数据。</span>
+    </div>
+<!--    <div class="lab-row mt10" *ngIf="defaultConversion.conver_source_type === 3" style="line-height: 14px;">-->
+<!--      <i nz-icon nzType="question-circle" nzTheme="outline" class="ml8"  style="color: #f09200;"></i>-->
+<!--      <span style="color: #f09200">您将使用{{productInfo['name']}}跟踪参数来对接转化数据，请联系{{productInfo['name']}}工作人员来设置跟踪参数，联系电话400-605-1902。</span>-->
+<!--    </div>-->
+  </div>
+
+
+</div>
+<div class="button-controller">
+  <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+    <span>取消</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submitting" [nzSize]="'default'" (click)="doSave()">
+    <span>完成</span>
+  </button>
+</div>

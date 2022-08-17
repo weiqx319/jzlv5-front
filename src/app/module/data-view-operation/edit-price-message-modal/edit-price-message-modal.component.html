@@ -1,0 +1,10 @@
+<div class="edit-price-container">
+  <h3 *ngIf="editData.edit_type === 'single'">确认将关键词出价修改为 {{editData.data['value']}} 元？</h3>
+  <h3 *ngIf="editData.edit_type === 'batch' && editData.data['modify_type'] === 1">确认将关键词出价修改为 {{editData.data['value']}} 元？</h3>
+  <h3 *ngIf="editData.edit_type === 'batch' && editData.data['modify_type'] === 2">确认将关键词出价 <span *ngIf="editData.data['action'] === 1">提高</span> <span *ngIf="editData.data['action'] === 2">降低</span> {{editData.data['value']}} 元？</h3>
+  <h3 *ngIf="editData.edit_type === 'batch' && editData.data['modify_type'] === 3">确认将关键词出价 <span *ngIf="editData.data['action'] === 1">提高</span> <span *ngIf="editData.data['action'] === 2">降低</span> {{editData.data['value']}}%？</h3>
+  <div class="edit-price-footer mt30">
+    <button class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">取消</button>
+    <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'"  (click)="sure()">确认</button>
+  </div>
+</div>

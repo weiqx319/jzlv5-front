@@ -1,0 +1,243 @@
+<div >
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="manage-header-left">
+      <a class="mr8 back-button-outline" nz-button [nzType]="'default'" [nzSize]="'default'" [routerLink]="['../']">
+        <i nz-icon nzType="left" nzTheme="outline"></i><span>返回管家列表</span>
+      </a>
+      <a class="mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addAccountKeeperChildAccount()">
+        <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加子帐户</span>
+      </a>
+      <ng-container *ngIf="canBatchGrant">
+        <a
+          nz-button [nzType]="'default'" [nzSize]="'default'"
+          class="manage-add mr8"
+          nz-popover
+          nzPopoverTitle="授权到广告主、用户"
+          [(nzPopoverVisible)]="grantEditParam.showEdit"
+          nzPopoverTrigger="click"
+          [nzPopoverContent]="grantTpl"
+          nzPopoverPlacement="bottom"
+          (click)="grantChild()"
+        >批量授权</a>
+      </ng-container>
+      <ng-container *ngIf="!canBatchGrant">
+        <a
+          nz-button [nzType]="'default'" [nzSize]="'default'"
+          class="mr8 disabled-status"
+        >批量授权</a>
+      </ng-container>
+      <ng-container *ngIf="canBatchBind">
+        <a class="mr8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="bindChild()">
+          <span>批量关联</span>
+        </a>
+      </ng-container>
+      <ng-container *ngIf="!canBatchBind">
+        <a class="mr8 disabled-status" nz-button [nzType]="'default'" [nzSize]="'default'">
+          <span>批量关联</span>
+        </a>
+      </ng-container>
+      <ng-container *ngIf="canBatchUnbind">
+      <a class="mr8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="unbindChild()">
+        <span>批量取消关联</span>
+      </a>
+      </ng-container>
+      <ng-container *ngIf="!canBatchUnbind">
+      <a class="mr8 disabled-status" nz-button [nzType]="'default'" [nzSize]="'default'" >
+        <span>批量取消关联</span>
+      </a>
+      </ng-container>
+      <ng-container *ngIf="filter_result_array.length>0">
+        <div class="inline-block" style="vertical-align: middle;">
+          <div class="filter-trash pull-left" *ngIf="filter_result_array.length>1" (click)="clearFilter()">
+            <i nz-icon nzType="delete" nzTheme="outline"></i>
+          </div>
+          <div class="filter-desc pull-left">
+            <span *ngFor="let filter of filter_result_array;let i = index;">
+              {{filter.name}}{{filter.op}}{{filter.value}}
+              <span class="filter-delete ml8" (click)="deleteFilter(i)"><i nz-icon nzType="close" nzTheme="outline"></i></span>
+              <span *ngIf="i < filter_result_array.length-1">；</span>
+            </span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="manage-table manage-no-result-table">
+      <nz-table #nzTable
+                nzShowSizeChanger
+                [nzPageSizeOptions]="[30,50,100,500]"
+                [nzSize]="'default'"
+                [nzData]="apiData"
+                [nzFrontPagination]="false"
+                [nzShowPagination]="false"
+                [(nzPageSize)]="pageSize"
+                [(nzPageIndex)]="currentPage"
+                (nzPageIndexChange)="refreshData()"
+                (nzPageSizeChange)="refreshData(true)"
+                [nzTotal]="total"
+                [nzLoading]="loading"
+                [nzShowTotal]="totalItemTemplate"
+                [nzScroll]="{ x: '1050px', y: noResultHeight+'px' }">
+        <thead>
+        <tr>
+          <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll($event)">
+          <th [nzWidth]="'200px'">
+            <span>账户名称</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'child_account_name',name:'账户名称',type:'multiValue'}" [(filterResult)]="filterResult['child_account_name']" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>媒体</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'publisher_id',name:'媒体',type:'singleList'}" [(filterResult)]="filterResult['publisher_id']" [filterOption]="filterPublisherOption" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>所属广告主</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>所属用户</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>帐户配额</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>状态</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'new_status',name:'状态',type:'singleList'}" [(filterResult)]="filterResult['new_status']" [filterOption]="filterChildAccountStatusOption" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>操作</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of apiData">
+          <td  nzShowCheckbox [nzDisabled]="data.disabled" [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)">
+          </td>
+          <td>
+            {{data.child_account_name}}
+          </td>
+          <td>{{publisherTypeRelation['publisher_id_'+data.publisher_id]}}</td>
+          <td>{{data.ad_name}}</td>
+          <td>{{data.user_name}}</td>
+          <td>{{data.quota_remain}}</td>
+
+
+          <td>{{newStatusMap['status_'+data.new_status]}}</td>
+          <td>
+            <!-- 关联是关联到九枝兰 -->
+            <ng-container *ngIf="data.new_status==4">
+              <a (click)="unbindChild(data)">取消关联</a>
+            </ng-container>
+            <ng-container *ngIf="data.new_status==3">
+              <a (click)="bindChild(data)">关联已授权帐户</a>
+            </ng-container>
+
+            <!-- 取消授权 是 从九枝兰把帐户删除 -->
+            <ng-container *ngIf="data.new_status==2">
+              <a
+                class="manage-add mr8"
+                nz-popover
+                nzPopoverTitle="授权到广告主、用户"
+                [(nzPopoverVisible)]="data.showEdit"
+                nzPopoverTrigger="click"
+                [nzPopoverContent]="grantRowTpl"
+                nzPopoverPlacement="bottom"
+                (click)="grantChild(data)"
+              >授权</a>
+
+
+              <ng-template #grantRowTpl>
+                <div class="pop-grant">
+                  <div class="lab-row mt10" >
+                    <label class="inline-block" style="width: 60px;text-align: right">广告主：</label>
+                    <nz-select  class="w150" [nzSize]="'small'" [nzPlaceHolder]="'请选择广告主'" [(ngModel)]="grantEditParam.cid">
+                      <nz-option
+                        *ngFor="let column of advertiserList"
+                        [nzDisabled]="column.disabled"
+                        [nzLabel]="column.name"
+                        [nzValue]="column.key">
+                      </nz-option>
+                    </nz-select>
+                  </div>
+                  <div class="lab-row mt10" >
+                    <label class="inline-block" style="width: 60px;text-align: right">用户：</label>
+                    <nz-select  class="w150" [nzSize]="'small'" [nzPlaceHolder]="'请选择用户'" [(ngModel)]="grantEditParam.get_user_id">
+                      <nz-option
+                        *ngFor="let column of optimizerManagerList"
+                        [nzDisabled]="column.disabled"
+                        [nzLabel]="column.name"
+                        [nzValue]="column.id">
+                      </nz-option>
+                    </nz-select>
+                  </div>
+                  <div class="text-right mt14">
+                    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel(data)">
+                      <span>取消</span>
+                    </button>
+                    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="ok()">
+                      <span>确定</span>
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+
+            </ng-container>
+            <ng-container *ngIf="data.new_status<2">
+              <a (click)="delChild(data)">删除</a>
+            </ng-container>
+
+          </td>
+        </tr>
+        <tr *ngIf="apiData.length===0">
+          <td #noResultTd [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+            <div class="table-no-result">
+              <div class="table-no-result-content">
+                <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addAccountKeeperChildAccount()">
+                 <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加子帐户</span>
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #grantTpl>
+  <div class="pop-grant">
+    <div class="lab-row mt10" >
+      <label class="inline-block" style="width: 60px;text-align: right">广告主：</label>
+      <nz-select  class="w150" [nzSize]="'small'" [nzPlaceHolder]="'请选择广告主'" [(ngModel)]="grantEditParam.cid">
+        <nz-option
+          *ngFor="let column of advertiserList"
+          [nzDisabled]="column.disabled"
+          [nzLabel]="column.name"
+          [nzValue]="column.key">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="lab-row mt10" >
+      <label class="inline-block" style="width: 60px;text-align: right">用户：</label>
+      <nz-select  class="w150" [nzSize]="'small'" [nzPlaceHolder]="'请选择用户'" [(ngModel)]="grantEditParam.get_user_id">
+        <nz-option
+          *ngFor="let column of optimizerManagerList"
+          [nzDisabled]="column.disabled"
+          [nzLabel]="column.name"
+          [nzValue]="column.id">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="text-right mt14">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="ok()">
+        <span>确定</span>
+      </button>
+    </div>
+  </div>
+</ng-template>
+

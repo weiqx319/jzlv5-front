@@ -1,0 +1,49 @@
+.view-chart {
+  background: #fff;
+}
+.view-chart-body {
+  position: relative;
+  .view-chart-selection {
+    position: absolute;
+    right: 20px;
+    top: -24px;
+  }
+}
+
+.fll {
+  float: left;
+}
+.view-chart-title {
+  position: relative;
+  button {
+    border-color: #e4e4e4;
+    &.chart-active {
+      background-color: #fff;
+    }
+  }
+
+  .view-chart-actions {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    .view-chart-close {
+      right: -20px;
+      width: 20px;
+      padding: 0 !important;
+    }
+  }
+}
+
+.white {
+  background: #fff !important;
+}
+.font12 {
+  font-size: 12px;
+}
+.tips {
+  position: absolute;
+  top: 83px;
+  text-align: center;
+  width: 100%;
+  font-size: 12px;
+}

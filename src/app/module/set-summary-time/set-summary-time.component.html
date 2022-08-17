@@ -1,0 +1,73 @@
+<div class="sub-company-content">
+  <div nz-form class="sub-company-form">
+    <div class="upload-item">
+      <div class="upload-title">选择要进行汇总的时间段:</div>
+      <div *ngIf="newSummaryTimeAttr[0].data.startDate" class="uploadDiv" style="margin-left: 246px;">
+        <a (click)="clearSet()">清除时段设置</a>
+      </div>
+    </div>
+    <div class="upload-item">
+      <div class="uploadDiv">
+        <div [ngClass]="{'mt8': index!==0}" *ngFor="let dataNode of newSummaryTimeAttr; let index = index">
+          <nz-select class="w104" [nzSize]="'small'"
+                     [(ngModel)]="dataNode.data.startDate"
+                     (ngModelChange)="changeStartDate(dataNode, index)"
+                     [nzPlaceHolder]="'选择开始日期'">
+            <ng-container>
+              <nz-option *ngIf="!dataNode.prev || (dataNode.prev && dataNode.data.startHour <= 24)" [nzLabel]="'前一天'" [nzValue]="'prev'"></nz-option>
+              <nz-option *ngIf="(index!==0&& index===duLinkList.length-1&&endHour>25 || (index!==0&&dataNode.next&&dataNode.data.endHour>=25))" [nzLabel]="'当前'" [nzValue]="'next'"></nz-option>
+            </ng-container>
+          </nz-select>
+          <nz-select class="w104 ml8" [nzSize]="'small'"
+                     [(ngModel)]="dataNode.data.startHour"
+                     (ngModelChange)="changeStartHour(dataNode, index)"
+                     [nzPlaceHolder]="'选择开始时间'">
+            <ng-container *ngFor="let item of getTimeList(dataNode.prev?dataNode.prev.data.endHour: 1, (dataNode.next && index!==0)?dataNode.next.data.startHour - 1 : index!==0?dataNode.data.endHour?dataNode.data.endHour-1:endHour-1:24)">
+              <nz-option *ngIf="dataNode.data.startDate === 'prev' && item <= 24" [nzLabel]="item" [nzValue]="item"></nz-option>
+              <nz-option *ngIf="dataNode.data.startDate === 'next' && item > 24" [nzLabel]="item-24" [nzValue]="item"></nz-option>
+
+            </ng-container>
+          </nz-select>
+
+          <span class="ml8">-</span>
+
+          <nz-select class="w104 ml8" [nzSize]="'small'"
+                     [(ngModel)]="dataNode.data.endDate"
+                     (ngModelChange)="changeEndDate(dataNode, index)"
+                     [nzPlaceHolder]="'选择结束日期'">
+            <ng-container>
+              <nz-option *ngIf="dataNode.data.startHour<24" [nzLabel]="'前一天'" [nzValue]="'prev'"></nz-option>
+              <nz-option *ngIf="(index!==0&&dataNode.next&&dataNode.next.data.startHour>=25) || (index!==0&& index===duLinkList.length-1&&endHour>24) || index===0" [nzLabel]="'当天'" [nzValue]="'next'"></nz-option>
+            </ng-container>
+          </nz-select>
+          <nz-select class="w104 ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="dataNode.data.endHour"
+                     (ngModelChange)="changeEndHour(dataNode,index)"
+                     [nzPlaceHolder]="'选择结束时间'">
+            <ng-container *ngFor="let item of getTimeList( dataNode.data.startHour+1, (dataNode.next && index!==0)?dataNode.next.data.startHour : endHour)">
+              <nz-option *ngIf="dataNode.data.endDate === 'prev' && item <= 24" [nzLabel]="item" [nzValue]="item"></nz-option>
+              <nz-option *ngIf="dataNode.data.endDate === 'next' && item > 24" [nzLabel]="item-24" [nzValue]="item"></nz-option>
+
+            </ng-container>
+          </nz-select>
+          <span class="ml5">(00:00)</span>
+
+          <i nz-icon nzType="close" nzTheme="outline" class="deleteBtn ml10"  *ngIf="(duLinkList.length>1&&index!==0)||(duLinkList.length===1&&dataNode.data.startDate)" (click)="removeNode(duLinkList,dataNode, index)"></i>
+          <nz-content style="display: inline" *ngIf="!dataNode.next">
+            <i nz-icon nzType="plus" nzTheme="outline" class="deleteBtn ml10" *ngIf="!(dataNode.data.endHour === endHour) && (dataNode.data.startDate &&dataNode.data.startHour &&dataNode.data.endDate &&dataNode.data.endHour)"  (click)="appendNode(duLinkList,dataNode)"></i>
+          </nz-content>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="sub-company-form-footer">
+    <button class="ml8" nz-button [nzType]="'default'"  [nzSize]="'small'" (click)="cancelModal()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="saveModal()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

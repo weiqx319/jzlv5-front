@@ -1,0 +1,105 @@
+<div>
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addMetric()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加广告主指标</span>
+      </a>
+      <span style="color:orange;">*注：适用于投放管理查看指标数据（分广告主设置）。</span>
+    </div>
+  </div>
+  <div class="manage-table manage-no-result-table pt8">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'default'"
+              [nzData]="apiData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ x: '1150px',y: noResultHeight+'px' }">
+      <thead>
+      <tr>
+        <th nzLeft [nzWidth]="'200px'">
+          <span>指标名称</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'metric_name',name:'指标名称',type:'multiValue'}" [(filterResult)]="filterResult['metric_name']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th nzLeft [nzWidth]="'150px'">
+          <span>指标分类</span>
+          <app-filter [filterType]="'multiList'" [(filterOption)]="categoryList" [filterKey]="{key:'category_id',name:'指标分类',type:'multiList'}" [(filterResult)]="filterResult['category_id']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>备注</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>广告主</span>
+          <app-filter [filterType]="'operSingleList'" [(filterOption)]="advertiserList" [filterKey]="{key:'cid',name:'广告主',type:'operSingleList'}" [(filterResult)]="filterResult['cid']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'" >
+          <span>渠道</span>
+          <app-filter [filterType]="'singleList'" [(filterOption)]="channelList" [filterKey]="{key:'channel_id',name:'渠道',type:'operSingleList'}" [(filterResult)]="filterResult['channel_id']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'" >
+          <span>媒体</span>
+          <app-filter [filterType]="'singleList'" [(filterOption)]="publiserList" [filterKey]="{key:'publisher_id',name:'媒体',type:'operSingleList'}" [(filterResult)]="filterResult['publisher_id']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>是否默认</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>公式</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作人</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作时间</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td nzLeft>
+          <a (click)="editMetric(data.metric_define_id)">{{data['metric_name']}}</a>
+        </td>
+         <!-- 指标分类 -->
+        <td nzLeft>{{data['category_name']}}</td>
+        <td>{{data['metric_remarks']}}</td>
+        <td>{{data['advertiser_name']}}</td>
+        <td>{{channelTypeRelation['channel_id_'+data.channel_id]}}</td>
+        <td>{{publisherTypeRelation['publisher_id_'+data.publisher_id]}}</td>
+        <!-- 是否默认 -->
+        <td><nz-switch [(ngModel)]="data['is_default']" (ngModelChange)="changeConversionDefault(data)"></nz-switch></td>
+        <td>{{data['metric_define']}}</td>
+        <td>{{data['user_name']}}</td>
+        <td>{{data['last_modify_time']}}</td>
+        <!-- 操作 -->
+        <td><a (click)="editMetric(data.metric_define_id)">编辑</a> <span class="ml8 mr8">|</span>
+          <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="delMetrics(data.metric_define_id)" nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click">删除</a>
+        </td>
+      </tr>
+      <tr *ngIf="apiData.length===0">
+        <td #noResultTd [attr.colspan]="10"  [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+          <div class="table-no-result">
+            <div class="table-no-result-content">
+              <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addMetric()">
+               <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加广告主指标</span>
+              </button>
+              <div class="mt8">只有在您定义指标后，工具才可以做各种转化数据分析和优化建议</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>
+

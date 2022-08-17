@@ -1,0 +1,20 @@
+<div class="filter-item-container mt20 mb20">
+  <div class="lab-row mt10">
+    <label>分类名称:</label>
+    <div class="w200 ml8">
+      <input nz-input
+        type="text"
+        [(ngModel)]="categoryName"
+        placeholder="请输入名称">
+    </div>
+  </div>
+
+</div>
+<div class="button-controller">
+  <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+    <span>取消</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="saveBtnLoading" (click)="doSave()">
+    <span>完成</span>
+  </button>
+</div>

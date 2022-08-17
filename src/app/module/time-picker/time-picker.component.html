@@ -1,0 +1,45 @@
+<div class="rc-trigger-popup date-range-picker-popup">
+<div class="rc-trigger-popup-content">
+  <div class="date-range-picker-header">
+    <span class="date-range-picker-header-label">{{time_title}}</span>
+    <div class="date-range-picker-control"></div>
+  </div>
+  <div class="date-range-picker-content">
+    <div class="date-range-picker-ranges-container">
+      <ng-container *ngFor="let item of timeListType let index = index">
+        <div class="date-range-picker-ranges-link" ngDefaultControl [ngClass]="{selected: item.key === curTimeType.key}" (click)="changeTime(item)">{{item.name}}</div>
+      </ng-container>
+    </div>
+    <div class="date-range-picker-cal">
+      <div class="rc-calendar rc-calendar-range">
+        <div class="rc-calendar-panel" *ngIf="curTimeType.key !== 'set_dynamic_time'">
+          <nz-range-picker class="custom-time" [nzAllowClear]="false" [nzDisabledDate]="getDisableDate" [(ngModel)]="summary_date_range" [nzDisabled]="curTimeType.key !== 'custom'" [nzFormat]="'yyyy-MM-dd'" (ngModelChange)="changeDynamicTime()"></nz-range-picker>
+        </div>
+        <div class="date-range-picker-custom-panel" *ngIf="curTimeType.key === 'set_dynamic_time'">
+          <div class="ant-calendar-range-left">
+            <div>开始时间：</div>
+            <div class="tabs start-controls">
+              <div class="start-word-list" [ngClass]="{tab_selected: startTimeType === 1}" (click)="changeTimeType(1)">具体时间</div>
+              <div class="start-word-list" [ngClass]="{tab_selected: startTimeType === 2}" (click)="changeTimeType(2)">过去 N 天</div>
+              <nz-date-picker [nzAllowClear]="false" class="start-time" [nzDisabledDate]="getDisableDate" *ngIf="startTimeType === 1" [(ngModel)]="startTime" (ngModelChange)="changeDynamicTime()"></nz-date-picker>
+              <nz-input-number [(ngModel)]="startDay" [nzMin]="1" *ngIf="startTimeType === 2" style="width: 250px" (ngModelChange)="changeDynamicTime()"></nz-input-number>
+            </div>
+          </div>
+          <div class="ant-calendar-range-right">
+            <div>结束时间：</div>
+            <div class="end-controls">
+              <div class="word-list tab_selected">过去 N 天</div>
+              <nz-input-number [(ngModel)]="endDay" [nzMin]="1" style="width: 250px" (ngModelChange)="changeDynamicTime()"></nz-input-number>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="date-range-picker-footer">
+    <div class="date-range-picker-footer-switch-row"></div>
+    <button nz-button nzType="primary" [nzSize]="'small'" (click)="doSave()">确定</button>
+  </div>
+</div>
+</div>

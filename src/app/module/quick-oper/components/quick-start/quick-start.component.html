@@ -1,0 +1,23 @@
+<button *ngIf="oper != 'stop'"
+        [ngClass]="{'disabled-status':selected.length<1}"
+        class="manage-start mr8"
+        nz-button
+        [disabled]="selected.length<1"
+        [nzType]="'default'"
+        [nzSize]="'small'"
+        nz-popconfirm [nzPopconfirmTitle]="propToolTip"  (nzOnConfirm)="handOk()"  [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click"
+>
+  <i nz-icon nzType="caret-right" nzTheme="outline"></i>
+</button>
+
+  <button *ngIf="oper == 'stop'"
+    [ngClass]="{'disabled-status':selected.length<1}"
+    class="manage-pause mr8"
+    nz-button
+    [disabled]="selected.length<1"
+    [nzType]="'default'"
+    [nzSize]="'small'"
+    nz-popconfirm [nzPopconfirmTitle]="propToolTip"  (nzOnConfirm)="handOk()"  [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click"
+  >
+    <i nz-icon nzType="pause" nzTheme="outline"></i>
+  </button>

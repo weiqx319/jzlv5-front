@@ -1,0 +1,160 @@
+<div class="app-module-condition pt8 pb8 pl30 pr30">
+  <div class="app-module-operations mt8 mr0">
+    <div class="app-module-operations-left">
+     <button class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeField()">
+        <i nz-icon nzType="bars" nzTheme="outline"></i><span>修改列</span>
+      </button>
+      <!-- <nz-select class="w200" [nzSize]="'small'" [nzPlaceHolder]="'请选择类型'"  [(ngModel)]="viewTableData.conversion_type"  (ngModelChange)="changeConversion()">
+        <ng-container *ngFor="let item of conversionList">
+          <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+        </ng-container>
+      </nz-select> -->
+      <div class="inline-block ml8 fs12">
+        <app-table-query-show [summary_type]="viewTableData.summary_type" [filterConditions] = "allFilterOption" [dataRange]="viewTableData['data_range']?viewTableData['data_range']:[]" [conditions]="viewTableData['condition']?viewTableData['condition']:[]" (changed)="reloadData()"></app-table-query-show>
+      </div>
+    </div>
+    <div class="app-module-operations-right fs12">
+
+      <div class="inline-block">
+        <button class="manage-add" nz-popconfirm [nzPopconfirmTitle]="createReportTpl" (nzOnCancel)="cancelCreateReport()" (nzOnConfirm)="handCreateReport()" [(nzPopconfirmVisible)]="showCreateReport"  [nzPopconfirmPlacement]="'bottomRight'" [nzPopconfirmOverlayClassName]="'pop-report-wrap'"  nz-button [nzType]="'default'" [nzSize]="'small'">
+          <span>生成报表</span>
+        </button>
+        <ng-template #createReportTpl>
+          <div class="pop-report">
+
+            <div class="lab-row">
+              <span>名称：</span>
+              <input nz-input type="text" placeholder="报表1" [nzSize]="'small'" style="width: 160px;"
+                     [(ngModel)]="viewReportSetting.report_name">
+            </div>
+            <div class="lab-row">
+              <span>频率：</span>
+              <nz-select class="w160" [nzSize]="'small'" [(ngModel)]="viewReportSetting.report_freq">
+                <nz-option [nzLabel]="'每天'" [nzValue]="'day'"></nz-option>
+                <nz-option [nzLabel]="'每周'" [nzValue]="'week'"></nz-option>
+                <nz-option [nzLabel]="'每月'" [nzValue]="'month'"></nz-option>
+                <nz-option [nzLabel]="'立即执行'" [nzValue]="'now'"></nz-option>
+              </nz-select>
+            </div>
+            <div class="lab-row">
+              <span>接收邮箱：</span>
+              <span>（一行一个）</span>
+            </div>
+            <div class="mt5">
+              <textarea  nz-input type ="'textarea'" rows="4" [(ngModel)]="viewReportSetting.email_list" style="width: 220px"></textarea>
+            </div>
+
+          </div>
+        </ng-template>
+
+        <!--<button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="downloadReport()">生成报表</button>-->
+      </div>
+      <div class="module-time inline-block ml8" (click)="changeDate()">
+        <div class="time-content pl8 pr8">
+          <span>{{timeDesc}}</span>
+        </div>
+        <div class="module-icon time-icon">
+          <i nz-icon nzType="calendar" nzTheme="outline"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--<app-view-bookmark #viewMark [summaryType]="viewTableData['summary_type']" [fixTop]="bookMarkTop" (create)="createBookMark($event)" (save)="saveBookMark($event)" (selected)="changeSelectedBookMark($event)" ></app-view-bookmark>-->
+</div>
+<div class="view-table conversion-report"   [ngStyle]="{'height':tableHeight+'px'}">
+  <ngx-datatable
+    #viewTable
+    class="jzl"
+    [rows]="rows"
+    [summaryHeight]="rowHeight"
+    [summaryPosition]="'top'"
+    [loadingIndicator]="loadingIndicator"
+    [columns]="columns"
+    [columnMode]="'force'"
+    [headerHeight]="44"
+    [footerHeight]="40"
+    [rowHeight]="rowHeight"
+    [count]="pageInfo.currentPageCount"
+    [scrollbarV]="true"
+    [scrollbarH]="true"
+    [externalPaging]="true"
+    [virtualization]="true"
+    (resize)="refreshTableSize()"
+    [reorderable]="reorderable"
+    [messages]="dataMessages"
+    [selected]="selected"
+    [selectionType]="'checkbox'"
+    (select)='onSelect($event)' >
+
+    <!--<ngx-datatable-column [width]="300" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">-->
+    <ng-template #chkHeader ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+      <label
+        class="datatable-checkbox" [ngClass]="{selectedCurrent:selectedType=='current' && selected.length>0}">
+          <a nz-dropdown [nzDropdownMenu]="menu">
+            <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"/>
+          </a>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu nzSelectable>
+            <li nz-menu-item (click)="selectedChange('current',allRowsSelected,selectFn)">
+              <a>选择当前页</a>
+            </li>
+            <li nz-menu-item  (click)="selectedChange('all',allRowsSelected,selectFn)">
+              <a>选择全部</a>
+            </li>
+          </ul>
+          </nz-dropdown-menu>
+
+
+      </label>
+    </ng-template>
+
+
+
+
+    <ng-template #filterHeader ngx-datatable-header-template  let-column="column" let-value="value">
+      <span class="datatable-header-cell-wrapper">
+          <span class="datatable-header-cell-label"> {{column.name}}</span>
+      </span>
+      <app-filter [filterType]="column.data['filterType']" [filterKey]="column.data['filterKey']" [(filterResult)]="column.data['filterResult']" [extraOption]="column.data['extraOption']"  [filterOption]="column.data['filterOption']" (submit)="reloadFirstPage()"></app-filter>
+    </ng-template>
+
+    <ng-template #conversionTypeCell let-row="row"  ngx-datatable-cell-template>
+      {{conversionObject[row['conver_column']]?conversionObject[row['conver_column']]['name']:''}}
+    </ng-template>
+    <ng-template #channelNameCell let-row="row"  ngx-datatable-cell-template>
+      {{channelObject['channel_' + row.publisher_id + '_' + row.channel_id]['label']}}
+    </ng-template>
+
+    <!--</ngx-datatable-column>-->
+
+    <ngx-datatable-footer>
+      <ng-template  ngx-datatable-footer-template>
+        <div class="page-count" *ngIf="pageInfo.loadingStatus == 'success'">
+          共{{pageInfo.allCount}}条
+        </div>
+        <div class="page-count" *ngIf="pageInfo.loadingStatus == 'pending'">
+          <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+        </div>
+        <div class="page-count" *ngIf="pageInfo.loadingStatus == 'error'">
+          总条数加载失败
+        </div>
+        <div class="page-size-select">
+          <select [(ngModel)]="pageInfo.pageSize" (ngModelChange)="changePageSize($event)">
+            <option *ngFor="let sizeList of pageInfo.pageSizeList" [value]="sizeList.key">{{sizeList.name}}</option>
+          </select>
+        </div>
+        <datatable-pager
+          [pagerLeftArrowIcon]="'datatable-icon-left'"
+          [pagerRightArrowIcon]="'datatable-icon-right'"
+          [pagerPreviousIcon]="'datatable-icon-prev'"
+          [pagerNextIcon]="'datatable-icon-skip'"
+          [page]="pageInfo.currentPage"
+          [size]="pageInfo.pageSize"
+          [count]="pageInfo.allCount"
+          [hidden]="!((pageInfo.allCount / pageInfo.pageSize) > 1)"
+          (change)="changePage($event)">
+        </datatable-pager>
+      </ng-template>
+    </ngx-datatable-footer>
+  </ngx-datatable>
+</div>

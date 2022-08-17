@@ -1,0 +1,33 @@
+.upload-documents-container {
+
+  .form-content {
+    .lab-row{
+      display: flex;
+      margin-bottom: 2px;
+    }
+
+    .lab-row > label:first-child{
+      width: 80px;
+      text-align: right;
+      display: inline-block;
+    }
+
+    .w_full {
+      width: 600px;
+    }
+  }
+
+  .tag-content {
+    display: flex;
+    flex-wrap: wrap;
+    width: 600px;
+    margin-left: 88px;
+  }
+
+  .form-btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+}
+

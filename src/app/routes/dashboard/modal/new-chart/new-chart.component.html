@@ -1,0 +1,129 @@
+<nz-steps [(nzCurrent)]="current" [nzSize]="'small'">
+  <nz-step [nzTitle]="'选择样式'"></nz-step>
+  <nz-step [nzTitle]="'定义指标'"></nz-step>
+  <nz-step [nzTitle]="'选择范围'"></nz-step>
+</nz-steps>
+<div class="steps-content">
+  <div *ngIf="current === 0" class="new-chart-type pt16">
+    <div class="new-chart-type-content">
+      <ul class="new-chart-type-ul">
+        <li
+          class="new-chart-icon color-979797"
+          [class.active]="chart_type == 'line'"
+          (click)="typeChange('line')"
+        >
+          <i nz-icon nzType="line-chart" nzTheme="outline"></i>
+        </li>
+        <li
+          class="new-chart-icon color-979797 ml8"
+          [class.active]="chart_type === 'bar'"
+          (click)="typeChange('bar')"
+        >
+          <i nz-icon nzType="bar-chart" nzTheme="outline"></i>
+        </li>
+        <li
+          class="new-chart-icon ml8"
+          [class.active]="chart_type === 'lineStack'"
+          (click)="typeChange('lineStack')"
+        >
+         <i nz-icon nzType="area-chart" nzTheme="outline"></i>
+        </li>
+        <li
+          class="new-chart-icon ml8"
+          [class.active]="chart_type === 'pie'"
+          (click)="typeChange('pie')"
+        >
+         <i nz-icon nzType="pie-chart" nzTheme="outline"></i>
+        </li>
+        <li
+          class="new-chart-icon new-chart-icon-card ml8"
+          [class.active]="chart_type === 'card'"
+          (click)="typeChange('card')"
+        >
+          <!--<i class="jzl-icon-table-chart"></i>-->
+          <i nz-icon nzType="credit-card" nzTheme="outline"></i>
+        </li>
+        <li
+          class="new-chart-icon new-chart-icon-funnel ml8"
+          [class.active]="chart_type === 'funnel'"
+          (click)="typeChange('funnel')"
+          *ngIf="menuService.currentChannelId===2"
+        >
+          <i nz-icon nzType="funnel-plot" nzTheme="outline"></i>
+        </li>
+        <li
+          class="new-chart-icon new-chart-icon-map ml8"
+          [class.active]="chart_type === 'map'"
+          (click)="typeChange('map')"
+        >
+          <i nz-icon nzType="global" nzTheme="outline"></i>
+        </li>
+      </ul>
+      <form [formGroup]="validateTitleForm">
+        <nz-form-item class="w306 h40 pt30">
+          <div class="pull-left">
+            <label [attr.for]="'chart_name'">标题:</label>
+          </div>
+          <nz-form-control class="w270 ml8 pull-left">
+            <input
+              nz-input
+              type="text"
+              [nzSize]="'small'"
+              placeholder="请填写标题"
+              [formControlName]="'chart_name'"
+              [(ngModel)]="chart_name"
+            />
+
+            <div class='ant-form-item-explain'
+              *ngIf="
+                getTitleFormControl('chart_name')?.dirty &&
+                getTitleFormControl('chart_name')?.hasError('required')
+              "
+            >
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请填写标题
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </div>
+    <div class="new-chart-type-btns">
+      <button
+        class="ml8"
+        nz-button
+        [nzType]="'default'"
+        [nzSize]="'small'"
+        (click)="cancelModal()"
+      >
+        <span>取消</span>
+      </button>
+      <button
+        class="ml8"
+        nz-button
+        [nzType]="'primary'"
+        [nzSize]="'small'"
+        (click)="next()"
+        [disabled]="!validateTitleForm.valid"
+      >
+        <span>下一步</span>
+      </button>
+    </div>
+  </div>
+  <div *ngIf="current === 1" class="new-chart-setting">
+    <app-chart-setting
+      [setting]="chart_setting"
+      [bizInfo]="bizInfo"
+      (cancelModal)="cancelModal($event)"
+      (preClick)="pre()"
+      (nextClick)="next()"
+    ></app-chart-setting>
+  </div>
+  <div *ngIf="current === 2" class="new-chart-setting">
+    <app-chart-data-setting
+      [setting]="chart_setting"
+      [bizInfo]="bizInfo"
+      (cancelModal)="cancelModal($event)"
+      (preClick)="pre()"
+      (doneClick)="done()"
+    ></app-chart-data-setting>
+  </div>
+</div>

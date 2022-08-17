@@ -1,0 +1,178 @@
+<div class="constraint cantClick" [ngClass]="{cantClick:!is_edit}">
+  <div class="inpRow mt5 mb12" *ngFor=" let dataNode  of newConstraintAttr ;let idx=index">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w73 mr8 inline-block">
+        <span [ngClass]="{e4e4e4: isSingleEdit}">约束条件{{idx+1}}:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div class="optimization">
+        <div class="pull-left mr5">
+          <span>竞价时段:</span>
+        </div>
+        <div class="pull-left">
+          <nz-select style="width: 60px;"
+                     [nzDisabled]="!is_edit"
+                     [(ngModel)]="dataNode.data.min"
+                     [nzPlaceHolder]="'请选择'"
+                     [nzSize]="'small'">
+            <nz-option
+              *ngFor="let option of getDateList( dataNode.prev?dataNode.prev.data.max + 1: 0,dataNode.data.max+1)"
+              [nzLabel]="option"
+              [nzValue]="option">
+            </nz-option>
+          </nz-select>
+          <span>（00:00）</span>
+          <nz-select style="width: 60px;"
+                     [nzDisabled]="!is_edit"
+                     [(ngModel)]="dataNode.data.max"
+                     [nzPlaceHolder]="'请选择'"
+                     [nzSize]="'small'">
+            <nz-option
+              *ngFor="let option of getDateList( dataNode.data.min, dataNode.next?dataNode.next.data.min : 23+1 )"
+              [nzLabel]="option"
+              [nzValue]="option">
+            </nz-option>
+          </nz-select>
+          <span>（59:59）</span>
+          <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="'如果您在媒体端设置了时段系数，最终在该时段参与竞价的价格为出价*时段系数。'" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+          <i nz-icon nzType="close" nzTheme="outline" class="deleteBtn ml10"  *ngIf="duLinkList.length > 1"  (click)="removeNode(duLinkList,dataNode)"></i>
+          <nz-content style="display: inline" *ngIf="dataNode.next">
+            <i nz-icon nzType="plus" nzTheme="outline" class="deleteBtn ml10"  *ngIf="!(dataNode.data.max===dataNode.next.data.min-1)" (click)="appendNode(duLinkList,dataNode)"></i>
+          </nz-content>
+          <nz-content style="display: inline" *ngIf="!dataNode.next">
+            <i nz-icon nzType="plus" nzTheme="outline" class="deleteBtn ml10" *ngIf="!(dataNode.data.max === 23)"  (click)="appendNode(duLinkList,dataNode)"></i>
+          </nz-content>
+
+
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="advancedStting">
+        <div class="optimization mt10">
+          <div class="pull-left">
+            <label class="titleLa mr5 inline-block">
+              <span>目标排名:</span>
+            </label>
+          </div>
+          <div class="pull-left">
+            <nz-select class="mr5" style="width: 100px;"
+                       [nzDisabled]="!is_edit"
+                       [(ngModel)]="dataNode.data.device"
+                       (ngModelChange)="rankingChange(newConstraintAttr[idx])"
+                       [nzPlaceHolder]="'请选择'"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of deviceArray"
+                [nzLabel]="option"
+                [nzValue]="option">
+              </nz-option>
+            </nz-select>
+            <nz-select class="mr5" style="width: 70px;" *ngIf=" publisher_id === 4 && dataNode.data.device === 'wap'"
+                       [nzDisabled]="!is_edit"
+                       [(ngModel)]="dataNode.data.device_os"
+                       [nzSize]="'small'">
+              <nz-option [nzValue]="1" [nzLabel]="'安卓'"></nz-option>
+              <nz-option [nzValue]="2" [nzLabel]="'ios'"></nz-option>
+            </nz-select>
+            <nz-select class="mr5" style="width: 70px;"
+                       [nzDisabled]="!is_edit"
+                       [(ngModel)]="dataNode.data.ranking_left"
+                       [nzPlaceHolder]="'请选择'"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of rank_option[dataNode.data.device]"
+                [nzLabel]="option.name"
+                [nzValue]="option.id">
+              </nz-option>
+            </nz-select>
+            <nz-select class="mr5" style="width: 70px;"
+                       [nzDisabled]="!is_edit"
+                       [(ngModel)]="dataNode.data.ranking_right"
+                       [nzPlaceHolder]="'请选择'"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of rank_option[dataNode.data.device]"
+                [nzLabel]="option.name"
+                [nzValue]="option.id">
+              </nz-option>
+            </nz-select>
+            <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="'如果您在媒体段设置了pc优先，但选择竞wap端的排名，您在wap端参与竞价的价格为当前出价*移动出价比例，此价格未在此显示。如果您在媒体段设置了wap优先，但选择竞pc端的排名，您在pc端参与竞价的价格为当前出价*计算机出价比例，此价格未在此显示。'" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="optimization mt10">
+          <label class="titleLa mr5 inline-block pull-left">
+            <span>出价范围:</span>
+          </label>
+          <div class="pull-left">
+            <nz-radio-group [(ngModel)]="dataNode.data.price_type"  [nzDisabled]="!is_edit">
+              <div >
+                <div class="pull-left">
+                  <label class="w20 mr0" nz-radio [nzValue]="1"></label>
+                </div>
+                <div class="pull-left">
+                  <span class="mr5">当前出价</span>
+                  <nz-input-number style="width: 70px;" class="mr5"
+                                   [(ngModel)]="dataNode.data.price_rate_min"
+                                   [nzDisabled]="!is_edit"
+                                   [nzMin]="0.1"
+                                   [nzStep]="0.1"
+                                   [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">倍（小）到</span>
+                  <nz-input-number style="width: 70px;" class="mr5"
+                                   [(ngModel)]="dataNode.data.price_rate_max"
+                                   [nzDisabled]="!is_edit"
+                                   [nzMin]="0.1"
+                                   [nzStep]="0.1"
+                                   [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">倍（大），且不超过</span>
+                  <nz-input-number style="width: 70px;" class="mr5"
+                                   [(ngModel)]="dataNode.data.price_rate_max_abs"
+                                   [nzDisabled]="!is_edit"
+                                   [nzMin]="0.1"
+                                   [nzStep]="0.1"
+                                   [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">元</span>
+                </div>
+                <div class="clear"></div>
+              </div>
+              <div class="mt10">
+                <div class="pull-left">
+                  <label class="w20 mr0" nz-radio [nzDisabled]="!is_edit" [nzValue]="2">
+                  </label>
+                </div>
+                <div class="pull-left">
+                  <nz-input-number style="width: 70px;" class="mr5"
+                                   [(ngModel)]="dataNode.data.price_left"
+                                   [nzDisabled]="!is_edit"
+                                   [nzMin]="0.1"
+                                   [nzStep]="0.1"
+                                   [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">元（小）到</span>
+                  <nz-input-number style="width: 70px;" class="mr5"
+                                   [(ngModel)]="dataNode.data.price_right"
+                                   [nzDisabled]="!is_edit"
+                                   [nzMin]="0.1"
+                                   [nzStep]="0.1"
+                                   [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">元（大）</span>
+                </div>
+                <div class="clear"></div>
+              </div>
+            </nz-radio-group>
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+</div>
+
+

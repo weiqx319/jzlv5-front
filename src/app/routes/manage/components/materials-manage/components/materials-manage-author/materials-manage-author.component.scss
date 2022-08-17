@@ -1,0 +1,33 @@
+.materials-manage-contents{
+  background-color: white;
+  // padding: 20px;
+  padding-top: 20px;
+
+  .ant-table-small .ant-table-thead > tr > th{
+    height: 50px;
+  }
+
+
+  .ant-table-tbody > tr > td {
+    height: 50px;
+    padding: 4px;
+  }
+
+  .ant-table-thead > tr > tH {
+    height: 50px;
+    padding: 4px;
+  }
+
+  .materials-manage-operation{
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .header-right{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+  }
+}

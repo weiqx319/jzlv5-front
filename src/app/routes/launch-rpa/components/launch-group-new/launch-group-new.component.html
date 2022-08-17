@@ -1,0 +1,12 @@
+<div class="launch-rpa-target">
+  <ng-container *ngIf="publisherId === 22">
+    <app-launch-group-list-qc></app-launch-group-list-qc>
+  </ng-container>
+  <ng-container *ngIf="publisherId === 1">
+    <app-launch-group-list-bd></app-launch-group-list-bd>
+  </ng-container>
+  <ng-container *ngIf="publisherId === 17">
+    <app-launch-group-list-new-uc></app-launch-group-list-new-uc>
+  </ng-container>
+</div>
+

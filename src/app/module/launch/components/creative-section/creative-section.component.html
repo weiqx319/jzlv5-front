@@ -1,0 +1,373 @@
+<div class="creative-section-container" *ngIf="!structConfigLoading">
+  <div class="form-content">
+    <ng-container *ngIf="adgroup.delivery_range === 'DEFAULT'">
+      <div class="lab-row mb20">
+        <label>投放位置:</label>
+        <nz-radio-group
+          class="ml8"
+          [nzSize]="'small'"
+          [(ngModel)]="data.launch_positon"
+          (ngModelChange)="targetGroupChange()"
+        >
+          <ng-container *ngFor="let option of structConfig['launch_positon']['sub']">
+            <label nz-radio-button nzValue="{{option['value']}}">
+              <span>{{ option['label'] }}</span>
+            </label>
+          </ng-container>
+        </nz-radio-group>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="adgroup.delivery_range === 'DEFAULT' && data.launch_positon === 'inventory_type'">
+      <div class="lab-row mb20">
+        <label><span class="redStart">*</span>按媒体指定位置:</label>
+        <div>
+          <nz-select class="w200 ml8"
+                     [nzSize]="'small'"
+                     [nzMode]="'multiple'"
+                     [(ngModel)]="data.inventory_type"
+                     [nzPlaceHolder]="'请选择'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of structConfig['inventory_type']['sub']"
+              [nzLabel]="option.label"
+              [nzValue]="option.value">
+            </nz-option>
+          </nz-select>
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.inventory_type.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.inventory_type.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="adgroup.delivery_range === 'DEFAULT' && data.launch_positon === 'scene_inventory'">
+      <div class="lab-row mb20">
+        <label>按场景指定位置:</label>
+        <nz-select class="w200 ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="data.scene_inventory"
+                   [nzPlaceHolder]="'请选择'"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of structConfig['scene_inventory']['sub']"
+            [nzLabel]="option.label"
+            [nzValue]="option.value">
+          </nz-option>
+        </nz-select>
+      </div>
+    </ng-container>
+    <div class="lab-row mb20">
+      <label id="creative_mode">创意方式:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.creative_material_mode"
+      >
+        <ng-container *ngFor="let option of structConfig['creative_material_mode']['sub']">
+          <label nz-radio-button nzValue="{{option['value']}}" [nzDisabled]="option['value'] === 'STATIC_ASSEMBLE' && materialType === 2">
+            <span>{{ option['label'] }}</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20" *ngIf="data.creative_material_mode === 'STATIC_ASSEMBLE'">
+      <label>衍生计划:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="data.generate_derived_ad">
+        <ng-container *ngFor="let option of structConfig['generate_derived_ad']['sub']">
+          <label nz-radio-button nzValue="{{option['value']}}">
+            <span>{{ option['label'] }}</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20 w100p">
+      <label><span class="redStart">*</span>创意分类:</label>
+      <div>
+        <nz-cascader class="w_full ml8"
+                     [nzSize]="'small'"
+                     [nzOptions]="structConfig['third_industry_id']"
+                     [(ngModel)]="data.third_industry_id_list"
+                     (ngModelChange)="onCategoryChanges($event)">
+        </nz-cascader>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.third_industry_id.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.third_industry_id.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="lab-row mb20 w100p">
+      <label><span class="redStart">*</span>创意标签:</label>
+      <div>
+        <div style="display: flex;">
+          <div class="w_full ml8 mr8">
+            <input
+              nz-input
+              [nzSize]="'small'"
+              type="text"
+              [(ngModel)]="inputValue"
+              (keyup.enter)="AddTags()"
+              placeholder="最多20个标签，每个不超过10个字，可空格分隔"
+            />
+          </div>
+          <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="AddTags()">
+            <span>添加</span>
+          </button>
+        </div>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.ad_keywords.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.ad_keywords.tip_text }}</span>
+        </div>
+        <div class="mt20" style="display: flex;" *ngIf="data.ad_keywords.length">
+          <div class="tags-box w_full ml8 mr8">
+            <div class="tags-box-title">
+              <span>已选</span>
+              <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="clearTags()">
+                <span>清空</span>
+              </button>
+            </div>
+            <div class="tags-box-content">
+              <div *ngFor="let item of data.ad_keywords; let index = index;">
+                <span>{{item}}</span>
+                <a style="color: red; float: right;"><i nz-icon nzType="close" nzTheme="outline" (click)="deleteTag(index)"></i></a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <ng-container *ngIf="(landing_type === 'APP' && adgroup.download_type === 'EXTERNAL_URL') || landing_type === 'LINK'">
+      <div class="lab-row mb20">
+        <label><span class="redStart">*</span>来源:</label>
+        <div>
+          <input nz-input
+                 class="w170 ml8 mr8"
+                 [nzSize]="'small'"
+                 type="text"
+                 [(ngModel)]="data.source"
+                 placeholder="请输入2-10个字的来源">
+          <span>{{data.source.length}}/10</span>
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.source.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.source.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <div class="lab-row mb20">
+      <label><span class="redStart">*</span>行动号召:</label>
+      <div>
+        <nz-select class="w200 ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="data.action_text"
+                   [nzPlaceHolder]="'请选择'"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of callActionList[landing_type]"
+            [nzLabel]="option.name"
+            [nzValue]="option.key">
+          </nz-option>
+        </nz-select>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.action_text.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.action_text.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="adgroup.delivery_range === 'DEFAULT'">
+      <div class="lab-row mb20">
+        <label>广告评论:</label>
+        <nz-select class="w200 ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="data.is_comment_disable"
+                   [nzPlaceHolder]="'请选择'"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of structConfig['is_comment_disable']['sub']"
+            [nzLabel]="option.label"
+            [nzValue]="option.value">
+          </nz-option>
+        </nz-select>
+      </div>
+    </ng-container>
+    <div class="lab-row mb20">
+      <label>创意展现方式:</label>
+      <nz-select class="w200 ml8"
+                 [nzSize]="'small'"
+                 [(ngModel)]="data.creative_display_mode"
+                 [nzPlaceHolder]="'请选择'"
+                 nzShowSearch>
+        <nz-option
+          *ngFor="let option of structConfig['creative_display_mode']['sub']"
+          [nzLabel]="option.label"
+          [nzValue]="option.value">
+        </nz-option>
+      </nz-select>
+    </div>
+    <ng-container *ngIf="landing_type === 'APP' && adgroup.download_type === 'DOWNLOAD_URL'">
+      <div class="lab-row mb20">
+        <label><span class="redStart">*</span>应用名:</label>
+        <div>
+          <input nz-input
+                 class="w200 ml8"
+                 [nzSize]="'small'"
+                 type="text"
+                 [(ngModel)]="data.app_name"
+                 placeholder="请输入">
+          <div class="error-tip mt5 ml8" *ngIf="errorTip.app_name.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ errorTip.app_name.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="lab-row mb20">
+        <label>副标题:</label>
+        <input nz-input
+               class="w200 ml8"
+               [nzSize]="'small'"
+               type="text"
+               [(ngModel)]="data.sub_title"
+               placeholder="请输入">
+      </div>
+      <ng-container *ngIf="adgroup.app_type === 'APP_ANDROID'">
+        <div class="lab-row mb20 w100p">
+          <label>链接方式:</label>
+          <nz-radio-group
+            class="ml8"
+            [(ngModel)]="data.url_select"
+            (ngModelChange)="changeUrlType()"
+            [nzSize]="'small'"
+          >
+            <ng-container>
+              <label nz-radio-button [nzValue]="'media'">
+                <span>媒体链接</span>
+              </label>
+              <label nz-radio-button [nzValue]="'local'">
+                <span>本地链接</span>
+              </label>
+            </ng-container>
+          </nz-radio-group>
+        </div>
+        <div class="lab-row mb20 w100p">
+          <label><span class="redStart">*</span>Android应用下载详情页:</label>
+          <div>
+            <nz-input-group class="w_full ml8" [nzSize]="'small'" [nzAddOnBefore]="nameBeforeTemplate">
+              <input nz-input
+                     [nzSize]="'small'"
+                     type="text"
+                     [(ngModel)]="data.web_url"
+                     placeholder="从系统设置中获取">
+            </nz-input-group>
+            <ng-template #nameBeforeTemplate>
+                <button class="input-group-btn" nz-button [nzSize]="'small'" nz-dropdown [nzDropdownMenu]="menu" [nzTrigger]="'click'">
+                  <span>选择</span>
+                  <i nz-icon nzType="down"></i>
+                </button>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                  <ul nz-menu>
+                    <ng-container *ngIf="data.url_select === 'local'">
+                      <li nz-menu-item *ngFor="let option of downloadUrlList['3']" (click)="urlClick(option,1);">
+                        <a>{{option.app_url_name}}</a>
+                      </li>
+                    </ng-container>
+                    <ng-container *ngIf="data.url_select === 'media'">
+                      <li nz-menu-item *ngFor="let option of mediaTargetList" (click)="urlClick(option,2);">
+                        <a>{{option.name}}</a>
+                      </li>
+                    </ng-container>
+
+                  </ul>
+                </nz-dropdown-menu>
+
+            </ng-template>
+            <div class="error-tip mt5 ml8" *ngIf="errorTip.web_url.is_show">
+              <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+              <span style="color: red;">{{ errorTip.web_url.tip_text }}</span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+    <div class="lab-row mb20 w100p">
+      <label id="track_url">展示监测链接:</label>
+      <div>
+        <input nz-input
+               class="w_full ml8"
+               [nzSize]="'small'"
+               type="text"
+               [(ngModel)]="data.track_url"
+               placeholder="请输入">
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.track_url.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.track_url.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="lab-row w100p mb20">
+      <label>点击监测链接:</label>
+      <div>
+        <input nz-input
+               class="w_full ml8"
+               [nzSize]="'small'"
+               type="text"
+               [(ngModel)]="data.action_track_url"
+               placeholder="请输入">
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.action_track_url.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.action_track_url.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+<!--    <ng-container *ngIf="adgroup.delivery_range === 'DEFAULT'">-->
+<!--      <div class="lab-row w100p mb20">-->
+<!--        <label>视频播放监测链接:</label>-->
+<!--        <div>-->
+<!--          <input nz-input-->
+<!--                 class="w_full ml8"-->
+<!--                 [nzSize]="'small'"-->
+<!--                 type="text"-->
+<!--                 [(ngModel)]="data.video_play_track_url"-->
+<!--                 placeholder="请输入">-->
+<!--          <div class="error-tip mt5 ml8" *ngIf="errorTip.video_play_track_url.is_show">-->
+<!--            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>-->
+<!--            <span style="color: red;">{{ errorTip.video_play_track_url.tip_text }}</span>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="lab-row w100p mb20">-->
+<!--        <label>视频播放完毕监测链接:</label>-->
+<!--        <div>-->
+<!--          <input nz-input-->
+<!--                 class="w_full ml8"-->
+<!--                 [nzSize]="'small'"-->
+<!--                 type="text"-->
+<!--                 [(ngModel)]="data.video_play_done_track_url"-->
+<!--                 placeholder="请输入">-->
+<!--          <div class="error-tip mt5 ml8" *ngIf="errorTip.video_play_done_track_url.is_show">-->
+<!--            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>-->
+<!--            <span style="color: red;">{{ errorTip.video_play_done_track_url.tip_text }}</span>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="lab-row w100p mb20">-->
+<!--        <label>视频有效播放监测链接:</label>-->
+<!--        <div>-->
+<!--          <input nz-input-->
+<!--                 class="w_full ml8"-->
+<!--                 [nzSize]="'small'"-->
+<!--                 type="text"-->
+<!--                 [(ngModel)]="data.video_play_effective_track_url"-->
+<!--                 placeholder="请输入">-->
+<!--          <div class="error-tip mt5 ml8" *ngIf="errorTip.video_play_effective_track_url.is_show">-->
+<!--            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>-->
+<!--            <span style="color: red;">{{ errorTip.video_play_effective_track_url.tip_text }}</span>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </ng-container>-->
+  </div>
+</div>

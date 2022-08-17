@@ -1,0 +1,93 @@
+<a class="manage-add mr8" (click)="showBackupList()" nz-button [nzType]="'default'" [nzSize]="'small'" >
+  <i nz-icon nzType="unordered-list" nzTheme="outline"></i><span>备份列表</span>
+</a>
+
+
+<nz-drawer [nzVisible]="showBackup" [nzWidth]="1000"  nzPlacement="right" [nzTitle]="'备份列表'" (nzOnClose)="closeBackupList()">
+
+
+  <div class="backup-list">
+    <nz-table
+        #nzTable
+        class="pt8"
+        nzShowSizeChanger
+        [nzPageSizeOptions]="[30, 50, 100, 500]"
+        [nzSize]="'small'"
+        [nzData]="taskListData"
+        [nzFrontPagination]="false"
+        [(nzPageSize)]="pageSize"
+        [(nzPageIndex)]="currentPage"
+        (nzPageIndexChange)="refreshData()"
+        (nzPageSizeChange)="refreshData(true)"
+        [nzTotal]="total"
+        [nzLoading]="loading"
+        [nzScroll]="{ y: noResultHeight + 'px' }"
+        class="task-table"
+    >
+      <thead>
+      <tr>
+        <th [nzWidth]="'200px'">
+          <span>提交时间</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>完成时间</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>备份名称</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>备份人员</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>备份层级</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>分帐户备份</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>备份状态</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>备份结果</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of taskListData">
+        <td>{{ data.create_time }}</td>
+        <td>{{ data.finished_time != '1900-01-01 00:00:00' ? data.finished_time:'' }}</td>
+        <td>{{ data.backup_name }}</td>
+        <td>{{ data.user_name }}</td>
+        <td>
+          {{data.backup_level}}
+        </td>
+        <td>
+          {{data.is_split_account == 1?'是':'否'}}
+        </td>
+        <td>
+          {{statusMap[data.status]  }}
+        </td>
+        <td>
+          {{data.result_desc}}
+        </td>
+        <td>
+            <a class="mr8"><i nz-icon nzType="close" nzTheme="outline" nz-popconfirm [nzPopconfirmTitle]="'确定要删除此项？'" (nzOnConfirm)="delBackup(data.backup_id)" ></i></a>
+          <a class="manage-add mr8" (click)="downBackup(data.backup_id)" *ngIf="data.status>1 && data.status<4">
+           <i nz-icon nzType="download" nzTheme="outline"></i>
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+
+
+
+  </div>
+
+</nz-drawer>
+
+
+

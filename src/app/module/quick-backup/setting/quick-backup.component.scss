@@ -1,0 +1,19 @@
+
+.backup-setting{
+  background-color: white;
+  padding: 16px 8px;
+
+  .lab-row{
+    //@include title-height(24);
+    line-height: 24px;
+
+    >span:first-child{
+      width: 120px;
+      text-align: right;
+      display: block;
+      float: left;
+      line-height: 22px;
+    }
+
+  }
+}

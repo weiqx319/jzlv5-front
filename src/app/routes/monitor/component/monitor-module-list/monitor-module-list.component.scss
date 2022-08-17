@@ -1,0 +1,77 @@
+@import "../../../../../styles/util/mixin";
+
+.sidebar-show .app-module-operations{
+  margin-right: 180px;
+}
+.hidden{
+  display: none !important;
+}
+.pop-report-wrap{
+  //width: 280px;
+  .ant-popover-inner-content{
+    //width: 280px;
+    //max-width: 280px;
+  }
+}
+
+
+.pop-report{
+  background-color: white;
+  padding: 16px 8px;
+
+  .lab-row{
+    //@include title-height(24);
+    line-height: 24px;
+
+    span:first-child{
+      width: 60px;
+      text-align: right;
+      display: block;
+      float: left;
+      line-height: 22px;
+    }
+
+  }
+
+
+}
+
+.view-chart{
+  background-color:#F7F7F7;
+  height:300px;
+  padding-left: 30px;
+  padding-right: 30px;
+  overflow: hidden;
+
+}
+
+.hidden{
+  display: none !important;
+}
+
+//.create-style{
+.create-desc{
+  font-size: 10px;
+  color: #777777;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.create-title{
+  text-decoration: underline;
+  color:#56acef;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.create-title-url{
+  color:#56acef;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.red{
+  color: red;
+}
+//}
+

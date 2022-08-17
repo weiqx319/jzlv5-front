@@ -1,0 +1,22 @@
+<div class="optimization-nav-tab">
+  <div class="optimization-nav-menu">
+    <ng-container *ngFor="let tab of optimizationTab">
+      <div class="optimization-type" (click)="changeActive(tab.key)" [ngClass]="{'active':activeType===tab.key}">{{tab.name}}</div>
+      <div class="ml10"></div>
+    </ng-container>
+  </div>
+</div>
+<app-folder-list [tableHeight]="tableHeight"></app-folder-list>
+
+<div class="function-group">
+  <button class="manage-table-icon ml8 pull-left " [ngClass]="{'active':viewType === 'view'}" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeDataViewUrl('view')">
+    <span>视图</span>
+  </button>
+  <button class="manage-tree pull-left" [ngClass]="{'active':viewType === 'folder'}" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeDataViewUrl('folder')">
+    <span>文件夹</span>
+  </button>
+
+</div>
+
+
+

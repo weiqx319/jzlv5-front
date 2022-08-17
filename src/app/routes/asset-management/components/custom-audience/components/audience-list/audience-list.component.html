@@ -1,0 +1,122 @@
+<div class="top-condition-manage">
+  <div class="materials-manage-content-top">
+    <form [formGroup]="validateForm">
+      <div nz-row [nzGutter]="24">
+        <ng-container *ngFor="let item of filterItemList['publisher_' + publisher_id];let i =index">
+          <div class="materials-manage-item" nz-col [nzSpan]="8" *ngIf="i<9">
+            <nz-form-item>
+              <nz-form-label>{{item.name}}</nz-form-label>
+              <nz-form-control>
+                <ng-container *ngIf="item.type==='select'">
+                  <nz-select class="w240" [formControlName]="item.key" [(ngModel)]="defaultData[item.key]" nzShowSearch nzAllowClear
+                             [nzPlaceHolder]="'请选择'+item.name">
+                    <nz-option *ngFor="let option of item['optionList']" [nzValue]="option['value']" [nzLabel]="option['label']"></nz-option>
+                  </nz-select>
+                </ng-container>
+                <ng-container *ngIf="item.type==='input'">
+                  <input class="w240" [formControlName]="item.key" nz-input [placeholder]="'请输入'+item.name"
+                         [(ngModel)]="defaultData[item.key]"/>
+                </ng-container>
+                <ng-container *ngIf="item.type==='date'">
+                  <nz-range-picker class="w240" [formControlName]="'create_time'" [(ngModel)]="defaultData.create_time" nzFormat="yyyy-MM-dd"></nz-range-picker>
+                </ng-container>
+                <ng-container *ngIf="item.type==='text'">
+                  <textarea class="w240" rows="2" nz-input [formControlName]="item.key"
+                            [(ngModel)]="defaultData[item.key]"></textarea>
+                </ng-container>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </ng-container>
+        <div class="materials-manage-item" nz-col [nzSpan]="8">
+          <button class="mr10" nz-button nzType="primary" nzSize="default" (click)="reloadData()">查询</button>
+          <button class="mr10" nz-button nzSize="default" (click)="resetData()">重置</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="content-section-manage">
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <!-- <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="uploadCustomAudience()">
+       <i nz-icon nzType="upload" nzTheme="outline"></i><span>上传人群包</span>
+      </a> -->
+      <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="syncAudience()">
+        <i nz-icon nzType="sync" nzTheme="outline"></i><span>同步媒体人群包</span>
+      </a>
+    </div>
+  </div>
+  <div class="section-content-container pt8">
+    <nz-table #basicTable
+              nzShowSizeChanger
+              nzFrontPagination="false"
+              [nzPageSizeOptions]="[10,20,30,50,100]"
+              [nzShowTotal]="totalItemTemplate"
+              [nzSize]="'default'"
+              [nzData]="apiData"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzScroll]="{ x: '1472px', y: noResultHeight + 'px' }">
+      <thead>
+        <tr>
+          <th nzWidth="62px" nzLeft class="jzlCheckboxHeader">
+            <a nz-dropdown [nzDropdownMenu]="menu">
+              <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)"
+                     [nzIndeterminate]="indeterminate"></label>
+            </a>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu nzSelectable>
+                <li nz-menu-item (click)="_checkAll(true)" [nzSelected]="currentSelectedPage=='current'">
+                  <a>选择当前页</a>
+                </li>
+                <li nz-menu-item (click)="_checkAllPage(true)" [nzSelected]="currentSelectedPage=='all'">
+                  <a>选择全部</a>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+          </th>
+          <th nzWidth="100px" nzLeft>人群名称</th>
+          <th nzWidth="100px">人群状态</th>
+          <th nzWidth="100px">人群类型</th>
+          <th nzWidth="100px" *ngIf="publisher_id===6">自定义编码</th>
+          <th nzWidth="130px">全部推送人数</th>
+          <th nzWidth="130px">全部覆盖人数</th>
+          <!-- <th nzShowSort (nzSortOrderChange)="sortData($event,'upload_num')" nzWidth="130px">全部推送人数</th>
+          <th nzShowSort (nzSortOrderChange)="sortData($event,'cover_num')" nzWidth="130px">全部覆盖人数</th> -->
+          <th nzWidth="100px" *ngIf="publisher_id===7">人群分组</th>
+          <th nzWidth="200px">创建时间</th>
+          <th nzWidth="200px">最后同步时间</th>
+          <th nzWidth="200px" *ngIf="publisher_id===7">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of apiData">
+          <td nzLeft nzShowCheckbox [(nzChecked)]="data['checked']"
+              (nzCheckedChange)="_refreshSingleChangeStatus($event)">
+          <td nzLeft>{{data['custom_audience_name']}}</td>
+          <td >{{audienceStatusObj['publisher_' + publisher_id][data['status']]}}</td>
+          <td *ngIf="publisher_id===7">{{audienceTypeObj['publisher_7'][data['source']]}}</td>
+          <td *ngIf="publisher_id===6">{{audienceTypeObj['publisher_6'][data['type']]}}</td>
+          <td *ngIf="publisher_id===6">{{data['external_audience_id']}}</td>
+          <td >{{data['upload_num']}}</td>
+          <td >{{data['cover_num']}}</td>
+          <td *ngIf="publisher_id===7">{{data['tag']}}</td>
+          <td >{{data['create_time']}}</td>
+          <td >{{data['last_modify_time']}}</td>
+          <td *ngIf="publisher_id===7">
+            <a href="javascript:" (click)="pushAccount(data)">推送账户</a>
+            <span class="ml4 mr4">|</span>
+            <a href="javascript:" (click)="pushAccountLog(data)">推送记录</a>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>

@@ -1,0 +1,154 @@
+
+
+.button-controller{
+  display: flex;
+  display: -webkit-flex;
+  justify-content: flex-end;
+}
+
+
+
+.filter-item-container{
+  .ant-calendar-picker{
+    width: 190px;
+  }
+  .lab-row{
+    display: flex;
+  }
+  .lab-row > label:first-child{
+    width: 80px;
+    text-align: right;
+    display: inline-block;
+  }
+}
+.conversion-setting{
+  flex: 1;
+
+  .metric-detail{
+    background-color: #fbfbfb;
+    border: 1px solid #e4e4e4;
+    padding-top: 10px;
+    padding-bottom:10px;
+    padding-left:50px;
+    .condition-row{
+      &.disabled{
+        color:#d9d9d9
+      }
+
+      line-height: 28px;
+      height:28px;
+      button.add{
+        color: #56acef
+      }
+      button[disabled]{
+        color:#d9d9d9
+      }
+    }
+
+  }
+  .condition-row-lab{
+
+  }
+  .conversion-api{
+    background-color: #fbfbfb;
+    border: 1px solid #e4e4e4;
+
+    .api-row{
+      &.disabled{
+        color:#d9d9d9
+      }
+      label.api-setting-text{
+        display: inline-block;
+        width: 150px;
+        text-align: right;
+      }
+
+      line-height: 28px;
+      height:28px;
+      button.add{
+        color: #56acef
+      }
+      button[disabled]{
+        color:#d9d9d9
+      }
+    }
+
+  }
+}
+
+
+
+.custom-report-formula{
+  width:100%;
+  height:100%;
+  .brackets-blue{
+    border:1px solid #56acef;
+    color:#56acef;
+  }
+  .w146{
+    width:146px;
+  }
+  .w196{
+    width:196px;
+  }
+  .color-red{
+    color:red;
+  }
+}
+.custom-report-formula-body{
+  width:100%;
+  height:400px;
+  padding:20px;
+  overflow:auto;
+}
+.custom-report-formula-top{
+  label{
+    width:84px;
+  }
+  margin-bottom:20px;
+}
+.custom-report-formula-left{
+  width:84px;
+}
+.custom-report-formula-right{
+
+}
+.custom-obj-select{
+  height:20px;
+}
+.custom-operator-select{
+    width:132px;
+    margin-left:196px;
+}
+.custom-report-formula-trash{
+  width:20px;
+  height:20px;
+  line-height:20px;
+  text-align:center;
+  display:inline-block;
+  font-size:18px;
+  color:#56acef;
+  vertical-align:top;
+  cursor:pointer;
+}
+.sem-brackets{
+  width:20px;
+  height:20px;
+  padding: 0;
+  display:inline-block;
+  border:1px solid #e9ecf3;
+  background-color:#fff;
+  vertical-align:top;
+  text-align:center;
+  color:#ccc;
+  border-radius:4px;
+  cursor:pointer;
+}
+.brackets-blue{
+  border:1px solid #56acef;
+  color:#56acef;
+}
+.lab-row-flex{
+  display: flex;
+  align-items: center;
+}

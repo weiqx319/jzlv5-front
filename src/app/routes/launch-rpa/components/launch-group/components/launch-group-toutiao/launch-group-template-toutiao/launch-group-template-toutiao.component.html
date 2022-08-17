@@ -1,0 +1,1502 @@
+<div class="create-launch-container-toutiao" *ngIf="!structConfigLoading">
+  <div class="create-launch-left pl10 pr10 pt20" [ngStyle]="{'height':tableHeight + 'px'}">
+    <nz-anchor [nzContainer]="'#anchorContent'" [nzOffsetTop]="30">
+      <ng-container *ngFor="let anchor of anchorList;">
+        <nz-link nzHref="{{anchor.key}}" nzTitle="{{anchor.name}}">
+          <nz-link *ngFor="let sub of anchor.sub;"
+                   nzHref="{{sub.key}}"
+                   nzTitle="{{sub.name}}"></nz-link>
+        </nz-link>
+      </ng-container>
+    </nz-anchor>
+  </div>
+
+  <div class="create-launch-right" [ngStyle]="{'width':tableWidth +'px'}">
+    <div class="form-content">
+      <div id="anchorContent" class="setting-box" [ngStyle]="{'height':tableHeight - 40 +'px'}">
+        <!--账户-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="select_account" class="sub_title mb10"><span>选择账户</span></div>
+          <div class="basic-card">
+            <div id="change_account" class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>选择账号:</label>
+              <div>
+                <nz-select class="w_full ml8"
+                           [nzSize]="'small'"
+                           [nzMaxTagCount]="1"
+                           [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                           nzMode="multiple"
+                           [nzPlaceHolder]="'请选择帐户'"
+                           [nzAllowClear]="true"
+                           (nzOpenChange)="changeAccount($event)"
+                           [(ngModel)]="defaultData.chan_pub_id_lst"
+                           nzShowSearch>
+                  <nz-option
+                    *ngFor="let option of accountsList"
+                    [nzLabel]="option.pub_account_name"
+                    [nzValue]="option.chan_pub_id">
+                  </nz-option>
+                </nz-select>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.chan_pub_id_lst.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.chan_pub_id_lst.tip_text }}</span>
+                </div>
+<!--                <div class="lab-tip mt5 ml8 pl20">-->
+<!--                  <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)"-->
+<!--                     class="mr5"></i>-->
+<!--                  <span>该账户下总共还能新建 <b>50</b> 个计划</span>-->
+<!--                </div>-->
+              </div>
+            </div>
+            <div id="template_name" class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>模板名称:</label>
+              <div>
+                <input class="w_full ml8" nz-input nzSize="small" [(ngModel)]="defaultData.project_template_name" (ngModelChange)="getItemErrorTip('project_template_name',defaultData.project_template_name)"
+                       placeholder="请输入模板名称"/>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.project_template_name.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.project_template_name.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--广告组-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="campaign_start" class="sub_title mb10"><span>广告组</span></div>
+          <div class="basic-card">
+            <div id="promotion_objective" class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>推广目的:</label>
+              <nz-select class="w_full ml8"
+                         [nzSize]="'small'"
+                         [(ngModel)]="defaultData.landing_type"
+                         (ngModelChange)="changeLandType($event)"
+                         [nzPlaceHolder]="'请选择'"
+                         nzShowSearch>
+                <nz-option *ngFor="let option of structConfig['campaign']['landing_type']['sub']"
+                           [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+                <nz-option [nzValue]="'QUICK_APP'" [nzLabel]="'快应用'"></nz-option>
+                <nz-option [nzValue]="'SHOP'" [nzLabel]="'电商店铺推广'"></nz-option>
+              </nz-select>
+
+            </div>
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>广告组选择:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="defaultData.template_struct.campaign.campaign_select"
+                [nzSize]="'small'">
+                <ng-container>
+                  <label nz-radio-button nzValue="create">
+                    <span>新建广告组</span>
+                  </label>
+<!--                  <label nz-radio-button nzValue="exist" [nzDisabled]="true">-->
+<!--                    <span>已有广告组</span>-->
+<!--                  </label>-->
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>广告组名称:</label>
+              <div>
+                <input #curCampaignTextArea class="w_full ml8" [(ngModel)]="defaultData.template_struct.campaign.campaign_name" nz-input (ngModelChange)="getItemErrorTip('campaign_name',defaultData.template_struct.campaign.campaign_name)"
+                       nzSize="small"
+                       placeholder="请输入广告组名称"/>
+               <div class="item-body mt10">
+                 <div class="tag ml8">
+                   <span class="word-name">占位符：</span>
+                   <ng-container *ngFor="let word of campaignWordList;let i = index;">
+                     <span class="tag-word mb8 mr10" (click)="addTags(word,'campaign')"><i nz-icon nzType="plus" nzTheme="outline" class="mr5"></i>{{ word }}</span>
+                   </ng-container>
+                 </div>
+               </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.campaign_name.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.campaign_name.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div id="budget" class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>预算:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="defaultData.template_struct.campaign.campaign_budget_mode"
+                [nzSize]="'small'">
+                <ng-container>
+                  <label nz-radio-button nzValue="nolimt">
+                    <span>不限</span>
+                  </label>
+                  <label nz-radio-button nzValue="budget">
+                    <span>日预算</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+              <ng-container *ngIf="defaultData.template_struct.campaign.campaign_budget_mode === 'budget'">
+                <div>
+                  <nz-input-number class="ml20 mr10" [(ngModel)]="defaultData.template_struct.campaign.campaign_budget" (ngModelChange)="getItemErrorTip('campaign_budget',defaultData.template_struct.campaign.campaign_budget)"
+                                   nzSize="small" [nzMin]="1000"
+                                   [nzMax]="9999999.99" [nzStep]="1"></nz-input-number>
+                  元
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)"
+                     class="ml5 mt5 mr5"></i>
+                  <span>取值范围: 1000-9999999.99</span>
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.campaign_budget.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.campaign_budget.tip_text }}</span>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <div id="adgroup_start" class="lab-row mb20 pl20 w100p">
+              <label>设置计划上限:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="defaultData.template_struct.campaign.is_set_adgroup_limit_num"
+                [nzSize]="'small'">
+                <ng-container>
+                  <label nz-radio-button [nzValue]="'1'">
+                    <span>是</span>
+                  </label>
+                  <label nz-radio-button [nzValue]="'0'">
+                    <span>否</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.template_struct.campaign.is_set_adgroup_limit_num==='1'">
+              <label>广告组计划上限:</label>
+              <div>
+                <nz-input-number class="w_full ml8" [(ngModel)]="defaultData.template_struct.campaign.campaign_max_adgroup_num" (ngModelChange)="getItemErrorTip('campaign_max_adgroup_num',defaultData.template_struct.campaign.campaign_max_adgroup_num)" nzSize="small" nzPlaceHolder="请输入广告组计划上限"></nz-input-number>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.campaign_max_adgroup_num.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.campaign_max_adgroup_num.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div id="adgroup_name" class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>计划名称:</label>
+              <div>
+                <input class="w_full ml8" #curAdgroupTextArea [(ngModel)]="defaultData.template_struct.adgroup.ad_name" (ngModelChange)="getItemErrorTip('ad_name',defaultData.template_struct.adgroup.ad_name)" nz-input
+                       nzSize="small"
+                       placeholder="请输入计划名称"/>
+               <div class="item-body mt10">
+                 <div class="tag ml8">
+                   <span class="word-name">占位符：</span>
+                   <ng-container *ngFor="let word of adgroupWordList;let i = index;">
+                     <span class="tag-word mb8 mr10" (click)="addTags(word,'adgroup')"><i nz-icon nzType="plus" nzTheme="outline" class="mr5"></i>{{ word }}</span>
+                   </ng-container>
+                 </div>
+               </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.ad_name.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.ad_name.tip_text }}</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <!--投放目标-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="launch_objective" class="sub_title mb10"><span>投放目标</span></div>
+          <div class="basic-card">
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>投放目标:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="defaultData.template_struct.adgroup.pricing"
+                (ngModelChange)="changePricing($event)"
+                [nzSize]="'small'">
+                <ng-container>
+                  <label nz-radio-button *ngFor="let option of launchTargetList" [nzValue]="option.value">
+                    <span>{{option.label}}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.landing_type === 'APP'">
+              <label><span class="redStart">*</span>下载类型:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="defaultData.template_struct.adgroup.app_type"
+                (ngModelChange)="changeAppType($event)"
+                [nzSize]="'small'">
+                <label nz-radio-button [nzValue]="'APP_ANDROID'">
+                  <span>安卓</span>
+                </label>
+                <label nz-radio-button [nzValue]="'APP_IOS'">
+                  <span>IOS</span>
+                </label>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.landing_type==='LINK'||defaultData.landing_type==='QUICK_APP'">
+              <label><span class="redStart">*</span>数据对接方式:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="defaultData.template_struct.is_use_market"
+                (ngModelChange)="useMarketChange()"
+                [nzSize]="'small'">
+                <ng-container>
+                  <label *ngIf="false" nz-radio-button [nzValue]="'0'">
+                    <span>转化跟踪</span>
+                  </label>
+                  <label nz-radio-button [nzValue]="'1'">
+                    <span>事件管理</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>渠道号:</label>
+              <div>
+                <div class="lab-row w_full">
+                  <nz-transfer-tree class="ml8 mr20" *ngIf="isChannelTree" [getParentKey]="false" [target]="defaultData.convert_channel_id_lst" (nzChange)="transferTreeChange($event)" [source]="channelTreeList"></nz-transfer-tree>
+                  <button class="ml8" nz-button nzSize="small" (click)="getChannelList()">刷新</button>
+                  <a class="ml20" target="_blank" href="javascript:" [routerLink]="'/launch_rpa/channel'">渠道管理</a>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.convert_channel_id_lst.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.convert_channel_id_lst.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--投放范围-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="launch_range" class="sub_title mb10"><span>投放范围</span></div>
+          <div class="basic-card">
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>是否分渠道号:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.adgroup.delivery_by_convert_channel"
+                (ngModelChange)="changeDelivery($event)"
+              >
+                <ng-container>
+                  <label nz-radio-button [nzValue]="true" [nzDisabled]="defaultData.convert_channel_id_lst.length === 0">
+                    <span>是</span>
+                  </label>
+                  <label nz-radio-button [nzValue]="false">
+                    <span>否</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.template_struct.adgroup.delivery_by_convert_channel">
+              <label>选择方式:</label>
+              <div>
+                <nz-radio-group
+                  class="ml8"
+                  [(ngModel)]="defaultData.template_struct.adgroup.delivery_select_type"
+                  (ngModelChange)="defaultData.template_struct.adgroup.media_target_package_type=defaultData.template_struct.adgroup.delivery_select_type"
+                  [nzSize]="'small'">
+                  <ng-container>
+                    <label nz-radio-button [nzValue]="'0'">
+                      <span>分账户</span>
+                    </label>
+                    <label nz-radio-button [nzValue]="'1'">
+                      <span>分渠道号</span>
+                    </label>
+                  </ng-container>
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>投放范围:</label>
+              <div>
+                <ng-container *ngIf="defaultData.template_struct.adgroup.delivery_by_convert_channel&&defaultData.template_struct.adgroup.delivery_select_type=='1'">
+                  <nz-tabset class="ml8" [nzType]="'card'" *ngIf="targetChannelList.length" [nzSelectedIndex]="curDeliveryIndex">
+                    <nz-tab class="mb20" *ngFor="let item of targetChannelList" [nzTitle]="item.convert_channel_name">
+                      <ng-container [ngTemplateOutlet]="delivery_template" [ngTemplateOutletContext]="{list:defaultData.template_struct.adgroup.inventory_type_lst[item.convert_channel_id],id:item.convert_channel_id}"></ng-container>
+                    </nz-tab>
+                  </nz-tabset>
+                </ng-container>
+                <ng-container *ngIf="defaultData.template_struct.adgroup.delivery_by_convert_channel&&defaultData.template_struct.adgroup.delivery_select_type=='0'">
+                  <nz-tabset class="ml8" [nzType]="'card'" *ngIf="accountChannelList.length" [nzSelectedIndex]="curDeliveryIndex" (nzSelectedIndexChange)="deliveryTabChange()">
+                    <nz-tab class="mb20" *ngFor="let item of accountChannelList" [nzTitle]="item.pub_account_name">
+                      <ng-container [ngTemplateOutlet]="delivery_template" [ngTemplateOutletContext]="{list:defaultData.template_struct.adgroup.inventory_type_lst[item.convert_channel_id_lst[0]],id:item.convert_channel_id_lst[0]}"></ng-container>
+                    </nz-tab>
+                  </nz-tabset>
+                </ng-container>
+                <ng-container *ngIf="!defaultData.template_struct.adgroup.delivery_by_convert_channel">
+                  <ng-container [ngTemplateOutlet]="delivery_template" [ngTemplateOutletContext]="{list: defaultData.template_struct.adgroup.inventory_type_lst['all'],id:null}"></ng-container>
+                </ng-container>
+
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.inventory_type_lst.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.inventory_type_lst.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="mr2" nz-tooltip [nzTooltipTitle]="'搜索快投使用条件：非「穿山甲直投」计划，即「投放范围」仅选择「穿山甲」'"><i style="color: #f09200;" nz-icon nzType="question-circle" nzTheme="outline"></i></span><span class="redStart">*</span>搜索快投关键词:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="defaultData.template_struct.adgroup.feed_delivery_search"
+                [nzSize]="'small'">
+                <ng-container>
+                  <label [nzDisabled]="checkDeliveryRange()" nz-radio-button [nzValue]="'HAS_OPEN'">
+                    <span>启动</span>
+                  </label>
+                  <label nz-radio-button [nzValue]="'DISABLED'">
+                    <span>不启动</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+          </div>
+        </div>
+        <!--用户定向-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="user_target" class="sub_title mb10"><span>用户定向</span></div>
+          <div class="basic-card">
+<!--            <div class="lab-row mb20 pl20 w100p">-->
+<!--              <label>定向包来源:</label>-->
+<!--              <nz-radio-group-->
+<!--                class="ml8"-->
+<!--                [(ngModel)]="defaultData.template_struct.adgroup.is_media_audience"-->
+<!--                (ngModelChange)="changeTargetSource($event)"-->
+<!--                [nzSize]="'small'">-->
+<!--                <label nz-radio-button [nzValue]="false">-->
+<!--                  <span>投放系统</span>-->
+<!--                </label>-->
+<!--                <label nz-radio-button [nzValue]="true">-->
+<!--                  <span>媒体定向</span>-->
+<!--                </label>-->
+<!--              </nz-radio-group>-->
+<!--            </div>-->
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>是否分渠道号:</label>
+              <div>
+                <nz-radio-group
+                  class="ml8"
+                  [(ngModel)]="defaultData.template_struct.adgroup.audience_by_convert_channel"
+                  (ngModelChange)="changeTargetChannel($event)"
+                  [nzSize]="'small'">
+                  <ng-container>
+                    <label nz-radio-button [nzValue]="true" [nzDisabled]="defaultData.convert_channel_id_lst.length === 0">
+                      <span>是</span>
+                    </label>
+                    <label nz-radio-button [nzValue]="false" [nzDisabled]="defaultData.template_struct.adgroup.is_media_audience">
+                      <span>否</span>
+                    </label>
+                  </ng-container>
+                </nz-radio-group>
+              </div>
+            </div>
+
+            <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.template_struct.adgroup.audience_by_convert_channel">
+              <label><span class="redStart">*</span>是否使用媒体dmp定向包:</label>
+              <div>
+                <nz-radio-group
+                  class="ml8"
+                  [(ngModel)]="defaultData.template_struct.adgroup.is_use_media_target_package"
+                  (ngModelChange)="isUseMediaTargetPackage($event)"
+                  [nzSize]="'small'">
+                  <ng-container>
+                    <label nz-radio-button [nzValue]="true">
+                      <span>是</span>
+                    </label>
+                    <label nz-radio-button [nzValue]="false">
+                      <span>否</span>
+                    </label>
+                  </ng-container>
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.template_struct.adgroup.audience_by_convert_channel&&((defaultData.template_struct.adgroup.is_use_media_target_package&&!defaultData.template_struct.adgroup.delivery_by_convert_channel)||!defaultData.template_struct.adgroup.is_use_media_target_package)">
+              <label>选择方式:</label>
+              <div>
+                <nz-radio-group
+                  class="ml8"
+                  [(ngModel)]="defaultData.template_struct.adgroup.media_target_package_type"
+                  [nzSize]="'small'">
+                  <ng-container>
+                    <label nz-radio-button [nzValue]="'0'">
+                      <span>分账户</span>
+                    </label>
+                    <label nz-radio-button [nzValue]="'1'">
+                      <span>分渠道号</span>
+                    </label>
+                  </ng-container>
+                </nz-radio-group>
+              </div>
+            </div>
+
+            <div class="lab-row mb20 pl20 w100p"  *ngIf="!defaultData.template_struct.adgroup.is_use_media_target_package">
+              <label><span class="redStart">*</span>基础定向:</label>
+              <div>
+                <div class="lab-row w100p">
+                  <nz-select class="w_full ml8"
+                             [nzSize]="'small'"
+                             [nzPlaceHolder]="'请选择'"
+                             [(ngModel)]="defaultData.template_struct.adgroup.parent_audience_template_id"
+                             (ngModelChange)="changeBasicAudience($event)"
+                             nzShowSearch>
+                    <nz-option *ngFor="let item of curBasicTarget" [nzValue]="item.audience_template_id"
+                               [nzLabel]="item.audience_template_name"></nz-option>
+                  </nz-select>
+                  <button class="ml20" nz-button nzSize="small" (click)="getBasicTargetList()">刷新</button>
+                  <a class="ml20" target="_blank" href="javascript:" [routerLink]="'/launch_rpa/target'">定向管理</a>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.parent_audience_template_id.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.parent_audience_template_id.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row mb20 pl20 w100p">
+              <label></label>
+              <div>
+                <ng-container *ngIf="defaultData.template_struct.adgroup.audience_by_convert_channel&&!defaultData.template_struct.adgroup.is_use_media_target_package&&defaultData.template_struct.adgroup.media_target_package_type=='1'">
+                  <nz-tabset class="ml8 mt20" [nzType]="'card'" *ngIf="targetChannelList.length" [nzSelectedIndex]="curTargetIndex" (nzSelectedIndexChange)="changeTargetTab($event)">
+                    <nz-tab *ngFor="let item of targetChannelList" [nzTitle]="item.convert_channel_name">
+                      <ng-container [ngTemplateOutlet]="target_template" [ngTemplateOutletContext]="{}"></ng-container>
+                    </nz-tab>
+                  </nz-tabset>
+                </ng-container>
+                <ng-container *ngIf="defaultData.template_struct.adgroup.audience_by_convert_channel&&!defaultData.template_struct.adgroup.is_use_media_target_package&&defaultData.template_struct.adgroup.media_target_package_type=='0'">
+                  <nz-tabset class="ml8 mt20" [nzType]="'card'" *ngIf="accountChannelList.length" [nzSelectedIndex]="curTargetIndex" (nzSelectedIndexChange)="changeTargetTab($event)">
+                    <nz-tab *ngFor="let item of accountChannelList" [nzTitle]="item.pub_account_name">
+                      <ng-container [ngTemplateOutlet]="target_template" [ngTemplateOutletContext]="{}"></ng-container>
+                    </nz-tab>
+                  </nz-tabset>
+                </ng-container>
+                <ng-container *ngIf="defaultData.template_struct.adgroup.audience_by_convert_channel&&defaultData.template_struct.adgroup.is_use_media_target_package&&defaultData.template_struct.adgroup.media_target_package_type=='1'">
+                  <nz-tabset class="ml8 mt20" [nzType]="'card'" *ngIf="targetChannelList.length" [nzSelectedIndex]="curTargetIndex" (nzSelectedIndexChange)="changeTargetTab($event)">
+                    <nz-tab *ngFor="let item of targetChannelList" [nzTitle]="item.convert_channel_name">
+                      <div style="display:flex;">
+                        <ng-container [ngTemplateOutlet]="media_target_template" [ngTemplateOutletContext]="{deliveryType:defaultData.template_struct.adgroup.delivery_by_convert_channel?defaultData.template_struct.adgroup.inventory_type_lst[item.convert_channel_id][0]['delivery_range']:defaultData.template_struct.adgroup.inventory_type_lst['all'][0]['delivery_range']}"></ng-container>
+                        <div class="ml20 mt20 select-panel-moduler">
+                          <div class="select-panel-moduler-header">已添加媒体定向包 {{defaultData.template_struct.adgroup.audience_template_id_lst[item.convert_channel_id].length}}<a style="float: right;" (click)="deleteAllTarget(item.convert_channel_id)">清空</a></div>
+                          <ul class="select-panel-moduler-container">
+                            <ng-container *ngFor="let id of defaultData.template_struct.adgroup.audience_template_id_lst[item.convert_channel_id];let idx=index;">
+                              <li class="select-panel-item">{{mediaTargetMap[id]}}<span class="select-panel-close" (click)="deleteTarget(idx,item.convert_channel_id,id)"><i nz-icon nzType="close" nzTheme="outline"></i></span></li>
+                            </ng-container>
+                          </ul>
+                        </div>
+                      </div>
+
+                    </nz-tab>
+                  </nz-tabset>
+                </ng-container>
+                <ng-container *ngIf="defaultData.template_struct.adgroup.audience_by_convert_channel&&defaultData.template_struct.adgroup.is_use_media_target_package&&defaultData.template_struct.adgroup.media_target_package_type=='0'">
+                  <nz-tabset class="ml8 mt20" [nzType]="'card'" *ngIf="accountChannelList.length" [nzSelectedIndex]="curTargetIndex" (nzSelectedIndexChange)="changeTargetTab($event)">
+                    <nz-tab *ngFor="let item of accountChannelList" [nzTitle]="item.pub_account_name">
+                      <div style="display:flex;">
+                        <ng-container [ngTemplateOutlet]="media_target_template" [ngTemplateOutletContext]="{deliveryType:defaultData.template_struct.adgroup.delivery_by_convert_channel?defaultData.template_struct.adgroup.inventory_type_lst[item.convert_channel_id_lst[0]][0]['delivery_range']:defaultData.template_struct.adgroup.inventory_type_lst['all'][0]['delivery_range']}"></ng-container>
+                        <div class="ml20 mt20 select-panel-moduler">
+                          <div class="select-panel-moduler-header">已添加媒体定向包{{defaultData.template_struct.adgroup.audience_template_id_lst[item.convert_channel_id_lst[0]].length}}<a style="float: right;" (click)="deleteAllTarget(item.convert_channel_id_lst[0])">清空</a></div>
+                          <ul class="select-panel-moduler-container">
+                            <ng-container *ngFor="let id of defaultData.template_struct.adgroup.audience_template_id_lst[item.convert_channel_id_lst[0]];let idx=index;">
+                              <li class="select-panel-item">{{mediaTargetMap[id]}}<span class="select-panel-close" (click)="deleteTarget(idx,item.convert_channel_id_lst[0],id)"><i nz-icon nzType="close" nzTheme="outline"></i></span></li>
+                            </ng-container>
+                          </ul>
+                        </div>
+                      </div>
+
+                    </nz-tab>
+                  </nz-tabset>
+                </ng-container>
+
+                <ng-container *ngIf="!defaultData.template_struct.adgroup.audience_by_convert_channel">
+                  <ng-container [ngTemplateOutlet]="target_template" [ngTemplateOutletContext]="{}"></ng-container>
+                </ng-container>
+
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.audience_template_id_lst.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.audience_template_id_lst.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!--预算与出价-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="budget_and_bid" class="sub_title mb10"><span>预算与出价</span></div>
+          <div class="basic-card">
+            <div class="lab-row mb20 w100p pl20">
+              <label id="bid_setting">投放场景:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.adgroup.smart_bid_type"
+                (ngModelChange)="changeSmartBidType($event)">
+                <label nz-radio-button [nzValue]="'SMART_BID_CUSTOM'">
+                  <span>常规投放</span>
+                </label>
+                <label nz-radio-button [nzValue]="'SMART_BID_CONSERVATIVE'" [nzDisabled]="defaultData.template_struct.adgroup.pricing !== 'PRICING_OCPM'">
+                  <span>放量投放</span>
+                </label>
+                <label nz-radio-button [nzValue]="'SMART_BID_NO_BID'">
+                  <span>最大转化投放(白名单)</span>
+                </label>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.template_struct.adgroup.smart_bid_type === 'SMART_BID_CUSTOM'">
+              <label><span class="redStart">*</span>竞价策略:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.adgroup.flow_control_mode">
+                <ng-container *ngFor="let option of flowControlModeList[defaultData.template_struct.adgroup.pricing]">
+                  <label nz-radio-button [nzValue]="option.key">
+                    <span>{{ option.name }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>日预算:</label>
+              <div>
+                <nz-input-number
+                  class="w200 ml8 mr8"
+                  [nzMin]="300"
+                  [nzMax]="9999999.99"
+                  [nzPrecision]="2"
+                  [nzSize]="'small'"
+                  [(ngModel)]="defaultData.template_struct.adgroup.budget"
+                  (ngModelChange)="getItemErrorTip('budget',defaultData.template_struct.adgroup.budget)">
+                </nz-input-number>
+                <div class="lab-tip mt5 ml8">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)"
+                     class="mr5"></i>
+                  <span>取值范围: 300-9999999.99</span>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.budget.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.budget.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.template_struct.adgroup.smart_bid_type === 'SMART_BID_CONSERVATIVE'">
+              <label><span class="redStart">*</span>调整自动出价:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.adgroup.adjust_cpa"
+                (ngModelChange)="changeAdjustCpa()"
+              >
+                <label nz-radio-button [nzValue]="1">
+                  <span>是</span>
+                </label>
+                <label nz-radio-button [nzValue]="0">
+                  <span>否</span>
+                </label>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.template_struct.adgroup.smart_bid_type === 'SMART_BID_CONSERVATIVE' && defaultData.template_struct.adgroup.adjust_cpa === 1">
+              <label><span class="redStart">*</span>广告出价:</label>
+              <div>
+                <nz-input-number class="w200 ml8" nzSize="small" [(ngModel)]="defaultData.template_struct.adgroup.bid" (ngModelChange)="getItemErrorTip('bid',defaultData.template_struct.adgroup.bid)" [nzMin]="0.1" [nzMax]="10000" [nzStep]="1"></nz-input-number>
+                <span class="ml20">元</span>
+                <div class="lab-tip mt5 ml8">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+                  <span>取值范围: 0.1-日预算, 最高不超过10000</span>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.bid.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.bid.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.template_struct.adgroup.smart_bid_type === 'SMART_BID_CUSTOM'">
+              <label><span class="redStart">*</span>出价:</label>
+              <div>
+                <nz-input-number class="w200 ml8" nzSize="small" [(ngModel)]="defaultData.template_struct.adgroup.bid" (ngModelChange)="getItemErrorTip('bid',defaultData.template_struct.adgroup.bid)" [nzMin]="0.1" [nzMax]="10000" [nzStep]="1"></nz-input-number>
+                <span class="ml20">元</span>
+                <div class="lab-tip mt5 ml8">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)"
+                     class="mr5"></i>
+                  <span *ngIf="defaultData.template_struct.adgroup.pricing === 'PRICING_CPC'">取值范围: 0.2-100</span>
+                  <span *ngIf="defaultData.template_struct.adgroup.pricing === 'PRICING_CPM'">取值范围: 4-100</span>
+                  <span *ngIf="defaultData.template_struct.adgroup.pricing === 'PRICING_OCPC' || defaultData.template_struct.adgroup.pricing === 'PRICING_OCPM'">取值范围: 0.1-日预算, 最高不超过10000元</span>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.bid.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.bid.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row pl20 mb20 w100p">
+              <label id="schedule_type">投放时间:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.adgroup.schedule_type"
+               >
+                <label nz-radio-button [nzValue]="'SCHEDULE_FROM_NOW'">
+                  <span>长期投放</span>
+                </label>
+                <label nz-radio-button [nzValue]="'SCHEDULE_START_END'"
+                       [nzDisabled]="defaultData.template_struct.adgroup.smart_bid_type === 'SMART_BID_CONSERVATIVE'">
+                  <span>日期范围</span>
+                </label>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row pl20 mb20 w100p"
+                 *ngIf="defaultData.template_struct.adgroup.schedule_type === 'SCHEDULE_START_END'">
+              <label><span class="redStart">*</span>起始时间:</label>
+              <nz-range-picker
+                class="w200 ml8"
+                [nzAllowClear]="false"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.adgroup.time_range"
+                [nzDisabledDate]="getDisableDate"
+                [nzFormat]="'yyyy/MM/dd'">
+              </nz-range-picker>
+            </div>
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>投放时段:</label>
+              <div>
+                <nz-radio-group class="ml8" [nzSize]="'small'"
+                                [(ngModel)]="defaultData.template_struct.adgroup.schedule_time_slt">
+                  <label nz-radio-button [nzValue]="'nolimt'">
+                    <span>不限</span>
+                  </label>
+                  <label nz-radio-button [nzValue]="'schedule_time'">
+                    <span>指定时段</span>
+                  </label>
+                </nz-radio-group>
+                <ng-container *ngIf="defaultData.template_struct.adgroup.schedule_time_slt === 'schedule_time'">
+                  <app-edit-schedule [outFormat]="'string'" [timeDimension]="0.5"
+                                     [parentTimeDate]="defaultData.template_struct.adgroup['schedule_time']"
+                                     [showCoefficient]="showCoefficient"
+                                     (dateSelected)="dateDate($event)"></app-edit-schedule>
+                </ng-container>
+              </div>
+            </div>
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>深度优化方式:</label>
+              <div>
+                <nz-select class="w200 ml8"
+                           [nzSize]="'small'"
+                           [(ngModel)]="defaultData.template_struct.adgroup.deep_bid_type"
+                           [nzPlaceHolder]="'请选择'"
+                           nzShowSearch>
+                  <nz-option
+                    *ngFor="let option of structConfig['adgroup']['deep_bid_type']['sub']"
+                    [nzLabel]="option.label"
+                    [nzValue]="option.value">
+                  </nz-option>
+                </nz-select>
+                <div class="lab-tip mt5 ml8">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)"
+                     class="mr5"></i>
+                  <span>目前仅开通深度转化的客户可以设置</span>
+                </div>
+              </div>
+            </div>
+            <ng-container *ngIf="defaultData.template_struct.adgroup.deep_bid_type === 'DEEP_BID_MIN'">
+              <div class="lab-row pl20 mb20">
+                <label><span class="redStart">*</span>深度优化出价:</label>
+                <div>
+                  <input nz-input
+                         class="w180 ml8 mr8"
+                         [nzSize]="'small'"
+                         type="number"
+                         [(ngModel)]="defaultData.template_struct.adgroup.deep_cpabid"
+                         (ngModelChange)="getItemErrorTip('deep_cpabid',defaultData.template_struct.adgroup.deep_cpabid)">元
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.deep_cpabid.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.deep_cpabid.tip_text }}</span>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="defaultData.template_struct.adgroup.deep_bid_type === 'ROI_COEFFICIENT'">
+              <div class="lab-row pl20 mb20">
+                <label><span class="redStart">*</span>深度转化ROI系数:</label>
+                <div>
+                  <input nz-input
+                         class="w200 ml8 mr8"
+                         [nzSize]="'small'"
+                         type="number"
+                         [(ngModel)]="defaultData.template_struct.adgroup.roi_goal"
+                         (ngModelChange)="getItemErrorTip('roi_goal',defaultData.template_struct.adgroup.roi_goal)">
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.roi_goal.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.roi_goal.tip_text }}</span>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <!--素材标题-->
+        <div id="creative_start" class="basic-setting setting-block pl20 mt20">
+          <div id="material_title" class="sub_title mb10"><span>素材标题</span></div>
+          <div class="basic-card">
+            <div class="lab-row pl20 mb20 w100p">
+              <label id="creative_mode"><span class="redStart">*</span>创意方式:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.creative.creative_material_mode"
+                (ngModelChange)="changeCreativeType($event)"
+              >
+                <ng-container *ngFor="let option of structConfig['creative']['creative_material_mode']['sub']">
+                  <label nz-radio-button nzValue="{{option['value']}}">
+                    <span>{{ option['label'] }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>创意类型:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.creative.style"
+                (ngModelChange)="changeCreativeStyle($event)"
+              >
+                <ng-container *ngFor="let option of styleList">
+                  <label nz-radio-button [nzValue]="option.css_type">
+                    <span>{{option.name}}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>分渠道号选择素材:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="defaultData.template_struct.material.by_channel_set_material"
+                (ngModelChange)="changeMaterialByChannel()"
+                [nzSize]="'small'"
+              >
+                <label nz-radio-button [nzValue]="true" [nzDisabled]="defaultData.convert_channel_id_lst.length === 0">
+                  <span>是</span>
+                </label>
+                <label nz-radio-button [nzValue]="false">
+                  <span>否</span>
+                </label>
+              </nz-radio-group>
+            </div>
+
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>分素材选择标题:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="defaultData.template_struct.material.by_material_set_title"
+                (ngModelChange)="changeTitleByChannel($event)"
+                [nzSize]="'small'"
+              >
+                <label nz-radio-button [nzValue]="true">
+                  <span>是</span>
+                </label>
+                <label nz-radio-button [nzValue]="false">
+                  <span>否</span>
+                </label>
+              </nz-radio-group>
+            </div>
+
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.template_struct.creative.style === 3">
+              <label><span class="redStart">*</span>封面选取方式:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.material.screenshot_setting_type"
+                (ngModelChange)="changeCoverType($event)"
+              >
+                <label nz-radio-button *ngFor="let option of coverSelectList" [nzValue]="option.value">
+                  <span>{{option.label}}</span>
+                </label>
+              </nz-radio-group>
+            </div>
+
+            <ng-container *ngIf="defaultData.template_struct.material.by_channel_set_material">
+              <div class="w100p">
+                <nz-tabset class="materials-tab" [nzType]="'card'" *ngIf="targetChannelList.length > 0" [nzSelectedIndex]="curDeliveryIndex">
+                  <nz-tab class="mb20 w100p" *ngFor="let item of targetChannelList" [nzTitle]="item.convert_channel_name">
+                    <div class="lab-row pl20 mb20 w100p">
+                      <label><span class="redStart">*</span>素材选取:</label>
+                      <div style="flex:1">
+                        <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="openMaterials(defaultData.template_struct.material.material_type_lst[item.convert_channel_id].materials,defaultData.template_struct.creative.style)">
+                          <span>素材库</span>
+                        </button>
+                        <ng-container *ngIf="defaultData.template_struct.material.material_type_lst[item.convert_channel_id].materials.length>0">
+                          <ng-container *ngIf="defaultData.template_struct.material.by_material_set_title" [ngTemplateOutlet]="materialSelectedShowAndTitle" [ngTemplateOutletContext]="{materialList:defaultData.template_struct.material.material_type_lst[item.convert_channel_id].materials,cssType:defaultData.template_struct.creative.style}"></ng-container>
+                          <ng-container *ngIf="!defaultData.template_struct.material.by_material_set_title" [ngTemplateOutlet]="materialSelectedShow" [ngTemplateOutletContext]="{materialList:defaultData.template_struct.material.material_type_lst[item.convert_channel_id].materials,cssType:defaultData.template_struct.creative.style}"></ng-container>
+                        </ng-container>
+                        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.material_lst.is_show">
+                          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                          <span style="color: red;">{{ checkErrorTip.material_lst.tip_text }}</span>
+                        </div>
+
+                        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.material_title_lst.is_show">
+                          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                          <span style="color: red;">{{ checkErrorTip.material_title_lst.tip_text }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="lab-row pl20 mb20 w100p" *ngIf="!defaultData.template_struct.material.by_material_set_title">
+                      <label><span class="redStart">*</span>标题选取:</label>
+                      <div>
+                        <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                                (click)="addLaunchTitle(defaultData.template_struct.material.material_type_lst[item.convert_channel_id].titles)">
+                          <span>添加标题</span>
+                        </button>
+                        <ng-container *ngIf="defaultData.template_struct.material.material_type_lst[item.convert_channel_id].titles.length>0"
+                                      [ngTemplateOutlet]="titleSelectedShow" [ngTemplateOutletContext]="{titles:defaultData.template_struct.material.material_type_lst[item.convert_channel_id].titles}">
+                        </ng-container>
+                        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.title_lst.is_show">
+                          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                          <span style="color: red;">{{ checkErrorTip.title_lst.tip_text }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </nz-tab>
+                </nz-tabset>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="!defaultData.template_struct.material.by_channel_set_material">
+              <div class="lab-row pl20 mb20 w100p">
+                <label><span class="redStart">*</span>素材选取:</label>
+                <div style="flex:1">
+                  <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="openMaterials(defaultData.template_struct.material.material_type_lst.all.materials,defaultData.template_struct.creative.style)">
+                    <span>素材库</span>
+                  </button>
+                  <ng-container *ngIf="defaultData.template_struct.material.material_type_lst.all.materials.length>0">
+                    <ng-container *ngIf="defaultData.template_struct.material.by_material_set_title" [ngTemplateOutlet]="materialSelectedShowAndTitle" [ngTemplateOutletContext]="{materialList:defaultData.template_struct.material.material_type_lst.all.materials,cssType:defaultData.template_struct.creative.style}"></ng-container>
+                    <ng-container *ngIf="!defaultData.template_struct.material.by_material_set_title" [ngTemplateOutlet]="materialSelectedShow" [ngTemplateOutletContext]="{materialList:defaultData.template_struct.material.material_type_lst.all.materials,cssType:defaultData.template_struct.creative.style}"></ng-container>
+                  </ng-container>
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.material_lst.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.material_lst.tip_text }}</span>
+                  </div>
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.material_title_lst.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.material_title_lst.tip_text }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lab-row pl20 mb20 w100p" *ngIf="!defaultData.template_struct.material.by_material_set_title">
+                <label><span class="redStart">*</span>标题选取:</label>
+                <div>
+                  <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                          (click)="addLaunchTitle(defaultData.template_struct.material.material_type_lst.all.titles)">
+                    <span>添加标题</span>
+                  </button>
+                  <ng-container *ngIf="defaultData.template_struct.material.material_type_lst.all.titles.length>0"
+                                [ngTemplateOutlet]="titleSelectedShow" [ngTemplateOutletContext]="{titles:defaultData.template_struct.material.material_type_lst.all.titles}">
+                  </ng-container>
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.title_lst.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.title_lst.tip_text }}</span>
+                  </div>
+                </div>
+
+              </div>
+            </ng-container>
+
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>单计划素材数:</label>
+              <div>
+                <nz-input-number class="w_full ml8" nzSize="small" [(ngModel)]="defaultData.template_struct.material.single_adgroup_material_num" [nzMin]="0" [nzMax]="10" [nzStep]="1" (ngModelChange)="getItemErrorTip('single_adgroup_material_num',defaultData.template_struct.material.single_adgroup_material_num)"></nz-input-number>
+
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.single_adgroup_material_num.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.single_adgroup_material_num.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="!defaultData.template_struct.material.by_material_set_title">
+              <label><span class="redStart">*</span>单计划标题数:</label>
+              <div>
+                <nz-input-number class="w_full ml8" nzSize="small" [(ngModel)]="defaultData.template_struct.material.single_adgroup_title_num" [nzMin]="0" [nzMax]="10" [nzStep]="1" (ngModelChange)="getItemErrorTip('single_adgroup_title_num',defaultData.template_struct.material.single_adgroup_title_num)"></nz-input-number>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.single_adgroup_title_num.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.single_adgroup_title_num.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--创意设置-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="creative_setting" class="sub_title mb10"><span>创意设置</span></div>
+          <div class="basic-card">
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>创意分类:</label>
+              <div>
+                <nz-cascader class="w_full ml8"
+                             [nzSize]="'small'"
+                             [nzOptions]="structConfig['creative']['third_industry_id']"
+                             [(ngModel)]="defaultData.template_struct.creative.third_industry_id_list">
+                </nz-cascader>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.third_industry_id_list.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.third_industry_id_list.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div id="creative_label" class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>创意标签:</label>
+              <div>
+                <div style="display: flex;">
+                  <div class="w_full ml8 mr8">
+                    <input
+                      nz-input
+                      [nzSize]="'small'"
+                      type="text"
+                      [(ngModel)]="inputValue"
+                      (keyup.enter)="AddTags()"
+                      placeholder="最多20个标签，每个不超过20个字符，可空格分隔"
+                    />
+                  </div>
+                  <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="AddTags()">
+                    <span>添加</span>
+                  </button>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.ad_keywords.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.ad_keywords.tip_text }}</span>
+                </div>
+                <div class="mt20" style="display: flex;"
+                     *ngIf="defaultData.template_struct.creative.ad_keywords.length">
+                  <div class="tags-box w_full ml8 mr8">
+                    <div class="tags-box-title">
+                      <span>已选</span>
+                      <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="clearTags()">
+                        <span>清空</span>
+                      </button>
+                    </div>
+                    <div class="tags-box-content">
+                      <div *ngFor="let item of defaultData.template_struct.creative.ad_keywords; let index = index;">
+                        <span>{{item}}</span>
+                        <a style="color: red; float: right;"><i nz-icon nzType="close" nzTheme="outline"
+                                                                (click)="deleteTag(index)"></i></a>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.landing_type!=='SHOP'">
+              <label><span class="redStart">*</span>行动号召:</label>
+              <div>
+                <nz-select class="w_full ml8"
+                           [nzSize]="'small'"
+                           [(ngModel)]="defaultData.template_struct.creative.action_text"
+                           [nzPlaceHolder]="'请选择'"
+                           nzShowSearch>
+                  <nz-option
+                    *ngFor="let option of callActionList[defaultData.landing_type]"
+                    [nzLabel]="option.name"
+                    [nzValue]="option.key">
+                  </nz-option>
+                </nz-select>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.action_text.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.action_text.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row pl20 mb20 w100p">
+              <label>广告评论:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.creative.is_comment_disable"
+              >
+                <ng-container *ngFor="let option of structConfig['creative']['is_comment_disable']['sub']">
+                  <label nz-radio-button nzValue="{{option['value']}}">
+                    <span>{{ option['label'] }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <ng-container *ngIf="defaultData.landing_type==='SHOP'">
+              <div class="lab-row pl20 mb20 w100p">
+                <label>是否开启自动生成素材:</label>
+                <nz-radio-group
+                  class="ml8"
+                  [nzSize]="'small'"
+                  [(ngModel)]="defaultData.template_struct.creative.creative_auto_generate_switch"
+                >
+                  <label nz-radio-button [nzValue]="'0'"><span>不启用</span></label>
+                  <label nz-radio-button [nzValue]="'1'"><span>启用</span></label>
+                </nz-radio-group>
+              </div>
+              <div class="lab-row pl20 mb20 w100p">
+                <label>允许客户端下载视频:</label>
+                <nz-radio-group
+                  class="ml8"
+                  [nzSize]="'small'"
+                  [(ngModel)]="defaultData.template_struct.creative.ad_download_status"
+                >
+                  <label nz-radio-button [nzValue]="'0'"><span>开启</span></label>
+                  <label nz-radio-button [nzValue]="'1'"><span>关闭</span></label>
+                </nz-radio-group>
+              </div>
+            </ng-container>
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>创意展现方式:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.creative.creative_display_mode"
+              >
+                <ng-container *ngFor="let option of structConfig['creative']['creative_display_mode']['sub']">
+                  <label nz-radio-button nzValue="{{option['value']}}">
+                    <span>{{ option['label'] }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.landing_type === 'LINK'||defaultData.landing_type === 'QUICK_APP'||defaultData.landing_type === 'SHOP'">
+              <label><span class="redStart">*</span>来源:</label>
+              <div>
+                <input nz-input
+                       class="w_full ml8 mr8"
+                       [nzSize]="'small'"
+                       type="text"
+                       [(ngModel)]="defaultData.template_struct.creative.source"
+                       (ngModelChange)="getItemErrorTip('source',defaultData.template_struct.creative.source)"
+                       placeholder="请输入2-10个字的来源">
+                <span>{{defaultData.template_struct.creative.source.length}}/10</span>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.source.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.source.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.landing_type === 'APP'">
+              <label><span class="redStart">*</span>应用名:</label>
+              <div>
+                <input nz-input
+                       class="w_full ml8"
+                       [nzSize]="'small'"
+                       type="text"
+                       [(ngModel)]="defaultData.template_struct.creative.app_name"
+                       (ngModelChange)="getItemErrorTip('app_name',defaultData.template_struct.creative.app_name)"
+                       placeholder="请输入">
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.app_name.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.app_name.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.landing_type === 'APP'">
+              <label>副标题:</label>
+              <input nz-input
+                     class="w400 ml8"
+                     [nzSize]="'small'"
+                     type="text"
+                     [(ngModel)]="defaultData.template_struct.creative.sub_title"
+                     placeholder="请输入">
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.template_struct.creative.creative_material_mode === 'STATIC_ASSEMBLE'">
+              <label>自动生成视频素材:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.creative.is_presented_video"
+              >
+                <ng-container>
+                  <label nz-radio-button [nzValue]="false">
+                    <span>不启用</span>
+                  </label>
+                  <label nz-radio-button [nzValue]="true">
+                    <span>启用</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.template_struct.creative.creative_material_mode === 'STATIC_ASSEMBLE'">
+              <label>衍生计划:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.template_struct.creative.generate_derived_ad">
+                <ng-container *ngFor="let option of structConfig['creative']['generate_derived_ad']['sub']">
+                  <label nz-radio-button nzValue="{{option['value']}}">
+                    <span>{{ option['label'] }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+<!--            <div class="lab-row mb20 w100p">-->
+<!--              <label>品牌主页:</label>-->
+<!--              <nz-radio-group-->
+<!--                class="ml8"-->
+<!--                [nzSize]="'small'"-->
+<!--              >-->
+<!--                <ng-container>-->
+<!--                  <label nz-radio-button>-->
+<!--                    <span>不开启</span>-->
+<!--                  </label>-->
+<!--                  <label nz-radio-button>-->
+<!--                    <span>开启抖音主页</span>-->
+<!--                  </label>-->
+<!--                </ng-container>-->
+<!--              </nz-radio-group>-->
+<!--            </div>-->
+<!--            <div class="lab-row mb20 w100p">-->
+<!--              <label>启用试玩素材:</label>-->
+<!--              <nz-radio-group-->
+<!--                class="ml8"-->
+<!--                [nzSize]="'small'"-->
+<!--              >-->
+<!--                <ng-container>-->
+<!--                  <label nz-radio-button>-->
+<!--                    <span>不启用</span>-->
+<!--                  </label>-->
+<!--                  <label nz-radio-button>-->
+<!--                    <span>启用</span>-->
+<!--                  </label>-->
+<!--                </ng-container>-->
+<!--              </nz-radio-group>-->
+<!--            </div>-->
+          </div>
+        </div>
+        <!--卡片模板-->
+<!--        <div class="card_template setting-block pl20 mt20">-->
+<!--          <div id="other" class="sub_title mb10"><span>卡片模板</span></div>-->
+<!--          <div class="basic-card">-->
+<!--            <div class="lab-row pl20 mb20 w100p">-->
+<!--              <label><span class="redStart">*</span>是否使用推广卡片:</label>-->
+<!--              <nz-radio-group-->
+<!--                class="ml8"-->
+<!--                [nzSize]="'small'"-->
+<!--                [(ngModel)]="defaultData.template_struct.promotion_card.isOpenCard"-->
+<!--                (ngModelChange)="changeUseCard($event)"-->
+<!--              >-->
+<!--                <label nz-radio-button [nzValue]="true" [nzDisabled]="defaultData.convert_channel_id_lst.length === 0 || defaultData.template_struct.creative.style == 1||defaultData.template_struct.is_use_market==='1'">-->
+<!--                  <span>是</span>-->
+<!--                </label>-->
+<!--                <label nz-radio-button [nzValue]="false">-->
+<!--                  <span>否</span>-->
+<!--                </label>-->
+<!--              </nz-radio-group>-->
+<!--            </div>-->
+<!--            <ng-container *ngIf="defaultData.template_struct.promotion_card.isOpenCard">-->
+<!--              <div class="lab-row pl20 mb20 w100p">-->
+<!--                <label><span class="redStart">*</span>是否分渠道号:</label>-->
+<!--                <nz-radio-group-->
+<!--                  class="ml8"-->
+<!--                  [nzSize]="'small'"-->
+<!--                  [(ngModel)]="defaultData.template_struct.promotion_card.card_by_convert_channel"-->
+<!--                  (ngModelChange)="changeChannelSetCard($event)"-->
+<!--                >-->
+<!--                  <label nz-radio-button [nzValue]="true" [nzDisabled]="defaultData.convert_channel_id_lst.length === 0">-->
+<!--                    <span>是</span>-->
+<!--                  </label>-->
+<!--                  <label nz-radio-button [nzValue]="false">-->
+<!--                    <span>否</span>-->
+<!--                  </label>-->
+<!--                </nz-radio-group>-->
+<!--              </div>-->
+<!--                <ng-container *ngIf="defaultData.template_struct.promotion_card.card_by_convert_channel && defaultData.template_struct.promotion_card.card_type_lst">-->
+<!--                  <nz-tabset class="ml8 card-tab" [nzType]="'card'" *ngIf="targetChannelList.length > 0" [nzSelectedIndex]="curDeliveryIndex" (nzSelectedIndexChange)="changeCardTab($event)">-->
+<!--                    <nz-tab class="mb20" *ngFor="let item of targetChannelList" [nzTitle]="item.convert_channel_name">-->
+<!--                      <div class="lab-row mb20 pl20 w100p">-->
+<!--                        <label><span class="redStart">*</span>卡片模板列表:</label>-->
+<!--                        <div>-->
+<!--                          <nz-select class="w300 ml8"-->
+<!--                                     [nzSize]="'small'"-->
+<!--                                     [nzPlaceHolder]="'请选择卡片模板'"-->
+<!--                                     [(ngModel)]="defaultData.template_struct.promotion_card.card_type_lst[item.convert_channel_id]['card_id']"-->
+<!--                                     (ngModelChange)="changeCardTemplate(defaultData.template_struct.promotion_card.card_type_lst[item.convert_channel_id])"-->
+<!--                          >-->
+<!--                            <nz-option *ngFor="let item of cardTemplateList" [nzLabel]="item.promo_card_template_name" [nzValue]="item.promo_card_template_id"></nz-option>-->
+<!--                          </nz-select>-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                      <app-card-template-section *ngIf="cardLoading" [promotionCard]="defaultData.template_struct.promotion_card.card_type_lst[item.convert_channel_id]" [checkError]="checkErrorTip.card_error_tip[item.convert_channel_id]"></app-card-template-section>-->
+<!--                    </nz-tab>-->
+<!--                  </nz-tabset>-->
+<!--                  <div class="lab-row pl20 mb20 ml20 w100p" *ngIf="checkErrorTip.card_error_tip.has_error">-->
+<!--                    <label><span class="redStart">*</span></label>-->
+<!--                    <span class="redStart">请完善渠道下的卡片模板信息</span>-->
+<!--                  </div>-->
+<!--                </ng-container>-->
+<!--                <ng-container *ngIf="!defaultData.template_struct.promotion_card.card_by_convert_channel && defaultData.template_struct.promotion_card.card_type_lst">-->
+<!--                  <div class="lab-row mb20 pl20 w100p">-->
+<!--                    <label><span class="redStart">*</span>卡片模板列表:</label>-->
+<!--                    <div>-->
+<!--                      <nz-select class="w300 ml8"-->
+<!--                                 [nzSize]="'small'"-->
+<!--                                 [nzPlaceHolder]="'请选择卡片模板'"-->
+<!--                                 [(ngModel)]="defaultData.template_struct.promotion_card.card_type_lst['all']['card_id']"-->
+<!--                                 (ngModelChange)="changeCardTemplate(defaultData.template_struct.promotion_card.card_type_lst['all'])"-->
+<!--                      >-->
+<!--                        <nz-option *ngFor="let item of cardTemplateList" [nzLabel]="item.promo_card_template_name" [nzValue]="item.promo_card_template_id"></nz-option>-->
+<!--                      </nz-select>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                  <app-card-template-section *ngIf="cardLoading" [promotionCard]="defaultData.template_struct.promotion_card.card_type_lst['all']" [checkError]="checkErrorTip.card_error_tip['all']"></app-card-template-section>-->
+<!--                </ng-container>-->
+<!--            </ng-container>-->
+
+<!--          </div>-->
+<!--        </div>-->
+      </div>
+    </div>
+
+    <div class="form-btns">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+        <span>完成</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-global-template></app-global-template>
+
+<ng-template #media_target_template let-deliveryType="deliveryType">
+  <nz-table class="mt20 ml8" #borderTable nzBordered [nzPageSize]="curMediaTargetList.length+10" [nzShowPagination]="false" [nzData]="curMediaTargetList" [nzScroll]="{x:'662px', y: '400px' }">
+    <thead>
+    <tr>
+      <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll(curMediaTargetList,$event,deliveryType)">
+      <th nzWidth="200px">名称</th>
+      <th nzWidth="200px">定向包类型</th>
+      <th nzWidth="200px">投放范围</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of borderTable.data">
+      <ng-container *ngIf="data.delivery_range===deliveryType">
+        <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus(curMediaTargetList,$event)">
+        <td>{{data.name}}</td>
+        <td>
+          <span *ngIf="data.landing_type === 'EXTERNAL'">销售线索收集</span>
+          <span *ngIf="data.landing_type === 'QUICK_APP'">快应用</span>
+          <span *ngIf="data.landing_type === 'SHOP'">电商店铺推广</span>
+          <span *ngIf="data.landing_type === 'APP_ANDROID'">应用推广-Android</span>
+          <span *ngIf="data.landing_type === 'APP_IOS'">应用推广-IOS</span>
+        </td>
+        <td>{{data.delivery_range === "UNION" ? '穿山甲' :'默认'}}</td>
+      </ng-container>
+    </tr>
+    </tbody>
+  </nz-table>
+</ng-template>
+
+<ng-template #target_template>
+  <nz-table class="mt20 ml8" #borderedTable nzBordered [nzShowPagination]="false" [nzData]="curTargetList" [nzScroll]="{x:'662px', y: '400px' }">
+    <thead>
+    <tr>
+      <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll(curTargetList,$event)">
+      <th nzWidth="200px">名称</th>
+      <th nzWidth="200px">定向包类型</th>
+      <th nzWidth="200px">创建时间</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of borderedTable.data">
+      <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus(curTargetList,$event)">
+      <td>{{data.audience_template_name}}</td>
+      <td>
+        <span *ngIf="data.landing_type === 'EXTERNAL'">销售线索收集</span>
+        <span *ngIf="data.landing_type === 'QUICK_APP'">快应用</span>
+        <span *ngIf="data.landing_type === 'SHOP'">电商店铺推广</span>
+        <span *ngIf="data.landing_type === 'ANDROID'">应用推广-Android</span>
+        <span *ngIf="data.landing_type === 'IOS'">应用推广-IOS</span>
+      </td>
+      <td>{{data.create_time}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</ng-template>
+
+<ng-template #delivery_template let-list=list let-id=id>
+  <div class="launch-position-box" [ngClass]="{'mt20': defaultData.template_struct.adgroup.delivery_by_convert_channel}">
+    <div class="ml8 mb20" *ngFor="let item of list let index = index">
+      <nz-select class="w150"
+                 [nzSize]="'small'"
+                 [(ngModel)]="item.delivery_range"
+                 (ngModelChange)="changeDeliveryRange(index,id,$event)"
+                 [nzPlaceHolder]="'请选择'"
+                 nzShowSearch>
+        <nz-option [nzValue]="'DEFAULT'" [nzLabel]="'默认'" [nzDisabled]="defaultData.template_struct.adgroup.pricing === 'PRICING_OCPC'||(defaultData.template_struct.adgroup.is_use_media_target_package&&list[0]['delivery_range']!=='DEFAULT'&&index!==0)"></nz-option>
+        <nz-option [nzValue]="'UNION'" [nzLabel]="'穿山甲'" [nzDisabled]="defaultData.template_struct.adgroup.is_use_media_target_package&&list[0]['delivery_range']!=='UNION'&&index!==0"></nz-option>
+        <nz-option [nzValue]="'UNIVERSAL'" [nzLabel]="'通投智选'" [nzDisabled]="defaultData.template_struct.adgroup.is_use_media_target_package&&list[0]['delivery_range']!=='UNIVERSAL'&&index!==0"></nz-option>
+      </nz-select>
+      <nz-select class="w150 ml8"
+                 *ngIf="item.delivery_range !== 'UNIVERSAL'"
+                 [nzSize]="'small'"
+                 [(ngModel)]="item.launch_positon"
+                 (ngModelChange)="getInventoryTypeLstErrorTip()"
+                 [nzPlaceHolder]="'请选择投放位置'"
+                 nzShowSearch>
+        <nz-option *ngFor="let option of launch_position[item.delivery_range]" [nzLabel]="option.label" [nzValue]="option.value" [nzDisabled]="defaultData.landing_type==='SHOP'&&option.value==='smart_inventory'"></nz-option>
+      </nz-select>
+      <nz-select class="w200 ml8"
+                 *ngIf="item.delivery_range === 'DEFAULT' && item.launch_positon !== 'smart_inventory'"
+                 [nzSize]="'small'"
+                 [nzMaxTagCount]="1"
+                 [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                 nzMode="multiple"
+                 [nzAllowClear]="true"
+                 [(ngModel)]="item.inventory_type"
+                 (nzOpenChange)="inventoryChange($event,list,index)"
+                 [nzPlaceHolder]="'请选择按媒体指定位置'"
+                 nzShowSearch>
+        <nz-option *ngFor="let option of inventory_type[item.launch_positon]" [nzLabel]="option.label" [nzValue]="option.value" [nzDisabled]="defaultData.landing_type==='SHOP'&&option.value==='UNION_BOUTIQUE_GAME'"></nz-option>
+      </nz-select>
+      <button class="ml20" nz-button nzSize="small" *ngIf="list.length !== 1" (click)="deleteDelivery(list,index)"><i nz-icon nzType="close" nzTheme="outline"></i></button>
+      <button class="ml20" nz-button nzSize="small" *ngIf="index === list.length - 1" (click)="addDelivery(list)"><i nz-icon nzType="plus" nzTheme="outline"></i></button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #titleSelectedShow let-titles="titles">
+  <div class="ml8 mt8 title-selected-show-container">
+    <div class="title-action">
+      <div>已选（{{titles.length}}）</div>
+      <div>
+        <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="clearAllSelected(titles,'title')">
+          <span>清空</span>
+        </button>
+        <button class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addLaunchTitle(titles)">
+          <span>添加标题</span>
+        </button>
+      </div>
+    </div>
+    <div class="title-item-wrapper mt10">
+      <div class="title-item" *ngFor="let title of titles;let idx=index">
+        <span class="txt" title="{{title}}">{{title}}</span>
+        <i nz-icon nzType="close" nzTheme="outline" class="hand" (click)="clearSingleSelected(titles,idx,'title')"></i>
+      </div>
+
+    </div>
+  </div>
+
+</ng-template>
+
+<ng-template #materialSelectedShow let-materialList="materialList" let-cssType="cssType">
+  <div class="ml8 mt8 mr8 material-selected-show-container">
+    <div class="title-action">
+      <div>已选（{{materialList.length}}）</div>
+      <div>
+        <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="clearAllSelected(materialList,'material')">
+          <span>清空</span>
+        </button>
+        <button class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="openMaterials(materialList,cssType)">
+          <span>添加素材</span>
+        </button>
+      </div>
+    </div>
+    <div class="material-item-wrapper mt10">
+      <ng-container *ngIf="materialList">
+        <div class="material-item">
+          <div class="material-item-left">
+            <div class="material-item-content" *ngFor="let material of materialList;let idx=index">
+              <div class="material-card-box">
+                <div class="material-card">
+                  <div class="material-card-content small">
+                    <div class="image-preview material-preview">
+                      <div class="img-content">
+                        <img class="cover size img" [src]="material['preview_img']" nz-popover [nzPopoverContent]="contentTemplate" [nzPopoverOverlayClassName]="'image-drop-class'" nzPopoverPlacement="topLeft" nzPopoverTrigger="click">
+                        <ng-template #contentTemplate>
+                          <div class="image-cnt-drop">
+                            <img *ngIf="cssType!=3" [src]="material['preview_img']">
+                            <a *ngIf="cssType==3" target="_blank" [href]="material['preview_video']"><video poster="{{material['preview_img']}}" [src]="material['preview_video']" controls="controls" controlslist="nodownload"></video></a>
+                          </div>
+                        </ng-template>
+                        <!--                        <i *ngIf="cssType==3" class="play-icon" style="font-size:18px;color:white;" nz-icon nzType="play-circle" nzTheme="fill"></i>-->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="material-name">{{material['material_name']}}</div>
+                </div>
+                <div class="btn-wrapper btn-center" *ngIf="defaultData.template_struct.material.screenshot_setting_type === 'material'">
+                  <button *ngIf="!material.screenshot_setting || !material.screenshot_setting['preview_img']" nz-button nzType="dashed" (click)="addCover(material,cssType)">设置封面</button>
+                  <div *ngIf="material.screenshot_setting && material.screenshot_setting['preview_img']" class="image-preview material-preview">
+                    <button class="update-cover-box" nz-button nzType="dashed" (click)="addCover(material,cssType)">修改封面</button>
+                    <div class="img-content">
+                      <img class="cover size img" [src]="material['screenshot_setting']['preview_img']" >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <i nz-icon class="close-icon" nzType="close-circle" nzTheme="outline" (click)="clearSingleSelected(materialList,idx,'material')"></i>
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #materialSelectedShowAndTitle let-materialList="materialList" let-cssType="cssType">
+  <div class="ml8 mt8 mr8 material-selected-show-container">
+    <div class="title-action">
+      <div>已选（{{materialList.length}}）</div>
+      <div>
+        <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="clearAllSelected(materialList,'material')">
+          <span>清空</span>
+        </button>
+        <button class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="openMaterials(materialList,cssType)">
+          <span>添加素材</span>
+        </button>
+      </div>
+    </div>
+    <div class="material-item-wrapper mt10">
+      <ng-container *ngIf="materialList">
+        <div class="material-item multiline" *ngFor="let material of materialList;let idx=index">
+          <div class="material-item-left">
+            <div class="material-item-content">
+              <div class="material-card-box">
+                <div class="material-card">
+                  <div class="material-card-content small">
+                    <div class="image-preview material-preview">
+                      <div class="img-content">
+                        <img class="cover size img" [src]="material['preview_img']" nz-popover [nzPopoverContent]="contentTemplate" [nzPopoverOverlayClassName]="'image-drop-class'" nzPopoverPlacement="topLeft" nzPopoverTrigger="click">
+                        <ng-template #contentTemplate>
+                          <div class="image-cnt-drop">
+                            <img *ngIf="cssType!=3" [src]="material['preview_img']">
+                            <a *ngIf="cssType==3" target="_blank" [href]="material['preview_video']"><video poster="{{material['preview_img']}}" [src]="material['preview_video']" controls="controls" controlslist="nodownload"></video></a>
+                          </div>
+                        </ng-template>
+<!--                        <i *ngIf="cssType==3" class="play-icon" style="font-size:18px;color:white;" nz-icon nzType="play-circle" nzTheme="fill"></i>-->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="material-name">{{material['material_name']}}</div>
+                </div>
+                <div class="btn-wrapper btn-center" *ngIf="defaultData.template_struct.material.screenshot_setting_type === 'material'">
+                  <button *ngIf="!material.screenshot_setting || !material.screenshot_setting['preview_img']" nz-button nzType="dashed" (click)="addCover(material,cssType)">设置封面</button>
+                  <div  *ngIf="material.screenshot_setting && material.screenshot_setting['preview_img']" class="image-preview material-preview">
+                    <button class="update-cover-box" nz-button nzType="dashed" (click)="addCover(material,cssType)">修改封面</button>
+                    <div class="img-content">
+                      <img class="cover size img" [src]="material['screenshot_setting']['preview_img']" >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <i nz-icon class="close-icon" nzType="close-circle" nzTheme="outline" (click)="clearSingleSelected(materialList,idx,'material')"></i>
+            </div>
+          </div>
+          <div class="material-item-right" [ngClass]="{empty:!(material['title'] && material['title'].length>0)}">
+            <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'" *ngIf="!(material['title'] && material['title'].length>0)"
+                    (click)="addLaunchTitle(material['title'])">
+              <span>添加标题</span>
+            </button>
+            <ng-container *ngIf="material['title'] && material['title'].length>0"
+                          [ngTemplateOutlet]="titleSelectedShow" [ngTemplateOutletContext]="{titles:material['title']}">
+            </ng-container>
+          </div>
+        </div>
+
+      </ng-container>
+
+
+    </div>
+  </div>
+</ng-template>

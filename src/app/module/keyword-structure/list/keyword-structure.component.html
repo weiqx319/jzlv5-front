@@ -1,0 +1,209 @@
+<a class="manage-add mr8" (click)="showStructureList()" nz-button [nzType]="'default'" [nzSize]="'small'" >
+  <i nz-icon nzType="unordered-list" nzTheme="outline"></i><span>账户结构</span>
+</a>
+
+<nz-drawer [nzVisible]="showList" [nzWidth]="1100"  nzPlacement="right" [nzTitle]="'账户结构'" (nzOnClose)="closeStructureList()">
+  <div class="condition-wrapper">
+    <!--任务名称-->
+    <div class="condition-item">
+      <span class="label">任务名称：</span>
+      <div class="condition-content">
+        <input nz-input [(ngModel)]="taskName" nzSize="default"/>
+      </div>
+    </div>
+    <!--关键词-->
+    <div class="condition-item">
+      <div class="condition-content">
+        <div class="search-area-left">
+          <span class="label">{{this.searchTypeObj[this.sourceSummary]['name']}}：</span>
+          <nz-select [(ngModel)]="keywordOption" class="w100 mr5" nzSize="default">
+            <nz-option *ngFor="let item of keywordOptions" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </div>
+        <textarea class="textarea" nz-input placeholder="最多同时搜1000个文本，一行一个" nz-col nzSpan="8" [(ngModel)]="searchValue"></textarea>
+      </div>
+    </div>
+    <!--状态-->
+    <div class="condition-item">
+      <span class="label">{{this.searchTypeObj[this.sourceSummary]['name']}}状态：</span>
+      <div class="condition-content">
+        <nz-select
+          class="content"
+          [nzMaxTagCount]="2"
+          [nzMaxTagPlaceholder]="tagPlaceHolder"
+          nzMode="multiple"
+          nzPlaceHolder="请选择{{this.searchTypeObj[this.sourceSummary]['name']}}状态"
+          [(ngModel)]="statusOption"
+        >
+          <nz-option *ngFor="let item of statusFilterOption['filterOption']" [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+        </nz-select>
+        <ng-template #tagPlaceHolder let-selectedList>共{{ statusOption.length }}个</ng-template>
+      </div>
+    </div>
+    <!--匹配模式-->
+    <div class="condition-item" *ngIf="sourceSummary==='keyword'">
+      <span class="label">匹配模式：</span>
+      <div class="condition-content">
+        <nz-select
+          class="content"
+          [nzMaxTagCount]="2"
+          [nzMaxTagPlaceholder]="tagPlaceHolderMatch"
+          nzMode="multiple"
+          nzPlaceHolder="请选择匹配模式"
+          [(ngModel)]="matchTypeOption"
+        >
+          <nz-option *ngFor="let item of matchTypeOptions" nzCustomContent [nzLabel]="item.name" [nzValue]="item.key">{{item.name}}<span style="margin-left: 10px;color: #ccc;">{{item.belong_to.name}}
+          </span></nz-option>
+        </nz-select>
+        <ng-template #tagPlaceHolderMatch let-selectedList>共{{ matchTypeOption.length }}个</ng-template>
+      </div>
+    </div>
+    <!--出价-->
+    <div class="condition-item" *ngIf="sourceSummary==='keyword'">
+      <span class="label">{{this.searchTypeObj[this.sourceSummary]['name']}}出价：</span>
+      <div class="condition-content">
+        <nz-select [(ngModel)]="priceOption" class="w100 mr5" nzSize="default">
+          <nz-option *ngFor="let item of priceOptions" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+        </nz-select>
+      </div>
+      <ng-container *ngIf="priceOption!=='between'">
+        <nz-input-number class="w300" [(ngModel)]="priceValue" [nzMin]="0" [nzStep]="1"></nz-input-number>
+      </ng-container>
+      <ng-container *ngIf="priceOption==='between'">
+        <nz-input-number class="w150 mr5" [(ngModel)]="priceValueArr[0]" [nzMin]="0" [nzStep]="1"></nz-input-number>
+        <nz-input-number class="w150" [(ngModel)]="priceValueArr[1]" [nzMin]="priceValueArr[0]" [nzStep]="1"></nz-input-number>
+      </ng-container>
+
+      </div>
+    <!--账户名称-->
+    <div class="condition-item">
+      <div class="condition-content">
+        <div class="search-area-left">
+          <span class="label">账户名称：</span>
+          <nz-select [(ngModel)]="accountOption" class="w100 mr5" nzSize="default">
+            <nz-option *ngFor="let item of keywordOptions" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </div>
+        <textarea class="textarea" nz-input placeholder="最多同时搜1000个文本，一行一个" nz-col nzSpan="8" [(ngModel)]="accountValue"></textarea>
+      </div>
+    </div>
+    <!--计划名称-->
+    <div class="condition-item">
+      <div class="condition-content">
+        <div class="search-area-left">
+          <span class="label">计划名称：</span>
+          <nz-select [(ngModel)]="campaignOption" class="w100 mr5" nzSize="default">
+            <nz-option *ngFor="let item of keywordOptions" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </div>
+        <textarea class="textarea" nz-input placeholder="最多同时搜1000个文本，一行一个" nz-col nzSpan="8" [(ngModel)]="campaignValue"></textarea>
+      </div>
+    </div>
+    <!--单元名称-->
+    <div class="condition-item">
+      <div class="condition-content">
+        <div class="search-area-left">
+          <span class="label">单元名称：</span>
+          <nz-select [(ngModel)]="adgroupOption" class="w100 mr5" nzSize="default">
+            <nz-option *ngFor="let item of keywordOptions" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </div>
+        <textarea class="textarea" nz-input placeholder="最多同时搜1000个文本，一行一个" nz-col nzSpan="8" [(ngModel)]="adgroupValue"></textarea>
+      </div>
+    </div>
+    <!--应用调起网址-->
+    <div class="condition-item" *ngIf="sourceSummary==='keyword'">
+      <div class="condition-content">
+        <div class="search-area-left">
+          <span class="label">应用调起网址：</span>
+          <nz-select [(ngModel)]="deeplinkOption" class="w100 mr5" nzSize="default">
+            <nz-option *ngFor="let item of keywordOptions" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </div>
+        <textarea class="textarea" nz-input placeholder="最多同时搜1000个文本，一行一个" nz-col nzSpan="8" [(ngModel)]="deeplinkUrl"></textarea>
+      </div>
+    </div>
+    <!--访问Url-->
+    <div class="condition-item">
+      <div class="condition-content">
+        <div class="search-area-left">
+          <span class="label">访问Url：</span>
+          <nz-select [(ngModel)]="pcDestinationOption" class="w100 mr5" nzSize="default">
+            <nz-option *ngFor="let item of keywordOptions" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </div>
+        <textarea class="textarea" nz-input placeholder="最多同时搜1000个文本，一行一个" nz-col nzSpan="8" [(ngModel)]="pcDestinationUrl"></textarea>
+      </div>
+    </div>
+    <!--移动访问Url-->
+    <div class="condition-item">
+      <div class="condition-content">
+        <div class="search-area-left">
+          <span class="label">移动访问Url：</span>
+          <nz-select [(ngModel)]="wapDestinationOption" class="w100 mr5" nzSize="default">
+            <nz-option *ngFor="let item of keywordOptions" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </div>
+        <textarea class="textarea" nz-input placeholder="最多同时搜1000个文本，一行一个" nz-col nzSpan="8" [(ngModel)]="wapDestinationUrl"></textarea>
+      </div>
+    </div>
+    <div class="placeholder" *ngIf="sourceSummary==='creative'"></div>
+    <div class="condition-item">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="resetSearchData()">
+        <span>重置</span></button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="saveSearchData()">
+        <span>搜索</span></button>
+    </div>
+  </div>
+  <div class="backup-list">
+    <nz-table
+        #nzTable
+        class="pt8"
+        nzShowSizeChanger
+        [nzPageSizeOptions]="[30, 50, 100, 500]"
+        [nzSize]="'small'"
+        [nzData]="taskListData"
+        [nzFrontPagination]="false"
+        [(nzPageSize)]="pageSize"
+        [(nzPageIndex)]="currentPage"
+        (nzPageIndexChange)="refreshData()"
+        (nzPageSizeChange)="refreshData(true)"
+        [nzTotal]="total"
+        [nzLoading]="loading"
+        [nzScroll]="{ y: noResultHeight + 'px' }"
+        class="task-table"
+    >
+      <thead>
+      <tr>
+        <th [nzWidth]="'200px'"><span>提交时间</span></th>
+        <th [nzWidth]="'200px'"><span>完成时间</span></th>
+        <th [nzWidth]="'200px'"><span>搜索名称</span></th>
+        <th [nzWidth]="'100px'"><span>操作人员</span></th>
+        <th [nzWidth]="'100px'"><span>状态</span></th>
+        <th [nzWidth]="'200px'"><span>结果</span></th>
+        <th [nzWidth]="'100px'"><span>操作</span></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of taskListData">
+        <td>{{ data.create_time }}</td>
+        <td>{{ data.finished_time != '1900-01-01 00:00:00' ? data.finished_time:'' }}</td>
+        <td>{{ data.search_name }}</td>
+        <td>{{ data.user_name }}</td>
+        <td>{{ statusMap[data.status] }}</td>
+        <td>{{ data.result_desc }}</td>
+        <td>
+          <a class="manage-add mr8" (click)="downloadList(data.search_id)" *ngIf="data.status>1 && data.status<4">
+            <i nz-icon nzType="download" nzTheme="outline"></i>
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+
+  </div>
+
+</nz-drawer>
+
+
+

@@ -1,0 +1,119 @@
+<div class="login-form">
+   <!-- 切换登录方式 -->
+   <div class="toggle">
+     <a *ngIf="isMsgLogin" (click)="isMsgLogin=false" href="javascript:;">
+       <i nz-icon nzType="user" nzTheme="outline"></i> 使用账号登录
+     </a>
+     <a *ngIf="!isMsgLogin" (click)="isMsgLogin=true" href="javascript:;">
+      <i nz-icon nzType="mail" nzTheme="outline"></i> 使用短信登录
+     </a>
+   </div>
+
+   <!-- 账号密码登录 -->
+   <form *ngIf="!isMsgLogin" class="login-form-content" nz-form [formGroup]="loginForm" (ngSubmit)="submit()" role="form">
+     <!-- 登录错误提醒 -->
+     <ng-container *ngIf="(authState$|async).isFailure&&(authState$|async)?.failureMsg">
+       <div class="login-error-hint">
+        <i nz-icon nzType="minus-circle" nzTheme="outline"></i><span class="ml8">{{(authState$|async)?.failureMsg}}</span>
+       </div>
+     </ng-container>
+     <nz-form-item class="login-form-item">
+       <nz-form-control>
+         <input nz-input [formControlName]="'username'" placeholder="请输入邮箱/手机号" [nzSize]="'large'">
+           <ng-template #prefix>
+             <i nz-icon nzType="user" nzTheme="outline"></i>
+           </ng-template>
+         <ng-container>
+           <div class='ant-form-item-explain' *ngIf="getFormControl('username').dirty&&getFormControl('username').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入邮箱/手机号</div>
+           <div class='ant-form-item-explain' *ngIf="getFormControl('username').dirty&&getFormControl('username').hasError('error')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入正确的邮箱/手机号</div>
+         </ng-container>
+       </nz-form-control>
+     </nz-form-item>
+     <nz-form-item class="login-form-item">
+       <nz-form-control>
+         <input nz-input [formControlName]="'password'"  placeholder="请输入密码" type="password" [nzSize]="'large'">
+           <ng-template #prefix>
+             <i nz-icon nzType="lock" nzTheme="outline"></i>
+           </ng-template>
+         <ng-container>
+           <div class='ant-form-item-explain' *ngIf="getFormControl('password').dirty&&getFormControl('password').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入密码</div>
+         </ng-container>
+       </nz-form-control>
+     </nz-form-item>
+     <nz-form-item>
+       <div nz-col [nzSpan]="12">
+         <label nz-checkbox [formControlName]="'remember'">
+           <span>自动登录</span>
+         </label>
+       </div>
+       <div nz-col [nzSpan]="12" class="text-right" *ngIf="!!productInfo['canReGetPassword']">
+         <a class="forgot" routerLink="/forget_password">忘记密码？</a>
+       </div>
+     </nz-form-item>
+     <nz-form-item>
+       <button nz-button [nzType]="'primary'" [nzLoading]="loading" [nzSize]="'large'" class="ant-btn__block">
+         <span>马上登录</span>
+       </button>
+     </nz-form-item>
+     <div class="login-to-register" *ngIf="!!productInfo['canSignUp']">
+       <span>还没注册{{productInfo['name']}}？</span><a routerLink="/register">马上注册</a>
+     </div>
+   </form>
+
+   <!-- 使用短信验证码登录 -->
+   <form *ngIf="isMsgLogin" class="login-form-content" nz-form [formGroup]="msgLoginForm" (ngSubmit)="msgSubmit()" role="form">
+     <!-- 登录错误提醒 -->
+     <ng-container *ngIf="(authState$|async).isFailure&&(authState$|async)?.msgFailureMsg">
+      <div class="login-error-hint">
+       <i nz-icon nzType="minus-circle" nzTheme="outline"></i><span class="ml8">{{(authState$|async)?.msgFailureMsg}}</span>
+      </div>
+    </ng-container>
+
+     <nz-form-item class="login-form-item">
+       <nz-form-control>
+         <input nz-input [formControlName]="'mobile'" placeholder="请输入手机号" [nzSize]="'large'">
+           <ng-template #prefix>
+             <i nz-icon nzType="user" nzTheme="outline"></i>
+           </ng-template>
+
+         <ng-container *ngIf="getMsgFormControl('mobile').dirty&&getMsgFormControl('mobile').errors">
+           <div class='ant-form-item-explain' *ngIf="getMsgFormControl('mobile').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入手机号</div>
+           <div class='ant-form-item-explain' *ngIf="getMsgFormControl('mobile').errors?.pattern"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入正确手机号</div>
+         </ng-container>
+       </nz-form-control>
+     </nz-form-item>
+
+     <nz-form-item class="login-form-item">
+       <nz-form-control>
+         <div class="login-phone-code">
+           <input nz-input [formControlName]="'verification_code'"  placeholder="请输入验证码" type="text" [nzSize]="'large'" [readonly]="(!!getMsgFormControl('mobile').errors)||!isGotPhoneCode">
+           <button class="login-phone-btn ml8" nz-button [nzType]="'default'" [nzSize]="'large'" [disabled]="isRequestingPhoneCode && count" [nzSize]="'large'" (click)="getPhoneCode()">
+             {{ count ? count + 's后重新获取' : '获取验证码' }}
+           </button>
+         </div>
+           <ng-template #prefix>
+             <i nz-icon nzType="lock" nzTheme="outline"></i>
+           </ng-template>
+         <ng-container *ngIf="getMsgFormControl('verification_code').dirty&&getMsgFormControl('verification_code').errors">
+           <div class='ant-form-item-explain' *ngIf="getMsgFormControl('verification_code').errors?.required&&isGotPhoneCode"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入手机验证码</div>
+         </ng-container>
+       </nz-form-control>
+     </nz-form-item>
+
+     <nz-form-item>
+       <div nz-col [nzSpan]="12">
+         <label nz-checkbox [formControlName]="'remember'">
+           <span>自动登录</span>
+         </label>
+       </div>
+     </nz-form-item>
+     <nz-form-item>
+       <button nz-button [nzType]="'primary'" [nzLoading]="loading" [nzSize]="'large'" class="ant-btn__block">
+         <span>登录</span>
+       </button>
+     </nz-form-item>
+     <div class="login-to-register" *ngIf="!!productInfo['canSignUp']">
+       <span>还没注册{{productInfo['name']}}？</span><a routerLink="/register">马上注册</a>
+     </div>
+   </form>
+ </div>

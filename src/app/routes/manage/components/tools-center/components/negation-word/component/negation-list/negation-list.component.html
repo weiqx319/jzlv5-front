@@ -1,0 +1,102 @@
+<div class="message-container">
+  <div class="fixed-condition-manage page-condition-header">
+    <div>
+      <button class="mr8" nz-popconfirm nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addNegativeWordGroup()">
+        <i nz-icon nzType="plus" nzTheme="outline"></i>新建否词包
+      </button>
+      <button class="mr8" nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="delNegativeWordGroup(true)" [nzPopconfirmPlacement]="'bottomLeft'" nz-button [nzType]="'default'" [nzSize]="'default'"
+              [ngClass]="{'disabled-status': !isIndeterminate || role_id !== 1}"
+              [disabled]="!isIndeterminate || role_id !== 1">
+        <i nz-icon nzType="close" nzTheme="outline"></i>删除
+      </button>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="table">
+      <nz-table
+        #nzTable
+        nzShowSizeChanger
+        [nzPageSizeOptions]="[30,50,100,500]"
+        [nzSize]="'default'"
+        [nzData]="negativeWordGroupList"
+        [nzFrontPagination]="false"
+        [(nzPageSize)]="pageSize"
+        [(nzPageIndex)]="currentPage"
+        (nzPageIndexChange)="refreshData()"
+        (nzPageSizeChange)="refreshData(true)"
+        [nzTotal]="total"
+        [nzLoading]="loading"
+        [nzShowTotal]="totalItemTemplate"
+        [nzScroll]="{ x: '1150px', y: noResultHeight+'px' }"
+      >
+        <thead>
+        <tr>
+          <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="isAllChecked" (nzCheckedChange)="updateAllChecked($event)">
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>否词包</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'group_name',name:'否词包',type:'multiValue'}" [(filterResult)]="filterResult['group_name']" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>否词包词数</span>
+          </th>
+  <!--        <th [nzWidth]="'150px'">-->
+  <!--          <span>适用媒体</span>-->
+  <!--          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'available_media',name:'适用媒体',type:'multiValue'}" [(filterResult)]="filterResult['available_media']" (submit)="doFilter()"></app-filter>-->
+  <!--        </th>-->
+          <th [nzWidth]="'200px'">
+            <span>备注说明</span>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>最近一次词包更新时间</span>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>创建时间</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>创建者</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'user_id',name:'创建者',type:'singleList'}" [(filterResult)]="filterResult['user_id']" [filterOption]="filterUserOption" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'150px'">
+            <span>操作</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of negativeWordGroupList">
+          <td
+            nzShowCheckbox
+            [(nzChecked)]="data.checked"
+            (nzCheckedChange)="checkedChange()"
+          ></td>
+          <td>
+            <a href="javascript:" routerLink="../negation_word_list" [queryParams]="{group_id:data.group_id}">{{data.group_name}}</a>
+          </td>
+          <td>{{data.word_count}}</td>
+  <!--        <td>{{data.available_media_name}}</td>-->
+          <td>{{data.remark}}</td>
+          <td>{{data.last_modify_time}}</td>
+          <td>{{data.create_time}}</td>
+          <td>{{data.user_name}}</td>
+          <td>
+            <ng-container *ngIf="data.user_id === user_id || role_id === 1">
+              <a (click)="editNegativeWordGroup(data)">编辑</a>
+            </ng-container>
+            <ng-container *ngIf="data.user_id !== user_id && role_id !== 1">
+              <span>编辑</span>
+            </ng-container>
+            <span class="ml8 mr8">|</span>
+            <ng-container *ngIf="role_id === 1">
+                <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="delNegativeWordGroup(false, data)" [nzPopconfirmOverlayClassName]="'dashboard-delete-card'" [nzPopconfirmPlacement]="'bottomRight'" [nzPopconfirmTrigger]="'click'">删除</a>
+            </ng-container>
+            <ng-container *ngIf="role_id !== 1">
+              <span>删除</span>
+            </ng-container>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+    </div>
+  </div>
+</div>

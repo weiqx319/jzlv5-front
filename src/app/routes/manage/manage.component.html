@@ -1,0 +1,92 @@
+<app-layout-left-menu [menuList]="menuList"></app-layout-left-menu>
+
+<!-- <div class="manage-container">
+  <div class="manage-sidebar">
+    <ul class="manage-link">
+      <li class="manage-link-item" [routerLinkActive]="['active-link']">
+        <a routerLink="/manage/basic_detail">基本信息</a>
+      </li>
+      <li class="manage-link-item" [routerLinkActive]="['active-link']">
+        <a routerLink="/manage/message_center">消息中心</a>
+      </li>
+      <li class="manage-link-item" [routerLinkActive]="['active-link']">
+        <a routerLink="/manage/task_log">任务记录</a>
+      </li>
+      <ng-container *ngIf="currentManagerUser.role_id !== 2">
+        <ng-container *ngIf="currentManagerUser.role_id === 1 ||  currentManagerUser.role_id === 3 ">
+          <li class="manage-link-item" [routerLinkActive]="['active-link']">
+            <a routerLink="/manage/user_manage">用户管理</a>
+          </li>
+
+        </ng-container>
+        <ng-container *ngIf="currentManagerUser.role_id === 1">
+          <li class="manage-link-item" [routerLinkActive]="['active-link']">
+            <a routerLink="/manage/account_keeper">帐户管家</a>
+          </li>
+        </ng-container>
+        <li class="manage-link-item" [routerLinkActive]="['active-link']">
+          <a routerLink="/manage/account_binding">账户授权</a>
+        </li>
+        <ng-container *ngIf="currentManagerUser.role_id === 1">
+          <li class="manage-link-item" [routerLinkActive]="['active-link']">
+            <a routerLink="/manage/advert_manage">广告主管理</a>
+          </li>
+        </ng-container>
+        <li class="manage-link-item" [routerLinkActive]="['active-link']">
+          <a routerLink="/manage/generator">URL生成器</a>
+        </li>
+
+        <li class="manage-link-item" [routerLinkActive]="['active-link']">
+          <a routerLink="/manage/conversion"
+          >转化数据</a
+          >
+        </li>
+        <li class="manage-link-item" [routerLinkActive]="['active-link']">
+          <a routerLink="/manage/conversion_desc">转化描述</a>
+        </li>
+        <li class="manage-link-item" [routerLinkActive]="['active-link']" *ngIf="currentChannelId === 1">
+          <a routerLink="/manage/metric"
+          >SEM定义指标</a
+          >
+        </li>
+        <li class="manage-link-item" [routerLinkActive]="['active-link']" *ngIf="currentChannelId === 2">
+          <a routerLink="/manage/metric"
+          >信息流定义指标</a
+          >
+        </li>
+        <li class="manage-link-item" [routerLinkActive]="['active-link']" *ngIf="currentChannelId === 3">
+          <a routerLink="/manage/metric"
+          >应用商店定义指标</a
+          >
+        </li>
+        <li class="manage-link-item" [routerLinkActive]="['active-link']">
+          <a routerLink="/manage/company_metric">集团指标</a>
+        </li>
+        <li class="manage-link-item" [routerLinkActive]="['active-link']" *ngIf="currentChannelId === 1">
+          <a routerLink="/manage/dimension">定义维度</a>
+        </li>
+        <li
+          *ngIf="hasCompany && currentChannelId === 1"
+          class="manage-link-item"
+          [routerLinkActive]="['active-link']"
+        >
+          <a routerLink="/manage/trade_mark">行业标识配置</a>
+        </li>
+        <ng-container *ngIf="currentChannelId === 1">
+          <li class="manage-link-item" [routerLinkActive]="['active-link']">
+            <a routerLink="/manage/negation_word">否词库</a>
+          </li>
+          <li class="manage-link-item" [routerLinkActive]="['active-link']">
+            <a routerLink="/manage/black_word">黑名单词库</a>
+          </li>
+        </ng-container>
+        <li class="manage-link-item" [routerLinkActive]="['active-link']">
+          <a routerLink="/manage/manual_data">无API媒体数据上传</a>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+  <div class="manage-content">
+    <router-outlet></router-outlet>
+  </div>
+</div> -->

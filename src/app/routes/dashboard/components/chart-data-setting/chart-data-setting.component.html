@@ -1,0 +1,159 @@
+<div class="new-chart-line-data-setting">
+  <form class="new-chart-line-data-form" [formGroup]="validateDataForm">
+    <nz-form-item>
+      <div class="form-label" nz-col [nzSpan]="3">
+        <label>时间:</label>
+      </div>
+      <nz-form-control class="w150 ml8" [nzSpan]="20">
+        <nz-select class="w100p" [formControlName]="'dateRange'" [nzSize]="'small'" [(ngModel)]="setting.date_range">
+          <nz-option
+            *ngFor="let option of chart_detail_setting.summary_items.time_type"
+            [nzDisabled]="(setting.summary_type === 'province_region' || chart_detail_setting.summary_type === 'city_region' || disable_time || current_channel===2) && option.name === '今天'"
+            [nzLabel]="option.name"
+            [nzValue]="option.key">
+          </nz-option>
+        </nz-select>
+        <div class='ant-form-item-explain' class="ml8" *ngIf="getFormControl('dateRange').dirty&&getFormControl('dateRange').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择时间</div>
+      </nz-form-control>
+    </nz-form-item>
+    <ng-container>
+      <nz-form-item>
+        <div class="form-label" nz-col [nzSpan]="3">
+          <label>数据范围:</label>
+        </div>
+        <nz-form-control class="w330 ml8" nz-col [nzSpan]="20">
+          <app-item-select  [summaryType]="setting.summary_type" [itemDetail]="setting.data_range" (itemSelected)="itemSelect($event)"></app-item-select>
+        </nz-form-control>
+      </nz-form-item>
+    </ng-container>
+    <nz-form-item *ngFor="let filter of setting.conditions;let i = index;">
+      <div class="form-label" nz-col [nzSpan]="3" *ngIf="i==0">
+        <label>筛选条件:</label>
+      </div>
+      <nz-form-control [nzSpan]="20" [nzOffset]="i==0?0:3">
+        <div class="inline-block w120 ml8">
+          <nz-select class="w100p"
+                     [formControlName]="filter.filter_name"
+                     [nzSize]="'small'"
+                     [(ngModel)]="filter.key"
+                     (ngModelChange)="filterChange(i)"
+                     nzPlaceHolder="">
+            <nz-option
+              *ngFor="let option of chart_detail_setting.summary_items.filter_items[setting.summary_type]"
+              [nzLabel]="option.name"
+              [nzValue]="option.key">
+            </nz-option>
+          </nz-select>
+        </div>
+        <ng-container *ngIf="chart_detail_setting.summary_items.condition_details[filter.key]">
+          <div class="inline-block w80 ml8">
+            <nz-select
+              class="w100p"
+              [formControlName]="filter.filter_name + '_type'"
+              [nzSize]="'small'"
+              [(ngModel)]="filter.op"
+              nzPlaceHolder="">
+              <nz-option
+                *ngFor="let option of operations[chart_detail_setting.summary_items.condition_details[filter.key].op_type]"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="inline-block w120 ml8"
+               *ngIf="chart_detail_setting.summary_items.condition_details[filter.key].op_type == 'string'">
+            <input nz-input
+              class="w100p"
+              [nzSize]="'small'"
+              [formControlName]="filter.filter_name + '_value'"
+              type="text"
+              placholder="值"
+              [(ngModel)]="filter.value">
+
+          </div>
+          <div class="inline-block w120 ml8"
+               *ngIf="chart_detail_setting.summary_items.condition_details[filter.key].op_type == 'number'">
+            <input nz-input
+              class="w100p"
+              [nzSize]="'small'"
+              [formControlName]="filter.filter_name + '_value'"
+              type = "number"
+              placeholder="数值"
+              [(ngModel)]="filter.value">
+
+          </div>
+          <div class="inline-block w120 ml8"
+               *ngIf="chart_detail_setting.summary_items.condition_details[filter.key].op_type == 'single_select'">
+            <nz-select
+              class="w100p"
+              [formControlName]="filter.filter_name + '_value'"
+              [nzSize]="'small'"
+              [(ngModel)]="filter.value">
+              <nz-option
+                *ngFor="let option of chart_detail_setting.summary_items.condition_details[filter.key].select_items"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="inline-block w120 ml8"
+               style="vertical-align:middle; margin-top: -1px;"
+               *ngIf="chart_detail_setting.summary_items.condition_details[filter.key].op_type == 'multi_select'">
+            <app-region-select [region]="filter" [cIndex]="i" (regionSelected)="regionSelect(filter, $event)"></app-region-select>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="!chart_detail_setting.summary_items.condition_details[filter.key]">
+          <div class="inline-block w80 ml8">
+            <nz-select
+              class="w100p"
+              [formControlName]="filter.filter_name + '_type'"
+              [nzSize]="'small'"
+              [(ngModel)]="filter.op"
+              nzDisabled="!filter.key"
+              nzPlaceHolder="">
+            </nz-select>
+          </div>
+          <div class="inline-block w120 ml8">
+            <input nz-input
+              class="w100p"
+              [nzSize]="'small'"
+              [formControlName]="filter.filter_name + '_value'"
+              type="text"
+              placholder="值"
+              [(ngModel)]="filter.value"
+              nzDisabled="!filter.key">
+
+          </div>
+        </ng-container>
+        <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  style="cursor: pointer;" (click)="removeFilterField(filter,$event)"></i>
+        <div class='ant-form-item-explain' class="ml8"
+              *ngIf="getFormControl(filter.filter_name)?.dirty&&getFormControl(filter.filter_name)?.hasError('required') || getFormControl(filter.filter_name + '_type')?.dirty&&getFormControl(filter.filter_name + '_type')?.hasError('required') || getFormControl(filter.filter_name + '_value') ?.dirty&&getFormControl(filter.filter_name + '_value')?.hasError('required')">
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请完善选项
+          </div>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="mb8">
+      <div class="form-label" nz-col [nzSpan]="3" *ngIf="setting.conditions.length === 0">
+        <label>筛选条件:</label>
+      </div>
+      <nz-form-control [nzSpan]="20" [ngClass]="{ml71: setting.conditions.length !== 0}">
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addFilterField($event)">
+         <i nz-icon nzType="plus" nzTheme="outline"></i>
+          <span> 添加条件</span>
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+  <div class="new-chart-line-data-setting-footer mt8">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="pre()">
+      <span>上一步</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="done()" [disabled]="!validateDataForm.valid">
+      <span>完成</span>
+    </button>
+  </div>
+</div>
+

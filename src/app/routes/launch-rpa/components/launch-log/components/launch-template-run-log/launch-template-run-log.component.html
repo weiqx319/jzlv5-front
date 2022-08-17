@@ -1,0 +1,227 @@
+<div class="launch-rpa-contents">
+  <div style="display: flex; justify-content: flex-end">
+    <button class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="refreshData(true)">
+      <i nz-icon nzType="reload" nzTheme="outline"></i>
+      <span>刷新</span>
+    </button>
+  </div>
+
+  <div class="pt20">
+    <nz-table #basicTable
+              [nzShowTotal]="globalTemplate.totalItemTemplate"
+              [nzFrontPagination]="false"
+              [nzSize]="'small'"
+              [nzData]="apiData"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzNoResult]="globalTemplate.noResultTd"
+              [nzScroll]="{ y: noResultHeight + 'px' }">
+      <thead>
+      <tr>
+        <th nzWidth="150px">创建时间</th>
+        <th nzWidth="150px">结束时间</th>
+        <th nzWidth="150px">任务状态</th>
+        <th>执行结果</th>
+        <th nzWidth="100px">操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{data['begin_time']}}</td>
+        <td>{{data['run_status'] != 2 && data['run_status'] != 3 && data['run_status'] != 4 ? '-' : data['end_time']}}</td>
+        <td>{{data['run_status']| objMap:launchRpaService.TemplateStateConfig:'status_'}}</td>
+        <td>{{data['run_message']}}</td>
+        <td><a href="javascript:" *ngIf="data['run_status'] == 2 || data['run_status'] == 3 || data['run_status'] == 4" (click)="showRunLogDetail(data)">查看详情</a></td>
+      </tr>
+
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+
+<nz-drawer [nzFooter]="null" [nzWidth]="'1200px'" [nzWrapClassName]="'run-detail-drawer'" [(nzVisible)]="showLogDetail" nzTitle="执行详情"
+          (nzOnClose)="cancelShowRunLogDetail()">
+  <div class="run-detail">
+    <div class="filtrate-box">
+      <div class="lab-row mb20 w100p">
+        <label>状态：</label>
+        <nz-select class="w200" [(ngModel)]="detail_status" [nzPlaceHolder]="'请选择状态'" (ngModelChange)="refreshLogDetail(recordId,'filter')">
+          <nz-option [nzValue]="'1'" nzLabel="成功"></nz-option>
+          <nz-option [nzValue]="'2'" nzLabel="失败"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="pt20">
+      <nz-table #logDetailTable
+                [nzShowTotal]="globalTemplate.totalItemTemplate"
+                [nzFrontPagination]="true"
+                [nzSize]="'small'"
+                [nzData]="logApiData"
+                [(nzPageSize)]="logPageSize"
+                [(nzPageIndex)]="logCurrentPage"
+                [nzTotal]="logApiDataLength"
+                [nzLoading]="logLoading"
+                [nzNoResult]="globalTemplate.noResultTd"
+                [nzScroll]="{x:'2060px', y: noResultHeight + 'px' }">
+        <thead>
+        <tr>
+          <th nzWidth="150px">帐户</th>
+          <th nzWidth="150px">{{publisherId===23||publisherId===1?'计划名称':'广告组名称'}}</th>
+          <th nzWidth="80px">{{publisherId===23||publisherId===1?'计划状态':'广告组状态'}}</th>
+          <th nzWidth="150px">{{publisherId===23?'广告组名称':publisherId===1?'单元名称':'计划名称'}}</th>
+          <th nzWidth="80px">{{publisherId===23?'广告组状态':publisherId===1?'单元状态':'计划状态'}}</th>
+          <th nzWidth="150px" *ngIf="publisherId===1">创意名称</th>
+          <th nzWidth="50px">出价</th>
+          <th nzWidth="150px">定向包名称</th>
+          <th *ngIf="publisherId===1" nzWidth="150px">落地页</th>
+          <th *ngIf="publisherId!==22&&publisherId!==1" nzWidth="150px">渠道号名称</th>
+          <th nzWidth="150px">投放范围</th>
+          <th nzWidth="200px">使用素材</th>
+          <th *ngIf="publisherId!==7&&publisherId!==17&&publisherId!==22&&publisherId!==1" nzWidth="200px">使用长标题</th>
+          <th nzWidth="200px">使用短标题</th>
+          <th nzWidth="150px">创建时间</th>
+          <th nzWidth="150px">结束时间</th>
+          <th nzWidth="100px">执行状态</th>
+          <th nzWidth="150px">执行结果</th>
+          <th *ngIf="publisherId==6" nzRight="0" nzWidth="80px">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let detailData of logDetailTable.data">
+          <td>{{detailData['pub_account_name']}}</td>
+          <td>{{detailData['pub_campaign_name']}}</td>
+          <td>{{detailData['campaign_status']==0?'关闭':'开启'}}</td>
+          <td>{{detailData['pub_adgroup_name']}}</td>
+          <td>{{detailData['adgroup_status'] == 0?'关闭':'开启'}}</td>
+          <td *ngIf="publisherId===1">{{detailData['pub_creative_name']}}</td>
+          <td>{{detailData['bid']}}</td>
+          <td>{{detailData['audience_template_name']}}</td>
+          <td *ngIf="publisherId===1">{{detailData['landing_page_name']}}</td>
+          <td *ngIf="publisherId!==22&&publisherId!==1">{{detailData['convert_channel_name']}}</td>
+          <td>{{detailData['delivery_name']}}</td>
+          <td  nz-popover nzPopoverTrigger="hover" [nzPopoverContent]="cardDetail">
+            <span class="limit-line2">{{detailData['use_material'] | arrJoin :' \r\n '}}</span>
+
+            <ng-template #cardDetail>
+              <div *ngFor="let materialName of detailData['use_material']">{{materialName}}</div>
+            </ng-template>
+          </td>
+          <td *ngIf="publisherId!==7&&publisherId!==17&&publisherId!==22&&publisherId!==1"  nz-popover nzPopoverTrigger="hover" [nzPopoverContent]="cardDetail2">
+            <span class="limit-line2">{{detailData['use_description'] | arrJoin :' \r\n '}}</span>
+
+            <ng-template #cardDetail2>
+              <div *ngFor="let materialName of detailData['use_description']">{{materialName}}</div>
+            </ng-template>
+          </td>
+          <td  nz-popover nzPopoverTrigger="hover" [nzPopoverContent]="cardDetail3">
+            <span class="limit-line2">{{detailData['use_title'] | arrJoin :' \r\n '}}</span>
+
+            <ng-template #cardDetail3>
+              <div *ngFor="let materialName of detailData['use_title']">{{materialName}}</div>
+            </ng-template>
+          </td>
+          <td>{{detailData['begin_time']}}</td>
+          <td>{{detailData['end_time']}}</td>
+          <td>{{detailData['detail_status'] == 1?'成功':detailData['detail_status'] == 2?'失败':'部分成功'}}</td>
+          <td>{{detailData['detail_message']}}</td>
+          <td *ngIf="publisherId==6" nzRight="0"><a (click)="showRunLogDetailInfo(detailData)">查看详情</a></td>
+        </tr>
+
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</nz-drawer>
+
+<nz-modal [nzFooter]="null" [nzWidth]="'1200px'" [nzClassName]="'launch-rpa-contents-modal'" [(nzVisible)]="showLogDetailInfo" nzTitle="执行详情"
+          (nzOnCancel)="cancelShowRunLogDetailInfo()" (nzOnOk)="cancelShowRunLogDetailInfo()">
+
+  <div class="pt20">
+    <nz-table #logInfoDetailTable
+              [nzShowTotal]="globalTemplate.totalItemTemplate"
+              [nzFrontPagination]="true"
+              [nzSize]="'small'"
+              [nzData]="logDetailApiData"
+              [(nzPageSize)]="logDetailPageSize"
+              [(nzPageIndex)]="logDetailCurrentPage"
+              [nzTotal]="logDetailApiDataLength"
+              [nzLoading]="logInfoLoading"
+              [nzNoResult]="globalTemplate.noResultTd"
+              [nzScroll]="{x:'2060px', y: noResultHeight + 'px' }">
+      <thead>
+      <tr>
+        <th nzWidth="150px">帐户</th>
+        <th nzWidth="150px">广告组名称</th>
+        <th nzWidth="80px">广告组状态</th>
+        <th nzWidth="150px">计划名称</th>
+        <th nzWidth="80px">计划状态</th>
+        <th nzWidth="50px">出价</th>
+        <th nzWidth="150px">广告创意</th>
+        <th nzWidth="150px">广告</th>
+        <th nzWidth="150px">定向包名称</th>
+        <th *ngIf="publisherId!==22" nzWidth="150px">渠道号名称</th>
+        <th nzWidth="150px">投放范围</th>
+        <th nzWidth="200px">使用素材</th>
+        <th nzWidth="200px" *ngIf="publisherId!==7&&publisherId!==17&&publisherId!==22">使用长标题</th>
+        <th nzWidth="200px">使用短标题</th>
+        <th nzWidth="150px">创建时间</th>
+        <th nzWidth="150px">结束时间</th>
+        <th nzWidth="100px">执行状态</th>
+        <th nzWidth="150px">执行结果</th>
+        <th nzRight="0" nzWidth="80px">操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let adData of logInfoDetailTable.data">
+        <td>{{adData['pub_account_name']}}</td>
+        <td>{{adData['pub_campaign_name']}}</td>
+        <td>{{adData['campaign_status']==0?'关闭':'开启'}}</td>
+        <td>{{adData['pub_adgroup_name']}}</td>
+        <td>{{adData['adgroup_status'] == 0?'关闭':'开启'}}</td>
+        <td>{{adData['bid']}}</td>
+        <td>{{adData['pub_adcreative_name']}}</td>
+        <td>{{adData['pub_ad_name']}}</td>
+        <td>{{adData['audience_template_name']}}</td>
+        <td *ngIf="publisherId!==22">{{adData['convert_channel_name']}}</td>
+        <td>{{adData['delivery_name']}}</td>
+        <td  nz-popover nzPopoverTrigger="hover" [nzPopoverContent]="cardDetail">
+          <span class="limit-line2">{{adData['use_material']}}</span>
+
+          <ng-template #cardDetail>
+            <div>{{adData['use_material']}}</div>
+          </ng-template>
+        </td>
+        <td *ngIf="publisherId!==7&&publisherId!==17&&publisherId!==22" nz-popover nzPopoverTrigger="hover" [nzPopoverContent]="cardDetail2">
+          <span class="limit-line2">{{adData['use_description']}}</span>
+
+          <ng-template #cardDetail2>
+            <div>{{adData['use_description']}}</div>
+          </ng-template>
+        </td>
+        <td  nz-popover nzPopoverTrigger="hover" [nzPopoverContent]="cardDetail3">
+          <span class="limit-line2">{{adData['use_title']}}</span>
+
+          <ng-template #cardDetail3>
+            <div>{{adData['use_title']}}</div>
+          </ng-template>
+        </td>
+        <td>{{adData['begin_time']}}</td>
+        <td>{{adData['end_time']}}</td>
+        <td>{{adData['detail_status'] == 1?'成功':adData['detail_status'] == 2?'失败':'部分成功'}}</td>
+        <td>{{adData['detail_message']}}</td>
+        <td nzRight="0"><a (click)="lookRunLogDetailInfo(adData)">预览</a></td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+
+
+</nz-modal>
+
+
+<app-global-template></app-global-template>

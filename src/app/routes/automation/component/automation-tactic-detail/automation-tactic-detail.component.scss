@@ -1,0 +1,191 @@
+// 标题、操作
+.tactic-header {
+  position: fixed;
+  z-index: 10;
+  height: 50px;
+  width: 100%;
+  padding: 0 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .arrow-left {
+    cursor: pointer;
+    font-size: 14px;
+  }
+}
+
+.tactic-content {
+  margin-top: 50px;
+  border-radius: 6px;
+  background-color: #fafafa;
+  min-height: 200px;
+  padding: 20px 20px;
+
+  .description-card {
+    margin-bottom: 20px;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 16%);
+    background-color: #fcfcfc;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    .content {
+      font-size: 14px;
+      .title {
+        display: flex;
+        align-items: center;
+        .title-text {
+          font-size: 22px;
+          margin-left: 12px;
+        }
+      }
+      p {
+        margin: 10px 0;
+      }
+    }
+    .image {
+      text-align: center;
+    }
+  }
+  // 指标
+  .metric-container {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    .metric-title {
+      height: 48px;
+      line-height: 48px;
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 10px;
+      border-top: 1px solid #f0f0f3;
+      border-bottom: 1px solid #f0f0f3;
+    }
+    .metrics-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-rows: 1fr auto;
+      margin-top: 20px;
+      grid-gap: 21px;
+
+      .metric-item {
+        margin: auto;
+        box-shadow: 0 3px 6px rgb(0 0 0 / 10%);
+        background-color: #f5f5f5;
+        box-sizing: border-box;
+        height: 100px;
+        width: 90%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        &:hover {
+          cursor: pointer;
+          background-color: #edeef2;
+        }
+        .metric {
+          color: #4c27a8;
+          font-size: 22px;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+  .skip {
+    color: #adb6c7;
+    text-align: center;
+    font-size: 20px;
+    cursor: pointer;
+    &:hover {
+      color: #d7dbe2;
+    }
+  }
+  .content-card {
+    margin-bottom: 20px;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 16%);
+    background-color: #fff;
+    position: relative;
+    .title {
+      background-color: #fafafa;
+      border-bottom: 1px solid #f0f0f3;
+      padding: 5px 20px;
+      font-size: 18px;
+    }
+    .content {
+      .summarize {
+        padding: 20px;
+        font-size: 16px;
+      }
+      .detail {
+        padding: 20px;
+        background-color: #f6f6f8;
+        :last-child {
+          margin-bottom: 0;
+        }
+        .formula {
+          display: flex;
+          // &:last-child{
+          //   margin-bottom: 0!important;
+          // }
+          .left {
+            padding: 7px 7px 23px;
+          }
+          .right {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            .top,
+            .bottom {
+              display: flex;
+              align-items: center;
+              .text {
+                background-color: #e0e3e9;
+                padding: 0 10px;
+                height: 20px;
+                line-height: 20px;
+              }
+              [nz-radio] {
+                display: block;
+                height: 32px;
+                line-height: 32px;
+              }
+              .disabled {
+                color: rgba(0, 0, 0, 0.25);
+              }
+            }
+          }
+        }
+        .detail-text {
+          font-size: 14px;
+        }
+        .bold {
+          font-size: 13px;
+          font-weight: 600;
+        }
+      }
+      .title-area {
+        padding: 13px 20px;
+        .bold {
+          font-size: 14px;
+          font-weight: 600;
+        }
+      }
+    }
+    .card-delete-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 16px;
+      color: #a0aabe;
+      cursor: pointer;
+    }
+  }
+}
+.tactic-icon {
+  color: #fff;
+  font-size: 24px;
+  border-radius: 20px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+}

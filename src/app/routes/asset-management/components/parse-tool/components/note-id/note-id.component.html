@@ -1,0 +1,44 @@
+<div class="top-condition-manage">
+  <div class="top-content">
+    <div class="top-content-item">
+      <div class="label">
+        <div class="label-name">查询URL：</div>
+        <div class="label-tips">(一行一个)</div>
+      </div>
+      <textarea style="width: 600px;resize:none;"  nz-input type ="'textarea'" rows="4" placeholder="*请输入要解析的URL，一行一个" [(ngModel)]="queryUrls"></textarea>
+    </div>
+    <div class="top-content-item ml10">
+      <button class="parseBtn" nz-button nzType="primary" nzSize="default" [nzLoading]="isParsing" (click)="parseUrl()">查询</button>
+    </div>
+  </div>
+</div>
+
+<div class="content-section-manage">
+  <div class="manage-operation">
+    <div class="manage-header-left">
+    </div>
+  </div>
+  <div class="section-content-container" id="hotTableWrapper">
+    <nz-spin [nzSpinning]="isParsing">
+      <hot-table
+        class="hot"
+        [data]="dataset"
+        [colHeaders]="true"
+        [rowHeaders]="true"
+        [cells]="rowReadOnly"
+        [stretchH]="'all'"
+        [autoWrapRow]="true"
+        [manualColumnResize]="true"
+        [manualRowResize]="true"
+        [colWidths]="colWidths"
+        [minSpareCols]='2'
+        [className]="'htMiddle'"
+        [contextMenu]="contextMenu">
+        <ng-container *ngFor="let col of tableField">
+          <hot-column title="{{col}}"></hot-column>
+        </ng-container>
+      </hot-table>
+    </nz-spin>
+
+  </div>
+</div>

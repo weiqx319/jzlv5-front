@@ -1,0 +1,62 @@
+<div class="element-setting mb20" *ngFor="let settingLine of actionElementSetting">
+  <div class="element-setting-row" class="mr20" *ngFor="let setting of settingLine" [ngStyle]="{width: setting.width}">
+    <ng-container *ngIf="actionSettings[setting.inputElementId]">
+      <!-- 多选框，是否可选 -->
+      <label *ngIf="setting.isOptional"
+            class="mr10" nz-checkbox
+            [(ngModel)]="actionSettings[setting.inputElementId].isEnabled">
+      </label>
+      <!-- 左侧文字 -->
+      <span *ngIf="setting.label" [ngStyle]="{'width': setting.labelWidth,'text-align': 'right','display':'inline-block'}">{{setting.label}}：</span>
+      <ng-container *ngFor="let value of setting.valueGroup">
+        <!-- 选择器 -->
+        <nz-select *ngIf="value.inputType==='select'"
+              class="ml5" [ngStyle]="{'width': value.width}"
+              nzShowSearch
+              [nzPlaceHolder]="value.placeHolder"
+              [(ngModel)]="actionSettings[setting.inputElementId][value.inputValueId]"
+              [nzMode]="value.selectMode"
+              nzSize="small"
+              [nzDisabled]="setting.isOptional&&!actionSettings[setting.inputElementId].isEnabled">
+          <nz-option *ngFor="let option of selectOptions[value.optionsId].options" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+        </nz-select>
+        <!-- 数字输入框 -->
+        <nz-input-number *ngIf="value.inputType==='number'"
+              class="ml5"
+              [ngStyle]="{'width': value.width}"
+              [(ngModel)]="actionSettings[setting.inputElementId][value.inputValueId]"
+              [nzMin]="0"
+              [nzStep]="1"
+              nzSize="small"
+              [nzPlaceHolder]="value.placeHolder"
+              [nzDisabled]="setting.isOptional&&!actionSettings[setting.inputElementId].isEnabled">
+        </nz-input-number>
+        <!-- 单位 -->
+        <span *ngIf="value.inputType==='unit'">{{actionSettings[setting.inputElementId]["measuring_unit"]==='percent'?' %':''}}</span>
+        <!-- 时间选择器 -->
+        <nz-time-picker *ngIf="value.inputType==='time'"
+              class="ml5"
+              [ngStyle]="{'width': value.width}"
+              [(ngModel)]="actionSettings[setting.inputElementId][value.inputValueId]"
+              (ngModelChange)="formatTime(actionSettings[setting.inputElementId],value.inputValueId)"
+              nzSize="small" [nzPlaceHolder]="value.placeHolder"
+              nzFormat="HH:mm"
+              [nzAllowEmpty]="false"
+              [nzDisabled]="true">
+        </nz-time-picker>
+        <!-- <nz-time-picker *ngIf="value.inputType==='time'"
+              class="ml5"
+              [ngStyle]="{'width': value.width}"
+              [(ngModel)]="actionSettings[setting.inputElementId][value.inputValueId]"
+              (ngModelChange)="formatTime(actionSettings[setting.inputElementId],value.inputValueId)"
+              nzSize="small" [nzPlaceHolder]="value.placeHolder"
+              nzFormat="HH:mm"
+              [nzAllowEmpty]="false"
+              [nzDisabled]="setting.isOptional&&!actionSettings[setting.inputElementId].isEnabled">
+        </nz-time-picker> -->
+        <!-- span描述文字 -->
+        <span *ngIf="value.inputType==='span'">{{value.value}}</span>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

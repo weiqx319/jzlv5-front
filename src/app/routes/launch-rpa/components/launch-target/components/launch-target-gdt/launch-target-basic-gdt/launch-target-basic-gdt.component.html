@@ -1,0 +1,59 @@
+<div class="add-target-template-container" *ngIf="!getting">
+  <nz-spin [nzSpinning]="getting">
+    <div class="target-setting pr20" [ngStyle]="{'height':tableHeight +'px'}">
+      <nz-card class="basic_info" nzTitle="基本信息">
+        <div class="form-content">
+          <div class="lab-row mb20">
+            <label><span class="redStart">*</span>定向包名称:</label>
+            <input nz-input
+                   class="w200 ml8"
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="defaultData.audience_template_name"
+                   placeholder="请输入定向包名称">
+          </div>
+          <div class="lab-row mb20">
+            <label>定向包描述:</label>
+            <textarea nz-input
+                      class="w200 ml8"
+                      type="'textarea'"
+                      rows="3"
+                      [(ngModel)]="defaultData.audience_desc"
+                      placeholder="请输入定向包描述">
+            </textarea>
+          </div>
+          <div class="lab-row mb20">
+            <label><span class="redStart">*</span>定向包类型:</label>
+            <nz-radio-group
+              class="ml8"
+              [nzSize]="'small'"
+              [(ngModel)]="defaultData.landing_type"
+              (ngModelChange)="landingTypeChange();"
+            >
+              <ng-container *ngFor="let item of landingTypeList">
+                <label nz-radio-button [nzValue]="item.key" [nzDisabled]="(targetType !== 'basic') && defaultData.landing_type !== item.key">
+                  <span>{{item.name}}</span>
+                </label>
+              </ng-container>
+            </nz-radio-group>
+          </div>
+        </div>
+      </nz-card>
+
+      <nz-card class="basic_info mt20" nzTitle="用户定向">
+        <app-target-basic-template-gdt [curAudienceData]="curAudienceData" [isLaunchPackage]="isLaunchPackage" [landing_type]="defaultData.landing_type" [targetSource]="defaultData" [targetType]="targetType"></app-target-basic-template-gdt>
+      </nz-card>
+
+    </div>
+  </nz-spin>
+
+
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saveing" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

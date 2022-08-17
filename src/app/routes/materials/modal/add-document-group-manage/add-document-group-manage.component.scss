@@ -1,0 +1,50 @@
+.add-document-group-manage-container {
+
+  .form-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .lab-row {
+      width: 50%;
+      display: flex;
+
+      & > label:first-child{
+        width: 100px;
+        text-align: right;
+        display: inline-block;
+      }
+    }
+
+    .document-list {
+      .document-list-item {
+        display: flex;
+        align-items: center;
+
+        &>i {
+          color: #f04134;
+          cursor: pointer;
+        }
+
+        .w_full {
+          width: 550px;
+        }
+      }
+    }
+
+    .w100p {
+      width: 100%;
+    }
+
+    .w_full {
+      width: 568px;
+    }
+  }
+
+  .form-btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+}
+

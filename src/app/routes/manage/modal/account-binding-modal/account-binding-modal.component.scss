@@ -1,0 +1,35 @@
+.w130{
+  width: 130px;
+}
+.account-form-item{
+  // overflow: hidden;
+  display: flex;
+  align-items: center;
+  .form-label{
+    width: 98px;
+    text-align: right;
+  }
+}
+.account-binding-content{
+  display: flex;
+  display: -webkit-flex;
+  justify-content: flex-end;
+}
+.account-binding-form{
+  width: 438px;
+}
+.account-binding-form-content{
+  min-height: 280px;
+}
+.account-binding-form-footer{
+  padding-top: 8px;
+  text-align: right;
+}
+.account-image-token{
+  width: 130px;
+  height: 40px;
+  text-align: center;
+}
+.overHidden{
+  overflow: hidden;
+}

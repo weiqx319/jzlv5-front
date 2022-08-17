@@ -1,0 +1,82 @@
+<div class="fixed-condition-manage page-condition-header">
+  <a class="back-button" routerLink="../../trade_mark_list"><i nz-icon nzType="left" nzTheme="outline"></i>返回列表页</a>
+  <div class="content-title">
+    {{parentData?parentData['biz_unit_type_name']:''}}编辑
+  </div>
+</div>
+<div class="content-section-manage">
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="add()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加</span>
+      </a><!--
+      <a class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="addDim()">
+        <i nz-icon nzType="close" nzTheme="outline"></i><span>删除</span>
+      </a>-->
+    </div>
+  </div>
+  <div class="manage-table manage-no-result-table pt8">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'default'"
+              [nzData]="apiData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ y: noResultHeight+'px' }">
+      <thead>
+      <tr>
+        <!--<th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll($event)"></th>-->
+        <th [nzWidth]="'200px'">
+          <span>{{parentData?parentData['biz_unit_type_name']:''}}名称</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>所属{{firstMark?firstMark['biz_unit_type_name']:''}}</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作人</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <!--<td nzShowCheckbox [nzDisabled]="data.disabled" [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)"></td>-->
+        <td>
+          {{data.biz_unit_name}}<span *ngIf="data.is_unknown*1==1">(系统默认)</span>
+          <a (click)="editTwoName(data)"><i class="ml4" nz-icon nzType="edit" nzTheme="outline"></i></a>
+
+        </td>
+        <td>
+          {{listFilterObject?listFilterObject[data.parent_id]['name']:''}}
+          <a *ngIf="data.is_unknown*1!==1" (click)="editParentUnit(data)"><i class="ml4" nz-icon nzType="edit" nzTheme="outline"></i></a>
+
+        </td>
+        <td>{{data.user_name}}</td>
+        <td><a *ngIf="data.is_unknown*1!==1" (click)="deleteOk(data['id'])" href="javascript:">删除</a></td>
+      </tr>
+      <tr *ngIf="apiData.length===0">
+        <td #noResultTd [attr.colspan]="6"  [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+          <div class="table-no-result">
+            <div class="table-no-result-content">
+              <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="add()">
+               <i nz-icon nzType="plus" nzTheme="outline"></i><span>创建标识名称</span>
+              </button>
+              <div class="mt8">您还未创建标识名称，点击按钮创建标识名称</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>

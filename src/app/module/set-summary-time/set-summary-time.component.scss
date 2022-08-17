@@ -1,0 +1,30 @@
+.sub-company-form{
+  padding: 15px 0;
+  margin-left: 14px;
+}
+.sub-company-form-footer{
+  text-align: center;
+  margin-top: 15px;
+  //margin-bottom: 10px;
+}
+
+.upload-item{
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+.upload-title{
+  display: block;
+  float: left;
+  height: 22px;
+  line-height: 22px;
+}
+.uploadDiv{
+  float: left;
+  position: relative;
+}
+.deleteBtn{
+  color: red;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}

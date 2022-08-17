@@ -1,0 +1,64 @@
+.add-campaign-template-container {
+  .title {
+    height: 50px;
+    line-height: 50px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sub_title {
+    height: 36px;
+    line-height: 36px;
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .form-content {
+
+    .basic-card {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .basic-card, .form-card {
+      max-width: 1000px;
+    }
+
+    .lab-row{
+      display: flex;
+      width: 50%;
+      margin-bottom: 2px;
+    }
+
+    .lab-row > label:first-child{
+      width: 140px;
+      text-align: right;
+      display: inline-block;
+    }
+
+    .w100p {
+      width: 100%;
+    }
+
+    .w170 {
+      width: 170px !important;
+    }
+
+    .w_full {
+      width: 568px;
+    }
+  }
+
+  .target-setting {
+    overflow: auto;
+  }
+
+  .form-btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+}

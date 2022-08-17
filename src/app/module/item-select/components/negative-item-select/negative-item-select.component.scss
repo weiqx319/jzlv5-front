@@ -1,0 +1,118 @@
+.item-select{
+  height: 20px;
+  line-height: 1.5;
+  padding-left: 10px;
+  padding-right: 20px;
+  position:relative;
+  border:1px solid #e4e4e4;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.item-desc{
+  overflow: hidden;
+  white-space:nowrap;
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  a{
+    color: #404040;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a:hover{
+    color: #404040;
+    text-decoration: none;
+  }
+}
+.item-arrow{
+  position:absolute;
+  right: 5px;
+  top: 2px;
+  color: #a4a4a4;
+  font-size: 9px;
+  transform: scale(0.8);
+  transform-origin: 0% 0%;
+  -ms-transform: scale(0.8);    /* IE 9 */
+  -ms-transform-origin: 0% 0%;         /* IE 9 */
+  -webkit-transform: scale(0.8);    /* Safari 和 Chrome */
+  -webkit-transform-origin: 0% 0%;    /* Safari 和 Chrome */
+  -moz-transform: scale(0.8);/* Firefox */
+  -moz-transform-origin: 0% 0%;        /* Firefox */
+  -o-transform: scale(0.8);    /* Opera */
+  -o-transform-origin: 0% 0%;
+}
+.block{
+  display: block !important;
+}
+.item-content{
+  width: 632px;
+  height: 350px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  border:1px solid #e4e4e4;
+  border-top-right-radius: 2px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  background-color:#fff;
+  z-index: 100;
+}
+.item-body{
+  width: 100%;
+  height: 310px;
+  overflow: hidden;
+}
+.item-content-left{
+  width: 300px;
+  height: 100%;
+  border-right:1px solid #e4e4e4;
+  border-bottom:1px solid #e4e4e4;
+}
+.item-content-center{
+  width: 30px;
+  height: 100%;
+  line-height: 350px;
+  text-align: center;
+  color: #56ace5;
+}
+.item-content-right{
+  width: 300px;
+  height: 100%;
+  border-left:1px solid #e4e4e4;
+  border-bottom:1px solid #e4e4e4;
+}
+.item-content-header{
+  height: 24px;
+  line-height: 24px;
+  padding-left: 8px;
+  background-color:#eef2f7;
+}
+.item-content-left-condition{
+  height: 66px;
+  padding: 8px;
+  border-top:1px solid #e4e4e4;
+  border-bottom:1px solid #e4e4e4;
+}
+.item-content-left-body{
+  height: 205px;
+  padding: 8px;
+  overflow-y: auto;
+}
+.item-content-right-body{
+  height: 285px;
+  padding: 8px;
+  overflow-y: auto;
+  border-top:1px solid #e4e4e4;
+  background-color: #fff;
+}
+.add-border{
+  border:1px solid #e4e4e4;
+  border-bottom:none;
+}
+.item-footer{
+  height: 40px;
+  line-height: 40px;
+  text-align: right;
+}

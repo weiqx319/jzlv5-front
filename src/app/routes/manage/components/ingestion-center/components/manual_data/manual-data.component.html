@@ -1,0 +1,136 @@
+<div>
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="manage-operation">
+      <div class="manage-header-left">
+        <a class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="clickUploadBtn(content)">
+          <i nz-icon nzType="upload" nzTheme="outline"></i><span>上传无API媒体数据</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="manage-table manage-no-result-table">
+      <nz-table #nzTable
+                nzShowSizeChanger
+                [nzPageSizeOptions]="[30,50,100,500]"
+                [nzSize]="'default'"
+                [nzData]="apiData"
+                [nzFrontPagination]="false"
+                [(nzPageSize)]="logPageInfo.pageSize"
+                [(nzPageIndex)]="logPageInfo.currentPage"
+                (nzPageIndexChange)="refreshData()"
+                (nzPageSizeChange)="refreshData('log')"
+                [nzTotal]="logPageInfo.total"
+                [nzLoading]="loading"
+                [nzShowTotal]="totalItemTemplate"
+                [nzScroll]="{ y: noResultHeight+'px' }">
+        <thead>
+        <tr>
+          <th [nzWidth]="'180px'">
+            <span>数据上传时间</span>
+          </th>
+          <th [nzWidth]="'250px'">
+            <span>文件名称</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'original_file_name',name:'数据表名称',type:'multiValue'}" [(filterResult)]="filterResult['original_file_name']" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'150px'">
+            <span>操作人</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>状态</span>
+          </th>
+          <th [nzWidth]="'300px'">
+            <span>具体说明</span>
+          </th>
+          <th [nzWidth]="'80px'">
+            <span>操作</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of apiData">
+          <td>{{data.create_time}}</td>
+          <td>{{data.original_file_name}}</td>
+          <td>{{data.user_name}}</td>
+          <td>
+            <span *ngIf="data.record_status == 0">待处理</span>
+            <span *ngIf="data.record_status == 1">处理中</span>
+            <span *ngIf="data.record_status == 3">成功</span>
+            <span *ngIf="data.record_status == 4">失败</span>
+
+          </td>
+          <td>{{data.record_detail}}</td>
+          <td><a (click)="downloadConversion(data)">下载</a></td>
+        </tr>
+
+        <tr *ngIf="apiData.length===0">
+          <td #noResultTd [attr.colspan]="6"  [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+            <div class="table-no-result">
+              <div class="table-no-result-content">
+                <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="clickUploadBtn(content)">
+                  <i nz-icon nzType="upload" nzTheme="outline"></i><span>上传无API媒体数据</span>
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #totalItemTemplate let-total>共{{ logPageInfo.total }}条</ng-template>
+    </div>
+  </div>
+</div>
+
+<ng-template #content>
+  <p style="color: red;" class="mt8" *ngIf="uploading">正在上传数据，请勿离开或者刷新此页面！</p>
+  <div class="upload-content">
+    <form nz-form class="upload-form" [formGroup]="uploadForm">
+      <!--<p style="color: red;margin-bottom: 10px;padding-left: 76px;">正在上传转化数据，请勿离开或者刷新此页面！</p>-->
+      <!--<p class="mt8">*请上传.xls或.xlsx文件</p>-->
+      <div class="sub-company-form-content">
+
+        <div class="uploadDiv" style="display: inline-block;position: relative;width: 100%;margin-left: 54px;margin-top: 5px;">
+          <nz-upload *ngIf="!uploading" class="pull-left"
+                     [(nzFileList)]="fileList"
+                     [nzBeforeUpload]="beforeUpload"
+                     [nzSize]="'small'"
+                     [nzAccept]="'.xlsx,.xls,.csv'"
+                     [nzLimit] = 1
+                     [nzName]="'files'">
+            <button nz-button style="height: 30px">
+              <i nz-icon nzType="upload" nzTheme="outline"  ></i><span>上传文件</span>
+            </button>
+          </nz-upload>
+          <button *ngIf="uploading" nz-button style="height: 20px" class="mt2 pull-left">
+            <i nz-icon nzType="upload" nzTheme="outline"  ></i><span>上传文件</span>
+          </button>
+          <span style="display: inline-block; margin-top: 3px; position: absolute;left: 95px;">*请上传.xls或.xlsx文件</span>
+        </div>
+        <div *ngIf="uploading || exception === 'exception'" class="m1020" style="margin-right: 25px; width: 72%; margin-left: 20px;">
+          <nz-progress [nzStatus]="exception" [nzPercent]="speed" nzSize="small"></nz-progress>
+        </div>
+        <div class="mb20"  style="display: inline-block;position: relative;width: 100%;margin-left: 54px;margin-top: 5px;">
+          <a href="javascript:" class="inline-block" style="position: absolute; top:2px;" (click)="downloadTemplate()">下载参考模板</a>
+        </div>
+        <div class="mb20"  style="display: inline-block;position: relative;width: 50%;margin-left: 54px;margin-top: 5px; color: red;">
+          <p>*注：默认只能上传近90天数据，超过90天数据系统会自动忽略，如需录入90天之前数据请联系{{productInfo['name']}}技术手动处理。</p>
+        </div>
+
+
+      </div>
+      <div class="upload-form-footer">
+        <button class="ml8" nz-button [nzType]="'default'" [disabled]="uploading" [nzSize]="'default'" (click)="cancelUpload()">
+          <span>取消</span>
+        </button>
+        <button class="ml8" *ngIf="!uploading" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="handleUpload()">
+          <span>完成</span>
+        </button>
+        <button class="ml8" *ngIf="uploading" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="uploading">
+          <span>上传中...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+
+</ng-template>

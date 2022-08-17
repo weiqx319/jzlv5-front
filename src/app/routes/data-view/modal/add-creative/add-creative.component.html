@@ -1,0 +1,415 @@
+<!--添加单个创意-->
+<div>
+  <h3>添加创意</h3>
+  <p class="slow_360" *ngIf="addOriginalityData['publisher_id'] * 1 === 3">360媒体的编辑操作同步到媒体端有一定时间的延迟，请耐心等待，请勿重复修改!</p>
+  <!--投放状态-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>投放状态:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <nz-radio-group [(ngModel)]="addOriginalityData['pause']">
+        <label class="mr20" nz-radio [nzValue]="false">
+          <span>开启</span>
+        </label>
+        <label nz-radio [nzValue]="true">
+          <span>暂停</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--媒体-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>媒体:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <div>
+        <nz-select style="width: 200px;"
+                   [(ngModel)]="addOriginalityData['publisher_id']"
+                   (ngModelChange)="changePublisher(addOriginalityData,false)"
+                   nzPlaceHolder="请选择媒体"
+                   [nzSize]="'small'"
+        >
+          <nz-option
+            *ngFor="let option of publisherData"
+            [nzLabel]="option.publisher_name"
+            [nzValue]="option.publisher_id"
+            [nzDisabled]="option.disabled">
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!addOriginalityData['publisher_id']">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择媒体</span>
+    <div class="clear"></div>
+  </div>
+  <!--账户-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>账户:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <div>
+        <nz-select style="width: 200px;"
+                   [(ngModel)]="addOriginalityData['pub_account_id']"
+                   (ngModelChange)="changeAccount(addOriginalityData,false)"
+                   nzPlaceHolder="请选择账户"
+                   [nzSize]="'small'"
+        >
+          <nz-option
+            *ngFor="let account of accountData"
+            [nzLabel]="account.pub_account_name"
+            [nzValue]="account.pub_account_id">
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!addOriginalityData['pub_account_id']">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择账户</span>
+    <div class="clear"></div>
+  </div>
+  <!--计划-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>计划:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <div>
+        <nz-select style="width: 200px;"
+                   [(ngModel)]="addOriginalityData['pub_campaign_id']"
+                   (ngModelChange)="changeCampaign(addOriginalityData,false)"
+                   nzPlaceHolder="请选择计划"
+                   [nzSize]="'small'"
+        >
+          <nz-option
+            *ngFor="let campItem of campaign"
+            [nzLabel]="campItem.pub_campaign_name"
+            [nzValue]="campItem.pub_campaign_id">
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!addOriginalityData['pub_campaign_id']">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择计划</span>
+    <div class="clear"></div>
+  </div>
+  <!--单元-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>单元:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <div>
+        <nz-select style="width: 200px;"
+                   [(ngModel)]="addOriginalityData['pub_adgroup_id']"
+                   nzPlaceHolder="请选择单元"
+                   [nzSize]="'small'"
+        >
+          <nz-option
+            *ngFor="let adgroupItem of adgroupData"
+            [nzLabel]="adgroupItem.pub_adgroup_name"
+            [nzValue]="adgroupItem.pub_adgroup_id">
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!addOriginalityData['pub_adgroup_id']">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择单元</span>
+    <div class="clear"></div>
+  </div>
+  <!--创意名称-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>创意标题:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left longInput">
+      <div class="titleColor">
+        <input #creativeTitle nz-input style="width: 400px;"
+               id="creativeName"
+               (keydown)="posCursor('pub_creative_title')"
+               (keyup)="posCursor('pub_creative_title')"
+               (mousedown)="posCursor('pub_creative_title')"
+               (mouseup)="posCursor('pub_creative_title')"
+               [(ngModel)]="addOriginalityData['pub_creative_title']"
+               (click) ="changeInput('pub_creative_title')"
+               (ngModelChange)="contentChange('pub_creative_title')"
+               placeholder="输入创意名称"
+               [nzSize]="'small'">
+        <span>（{{tips.length['pub_creative_title']}}/
+              <i *ngIf="!addOriginalityData['publisher_id']">50</i>
+              <i *ngIf="addOriginalityData['publisher_id']">{{creativeTitleRange[addOriginalityData['publisher_id'] * 1]['max']}}</i>
+              ）</span>
+        <span class="wordeCount" (click)="add('pub_creative_title')">关键词{{'{'}}{{'}'}}</span>
+        <i nz-icon nzType="question-circle" nzTheme="outline"
+           nz-popover
+           [nzPopoverContent]="OriginalityKeywordTemplate"
+           nzPopoverPlacement="bottom"
+           class="ml4"
+           style="color: #f09200"></i>
+        <span class="wordeCount ml10" (click)="addArea('pub_creative_title')">地域{{'{'}}{{'}'}} </span>
+        <i nz-icon nzType="question-circle" nzTheme="outline"
+           nz-popover
+           [nzPopoverContent]="OriginalityRegionTemplate"
+           nzPopoverPlacement="bottom"
+           class="ml4"
+           style="color: #f09200"></i>
+      </div>
+      <div *ngIf="addOriginalityData['publisher_id'] && tips.length['pub_creative_title'] && (tips.length['pub_creative_title'] < creativeTitleRange[addOriginalityData['publisher_id'] * 1]['min'])" class="mt2">
+          <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>还需要输入{{creativeTitleRange[addOriginalityData['publisher_id'] * 1]['min'] - tips.length['pub_creative_title']}}个字符</span>
+      </div>
+      <div *ngIf="tips.length['pub_creative_title'] && tips.check['pub_creative_title']" class="mt2">
+          <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词不能为空</span>
+      </div>
+      <div *ngIf="tips.pub_creative_title" class="mt2">
+        <span class="wroning" [ngClass]="{clSave:iswraing}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{this.originalityCheck['titlePrompt']}}</span>
+      </div>
+
+    </div>
+    <div class="clear"></div>
+  </div>
+
+  <!--设备偏好-->
+  <div *ngIf="addOriginalityData['publisher_id'] * 1 === 1 && addOriginalityData['pub_campaign_id']" class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>设备偏好:</span>
+      </label>
+    </div>
+    <div *ngIf="campaignInfo['bid_prefer'] * 1 === 1" class="inpRow_right pull-left longInput">
+      <label class="titleLa inline-block" nz-checkbox
+             [(ngModel)]="device_preference_status"
+             (ngModelChange)="changeDevicePrefer()">
+        <span>移动设备优先:</span>
+      </label>
+      <i nz-icon nzType="question-circle" nzTheme="outline"
+         nz-popover
+         [nzPopoverContent]="deviceTemplate"
+         nzPopoverPlacement="topLeft"
+         style="color: #f09200"></i>
+    </div>
+
+    <div *ngIf="campaignInfo['bid_prefer'] * 1 === 2" class="inpRow_right pull-left longInput">
+      <label class="titleLa inline-block">
+        <span>移动设备优先:</span>
+      </label>
+      <i nz-icon nzType="question-circle" nzTheme="outline"
+         nz-popover
+         [nzPopoverContent]="deviceTemplate"
+         nzPopoverPlacement="topLeft"
+         class="ml8"
+         style="color: #f09200"></i>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--描述1-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>描述1:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left longInput">
+      <div class="titleColor">
+        <input #description1 nz-input style="width: 400px;"
+               (keydown)="posCursor('pub_creative_description1')"
+               (keyup)="posCursor('pub_creative_description1')"
+               (mousedown)="posCursor('pub_creative_description1')"
+               (mouseup)="posCursor('pub_creative_description1')"
+               [(ngModel)]="addOriginalityData['pub_creative_description1']"
+               (click) ="changeInput('pub_creative_description1')"
+               (ngModelChange)="contentChange('pub_creative_description1')"
+               [nzSize]="'small'">
+        <span>（{{tips.length['pub_creative_description1']}}/
+              <i *ngIf="!addOriginalityData['publisher_id']">80</i>
+              <i *ngIf="addOriginalityData['publisher_id']">{{discription1Range[addOriginalityData['publisher_id'] * 1]['max']}}</i>
+              ）</span>
+        <span class="wordeCount" (click)="add('pub_creative_description1')">关键词{{'{'}}{{'}'}}</span>
+        <i nz-icon nzType="question-circle" nzTheme="outline"
+           nz-popover
+           [nzPopoverContent]="OriginalityKeywordTemplate"
+           nzPopoverPlacement="bottom"
+           class="ml4"
+           style="color: #f09200"></i>
+        <div *ngIf="addOriginalityData['publisher_id'] && tips.length['pub_creative_description1'] && (tips.length['pub_creative_description1'] < discription1Range[addOriginalityData['publisher_id'] * 1]['min'])" class="mt2">
+          <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>还需要输入{{discription1Range[addOriginalityData['publisher_id'] * 1]['min'] - tips.length['pub_creative_description1']}}个字符</span>
+        </div>
+        <div *ngIf="tips.length['pub_creative_description1'] && tips.check['pub_creative_description1']" class="mt2">
+          <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词不能为空</span>
+        </div>
+        <div *ngIf="tips.pub_creative_description1" class="mt2">
+           <span class="wroning" [ngClass]="{clSave:iswraing}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['discription1Prompt']}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--描述2（选填）-->
+  <div *ngIf="addOriginalityData['publisher_id'] * 1 !== 4" class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>描述2（选填）:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left longInput">
+      <div class="titleColor">
+        <input #description2 nz-input style="width: 400px;"
+               (keydown)="posCursor('pub_creative_description2')"
+               (keyup)="posCursor('pub_creative_description2')"
+               (mousedown)="posCursor('pub_creative_description2')"
+               (mouseup)="posCursor('pub_creative_description2')"
+               [(ngModel)]="addOriginalityData['pub_creative_description2']"
+               (click) ="changeInput('pub_creative_description2')"
+               (ngModelChange)="contentChange('pub_creative_description2')"
+               [nzSize]="'small'">
+        <span>（{{tips.length['pub_creative_description2']}}/
+        <i *ngIf="!addOriginalityData['publisher_id']">80</i>
+        <i *ngIf="addOriginalityData['publisher_id']">{{discription2Range[addOriginalityData['publisher_id'] * 1]['max']}}</i>）</span>
+        <span class="wordeCount" (click)="add('pub_creative_description2')">关键词{{'{'}}{{'}'}}</span>
+        <i nz-icon nzType="question-circle" nzTheme="outline"
+           nz-popover
+           [nzPopoverContent]="OriginalityKeywordTemplate"
+           nzPopoverPlacement="bottom"
+           class="ml4"
+           style="color: #f09200"></i>
+        <div *ngIf="tips.pub_creative_description2" class="mt2">
+           <span class="wroning" [ngClass]="{clSave:iswraing}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['discription2Prompt']}}</span>
+        </div>
+        <div *ngIf="addOriginalityData['publisher_id'] && tips.length['pub_creative_description2'] && (tips.length['pub_creative_description2'] < discription2Range[addOriginalityData['publisher_id'] * 1]['min'])" class="mt2">
+          <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>还需要输入{{discription2Range[addOriginalityData['publisher_id'] * 1]['min'] - tips.length['pub_creative_description2']}}个字符</span>
+        </div>
+        <div *ngIf="tips.length['pub_creative_description2'] && tips.check['pub_creative_description2']" class="mt2">
+          <span class="wroning clSave"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词不能为空</span>
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--访问Url-->
+  <div *ngIf="addOriginalityData['publisher_id'] * 1 !== 4" class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>访问URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div class="disabled">
+        <textarea placeholder="输入Url" id="textarea"
+                  [(ngModel)]="addOriginalityData['pc_destination_url']"
+                  (click) ="changeInput('pc_destination_url')"
+                  (ngModelChange)="contentChange('pc_destination_url')"
+                  class="w400 border titleColor"  rows="5"></textarea>
+        <i class="tip positionLeft">({{tips.length['pc_destination_url']}}/1024)</i>
+        <span style=" position: absolute;display: inline-block; right: -212px;top: 25px;width: 200px;"
+              class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.pc_destination_url">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['pcDestinationUrlPrompt']}}</span>
+      </div>
+
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--显示Url-->
+  <div class="inpRow mt8" *ngIf="addOriginalityData['publisher_id'] * 1 !== 4">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>显示URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div class="disabled">
+        <textarea placeholder="输入Url" [(ngModel)]="addOriginalityData['pc_display_url']"
+                  (click) ="changeInput('pc_display_url')"
+                  (ngModelChange)="contentChange('pc_display_url')"
+                  class="w400 border titleColor"  rows="5"></textarea>
+        <i class="tip positionLeft">({{tips.length['pc_display_url']}}/36)</i>
+        <span style=" position: absolute;display: inline-block; right: -212px;top: 25px;width: 200px;"
+              class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.pc_display_url">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['pcDisplayUrlPrompt']}}</span>
+      </div>
+
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--移动访问Url-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>移动访问URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div class="disabled">
+        <textarea placeholder="输入Url"
+                  [(ngModel)]="addOriginalityData['wap_destination_url']"
+                  (click) ="changeInput('wap_destination_url')"
+                  (ngModelChange)="contentChange('wap_destination_url')"
+                  class="w400 border titleColor"  rows="5"></textarea>
+        <i class="tip positionLeft">({{tips.length['wap_destination_url']}}/1024)</i>
+        <span style=" position: absolute;display: inline-block; right: -212px;top: 25px;width: 200px;"
+              class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips['wap_destination_url']">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['wapDestinationUrlPrompt']}}</span>
+      </div>
+    </div>
+
+    <div class="clear"></div>
+  </div>
+  <!--移动显示Url-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>移动显示URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div class="disabled">
+        <textarea placeholder="输入Url"
+                  [(ngModel)]="addOriginalityData['wap_display_url']"
+                  (click) ="changeInput('wap_display_url')"
+                  (ngModelChange)="contentChange('wap_display_url')"
+                  class="w400 border titleColor"  rows="5"></textarea>
+        <i class="tip positionLeft">({{tips.length['wap_display_url']}}/36)</i>
+        <span style=" position: absolute;display: inline-block; right: -212px;top: 25px;width: 200px;"
+              class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips['wap_display_url']">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{originalityCheck['wapDisplayUrlPrompt']}}</span>
+      </div>
+
+    </div>
+    <div class="clear"></div>
+  </div>
+
+  <ng-template #deviceTemplate>
+    <div style="max-width: 380px;" [ngSwitch]="summaryType">
+      <h4>移动设备优先</h4>
+      <p class="mt5">设备偏好系统将根据您的物料为您选择在各设备最优的创意进行展现，无需进行设置</p>
+    </div>
+  </ng-template>
+  <ng-template #OriginalityKeywordTemplate>
+    <div style="max-width: 380px;">
+      <h4>什么是关键词通配符？</h4>
+      <p style="line-height: 20px;" class="mt10">作为通配符的关键词在创意展示时会获得飘红，从而吸引更多网民关注。此外，插入通配符的创意在展现时，将以网民搜索的关键词替代通配符关键词，而
+        不是所有创意都飘红一样的关键词，从而增强网民搜索词、关键词和创意之间的相关性作为通配符的关键词会放在大括号里作为标志。</p>
+    </div>
+  </ng-template>
+  <ng-template #OriginalityRegionTemplate>
+    <div style="max-width: 380px;">
+      <h4>什么是地域通配符？</h4>
+      <p style="line-height: 20px;" class="mt10">在您的创意标题前插入{{'{'}}投放地域{{'}'}}，搜索用户会根据所在位置看到不一样的地域信息，帮您过滤非必要地域人群，增加精准地域人群的创意点击，同时，
+        地域信息飘红显示，可吸引更所网民关注。{{'{'}}投放地域{{'}'}}将作为地域通配符的标志，无需替换成具体地域。（地域通配符仅支持在标题前插入一次，插入后，
+        系统会适当的调整地域通配符的展现及在创意中所处的位置，以保障您的推广结果语句通顺可以吸引用户点击。）</p>
+    </div>
+  </ng-template>
+</div>
+

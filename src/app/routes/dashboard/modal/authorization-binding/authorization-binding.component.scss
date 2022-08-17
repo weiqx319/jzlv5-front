@@ -1,0 +1,22 @@
+.new-dashboard-content-form{
+  margin-top: 20px;
+
+  display: flex;
+  flex-direction:column;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.new-dashboard-content-row{
+  width: 306px;
+  height: 138px;
+  margin:0 auto;
+}
+.new-dashboard-footer{
+  text-align: right;
+}
+.ant-form-item{
+  margin-bottom: 0px;
+}
+.clear{
+  clear: both;
+}

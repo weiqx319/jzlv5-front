@@ -1,0 +1,1959 @@
+<div class="data-view-container">
+  <div class="data-view-content">
+    <ng-container *ngIf="isJump === ''">
+      <nz-drawer [nzClosable]="false" [nzWidth]="1200" [nzTitle]="summary_type_name[source_summary]+'数据'" [nzVisible]="viewChartShow" nzPlacement="right" (nzOnClose)="toggleChart()">
+        <ng-container *ngIf="viewChartShow">
+          <app-view-chart (closeCharts)="closeChart($event)"
+                          [is_refresh] = 'is_refresh'
+                          [chartItems] = 'chartItems'
+                          [viewTableData]="viewTableData"
+                          [chartType]="showChartType"></app-view-chart>
+        </ng-container>
+      </nz-drawer>
+    </ng-container>
+    <nz-drawer [nzClosable]="false" [nzWidth]="1200" [nzTitle]="reportDrawerTitle" [nzVisible]="dataViewDrawerShow" nzPlacement="right" (nzOnClose)="closeDataViewDrawer()">
+      <ng-container *ngIf="dataViewDrawerShow">
+        <app-data-view-drawer [data]="this.curTableData" [source_summary]="report_source_summary"></app-data-view-drawer>
+      </ng-container>
+    </nz-drawer>
+    <div class="app-module-condition operation-box pt8 pb8 pr30" *ngIf="isJump === ''" [ngClass]="{'view-chart-show':viewChartShow}">
+      <div style="display: flex; height: 20px">
+        <ng-container *ngIf="source_summary !='ocpc_baidu' && source_summary !='ocpc_baidu_report'&& source_summary !== 'creative_fengwu_360' && source_summary !== 'ocpc_360_setting'">
+          <a class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeCondition()" >
+            <i nz-icon nzType="filter" nzTheme="outline"></i><span>高级筛选</span>
+          </a>
+          <a class="manage-add mr8" [ngClass]="{activity_button:viewChartShow}" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="toggleChart()"  >
+            <i nz-icon nzType="line-chart" nzTheme="outline"></i><span>图表</span>
+          </a>
+        </ng-container>
+        <ng-container *ngIf="source_summary === 'account'">
+          <app-quick-backup [viewTableData]="viewTableData" [summary_type]="source_summary" [selected]="selected" [selectedType]="selectedType" [pageInfo]="pageInfo"  ></app-quick-backup>
+          <app-backup-list></app-backup-list>
+
+        </ng-container>
+
+        <div class="inline-block fs12">
+          <app-table-query-show [summary_type]="source_summary" [filterConditions] = "allFilterOption" [dataRange]="viewTableData['data_range']" [conditions]="viewTableData['condition']" (changed)="reloadData()"></app-table-query-show>
+        </div>
+      </div>
+  <div class="app-module-operations mt8">
+    <div class="app-module-operations-left">
+        <ng-container *ngIf="userSelectedOper.role_id!=5 && userSelectedOper.role_id!=2 && userSelectedOper.role_id!=6">
+         <ng-container *ngIf="source_summary != 'account' && source_summary !='publisher' && source_summary !='ocpc_360' && source_summary !='ocpc_baidu' && source_summary !='ocpc_baidu_report'&& source_summary !== 'creative_fengwu_360' && source_summary !== 'ocpc_360_setting'">
+          <app-quick-start [viewTableData]="viewTableData" [summary_type]="source_summary" [selected]="selected" [selectedType]="selectedType" [pageInfo]="pageInfo"  ></app-quick-start>
+          <app-quick-start [oper]="'stop'" [viewTableData]="viewTableData" [summary_type]="source_summary" [selected]="selected" [selectedType]="selectedType" [pageInfo]="pageInfo"  ></app-quick-start>
+         </ng-container>
+        <ng-container *ngIf="source_summary == 'creative'">
+
+          <app-sync-creative [viewTableData]="viewTableData" [summaryType]="source_summary" [selected]="selected" [selectedType]="selectedType" [pageInfo]="pageInfo" ></app-sync-creative>
+
+        </ng-container>
+        <ng-container *ngIf="source_summary !='publisher'">
+          <ng-container *ngIf="editParameter['editParameter'] !== 'all'">
+            <button *ngIf="source_summary !='search_keyword'&& source_summary !='dsa_pattern_day' && source_summary !='ocpc_360' && source_summary !='ocpc_baidu' && source_summary !='ocpc_baidu_report'&&this.source_summary != 'creative_fengwu_360' && source_summary !== 'ocpc_360_setting'" class="manage-add mr8" nz-button [nzType]="'default'" (click)="jumpToEdit()" [nzSize]="'small'" >
+             <i nz-icon nzType="edit" nzTheme="outline"></i>
+             <span *ngIf="selectedLength>0">编辑（已选中{{selectedLength}}条）</span>
+             <span *ngIf="selectedLength==0">编辑</span>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="source_summary === 'keyword' || source_summary === 'adgroup' || source_summary === 'ocpc_baidu' || source_summary === 'ocpc_360_setting'">
+            <button #quickEditButton *ngIf="!selected.length" class="manage-add mr8" nz-button [nzType]="'default'" (keyup)="quickEditKeyUp($event)" (click)="quickEdit(source_summary)" [nzSize]="'small'" >
+             <i nz-icon nzType="edit" nzTheme="outline"></i><span>快捷编辑</span>
+            </button>
+            <button #quickEditButton *ngIf="selected.length"
+                    class="manage-add mr8"
+                    nz-button
+                    [nzType]="'default'"
+                    nz-popover
+                    nzPopoverTitle="编辑{{selectedLength}}个"
+                    [(nzPopoverVisible)]="quickEditParam.showQuickEdit"
+                    nzPopoverTrigger="click"
+                    [nzPopoverContent]="showQuickEditTpl"
+                    nzPopoverPlacement="bottom"
+                    (click)="quickEdit(source_summary)"
+                    [nzSize]="'small'"
+            >
+             <i nz-icon nzType="edit" nzTheme="outline"></i><span>快捷编辑</span>
+            </button>
+            <ng-template #showQuickEditTpl>
+              <div class="pop-quick-edit">
+                <p class="slow_360" *ngIf="quickEditParam.publisherId === 3 || quickEditParam.publisherData['publisherCount'] > 1">360媒体的编辑操作同步到媒体端有一定时间的延迟，请耐心等待，请勿重复修改!</p>
+                <div class="lab-row mb16">
+                  <nz-select [nzSize]="'small'" style="width: 250px" [(ngModel)]="quickEditParam.quickEditItem">
+                    <nz-option *ngFor="let option of quickEditParam.editItem" [nzLabel]="option.name" [nzValue]="option.value"></nz-option>
+                  </nz-select>
+                </div>
+
+                <!-- 单元出价 -->
+                <app-quick-edit-keyword-price-single *ngIf="quickEditParam.quickEditItem === 12"
+                  class='mb10'
+                  (result)="quickResult($event)"
+                  ></app-quick-edit-keyword-price-single>
+
+                <!--投放状态-->
+                <app-quick-edit-status *ngIf="quickEditParam.quickEditItem === 1"
+                  (result)="quickResult($event)"
+                  [parentData]="quickEditParam.showData.pause"></app-quick-edit-status>
+                <!--同媒体-->
+                <ng-container *ngIf="quickEditParam.publisherData['publisherCount'] === 1">
+                  <!--出价单个编辑-->
+                  <app-quick-edit-keyword-price-single
+                    class='mb10'
+                    *ngIf="(quickEditParam.quickEditItem === 2 || quickEditParam.quickEditItem === 4 || quickEditParam.quickEditItem === 5) && selected.length === 1 "
+                    (result)="quickResult($event)"
+                    [parentData]="quickEditParam.showData.price"></app-quick-edit-keyword-price-single>
+                  <!--同媒体 匹配模式-->
+                  <app-quick-edit-keyword-match-type
+                    class='mb10'
+                    *ngIf="quickEditParam.quickEditItem === 3"
+                    (result)="quickResult($event)"
+                    [matchTypeData]="matchTypeData"
+                    [parentData]="quickEditParam.showData.match_type"></app-quick-edit-keyword-match-type>
+
+                  <!--出价 同媒体批量编辑-->
+                  <app-quick-edit-keyword-price-batch
+                    *ngIf="(quickEditParam.quickEditItem === 2 || quickEditParam.quickEditItem === 4 || quickEditParam.quickEditItem === 5) && selected.length > 1"
+                    (result)="quickResult($event)"></app-quick-edit-keyword-price-batch>
+                </ng-container>
+                <!--跨媒体媒体-->
+                <ng-container *ngIf="quickEditParam.publisherData['publisherCount'] > 1">
+                  <app-quick-edit-keyword-price-batch
+                    *ngIf="quickEditParam.quickEditItem === 2"
+                    (result)="quickResult($event)"></app-quick-edit-keyword-price-batch>
+                </ng-container>
+
+                <p style="margin-top: 8px; color: #f09200" *ngIf="quickEditParam.is_warning">{{quickEditParam.warning_info}}</p>
+
+                <div class="quick-edit-footer mt30">
+                  <button class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelQuickEdit()">取消</button>
+                  <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="quickEditParam.saveing"  (click)="quickEditOk(source_summary)">确认</button>
+                </div>
+
+              </div>
+            </ng-template>
+
+          </ng-container>
+
+
+          <button class="manage-add mr8" *ngIf="source_summary === 'keyword' || source_summary ==='adgroup' || source_summary ==='campaign' || source_summary ==='creative'" nz-button [nzType]="'default'" (click)="jumpToAdd()" [nzSize]="'small'" >
+           <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加</span>
+          </button>
+          <ng-container *ngIf="source_summary !== 'ocpc_baidu' && source_summary !== 'ocpc_baidu_report'&&this.source_summary != 'creative_fengwu_360' && source_summary !== 'ocpc_360_setting'">
+            <app-quick-delete class="mr8" [viewTableData]="viewTableData" [summary_type]="source_summary" [selected]="selected" [selectedType]="selectedType" [pageInfo]="pageInfo"  ></app-quick-delete>
+          </ng-container>
+        </ng-container>
+
+        <button class="manage-add mr8" nz-button [nzType]="'default'" (click)="batchUploadDelete()" [nzSize]="'small'" *ngIf="source_summary === 'keyword' || source_summary ==='creative'" >
+          <i nz-icon nzType="upload" nzTheme="outline"></i><span>上传删除</span>
+        </button>
+
+        <button class="manage-add mr8" nz-button [nzType]="'default'" (click)="batchUpload()" [nzSize]="'small'" *ngIf="source_summary === 'account' || source_summary === 'keyword' || source_summary ==='creative' || source_summary ==='campaign' || source_summary ==='adgroup'||this.source_summary === 'creative_fengwu_360'" >
+          <i nz-icon nzType="upload" nzTheme="outline"></i><span>上传</span>
+        </button>
+      </ng-container>
+
+
+      <button class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeField()">
+        <i nz-icon nzType="bars" nzTheme="outline"></i><span>修改列</span>
+      </button>
+<!--      <button class="manage-add mr8" *ngIf="source_summary === 'creative_fengwu_360'" nz-button [nzType]="'default'" (click)="jumpToCreate()" [nzSize]="'small'" >-->
+<!--        <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加凤舞创意</span>-->
+<!--      </button>-->
+      <ng-container *ngIf="selected.length==0">
+        <button class="manage-add mr8" (click)="syncPrompt()" *ngIf=" source_summary === 'account'" nz-button [nzType]="'default'" [nzSize]="'small'">
+          <i nz-icon nzType="sync" nzTheme="outline"></i><span>下载更新</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selected.length!=0">
+          <button class="manage-add mr8" nz-popconfirm [nzPopconfirmTitle]="syncTemplate" (nzOnConfirm)="doSync()" [nzPopconfirmPlacement]="'bottomLeft'" *ngIf=" source_summary === 'account'" nz-button [nzType]="'default'" [nzSize]="'small'">
+            <i nz-icon nzType="sync" nzTheme="outline"></i><span>下载更新</span>
+          </button>
+      </ng-container>
+      <ng-template #syncTemplate>
+        <p *ngIf="source_summary ==='campaign'" class="text-center"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: #faad14" ></i> 确定同步所选计划?</p>
+        <p *ngIf="source_summary ==='account'" class="text-center"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: #faad14" ></i> 确定同步所选账户?</p>
+      </ng-template>
+
+
+    </div>
+    <div class="app-module-operations-right fs12">
+      <nz-select style="width: 116px" class="mr8"
+                 [(ngModel)]="time_grain_filter"
+                 (ngModelChange)="timeRangeChange($event)"
+                 [nzSize]="'small'">
+        <nz-option [nzValue]="'summary'" [nzLabel]="'汇总:合计'"></nz-option>
+        <nz-option [nzValue]="'day'" [nzLabel]="'汇总:分日'"></nz-option>
+        <nz-option [nzValue]="'week'" [nzLabel]="'汇总:分周'"></nz-option>
+        <nz-option [nzValue]="'weekSplit'" [nzLabel]="'汇总:分星期'"></nz-option>
+        <nz-option [nzValue]="'month'" [nzLabel]="'汇总:分月'"></nz-option>
+        <nz-option *ngIf="source_summary!=='search_keyword' && source_summary!=='dsa_pattern_day'&& source_summary !='ocpc_360'&&this.source_summary != 'creative_fengwu_360'&& source_summary !='ocpc_baidu' && source_summary !== 'ocpc_360_setting'" [nzValue]="'hour'" [nzLabel]="'汇总:分时'"></nz-option>
+        <nz-option *ngIf="source_summary!=='search_keyword' && source_summary!=='dsa_pattern_day'&& source_summary !='ocpc_360'&&this.source_summary != 'creative_fengwu_360'&& source_summary !='ocpc_baidu' && source_summary !== 'ocpc_360_setting'" [nzValue]="'hour_day'" [nzLabel]="'汇总:分时分日'"></nz-option>
+        <nz-option *ngIf="source_summary!=='search_keyword' && source_summary!=='dsa_pattern_day'&& source_summary !='ocpc_360'&&this.source_summary != 'creative_fengwu_360'&& source_summary !='ocpc_baidu' && source_summary !== 'ocpc_360_setting'" [nzValue]="'hour_weekSplit'" [nzLabel]="'汇总:分时分星期'"></nz-option>
+
+        <nz-option *ngIf="source_summary==='campaign' || source_summary==='account' || source_summary==='publisher' " [nzValue]="'region'" [nzLabel]="'汇总:地域'"></nz-option>
+        <nz-option *ngIf="source_summary==='campaign' || source_summary==='account' || source_summary==='publisher' " [nzValue]="'region_day'" [nzLabel]="'汇总:地域分日'"></nz-option>
+      </nz-select>
+      <ng-container *ngIf="source_summary !== 'ocpc_baidu_report'">
+        <nz-select class="w100 mr8" (ngModelChange)="mainRangeChange($event)"
+                   [(ngModel)]="viewTableData['main_device']"
+                   [nzSize]="'small'">
+          <nz-option [nzValue]="'all'" [nzLabel]="'设备:全部'"></nz-option>
+          <nz-option [nzValue]="'pc'" [nzLabel]="'设备:计算机'"></nz-option>
+          <nz-option [nzValue]="'wap'" [nzLabel]="'设备:移动'"></nz-option>
+        </nz-select>
+      </ng-container>
+      <ng-container *ngIf="source_summary !=='search_keyword' && source_summary !=='ocpc_baidu_report'">
+        <nz-select class="w80 mr8" (ngModelChange)="mainRangeChange($event)"
+                   [(ngModel)]="viewTableData['main_range']"
+                   [nzDisabled]="time_grain_filter!=='summary'"
+                   [nzSize]="'small'">
+          <nz-option [nzValue]="'leftJoin'" [nzLabel]="'全部'"></nz-option>
+          <nz-option [nzValue]="'join'" [nzLabel]="'有展现'"></nz-option>
+          <nz-option [nzValue]="'no_impression'" [nzLabel]="'无展现'"></nz-option>
+        </nz-select>
+      </ng-container>
+      <div class="inline-block">
+          <button class="manage-add" nz-popconfirm [nzPopconfirmTitle]="createReportTpl" (nzOnCancel)="cancelCreateReport()" (nzOnConfirm)="handCreateReport()" [(nzPopconfirmVisible)]="showCreateReport"  [nzPopconfirmPlacement]="'bottomRight'" [nzPopconfirmOverlayClassName]="'pop-report-wrap'"  nz-button [nzType]="'default'" [nzSize]="'small'">
+            <span>生成报表</span>
+          </button>
+          <ng-template #createReportTpl>
+            <div class="pop-report">
+              <div class="lab-row">
+                <span>隐藏说明：</span>
+                <nz-radio-group style="width: 160px;" [(ngModel)]="viewTableData.hidden_condition" [nzSize]="'small'">
+                  <label class="" nz-radio [nzValue]="true">
+                    隐藏<i  nz-popover [nzPopoverContent]="'不插入报表生成条件'" nzPopoverPlacement="left" nz-icon nzType="question-circle" nzTheme="outline"></i>
+                  </label>
+                  <label nz-radio [nzValue]="false">
+                    显示<i nz-popover [nzPopoverContent]="'在前五行将插入报表生成条件'" nzPopoverPlacement="left" nz-icon nzType="question-circle" nzTheme="outline"></i>
+                  </label>
+                </nz-radio-group>
+              </div>
+              <div class="lab-row">
+                <span>名称：</span>
+                <input nz-input type="text" placeholder="报表1" [nzSize]="'small'" style="width: 160px;"
+                          [(ngModel)]="viewReportSetting.report_name">
+              </div>
+              <div class="lab-row">
+                <span>格式：</span>
+                <nz-select class="w160" [nzSize]="'small'" [(ngModel)]="viewReportSetting.report_format">
+                  <nz-option [nzLabel]="'Excel'" [nzValue]="'excel'"></nz-option>
+                  <nz-option [nzLabel]="'PDF'" [nzValue]="'pdf'"></nz-option>
+                </nz-select>
+              </div>
+
+              <div class="lab-row">
+                <span>汇总粒度：</span>
+                <nz-select class="w160" [nzSize]="'small'" [(ngModel)]="time_grain">
+                  <nz-option [nzLabel]="'合计'" [nzValue]="'summary'"></nz-option>
+                  <nz-option [nzLabel]="'分日'" [nzValue]="'day'"></nz-option>
+                  <nz-option *ngIf="source_summary!=='search_keyword' && source_summary!=='dsa_pattern_day'&& source_summary !='ocpc_360'&&this.source_summary != 'creative_fengwu_360'&& source_summary !='ocpc_baidu'" [nzLabel]="'分时'" [nzValue]="'hour'"></nz-option>
+                  <nz-option *ngIf="source_summary!=='search_keyword' && source_summary!=='dsa_pattern_day'&& source_summary !='ocpc_360'&&this.source_summary != 'creative_fengwu_360'&& source_summary !='ocpc_baidu'" [nzLabel]="'分时分日'" [nzValue]="'hour_day'"></nz-option>
+                  <nz-option *ngIf="source_summary!=='search_keyword' && source_summary!=='dsa_pattern_day'&& source_summary !='ocpc_360'&&this.source_summary != 'creative_fengwu_360'&& source_summary !='ocpc_baidu'" [nzValue]="'hour_weekSplit'" [nzLabel]="'汇总:分时分星期'"></nz-option>
+                  <nz-option *ngIf="source_summary==='campaign' || source_summary==='account' || source_summary==='publisher' "  [nzLabel]="'地域'" [nzValue]="'region'"></nz-option>
+                  <nz-option *ngIf="source_summary==='campaign' || source_summary==='account' || source_summary==='publisher' " [nzLabel]="'地域分日'" [nzValue]="'region_day'"></nz-option>
+                  <nz-option [nzLabel]="'分周'" [nzValue]="'week'"></nz-option>
+                  <nz-option [nzLabel]="'分星期'" [nzValue]="'weekSplit'"></nz-option>
+                  <nz-option [nzLabel]="'分月'" [nzValue]="'month'"></nz-option>
+                </nz-select>
+              </div>
+              <div class="lab-row">
+                <span>频率：</span>
+                <nz-select class="w160" [nzSize]="'small'" [(ngModel)]="viewReportSetting.report_freq" (ngModelChange)="onFreqChange()">
+                  <nz-option [nzLabel]="'每小时'" [nzValue]="'hour'"></nz-option>
+                  <nz-option [nzLabel]="'每天'" [nzValue]="'day'"></nz-option>
+                  <nz-option [nzLabel]="'每周'" [nzValue]="'week'"></nz-option>
+                  <nz-option [nzLabel]="'每月'" [nzValue]="'month'"></nz-option>
+                  <nz-option [nzLabel]="'立即执行'" [nzValue]="'now'"></nz-option>
+                </nz-select>
+              </div>
+              <div class="lab-row" *ngIf="viewReportSetting.report_freq!=='now' && viewReportSetting.report_freq!=='hour'">
+                <span>时段：</span>
+                <nz-time-picker class="w100 time-picker" [nzSize]="'small'" [(ngModel)]="cron_time" [nzAllowEmpty]="false"  nzFormat="HH:mm" [nzMinuteStep]="5" [nzDisabledHours]="disabledHours" [nzDisabledMinutes]="disabledMinutes"></nz-time-picker>
+              </div>
+              <div class="lab-row" *ngIf="viewReportSetting.report_freq=='hour'">
+                <span>分钟：</span>
+                <nz-select class="w100" [nzSize]="'small'" [(ngModel)]="cron_minute">
+                  <ng-container *ngFor="let item of cronMinuteList">
+                    <nz-option [nzValue]="item" [nzLabel]="item+''"></nz-option>
+                  </ng-container>
+                </nz-select>
+              </div>
+              <div class="lab-row">
+                <span>接收邮箱：</span>
+                <span>（一行一个）</span>
+              </div>
+              <div class="mt5">
+                <textarea  nz-input type ="'textarea'" rows="4" [(ngModel)]="viewReportSetting.email_list" style="width: 220px"></textarea>
+              </div>
+
+            </div>
+          </ng-template>
+
+        <!--<button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="downloadReport()">生成报表</button>-->
+      </div>
+      <div class="module-time inline-block ml8" (click)="changeDate()">
+        <div class="time-content pl8 pr8">
+          <span>{{timeDesc}}</span>
+        </div>
+        <div class="module-icon time-icon">
+          <i nz-icon nzType="calendar" nzTheme="outline"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-view-bookmark #viewMark [summaryType]="source_summary" [fixTop]="bookMarkTop" (create)="createBookMark($event)" (save)="saveBookMark($event)" (selected)="changeSelectedBookMark($event)" ></app-view-bookmark>
+    </div>
+
+
+    <div class="view-table" [ngClass]="{hidden:isJump == 'true' || source_summary === 'ocpc_baidu'}"   [ngStyle]="{'height':tableHeight+'px'}">
+  <ngx-datatable
+    #viewTable
+    class="jzl"
+    [rows]="rows"
+    [summaryRow]="true"
+    [summaryHeight]="rowHeight"
+    [summaryPosition]="'top'"
+    [loadingIndicator]="loadingIndicator"
+    [columns]="columns"
+    [columnMode]="'force'"
+    [headerHeight]="44"
+    [footerHeight]="40"
+    [rowHeight]="rowHeight"
+    [count]="pageInfo.currentPageCount"
+    [scrollbarV]="true"
+    [scrollbarH]="true"
+    [externalPaging]="true"
+    [externalSorting]="true"
+    [virtualization]="true"
+    [sorts]="defaultSortItems"
+    [sortType]="'single'"
+    (sort)="sortView($event)"
+    (resize)="refreshTableSize()"
+    [reorderable]="reorderable"
+    [messages]="dataMessages"
+    [selected]="selected"
+    [selectionType]="'checkbox'"
+    (select)='onSelect($event)' >
+
+    <!--<ngx-datatable-column [width]="300" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">-->
+    <ng-template #chkHeader ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+      <label
+        class="datatable-checkbox" [ngClass]="{selectedCurrent:selectedType=='current' && selected.length>0}">
+        <a nz-dropdown [nzDropdownMenu]="menu">
+            <input type="checkbox" [checked]="allRowsSelected" (change)="selectedChangeCheckBox(!allRowsSelected,selectFn)"/>
+          </a>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu nzSelectable>
+            <li nz-menu-item (click)="selectedChange('current',allRowsSelected,selectFn)" [nzSelected]="selectedType == 'current'">
+              <a>选择当前页</a>
+            </li>
+            <li nz-menu-item  (click)="selectedChange('all',allRowsSelected,selectFn)" [nzSelected]="selectedType == 'all'">
+              <a>选择全部</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </label>
+    </ng-template>
+    <ng-template #dataAnalysisHeader ngx-datatable-header-template let-value="value" let-column="column" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+      <span class="datatable-add-column">{{column['name']}}</span>
+    </ng-template>
+    <ng-template #summaryCell let-row="row" let-value="value" let-column="column">
+      <div class="summary-cell" *ngIf="summaryData[column.prop]">
+        {{ summaryData[column.prop] }}
+      </div>
+    </ng-template>
+    <ng-template #dataAnalysisCell let-row="row" let-value="value" let-column="column">
+      <a><i nz-icon nzType="stock" nzTheme="outline" (click)="openDataAnalysis(row)"></i></a>
+
+      <nz-drawer [nzClosable]="false" [nzWidth]="750" [nzVisible]="row['analysis']" nzPlacement="right" [nzTitle]="'数据分析('+row[dataAnalysisTitleKey[source_summary]]+')'" (nzOnClose)="closeDataAnalysis(row)">
+        <ng-container *ngIf="row['analysis']">
+          <app-data-analysis-chart (closeCharts)="closeChart($event)" [channelId]="1" [publisherId]="0"
+                          [chartItems] ='chartItems'
+                          [summaryType]="source_summary"
+                          [rowData]='row'></app-data-analysis-chart>
+        </ng-container>
+
+      </nz-drawer>
+
+    </ng-template>
+    <ng-template #rateSummaryCell let-row="row" let-value="value" let-column="column">
+      <div class="summary-cell" *ngIf="summaryData[column.prop]">
+      <ng-container *ngIf="summaryData[column.prop] == '10000000.00'">
+        +∞
+      </ng-container>
+      <ng-container *ngIf="summaryData[column.prop] == '-10000000.00'">
+        -∞
+      </ng-container>
+      <ng-container *ngIf="summaryData[column.prop] != '-10000000.00' && summaryData[column.prop] != '10000000.00'">
+        {{ summaryData[column.prop] + '%'}}
+      </ng-container>
+      </div>
+    </ng-template>
+    <ng-template #rateSummaryCellColor let-row="row" let-value="value" let-column="column">
+      <div class="summary-cell" *ngIf="summaryData[column.prop]">
+      <ng-container *ngIf="summaryData[column.prop] == '10000000.00'">
+        <span class="up-color">+∞</span>
+      </ng-container>
+      <ng-container *ngIf="summaryData[column.prop] == '-10000000.00'">
+        <span class="down-color">-∞</span>
+      </ng-container>
+      <ng-container *ngIf="summaryData[column.prop] != '-10000000.00' && summaryData[column.prop] != '10000000.00'">
+        <span [ngClass]="{'up-color':summaryData[column.prop]>0,'down-color':summaryData[column.prop]<0}">{{ summaryData[column.prop] + '%'}}</span>
+      </ng-container>
+      </div>
+    </ng-template>
+    <ng-template #summaryCellColor let-row="row" let-value="value" let-column="column">
+      <div class="summary-cell" *ngIf="summaryData[column.prop]">
+        <span [ngClass]="{'up-color':summaryData[column.prop]>0,'down-color':summaryData[column.prop]<0}">{{ summaryData[column.prop] }}</span>
+      </div>
+    </ng-template>
+    <ng-template #chkCell ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+      <label
+        class="datatable-checkbox">
+        <input type="checkbox" [checked]="isSelected" (change)="singleSelectedChange(onCheckboxChangeFn,$event)"/>
+      </label>
+    </ng-template>
+    <ng-template #filterHeader ngx-datatable-header-template  let-column="column" let-value="value" let-sortFn="sortFn">
+      <span class="datatable-header-cell-wrapper" (click)="sortFn()">
+          <span class="datatable-header-cell-label"> {{column.name}}</span>
+          <i *ngIf="column['remarks']" nz-icon nzType="question-circle"  nzTheme="outline"  nz-popover [nzPopoverContent]="column['remarks']" nzPopoverPlacement="right"  style="color: #f09200" ></i>
+      </span>
+      <app-filter [filterType]="column.data['filterType']" [filterKey]="column.data['filterKey']" [(filterResult)]="column.data['filterResult']" [extraOption]="column.data['extraOption']"  [filterOption]="column.data['filterOption']" (submit)="reloadFirstPage()"></app-filter>
+    </ng-template>
+    <ng-template #refreshRankingHeader ngx-datatable-header-template  let-column="column" let-value="value" let-sortFn="sortFn">
+      <span class="datatable-header-cell-wrapper" (click)="sortFn()">
+          <span class="datatable-header-cell-label"> {{column.name}}</span>
+      </span>
+      <app-filter [filterType]="column.data['filterType']" [filterKey]="column.data['filterKey']" [(filterResult)]="column.data['filterResult']" [extraOption]="column.data['extraOption']" [filterOption]="column.data['filterOption']" (submit)="reloadFirstPage()"></app-filter>
+      <i nz-icon nzType="sync" nzTheme="outline" *ngIf="refreshRankingSetting.status=='stop'" (click)="queryRanking()"></i>
+      <i nz-icon nzType="pause" nzTheme="outline" *ngIf="refreshRankingSetting.status !=='stop'" (click)="stopRanking()"></i>
+      <ng-template #rankTemplate><p class="w220">刷排名提示：百度和神马使用的是访问URL，搜狗使用的是显示URL，360因媒体不返回URL字段所以为空</p></ng-template>
+      <i nz-icon nzType="question-circle" nzTheme="outline"
+        *ngIf="column.name==='实时排名'"
+        nz-popover
+        [nzPopoverContent]="rankTemplate"
+         nzPopoverPlacement="right"
+        class="ml8"
+        style="color: #f09200"></i>
+    </ng-template>
+    <ng-template #refreshRankingCell ngx-datatable-cell-template let-row="row" let-value="value">
+      <span>{{row['ranknow']?row['ranknow']:'未获取'}}</span>
+      <i nz-icon nzType="question-circle" nzTheme="outline" *ngIf="row['ranknow']"
+         [nzPopoverOverlayClassName]="'backColor'"
+         nz-popover
+         [nzPopoverContent]="rankingtemplate"
+         nzPopoverPlacement="right"
+         style="color: #f09200; margin-left: 1px;"></i>
+      <i nz-icon nzType="picture" nzTheme="outline" class="ml2"*ngIf="row['ranknow'] && getDiffHour(row['ranking_time']) <= 10 && row['html_id'] !== '' && row['html_status'] !== '2'"  (click)="seeView(row)" style="cursor: pointer;" title="查看实况页面"></i>
+      <ng-template #rankingtemplate>
+        <div class="mt8 mb8">
+          <p><span class="mr8">所属地域:</span><span>{{row['region_name']}}</span></p>
+          <p class="mt8"><span class="mr8">所属设备:</span><span>{{row['ranking_device']==2?'移动':'计算机'}}</span><span *ngIf="row['publisher_id']*1 === 4">({{row['device_os'] * 1==2?'ios':'安卓'}})</span></p>
+          <p class="mt8"><span class="mr8">查询时间:</span><span>{{row['ranking_time']}}</span></p>
+        </div>
+      </ng-template>
+      <!--<i nz-icon nzType="loading" nzTheme="outline"  *ngIf="row['realLoading']"></i>-->
+      <!--<i nz-icon nzType="loading" nzTheme="outline"  *ngIf="row['rankingLoading']"></i>-->
+
+      <i style="color: limegreen" nz-icon [nzType]="'sync'" [nzSpin]="true" *ngIf="row['realLoading']"></i>
+      <i style="color: limegreen" nz-icon [nzType]="'sync'" [nzSpin]="true" *ngIf="row['rankingLoading']"></i>
+      <!--<img ng-src="assets/images/loading.gif" width="14px" ng-if="row[col.field]['loading']">-->
+      <!--<span ng-show="row[col.field]['ranknow'] || (row[col.field]['ranking_code'] && ((row[col.field]['ranking_code']/1000|number:0)!=0 || row[col.field]['ranking_code']==-1))" popover-template="'rankingPopoverTemplate.html'" popover-trigger="mouseenter" popover-placement="right"><a class="hand"><i class="jzl-icon-question-circle-o color-blue"></i></a></span>-->
+      <!--<i class="jzl-icon-refresh color-blue" ng-show="!row[col.field]['loading']" aria-hidden="true" title="刷新实时排名" ng-click="getRealTimeRanking(row,p_index)"></i>-->
+      <!--<i class="jzl-icon-refresh c-gray" ng-show="row[col.field]['loading']" aria-hidden="true" title="刷新实时排名"></i>-->
+    </ng-template>
+    <ng-template #priceCell let-row="row" ngx-datatable-cell-template let-column="column">
+      <ng-container *ngIf="source_summary!=='adgroup'">
+        <ng-container *ngIf="source_summary ==='ocpc_360_setting' && column['prop'] === 'exp_amt'">
+          <span nz-popover  [(nzPopoverVisible)]="row['showExpAmtBtn']" *ngIf="column['prop'] === 'exp_amt'" nzPopoverTrigger="click" [nzPopoverContent]="editPriceTemplate" [nzPopoverPlacement]="'bottom'" ><a class="editPriceBtn" [ngClass]="{'visible': row['showExpAmtBtn']}" (click)="editPrice(row,source_summary,column)"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a></span>{{row[column['prop']]}}
+        </ng-container>
+        <ng-container *ngIf="source_summary !=='ocpc_360_setting'">
+          <span nz-popover  [(nzPopoverVisible)]="row['showEditPrice']" *ngIf="row.price" nzPopoverTrigger="click" [nzPopoverContent]="editPriceTemplate" [nzPopoverPlacement]="'bottom'" ><a class="editPriceBtn" [ngClass]="{'visible': row['showPriceBtn']}" (click)="editPrice(row,'keyword')"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a></span>{{row.price}}
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="source_summary=='adgroup'">
+        <span nz-popover  [(nzPopoverVisible)]="row['showEditPrice']" *ngIf="row.max_price" nzPopoverTrigger="click" [nzPopoverContent]="editPriceTemplate" [nzPopoverPlacement]="'bottom'" ><a class="editPriceBtn" [ngClass]="{'visible': row['showPriceBtn']}" (click)="editPrice(row,'adgroup')"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a></span>{{row.max_price}}
+      </ng-container>
+      <ng-template #editPriceTemplate class="addSearchKeyword">
+        <div style="width:325px; padding: 10px;" class="mb8">
+          <div class="mt10" style=" position: relative">
+            <span *ngIf="source_summary != 'adgorup'">关键词出价:</span>
+            <span *ngIf="source_summary == 'adgorup'">单元出价:</span>
+            <div style="position: absolute;left: 64px;top: 0px;width: 236px;">
+            <nz-input-number class="ml5" [(ngModel)]="editPriceParam.keywordPrice" (ngModelChange)="keywordPriceChange($event)" [nzStep]="0.1" [nzSize]="'small'">
+            </nz-input-number>
+            <span class="ml5">元</span>
+            <span [ngClass]="{'up-color': editPriceParam.iswraing}" class="ml5" style="color: #afabab">范围: {{editPriceParam.priceRanges[editPriceParam.publisherId]['min']}}~{{editPriceParam.priceRanges[editPriceParam.publisherId]['max']}}</span>
+          </div>
+          </div>
+        </div>
+        <div class="mb10" style="text-align: right">
+          <button  [nzSize]="'small'"
+                   class="mr5"
+                   nz-button (click)='clickEditPriceCancel(row)'>取消</button>
+          <button  nzType="primary"
+                   [nzSize]="'small'"
+                   [nzLoading]="row.saveing"
+                   [disabled]="editPriceParam.iswraing"
+                   nz-button (click)='clickEditPriceOk(row,this.source_summary)'>确定</button>
+        </div>
+      </ng-template>
+    </ng-template>
+    <!-- 编辑匹配模式 -->
+    <ng-template #matchTypeCell let-row="row" ngx-datatable-cell-template>
+      <span nz-popover [(nzPopoverVisible)]="row['showEditMatchType']" *ngIf="row.match_type" nzPopoverTrigger="click"
+        [nzPopoverContent]="editMatchTypeTemplate" [nzPopoverPlacement]="'bottom'"><a class="editPriceBtn"
+          [ngClass]="{'visible': row['showMatchTypeBtn']}" (click)="editMatchType(row)"><i class="mr2" nz-icon nzType="form"
+            nzTheme="outline"></i></a></span>{{row.match_type}}
+      <ng-template #editMatchTypeTemplate class="addSearchKeyword">
+        <div style="width:325px; padding: 10px;" class="mb8">
+          <div class="mt10" style=" position: relative">
+            <span>匹配模式为:</span>
+            <div style="position: absolute;left: 68px;top: 0px;width:232px;">
+              <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="editMatchTypeParam.keywordMatchType" [nzPlaceHolder]="'请选择匹配模式'">
+                <nz-option
+                  *ngFor="let typeItem of row['matchTypeList']"
+                  [nzLabel]="typeItem.name"
+                  [nzValue]="typeItem.value">
+                </nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </div>
+        <div class="mb10" style="text-align: right">
+          <button [nzSize]="'small'" class="mr5" nz-button (click)='clickEditMatchTypeCancel(row)'>取消</button>
+          <button nzType="primary" [nzSize]="'small'" [nzLoading]="row.saveing"
+            nz-button (click)='clickEditMatchTypeOk(row)'>确定</button>
+        </div>
+      </ng-template>
+    </ng-template>
+    <ng-template #rateCell ngx-datatable-cell-template let-value="value">
+      <ng-container *ngIf="value == '10000000.00'">
+        +∞
+      </ng-container>
+      <ng-container *ngIf="value == '-10000000.00'">
+        -∞
+      </ng-container>
+      <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00' && value!= null && value!=''">
+        {{ value + '%'}}
+      </ng-container>
+    </ng-template>
+    <ng-template #progressCell ngx-datatable-cell-template let-value="value" let-column="column" let-row="row">
+      <div style="width:120px" *ngIf="summaryData[column.originProp]">
+      <nz-progress [nzPercent]="row[column.originProp]/summaryData[column.originProp]*100 | number" nzSize="small" [nzShowInfo]="true" [nzStatus]="'normual'"></nz-progress>
+      </div>
+    </ng-template>
+    <ng-template #rateCellColor ngx-datatable-cell-template let-value="value">
+      <ng-container *ngIf="value == '10000000.00'">
+        <span class="up-color">+∞</span>
+      </ng-container>
+      <ng-container *ngIf="value == '-10000000.00'">
+        <span class="down-color">-∞</span>
+      </ng-container>
+      <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00'">
+        <span [ngClass]="{'up-color':value>0,'down-color':value<0}">{{ value + '%'}}</span>
+      </ng-container>
+    </ng-template>
+    <ng-template #cellColor ngx-datatable-cell-template let-value="value">
+        <span [ngClass]="{'up-color':value>0,'down-color':value<0}">{{ value }}</span>
+    </ng-template>
+    <ng-template #starTpl ngx-datatable-cell-template let-value="value">
+      <span class="star-conatainer">
+        <span class="star-active" [ngStyle]="{'width': value/10*70+'px'}"></span>
+      </span>
+    </ng-template>
+    <ng-template #operation ngx-datatable-cell-template let-row="row" let-value="value">
+      <a nz-popover [nzPopoverPlacement]="'left'" [(nzPopoverVisible)]="row['showAddWord']" nzPopoverTrigger="click" [nzPopoverContent]="addKordTemplate" (click)="addWord(row,$event)">添词</a>
+      <span class="ml8 mr8">|</span>
+      <a nz-popover [nzPopoverPlacement]="'left'" [(nzPopoverVisible)]="row['showAddNagative']" nzPopoverTrigger="click" [nzPopoverContent]="addNagatibeTemplate"(click)="addNegative(row,$event)">添否</a>
+
+      <ng-template #addKordTemplate class="addSearchKeyword">
+        <div style="width:300px; padding: 10px;" class="mb8">
+          <p class="mb14">将 "{{row.pub_query}}" 添加为关键词</p>
+          <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>媒体</div>
+            <div class="pull-left w150">
+              <nz-select #nzSelectOper class="w100p"  [nzSize]="'small'" [(ngModel)]="addWordData.publisher_id" (ngModelChange)="changePublisher(addWordData)" [nzPlaceHolder]="'请选择广告主'">
+                <nz-option
+                  *ngFor="let publisher of accountPublishers"
+                  [nzLabel]="publisher.publisher_name"
+                  [nzValue]="publisher.publisher_id * 1">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>账户</div>
+            <div class="pull-left w150">
+              <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addWordData.pub_account_id" (ngModelChange)="changeAccount(addWordData)" [nzPlaceHolder]="'请选择账户'">
+                <nz-option
+                  *ngFor="let accountItem of accountList"
+                  [nzLabel]="accountItem.pub_account_name"
+                  [nzValue]="accountItem.pub_account_id">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="clear"></div>
+          </div>
+
+          <div class="mt10 add-search-keyword-item">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>计划</div>
+            <div class="pull-left w150">
+              <nz-select class="w100p"
+                         [nzPlaceHolder]="'搜索计划'"
+                         [(ngModel)]="addWordData.pub_campaign_id"
+                         [nzSize]="'small'"
+                         (ngModelChange)="changeCampaign(addWordData)"
+                         [nzShowSearch]="true">
+                <nz-option
+                  *ngFor="let campItem of compainList"
+                  [nzLabel]="campItem.pub_campaign_name"
+                  [nzValue]="campItem.pub_campaign_id">
+                </nz-option>
+              </nz-select>
+            <!--  <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addWordData.pub_campaign_id" (ngModelChange)="changeCampaign(addWordData)" [nzPlaceHolder]="'请选择计划'">
+                <nz-option
+                  *ngFor="let campItem of compainList"
+                  [nzLabel]="campItem.pub_campaign_name"
+                  [nzValue]="campItem.pub_campaign_id">
+                </nz-option>
+              </nz-select>-->
+            </div>
+            <div class="clear"></div>
+          </div>
+
+          <div class="mt10 add-search-keyword-item">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>单元</div>
+            <div class="pull-left w150">
+             <!-- <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addWordData.pub_adgroup_id" [nzPlaceHolder]="'请选择单元'">
+                <nz-option
+                  *ngFor="let adgroupItem of unitList"
+                  [nzLabel]="adgroupItem.pub_adgroup_name"
+                  [nzValue]="adgroupItem.pub_adgroup_id">
+                </nz-option>
+              </nz-select>-->
+
+              <nz-select class="w100p"
+                         [nzPlaceHolder]="'搜索单元'"
+                         [(ngModel)]="addWordData.pub_adgroup_id"
+                         [nzSize]="'small'"
+                         [nzShowSearch]="true">
+                <nz-option
+                  *ngFor="let adgroupItem of unitList"
+                  [nzLabel]="adgroupItem.pub_adgroup_name"
+                  [nzValue]="adgroupItem.pub_adgroup_id">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="clear"></div>
+          </div>
+
+
+
+          <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>匹配模式</div>
+            <div class="pull-left w150">
+              <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addWordData.match_type" [nzPlaceHolder]="'请选择匹配模式'">
+                <nz-option
+                  *ngFor="let typeItem of matchTypeData"
+                  [nzLabel]="typeItem.name"
+                  [nzValue]="typeItem.value">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+            <div class="pull-left w80 mr8 text-right">出价</div>
+            <div class="pull-left w150">
+              <input nz-input
+                     class="w100p"
+                     [nzSize]="'small'"
+                     type="text"
+                     placeholder="如不填则采用单元出价"
+                     [(ngModel)]="addWordData.price">
+            </div>
+            <span class="ml8">元</span>
+            <div class="clear"></div>
+          </div>
+        </div>
+        <div class="mb20" style="text-align: right">
+          <button  [nzSize]="'small'"
+                   class="mr5"
+                   nz-button (click)='clickKeyCancel(row)'>取消</button>
+          <button  nzType="primary"
+                   [nzSize]="'small'"
+                   nz-button (click)='clickKeyOk(row)'>确定</button>
+        </div>
+        <div *ngIf="row['addPadding']" style="text-align: right;margin-bottom: 120px;">
+        </div>
+      </ng-template>
+      <ng-template #addNagatibeTemplate class="addSearchKeyword">
+        <div style="width:300px; padding: 10px;" class="mb8">
+          <p class="mb14">添加否定关键词</p>
+          <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>否定关键词</div>
+            <div class="pull-left w150" style="position: relative">
+              <input nz-input
+                     class="w100p"
+                     [nzSize]="'small'"
+                     type="text"
+                     [(ngModel)]="addNegativeData.pub_query"
+                     (ngModelChange)="searchKeywordChange()"
+                     placeholder="1~40个字符">
+              <div style="position: absolute; width: 50px; right: -50px; top:0px;"><span>（</span><span [ngClass]="{redStart:negativeKeywordLength> 40}">{{negativeKeywordLength}}</span><span>/40）</span></div>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>媒体</div>
+            <div class="pull-left w150">
+              <nz-select #nzSelectOper class="w100p"  [nzSize]="'small'" [(ngModel)]="addNegativeData.publisher_id" (ngModelChange)="changePublisher(addNegativeData)" [nzPlaceHolder]="'请选择广告主'">
+                <nz-option
+                  *ngFor="let publisher of accountPublishers"
+                  [nzLabel]="publisher.publisher_name"
+                  [nzValue]="publisher.publisher_id * 1">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>账户</div>
+            <div class="pull-left w150">
+              <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addNegativeData.pub_account_id" (ngModelChange)="changeAccount(addNegativeData)" [nzPlaceHolder]="'请选择账户'">
+                <nz-option
+                  *ngFor="let accountItem of accountList"
+                  [nzLabel]="accountItem.pub_account_name"
+                  [nzValue]="accountItem.pub_account_id">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="clear"></div>
+          </div>
+
+          <div class="mt10 add-search-keyword-item">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>计划</div>
+            <div class="pull-left w150">
+            <!--  <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addNegativeData.pub_campaign_id" (ngModelChange)="changeCampaign(addNegativeData, 'addNegativeData')" [nzPlaceHolder]="'请选择计划'">
+                <nz-option
+                  *ngFor="let campItem of compainList"
+                  [nzLabel]="campItem.pub_campaign_name"
+                  [nzValue]="campItem.pub_campaign_id">
+                </nz-option>
+              </nz-select>-->
+
+              <nz-select class="w100p"
+                         [nzPlaceHolder]="'搜索计划'"
+                         [(ngModel)]="addNegativeData.pub_campaign_id"
+                         (ngModelChange)="changeCampaign(addNegativeData, 'addNegativeData')"
+                         [nzSize]="'small'"
+                         [nzShowSearch]="true">
+                <nz-option
+                  *ngFor="let campItem of compainList"
+                  [nzLabel]="campItem.pub_campaign_name"
+                  [nzValue]="campItem.pub_campaign_id">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="clear"></div>
+          </div>
+
+          <div class="mt10 add-search-keyword-item">
+            <div class="pull-left w80 mr8 text-right">单元</div>
+            <div class="pull-left w150">
+             <!-- <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addNegativeData.pub_adgroup_id" [nzPlaceHolder]="'请选择单元'">
+                <nz-option
+                  *ngFor="let adgroupItem of unitList"
+                  [nzLabel]="adgroupItem.pub_adgroup_name"
+                  [nzValue]="adgroupItem.pub_adgroup_id">
+                </nz-option>
+              </nz-select>-->
+
+              <nz-select class="w100p"
+                         [nzPlaceHolder]="'搜索单元'"
+                         [(ngModel)]="addNegativeData.pub_adgroup_id"
+                         [nzSize]="'small'"
+                         [nzShowSearch]="true">
+                <nz-option
+                  *ngFor="let adgroupItem of unitList"
+                  [nzLabel]="adgroupItem.pub_adgroup_name"
+                  [nzValue]="adgroupItem.pub_adgroup_id">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>匹配模式</div>
+            <div class="pull-left w150">
+              <nz-radio-group [(ngModel)]="addNegativeData.match_type">
+                <div>
+                  <label class="mr20" nz-radio [nzValue]="1">
+                    <span>短语否定</span>
+                  </label>
+                </div>
+                <div>
+                  <label class="mr20" nz-radio [nzValue]="2">
+                    <span>精确否定</span>
+                  </label>
+                </div>
+              </nz-radio-group>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>加入否词库</div>
+            <div class="pull-left w150">
+              <nz-radio-group [(ngModel)]="addNegativeWordGroupData.is_add">
+                <div>
+                  <label class="mr20" nz-radio [nzValue]="0">
+                    <span>否</span>
+                  </label>
+                  <label class="mr20" nz-radio [nzValue]="1">
+                    <span>是</span>
+                  </label>
+                </div>
+              </nz-radio-group>
+            </div>
+            <div class="clear"></div>
+          </div>
+
+          <div class="mt10 add-search-keyword-item" style="padding-right: 10px;" *ngIf="addNegativeWordGroupData.is_add === 1">
+            <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>否词包</div>
+            <div class="pull-left w150">
+              <nz-select #nzSelectOper class="w100p"
+                         [nzSize]="'small'"
+                         [(ngModel)]="addNegativeWordGroupData.group_id"
+                         [nzPlaceHolder]="'请选择否词包'">
+                <nz-option
+                  *ngFor="let group of negativeWordGroupList"
+                  [nzLabel]="group.group_name"
+                  [nzValue]="group.group_id * 1">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="clear"></div>
+          </div>
+
+        </div>
+        <div class="mb20" style="text-align: right">
+          <button  [nzSize]="'small'"
+                   class="mr5"
+                   nz-button (click)='clickNagativeCancel(row)'>取消</button>
+          <button  nzType="primary"
+                   [nzSize]="'small'"
+                   nz-button (click)='clickNagativeOk(row)'>确定</button>
+        </div>
+
+        <div *ngIf="row['addPadding']" style="text-align: right;margin-bottom: 120px;"></div>
+      </ng-template>
+    </ng-template>
+    <ng-template #pauseCell let-row="row"  ngx-datatable-cell-template>
+      <!--<a class="editPriceBtn" [ngClass]="{'visible': row['showPriceBtn']}"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a>-->
+      <span>{{row.pause_name}}</span>
+      <a *ngIf="row.pause_name === '暂停'" title="开启" class="editPriceBtn manage-start ml2" [ngClass]="{'visible': row['showPriceBtn']}" (click)="setStatus(row, false, '有效')">
+       <i nz-icon nzType="caret-right" nzTheme="outline" style="background: #bfe4ac;color: #44941b;" ></i>
+      </a>
+      <a *ngIf="row.pause_name !== '暂停'" title="暂停" class="editPriceBtn manage-start ml2" [ngClass]="{'visible': row['showPriceBtn']}" (click)="setStatus(row, true, '暂停推广')">
+        <i nz-icon nzType="pause" nzTheme="outline" style="background: #f5dfb1;color: #ab8330;"  ></i>
+      </a>
+
+    </ng-template>
+    <ng-template #statusCell let-row="row"  ngx-datatable-cell-template>
+      <!--<a class="editPriceBtn" [ngClass]="{'visible': row['showPriceBtn']}"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a>-->
+      <span>{{row.status}}</span>
+      <a *ngIf="row.status === '暂停推广'" title="开启" class="editPriceBtn manage-start ml2" [ngClass]="{'visible': row['showPriceBtn']}" (click)="setStatus(row, false, '有效')">
+       <i nz-icon nzType="caret-right" nzTheme="outline" style="background: #bfe4ac;color: #44941b;" ></i>
+      </a>
+      <a *ngIf="row.status !== '暂停推广'" title="暂停" class="editPriceBtn manage-start ml2" [ngClass]="{'visible': row['showPriceBtn']}" (click)="setStatus(row, true, '暂停推广')">
+        <i nz-icon nzType="pause" nzTheme="outline" style="background: #f5dfb1;color: #ab8330;"  ></i>
+      </a>
+
+    </ng-template>
+    <!--推广时段-->
+    <ng-template #scheduleCell ngx-datatable-cell-template let-row="row" let-value="value">
+      <a nz-popover [(nzPopoverVisible)]="row['showSchedule']" nzPopoverTrigger="click" [nzPopoverContent]="addKordTemplate">查看</a>
+
+      <ng-template #addKordTemplate>
+        <div style="width: 610px" class="mb8">
+          <app-show-schedule [parentTimeDate]="row['schedule']"></app-show-schedule>
+        </div>
+        <!--<div class="mb10" style="text-align: right">-->
+        <!--<button  [nzSize]="'small'"-->
+        <!--class="mr5"-->
+        <!--nz-button (click)='clickCancel(row)'>取消</button>-->
+        <!--<button  nzType="primary"-->
+        <!--[nzSize]="'small'"-->
+        <!--nz-button (click)='clickOk(row)'>确定</button>-->
+        <!--</div>-->
+      </ng-template>
+    </ng-template>
+    <ng-template #budgetCell let-row="row"  ngx-datatable-cell-template>
+      <span nz-popover  [(nzPopoverVisible)]="row['showBudget']" nzPopoverTrigger="click" [nzPopoverContent]="editBudgetTemplate" [nzPopoverPlacement]="'bottom'" ><a class="editPriceBtn" [ngClass]="{'visible': row['showBudgetBtn']}" (click)="editBudget(row)"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a></span>{{row.budget}}
+      <ng-template #editBudgetTemplate class="addSearchKeyword">
+        <div style="width:390px; padding: 10px 8px;" class="mb8">
+          <div class="mt10" style=" position: relative">
+            <div style="width: 60px;display: inline-block;float: left;">
+              <span *ngIf="source_summary === 'account'">账户预算:</span>
+              <span *ngIf="source_summary === 'campaign'">计划预算:</span>
+            </div>
+            <div>
+              <!--<div style="position: absolute;left: 54px;top: 0px;width: 258px;">
+                <nz-input-number class="ml5" [(ngModel)]="editBudgetParam.budget" (ngModelChange)="budgetChange($event)" [nzStep]="0.1" [nzSize]="'small'">
+                </nz-input-number>
+                <span class="ml5">元</span>
+                <span [ngClass]="{'up-color': editBudgetParam.iswraing}" class="ml5" style="color: #afabab">范围:>={{editBudgetParam.budgetRanges[editBudgetParam.publisherId]['min']}}</span>
+                <ng-container *ngIf="source_summary === 'account'">{{editBudgetParam.budgetRanges[editBudgetParam.publisherId]['extraInfo']}}</ng-container>
+              </div>-->
+              <nz-radio-group [(ngModel)]="editBudgetParam.budgetRadio" (ngModelChange)="budgetRadioChange($event)">
+                <div style="display: inline-block;">
+                  <div class="h20 pull-left">
+                    <label nz-radio
+                           [nzValue]="1">
+                      <span>每日</span>
+                    </label>
+                  </div>
+                  <nz-input-number [(ngModel)]="editBudgetParam.budget"
+                                   (ngModelChange)="budgetChange($event)"
+                                   [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="ml5">元</span>
+                  <ng-container >
+                    <span [ngClass]="{'up-color': editBudgetParam.iswraing}" class="ml5" style="color: #afabab">范围:>={{editBudgetParam.budgetRanges[editBudgetParam.publisherId]['min']}}<ng-container *ngIf="source_summary === 'account'">{{editBudgetParam.budgetRanges[editBudgetParam.publisherId]['extraInfo']}}</ng-container></span>
+                  </ng-container>
+                </div>
+                <div class="mt5">
+                  <label
+                    nz-radio
+                    [nzValue]="2">
+                    <span>不限定</span>
+                  </label>
+                </div>
+              </nz-radio-group>
+            </div>
+
+
+          </div>
+        </div>
+        <div class="mb10" style="text-align: right">
+          <button  [nzSize]="'small'"
+                   class="mr5"
+                   nz-button (click)='clickEditBudgetCancel(row)'>取消</button>
+          <button  nzType="primary"
+                   [nzSize]="'small'"
+                   [nzLoading]="row.saveing"
+                   [disabled]="editPriceParam.iswraing"
+                   nz-button (click)='clickEditBudgetOk(row)'>确定</button>
+        </div>
+      </ng-template>
+
+    </ng-template>
+    <ng-template #wapUrlCell let-row="row"  ngx-datatable-cell-template>
+      <a *ngIf="row.wap_destination_url" title="复制url" class="editPriceBtn mr2" [ngClass]="{'visible': row['showUrlBtn']}" (click)="copyUrl(row.wap_destination_url)"><i nz-icon nzType="copy" nzTheme="outline"></i></a>{{row.wap_destination_url}}
+    </ng-template>
+    <ng-template #pcUrlCell let-row="row"  ngx-datatable-cell-template>
+      <a *ngIf="row.pc_destination_url" title="复制url" class="editPriceBtn mr2" [ngClass]="{'visible': row['showUrlBtn']}" (click)="copyUrl(row.pc_destination_url)"><i nz-icon nzType="copy" nzTheme="outline"></i></a>{{row.pc_destination_url}}
+    </ng-template>
+    <ng-template #deepLinkUrlCell let-row="row"  ngx-datatable-cell-template>
+      <a *ngIf="row.deeplink_url" title="复制url" class="editPriceBtn mr2" [ngClass]="{'visible': row['showUrlBtn']}" (click)="copyUrl(row.deeplink_url)"><i nz-icon nzType="copy" nzTheme="outline"></i></a>{{row.deeplink_url}}
+    </ng-template>
+    <ng-template #priceRatioPCCell let-row="row"  ngx-datatable-cell-template>
+      <!--{{row['publisher_id']}}-->
+      <!--{{row['bid_prefer']}}-->
+      <ng-container *ngIf="row['publisher_id']*1 !== 1 || row.bid_prefer*1 === 1">-</ng-container>
+      <ng-container *ngIf="row['publisher_id']*1 === 1 && row.bid_prefer*1 === 2">
+        <span nz-popover
+       [(nzPopoverVisible)]="row['showPriceRatioPC']"
+       nzPopoverTrigger="click"
+       [nzPopoverContent]="priceRatioPcTemplate"
+       [nzPopoverPlacement]="'bottom'" >
+        <a class="editPriceBtn" [ngClass]="{'visible': row['showPriceRatioPCBtn']}" (click)="editPriceRatio(row, 'priceRatioPC')">
+          <i class="mr2" nz-icon nzType="form" nzTheme="outline"></i>
+        </a>
+      </span>{{row.pc_price_ratio}}
+      </ng-container>
+
+      <ng-template #priceRatioPcTemplate class="addSearchKeyword">
+        <div style="width:325px; padding: 10px;" class="mb8">
+          <div class="mt10" style=" position: relative">
+            <span>出价比例:</span>
+            <div style="position: absolute;left: 64px;top: 0px;width: 256px;">
+              <nz-input-number class="ml5"
+                               [(ngModel)]="editPriceRatioParam.priceRatio"
+                               (ngModelChange)="priceRatioChange($event, 'priceRatioPC')"
+                               [nzStep]="0.1"
+                               [nzSize]="'small'">
+              </nz-input-number>
+              <p style="width: 153px;color: #afabab; float: right;" [ngClass]="{'up-color': editPriceRatioParam.iswraing}" class="ml5">
+                范围: {{editPriceRatioParam.priceRatioRanges['min']}}~{{editPriceRatioParam.priceRatioRanges['max']}}
+                <ng-container *ngIf="editPriceRatioParam.priceRatioRanges['extraInfo']">{{editPriceRatioParam.priceRatioRanges['extraInfo']}}</ng-container>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="mb10" style="text-align: right">
+          <button  [nzSize]="'small'"
+                   class="mr5"
+                   nz-button (click)="clickPriceRatioCancel(row, 'priceRatioPC')">取消</button>
+          <button  nzType="primary"
+                   [nzSize]="'small'"
+                   [nzLoading]="row.saveing"
+                   [disabled]="editPriceRatioParam.iswraing"
+                   nz-button (click)="clickPriceRatioOk(row, 'priceRatioPC')">确定</button>
+        </div>
+      </ng-template>
+
+    </ng-template>
+    <ng-template #priceRatioWapCell let-row="row"  ngx-datatable-cell-template>
+      <ng-container *ngIf="row['publisher_id']*1 === 4 || row.bid_prefer*1 === 2"><i>-</i></ng-container>
+      <ng-container *ngIf="row['publisher_id']*1 === 2 || row['publisher_id']*1 === 3 || row.bid_prefer*1 === 1">
+        <span nz-popover
+              [(nzPopoverVisible)]="row['showPriceRatioWap']"
+              nzPopoverTrigger="click"
+              [nzPopoverContent]="priceRatioWapTemplate"
+              [nzPopoverPlacement]="'bottom'" >
+        <a class="editPriceBtn" [ngClass]="{'visible': row['showPriceRatioPCBtn']}" (click)="editPriceRatio(row, 'priceRatioWap')">
+          <i class="mr2" nz-icon nzType="form" nzTheme="outline"></i>
+        </a>
+      </span>
+        <span>{{row.wap_price_ratio}}</span>
+      </ng-container>
+      <ng-template #priceRatioWapTemplate class="addSearchKeyword">
+        <div style="width:325px; padding: 10px;" class="mb8">
+          <div class="mt10" style=" position: relative">
+            <span>出价比例:</span>
+            <div style="position: absolute;left: 64px;top: 0px;width: 256px;">
+              <nz-input-number class="ml5"
+                               [(ngModel)]="editPriceRatioParam.priceRatio"
+                               (ngModelChange)="priceRatioChange($event, 'priceRatioWap')"
+                               [nzStep]="0.1"
+                               [nzSize]="'small'">
+              </nz-input-number>
+              <p style="width: 153px;color: #afabab; float: right;" [ngClass]="{'up-color': editPriceRatioParam.iswraing}" class="ml5">
+                范围: {{editPriceRatioParam.priceRatioWapRanges[editPriceRatioParam.publisherId]['min']}}~{{editPriceRatioParam.priceRatioWapRanges[editPriceRatioParam.publisherId]['max']}}
+                <ng-container *ngIf="editPriceRatioParam.priceRatioWapRanges[editPriceRatioParam.publisherId]['extraInfo']">{{editPriceRatioParam.priceRatioWapRanges[editPriceRatioParam.publisherId]['extraInfo']}}</ng-container>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="mb10" style="text-align: right">
+          <button  [nzSize]="'small'"
+                   class="mr5"
+                   nz-button (click)="clickPriceRatioCancel(row, 'priceRatioWap')">取消</button>
+          <button  nzType="primary"
+                   [nzSize]="'small'"
+                   [nzLoading]="row.saveing"
+                   [disabled]="editPriceRatioParam.iswraing"
+                   nz-button (click)="clickPriceRatioOk(row, 'priceRatioWap')">确定</button>
+        </div>
+      </ng-template>
+
+
+    </ng-template>
+    <ng-template #viewTitleCell let-row="row"  ngx-datatable-cell-template>
+       <a  (click)="clickViewTitle(row)">
+         <span *ngIf="source_summary === 'publisher'">{{row['publisher']}}</span>
+         <span *ngIf="source_summary === 'account'">{{row['pub_account_name']}}</span>
+         <span *ngIf="source_summary === 'campaign'">{{row['pub_campaign_name']}}</span>
+         <span *ngIf="source_summary === 'adgroup'">{{row['pub_adgroup_name']}}</span>
+       </a>
+     </ng-template>
+    <ng-template #creativeCell let-row="row"  ngx-datatable-cell-template>
+      <div class="create-title">{{row['pub_creative_title']}}</div>
+      <div class="create-desc">{{row['pub_creative_description1']}}</div>
+      <div class="create-desc">{{row['pub_creative_description2']}}</div>
+      <div class="create-title-url">{{row['pc_display_url']!=''?row['pc_display_url']:row['wap_display_url']}}</div>
+    </ng-template>
+    <ng-template #creativeCellTemp let-row="row"  ngx-datatable-cell-template>
+      <div class="create-title">{{row['pub_creative_title_temp']}}</div>
+      <div class="create-desc">{{row['pub_creative_description1_temp']}}</div>
+      <div class="create-desc">{{row['pub_creative_description2_temp']}}</div>
+      <div class="create-title-url">{{row['pc_display_url_temp']!=''?row['pc_display_url_temp']:row['wap_display_url_temp']}}</div>
+    </ng-template>
+    <!--凤舞操作-->
+    <ng-template #fengwuOperation ngx-datatable-cell-template let-row="row" let-value="value">
+      <a (click)="openPreview(row)">预览</a>
+    </ng-template>
+    <ng-template #operateCell ngx-datatable-cell-template let-row="row" let-value="value">
+      <div class="summary-cell">
+        <a (click)="openDataViewDrawer(row)">数据</a>
+      </div>
+    </ng-template>
+    <ng-template #campaignCntCell ngx-datatable-cell-template let-row="row" let-value="value" let-column="column">
+      <span class="campaign-cnt-word" [title]="row[column['prop']] + '个计划'">{{row[column['prop']] + "个计划"}}</span>
+      <span class="expand-icon ml8" nz-popover [nzPopoverContent]="contentTemplate" [nzPopoverOverlayClassName]="'campaign-cnt-drop-class'" nzPopoverPlacement="topLeft"><i nz-icon nzType="down" nzTheme="outline"></i></span>
+      <ng-template #contentTemplate>
+        <div class="campaign-cnt-drop">
+          <div class="mt5 mb5" *ngFor="let planItem of row['plan_binds']">{{planItem['pub_campaign_name']}}</div>
+        </div>
+      </ng-template>
+    </ng-template>
+
+    <ng-template #budgetOfflineCell ngx-datatable-cell-template let-row="row" let-value="value" let-column="column">
+      <span>{{row[column['prop']]}}</span>
+      <ng-container *ngIf="row['budget_offline_time'] && row['budget_offline_time'].length > 0">
+        <span class="expand-icon ml8" nz-popover [nzPopoverContent]="contentTemplate" nzPopoverPlacement="bottom"><i nz-icon nzType="question-circle" nzTheme="outline"></i></span>
+      </ng-container>
+      <ng-template #contentTemplate>
+        <p *ngFor="let item of row['budget_offline_time']">
+          <span *ngIf="item.flag == 1">上线：{{item.time}}</span>
+          <span *ngIf="item.flag == 0">下线：{{item.time}}</span>
+        </p>
+      </ng-template>
+    </ng-template>
+
+    <!--</ngx-datatable-column>-->
+    <ngx-datatable-footer>
+      <ng-template  ngx-datatable-footer-template>
+        <div class="page-count" *ngIf="pageInfo.loadingStatus == 'success'">
+          共{{pageInfo.allCount}}条
+        </div>
+        <div class="page-count" *ngIf="pageInfo.loadingStatus == 'pending'">
+          <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+        </div>
+        <div class="page-count" *ngIf="pageInfo.loadingStatus == 'error'">
+          总条数加载失败
+        </div>
+        <div class="page-size-select">
+          <select [(ngModel)]="pageInfo.pageSize" (ngModelChange)="changePageSize($event)">
+            <option *ngFor="let sizeList of pageInfo.pageSizeList" [value]="sizeList.key">{{sizeList.name}}</option>
+          </select>
+        </div>
+        <datatable-pager
+          [pagerLeftArrowIcon]="'datatable-icon-left'"
+          [pagerRightArrowIcon]="'datatable-icon-right'"
+          [pagerPreviousIcon]="'datatable-icon-prev'"
+          [pagerNextIcon]="'datatable-icon-skip'"
+          [page]="pageInfo.currentPage"
+          [size]="pageInfo.pageSize"
+          [count]="pageInfo.allCount"
+          [hidden]="!((pageInfo.allCount / pageInfo.pageSize) > 1)"
+          (change)="changePage($event)">
+        </datatable-pager>
+      </ng-template>
+    </ngx-datatable-footer>
+  </ngx-datatable>
+    </div>
+
+    <div class="view-table" *ngIf="source_summary === 'ocpc_baidu'" [ngClass]="{hidden:isJump == 'true'}"   [ngStyle]="{'height':tableHeight+'px'}">
+      <nz-table
+        #expandTable
+        [nzData]="rows"
+        [nzShowTotal]="totalItemTemplate"
+        [nzSize]="'small'"
+        [nzFrontPagination]="false"
+        [(nzPageSize)]="pageInfo.pageSize"
+        [(nzPageIndex)]="pageInfo.currentPage"
+        [nzTotal]="pageInfo.allCount"
+        [nzLoading]="loadingIndicator"
+        (nzPageIndexChange)="changePage($event)"
+        (nzPageSizeChange)="changePageSize($event)"
+        [nzNoResult]="noResultTd"
+        [nzScroll]="{ y: (tableHeight - 100) + 'px' }"
+      >
+        <thead>
+        <tr>
+          <th [nzWidth]="'62px'" [nzLeft]="true" [nzAlign]="'center'">
+            <a nz-dropdown [nzDropdownMenu]="menu">
+              <label nz-checkbox [(ngModel)]="_allChecked" [nzIndeterminate]="_indeterminate" (ngModelChange)="_checkAll(_allChecked)"></label>
+            </a>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu nzSelectable>
+                <li nz-menu-item (click)="_checkAll(true)" [nzSelected]="selectedType == 'current'">
+                  <a>选择当前页</a>
+                </li>
+                <li nz-menu-item (click)="_checkAllPage(true)" [nzSelected]="selectedType == 'all'">
+                  <a>选择全部</a>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+          </th>
+          <ng-container *ngFor="let item of columns">
+            <th [nzLeft]="!!item.frozenLeft" [nzWidth]="item.width + 'px'" (nzSortOrderChange)="sortData($event,item)" [nzSortDirections]="['ascend', 'descend']" [nzShowSort]="!!item.sortable" [nzSortFn]="true">
+              <ng-container *ngIf="item['headerTemplateType'] && item['headerTemplateType'] === 'refreshHeader'">
+                <i nz-icon nzType="sync" nzTheme="outline" *ngIf="refreshRankingSetting.status=='stop'" (click)="queryRanking()"></i>
+                <i nz-icon nzType="pause" nzTheme="outline" *ngIf="refreshRankingSetting.status !=='stop'" (click)="stopRanking()"></i>
+                <ng-template #rankTemplate><p class="w220">刷排名提示：百度和神马使用的是访问URL，搜狗使用的是显示URL，360因媒体不返回URL字段所以为空</p></ng-template>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   *ngIf="item.name==='实时排名'"
+                   nz-popover
+                   [nzPopoverContent]="rankTemplate"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </ng-container>
+              <ng-container *ngIf="!(item['headerTemplateType'] && item['headerTemplateType'] === 'refreshHeader')">
+                {{item.name}}
+              </ng-container>
+              <app-filter *ngIf="item['headerTemplateType'] && item['headerTemplateType'] === 'filterHeader'" [filterType]="item.data['filterType']" [filterKey]="item.data['filterKey']" [(filterResult)]="item.data['filterResult']" [extraOption]="item.data['extraOption']"  [filterOption]="item.data['filterOption']" (submit)="reloadFirstPage()"></app-filter>
+            </th>
+          </ng-container>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let data of expandTable.data">
+          <tr [ngClass]="{'summary-row': data['summaryData']}">
+            <!--checkbox-->
+            <ng-container *ngIf="!data['summaryData']">
+              <td nzLeft nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshSingleChangeStatus($event)"></td>
+            </ng-container>
+            <ng-container *ngIf="data['summaryData']">
+              <td nzLeft></td>
+            </ng-container>
+
+            <ng-container *ngFor="let column of columns; let colIndex = index">
+              <!--合计-->
+              <td *ngIf="data['summaryData']" [nzLeft]="!!column.frozenLeft">
+                <ng-container *ngIf="column['summaryName']">
+                  {{column['summaryName']}}
+                </ng-container >
+                <ng-container *ngIf="!column['summaryName']">
+                  <ng-container *ngIf="column['summaryTemplateType'] && column['summaryTemplateType'] === 'rateSummaryCell'">
+                    <div class="summary-cell" *ngIf="data[column.prop]">
+                      <ng-container *ngIf="data[column.prop] == '10000000.00'">
+                        +∞
+                      </ng-container>
+                      <ng-container *ngIf="data[column.prop] == '-10000000.00'">
+                        -∞
+                      </ng-container>
+                      <ng-container *ngIf="data[column.prop] != '-10000000.00' && data[column.prop] != '10000000.00'">
+                        {{ data[column.prop] + '%'}}
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="column['summaryTemplateType'] && column['summaryTemplateType'] === 'rateSummaryCellColor'">
+                    <div class="summary-cell" *ngIf="data[column.prop]">
+                      <ng-container *ngIf="data[column.prop] == '10000000.00'">
+                        <span class="up-color">+∞</span>
+                      </ng-container>
+                      <ng-container *ngIf="data[column.prop] == '-10000000.00'">
+                        <span class="down-color">-∞</span>
+                      </ng-container>
+                      <ng-container *ngIf="data[column.prop] != '-10000000.00' && data[column.prop] != '10000000.00'">
+                        <span [ngClass]="{'up-color':data[column.prop]>0,'down-color':data[column.prop]<0}">{{ data[column.prop] + '%'}}</span>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="column['summaryTemplateType'] && column['summaryTemplateType'] === 'summaryCellColor'">
+                    <div class="summary-cell" *ngIf="data[column.prop]">
+                      <span [ngClass]="{'up-color':data[column.prop]>0,'down-color':data[column.prop]<0}">{{ data[column.prop] }}</span>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="!column['summaryTemplateType']">
+                    {{data[column.prop]}}
+                  </ng-container>
+                </ng-container>
+              </td>
+              <!--rows-->
+              <td *ngIf="!data['summaryData']" class="td-cell" [nzLeft]="!!column.frozenLeft">
+                <span [ngTemplateOutlet]="ant_view_table" [ngTemplateOutletContext]="{data: data, column: column, colIndex: colIndex, parent: true}"></span>
+              </td>
+            </ng-container>
+          </tr>
+          <ng-container *ngIf="data.expand">
+            <tr *ngFor="let childData of data.children">
+              <td nzLeft></td>
+              <ng-container *ngFor="let column of columns; let colIndex = index">
+                <!--rows-->
+                <td class="td-cell" [nzLeft]="!!column.frozenLeft">
+                  <span [ngTemplateOutlet]="ant_view_table" [ngTemplateOutletContext]="{data: childData, column: column, colIndex: colIndex, parent: false}"></span>
+                </td>
+              </ng-container>
+            </tr>
+          </ng-container>
+        </ng-container>
+        </tbody>
+      </nz-table>
+    </div>
+
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+
+
+    <ng-template #noResultTd>
+      <div class="table-no-result" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+        <div class="table-no-result-content">
+          <div class="mt8">无数据</div>
+        </div>
+      </div>
+    </ng-template>
+
+    <app-data-view-edit [parentData]="editParameter" *ngIf="isJump === 'true'" (isHidden) = 'childPageState($event)'></app-data-view-edit>
+
+<div class="view-group" *ngIf="source_summary === 'account' || source_summary === 'keyword' || source_summary === 'adgroup' || source_summary === 'campaign' || source_summary === 'creative' || source_summary === 'search_keyword'">
+  <button class="manage-table-icon ml8 pull-left " [ngClass]="{'active':viewType === 'view'}" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeDataViewUrl('view')">
+    <span>视图</span>
+  </button>
+  <button class="manage-tree pull-left" *ngIf="source_summary !== 'account' && source_summary !== 'search_keyword' " [ngClass]="{'active':viewType === 'folder'}" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeDataViewUrl('folder')">
+    <span>文件夹</span>
+  </button>
+  <button class="manage-tree pull-left" [ngClass]="{'active':viewType === 'analytics'}" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeDataViewUrl('analytics')">
+    <span>数据报告</span>
+  </button>
+  <!-- 账户结构 -->
+  <app-keyword-structure *ngIf="(source_summary === 'keyword'||source_summary === 'creative') && (companyId === 3673||companyId === 33)" [sourceSummary]="source_summary" [statusFilterOption]="allFilterOption['status']"></app-keyword-structure>
+
+   </div>
+  </div>
+</div>
+
+<ng-template #ant_view_table let-data="data" let-column="column" let-colIndex="colIndex" let-parent="parent">
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'campaignCnt' && parent">
+    <span *ngIf="data.expand" class="expand-icon mr8" (click)="collapse(data)">
+      <i nz-icon nzType="down" nzTheme="outline"></i>
+    </span>
+    <span *ngIf="!data.expand" class="expand-icon mr8" (click)="collapse(data)">
+      <i nz-icon nzType="right" nzTheme="outline"></i>
+    </span>
+    <span>{{data[column['prop']] + "个计划"}}</span>
+  </ng-container>
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'campaignCnt' && !parent">
+    <span>{{data['pub_campaign_name']}}</span>
+  </ng-container>
+  <ng-container *ngIf="!column['cellTemplateType']">
+    <div class="summary-cell">
+      {{ data[column.prop] }}
+    </div>
+  </ng-container>
+  <!--operate 操作-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'operate' && parent">
+    <div class="summary-cell">
+      <a (click)="openDataViewDrawer(data)">数据</a>
+    </div>
+  </ng-container>
+  <!--refreshCell  排名 -->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'refreshCell'">
+    <span>{{data['ranknow']?data['ranknow']:'未获取'}}</span>
+    <i nz-icon nzType="question-circle" nzTheme="outline" *ngIf="data['ranknow']"
+       [nzPopoverOverlayClassName]="'backColor'"
+       nz-popover
+       [nzPopoverContent]="rankingtemplate"
+       nzPopoverPlacement="right"
+       style="color: #f09200; margin-left: 1px;"></i>
+    <i nz-icon nzType="picture" nzTheme="outline" class="ml2" *ngIf="data['ranknow'] && getDiffHour(data['ranking_time']) <= 10 && data['html_id'] !== '' && data['html_status'] !== '2'"  (click)="seeView(data)" style="cursor: pointer;" title="查看实况页面"></i>
+    <ng-template #rankingtemplate>
+      <div class="mt8 mb8">
+        <p><span class="mr8">所属地域:</span><span>{{data['region_name']}}</span></p>
+        <p class="mt8"><span class="mr8">所属设备:</span><span>{{data['ranking_device']==2?'移动':'计算机'}}</span><span *ngIf="data['publisher_id']*1 === 4">({{data['device_os'] * 1==2?'ios':'安卓'}})</span></p>
+        <p class="mt8"><span class="mr8">查询时间:</span><span>{{data['ranking_time']}}</span></p>
+      </div>
+    </ng-template>
+    <!--<i nz-icon nzType="loading" nzTheme="outline"  *ngIf="row['realLoading']"></i>-->
+    <!--<i nz-icon nzType="loading" nzTheme="outline"  *ngIf="row['rankingLoading']"></i>-->
+    <i style="color: limegreen" nz-icon [nzType]="'sync'" [nzSpin]="true" *ngIf="data['realLoading']"></i>
+    <i style="color: limegreen" nz-icon [nzType]="'sync'" [nzSpin]="true" *ngIf="data['rankingLoading']"></i>
+    <!--<img ng-src="assets/images/loading.gif" width="14px" ng-if="row[col.field]['loading']">-->
+    <!--<span ng-show="row[col.field]['ranknow'] || (row[col.field]['ranking_code'] && ((row[col.field]['ranking_code']/1000|number:0)!=0 || row[col.field]['ranking_code']==-1))" popover-template="'rankingPopoverTemplate.html'" popover-trigger="mouseenter" popover-placement="right"><a class="hand"><i class="jzl-icon-question-circle-o color-blue"></i></a></span>-->
+    <!--<i class="jzl-icon-refresh color-blue" ng-show="!row[col.field]['loading']" aria-hidden="true" title="刷新实时排名" ng-click="getRealTimeRanking(row,p_index)"></i>-->
+    <!--<i class="jzl-icon-refresh c-gray" ng-show="row[col.field]['loading']" aria-hidden="true" title="刷新实时排名"></i>-->
+  </ng-container>
+  <!--priceCell  出价-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'priceCell'">
+    <ng-container *ngIf="source_summary!=='adgroup'">
+      <ng-container *ngIf="source_summary ==='ocpc_baidu' && column['prop'] === 'ocpc_bid'">
+        <span nz-popover  [(nzPopoverVisible)]="data['showEditOcpcBid']" *ngIf="column['prop'] === 'ocpc_bid'" nzPopoverTrigger="click" [nzPopoverContent]="editPriceTemplate" [nzPopoverPlacement]="'bottom'" ><a class="editPriceBtn" [ngClass]="{'visible': data['showBidBtn']}" (click)="editPrice(data,source_summary,column)"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a></span>{{data[column['prop']]}}
+      </ng-container>
+      <ng-container *ngIf="source_summary ==='ocpc_baidu' && column['prop'] === 'ocpc_deep_cpa'">
+        <span nz-popover  [(nzPopoverVisible)]="data['showEditDeepCpa']" *ngIf="column['prop'] === 'ocpc_deep_cpa'" nzPopoverTrigger="click" [nzPopoverContent]="editPriceTemplate" [nzPopoverPlacement]="'bottom'" ><a class="editPriceBtn" [ngClass]="{'visible': data['showDeepCpaBtn']}" (click)="editPrice(data,source_summary,column)"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a></span>{{data[column['prop']]}}
+      </ng-container>
+      <ng-container *ngIf="source_summary !=='ocpc_baidu' && source_summary !=='ocpc_360_setting'">
+        <span nz-popover  [(nzPopoverVisible)]="data['showEditPrice']" *ngIf="data.price" nzPopoverTrigger="click" [nzPopoverContent]="editPriceTemplate" [nzPopoverPlacement]="'bottom'" ><a class="editPriceBtn" [ngClass]="{'visible': data['showPriceBtn']}" (click)="editPrice(data,'keyword')"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a></span>{{data.price}}
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="source_summary=='adgroup'">
+      <span nz-popover  [(nzPopoverVisible)]="data['showEditPrice']" *ngIf="data.max_price" nzPopoverTrigger="click" [nzPopoverContent]="editPriceTemplate" [nzPopoverPlacement]="'bottom'" ><a class="editPriceBtn" [ngClass]="{'visible': data['showPriceBtn']}" (click)="editPrice(data,'adgroup')"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a></span>{{data.max_price}}
+    </ng-container>
+    <ng-template #editPriceTemplate class="addSearchKeyword">
+      <div style="width:325px; padding: 10px;" class="mb8">
+        <div class="mt10" style=" position: relative">
+          <span *ngIf="source_summary != 'adgorup'">关键词出价:</span>
+          <span *ngIf="source_summary == 'adgorup'">单元出价:</span>
+          <div style="position: absolute;left: 64px;top: 0px;width: 236px;">
+            <nz-input-number class="ml5" [(ngModel)]="editPriceParam.keywordPrice" (ngModelChange)="keywordPriceChange($event)" [nzStep]="0.1" [nzSize]="'small'">
+            </nz-input-number>
+            <span class="ml5">元</span>
+            <span [ngClass]="{'up-color': editPriceParam.iswraing}" class="ml5" style="color: #afabab">范围: {{editPriceParam.priceRanges[editPriceParam.publisherId]['min']}}~{{editPriceParam.priceRanges[editPriceParam.publisherId]['max']}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="mb10" style="text-align: right">
+        <button  [nzSize]="'small'"
+                 class="mr5"
+                 nz-button (click)='clickEditPriceCancel(data)'>取消</button>
+        <button  nzType="primary"
+                 [nzSize]="'small'"
+                 [nzLoading]="data.saveing"
+                 [disabled]="editPriceParam.iswraing"
+                 nz-button (click)='clickEditPriceOk(data,this.source_summary,column)'>确定</button>
+      </div>
+    </ng-template>
+  </ng-container>
+  <!--matchTypeCell   编辑匹配模式 -->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'matchTypeCell'">
+                  <span nz-popover [(nzPopoverVisible)]="data['showEditMatchType']" *ngIf="data.match_type" nzPopoverTrigger="click"
+                        [nzPopoverContent]="editMatchTypeTemplate" [nzPopoverPlacement]="'bottom'"><a class="editPriceBtn"
+                                                                                                      [ngClass]="{'visible': data['showMatchTypeBtn']}" (click)="editMatchType(data)"><i class="mr2" nz-icon nzType="form"
+                                                                                                                                                                                         nzTheme="outline"></i></a></span>{{data.match_type}}
+    <ng-template #editMatchTypeTemplate class="addSearchKeyword">
+      <div style="width:325px; padding: 10px;" class="mb8">
+        <div class="mt10" style=" position: relative">
+          <span>匹配模式为:</span>
+          <div style="position: absolute;left: 68px;top: 0px;width:232px;">
+            <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="editMatchTypeParam.keywordMatchType" [nzPlaceHolder]="'请选择匹配模式'">
+              <nz-option
+                *ngFor="let typeItem of data['matchTypeList']"
+                [nzLabel]="typeItem.name"
+                [nzValue]="typeItem.value">
+              </nz-option>
+            </nz-select>
+          </div>
+        </div>
+      </div>
+      <div class="mb10" style="text-align: right">
+        <button [nzSize]="'small'" class="mr5" nz-button (click)='clickEditMatchTypeCancel(data)'>取消</button>
+        <button nzType="primary" [nzSize]="'small'" [nzLoading]="data.saveing"
+                nz-button (click)='clickEditMatchTypeOk(data)'>确定</button>
+      </div>
+    </ng-template>
+  </ng-container>
+  <!--rateCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'rateCell'">
+    <ng-container *ngIf="data[column['prop']] == '10000000.00'">
+      +∞
+    </ng-container>
+    <ng-container *ngIf="data[column['prop']] == '-10000000.00'">
+      -∞
+    </ng-container>
+    <ng-container *ngIf="data[column['prop']] != '-10000000.00' && data[column['prop']] != '10000000.00' && data[column['prop']]!= null && data[column['prop']]!=''">
+      {{ data[column['prop']] + '%'}}
+    </ng-container>
+  </ng-container>
+  <!--progressCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'progressCell'">
+    <div style="width:120px" *ngIf="summaryData[column.originProp]">
+      <nz-progress [nzPercent]="data[column.originProp]/summaryData[column.originProp]*100 | number" nzSize="small" [nzShowInfo]="true" [nzStatus]="'normual'"></nz-progress>
+    </div>
+  </ng-container>
+  <!--rateCellColor-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'rateCellColor'">
+    <ng-container *ngIf="data[column['prop']] == '10000000.00'">
+      <span class="up-color">+∞</span>
+    </ng-container>
+    <ng-container *ngIf="data[column['prop']] == '-10000000.00'">
+      <span class="down-color">-∞</span>
+    </ng-container>
+    <ng-container *ngIf="data[column['prop']] != '-10000000.00' && data[column['prop']] != '10000000.00'">
+      <span [ngClass]="{'up-color':data[column['prop']]>0,'down-color':data[column['prop']]<0}">{{ data[column['prop']] + '%'}}</span>
+    </ng-container>
+  </ng-container>
+  <!--cellColor-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'cellColor'">
+    <span [ngClass]="{'up-color':data[column['prop']]>0, 'down-color':data[column['prop']]<0}">{{ data[column['prop']] }}</span>
+  </ng-container>
+  <!--starTpl-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'starTpl'">
+                  <span class="star-conatainer">
+                    <span class="star-active" [ngStyle]="{'width': data[column['prop']]/10*70+'px'}"></span>
+                  </span>
+  </ng-container>
+  <!--operation-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'operation'">
+    <a nz-popover [nzPopoverPlacement]="'left'" [(nzPopoverVisible)]="data['showAddWord']" nzPopoverTrigger="click" [nzPopoverContent]="addKordTemplate" (click)="addWord(data,$event)">添词</a>
+    <span class="ml8 mr8">|</span>
+    <a nz-popover [nzPopoverPlacement]="'left'" [(nzPopoverVisible)]="data['showAddNagative']" nzPopoverTrigger="click" [nzPopoverContent]="addNagatibeTemplate"(click)="addNegative(data,$event)">添否</a>
+    <ng-template #addKordTemplate class="addSearchKeyword">
+      <div style="width:300px; padding: 10px;" class="mb8">
+        <p class="mb14">将 "{{data.pub_query}}" 添加为关键词</p>
+        <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>媒体</div>
+          <div class="pull-left w150">
+            <nz-select #nzSelectOper class="w100p"  [nzSize]="'small'" [(ngModel)]="addWordData.publisher_id" (ngModelChange)="changePublisher(addWordData)" [nzPlaceHolder]="'请选择广告主'">
+              <nz-option
+                *ngFor="let publisher of accountPublishers"
+                [nzLabel]="publisher.publisher_name"
+                [nzValue]="publisher.publisher_id * 1">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>账户</div>
+          <div class="pull-left w150">
+            <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addWordData.pub_account_id" (ngModelChange)="changeAccount(addWordData)" [nzPlaceHolder]="'请选择账户'">
+              <nz-option
+                *ngFor="let accountItem of accountList"
+                [nzLabel]="accountItem.pub_account_name"
+                [nzValue]="accountItem.pub_account_id">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>计划</div>
+          <div class="pull-left w150">
+            <nz-select class="w100p"
+                       [nzPlaceHolder]="'搜索计划'"
+                       [(ngModel)]="addWordData.pub_campaign_id"
+                       [nzSize]="'small'"
+                       (ngModelChange)="changeCampaign(addWordData)"
+                       [nzShowSearch]="true">
+              <nz-option
+                *ngFor="let campItem of compainList"
+                [nzLabel]="campItem.pub_campaign_name"
+                [nzValue]="campItem.pub_campaign_id">
+              </nz-option>
+            </nz-select>
+            <!--  <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addWordData.pub_campaign_id" (ngModelChange)="changeCampaign(addWordData)" [nzPlaceHolder]="'请选择计划'">
+                   <nz-option
+                     *ngFor="let campItem of compainList"
+                     [nzLabel]="campItem.pub_campaign_name"
+                     [nzValue]="campItem.pub_campaign_id">
+                   </nz-option>
+                 </nz-select>-->
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>单元</div>
+          <div class="pull-left w150">
+            <!-- <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addWordData.pub_adgroup_id" [nzPlaceHolder]="'请选择单元'">
+                  <nz-option
+                    *ngFor="let adgroupItem of unitList"
+                    [nzLabel]="adgroupItem.pub_adgroup_name"
+                    [nzValue]="adgroupItem.pub_adgroup_id">
+                  </nz-option>
+                </nz-select>-->
+            <nz-select class="w100p"
+                       [nzPlaceHolder]="'搜索单元'"
+                       [(ngModel)]="addWordData.pub_adgroup_id"
+                       [nzSize]="'small'"
+                       [nzShowSearch]="true">
+              <nz-option
+                *ngFor="let adgroupItem of unitList"
+                [nzLabel]="adgroupItem.pub_adgroup_name"
+                [nzValue]="adgroupItem.pub_adgroup_id">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>匹配模式</div>
+          <div class="pull-left w150">
+            <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addWordData.match_type" [nzPlaceHolder]="'请选择匹配模式'">
+              <nz-option
+                *ngFor="let typeItem of matchTypeData"
+                [nzLabel]="typeItem.name"
+                [nzValue]="typeItem.value">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+          <div class="pull-left w80 mr8 text-right">出价</div>
+          <div class="pull-left w150">
+            <input nz-input
+                   class="w100p"
+                   [nzSize]="'small'"
+                   type="text"
+                   placeholder="如不填则采用单元出价"
+                   [(ngModel)]="addWordData.price">
+          </div>
+          <span class="ml8">元</span>
+          <div class="clear"></div>
+        </div>
+      </div>
+      <div class="mb20" style="text-align: right">
+        <button  [nzSize]="'small'"
+                 class="mr5"
+                 nz-button (click)='clickKeyCancel(data)'>取消</button>
+        <button  nzType="primary"
+                 [nzSize]="'small'"
+                 nz-button (click)='clickKeyOk(data)'>确定</button>
+      </div>
+      <div *ngIf="data['addPadding']" style="text-align: right;margin-bottom: 120px;">
+      </div>
+    </ng-template>
+    <ng-template #addNagatibeTemplate class="addSearchKeyword">
+      <div style="width:300px; padding: 10px;" class="mb8">
+        <p class="mb14">添加否定关键词</p>
+        <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>否定关键词</div>
+          <div class="pull-left w150" style="position: relative">
+            <input nz-input
+                   class="w100p"
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="addNegativeData.pub_query"
+                   (ngModelChange)="searchKeywordChange()"
+                   placeholder="1~40个字符">
+            <div style="position: absolute; width: 50px; right: -50px; top:0px;"><span>（</span><span [ngClass]="{redStart:negativeKeywordLength> 40}">{{negativeKeywordLength}}</span><span>/40）</span></div>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>媒体</div>
+          <div class="pull-left w150">
+            <nz-select #nzSelectOper class="w100p"  [nzSize]="'small'" [(ngModel)]="addNegativeData.publisher_id" (ngModelChange)="changePublisher(addNegativeData)" [nzPlaceHolder]="'请选择广告主'">
+              <nz-option
+                *ngFor="let publisher of accountPublishers"
+                [nzLabel]="publisher.publisher_name"
+                [nzValue]="publisher.publisher_id * 1">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>账户</div>
+          <div class="pull-left w150">
+            <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addNegativeData.pub_account_id" (ngModelChange)="changeAccount(addNegativeData)" [nzPlaceHolder]="'请选择账户'">
+              <nz-option
+                *ngFor="let accountItem of accountList"
+                [nzLabel]="accountItem.pub_account_name"
+                [nzValue]="accountItem.pub_account_id">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>计划</div>
+          <div class="pull-left w150">
+            <!--  <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addNegativeData.pub_campaign_id" (ngModelChange)="changeCampaign(addNegativeData, 'addNegativeData')" [nzPlaceHolder]="'请选择计划'">
+                   <nz-option
+                     *ngFor="let campItem of compainList"
+                     [nzLabel]="campItem.pub_campaign_name"
+                     [nzValue]="campItem.pub_campaign_id">
+                   </nz-option>
+                 </nz-select>-->
+            <nz-select class="w100p"
+                       [nzPlaceHolder]="'搜索计划'"
+                       [(ngModel)]="addNegativeData.pub_campaign_id"
+                       (ngModelChange)="changeCampaign(addNegativeData, 'addNegativeData')"
+                       [nzSize]="'small'"
+                       [nzShowSearch]="true">
+              <nz-option
+                *ngFor="let campItem of compainList"
+                [nzLabel]="campItem.pub_campaign_name"
+                [nzValue]="campItem.pub_campaign_id">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item">
+          <div class="pull-left w80 mr8 text-right">单元</div>
+          <div class="pull-left w150">
+            <!-- <nz-select class="w100p"  [nzSize]="'small'" [(ngModel)]="addNegativeData.pub_adgroup_id" [nzPlaceHolder]="'请选择单元'">
+                  <nz-option
+                    *ngFor="let adgroupItem of unitList"
+                    [nzLabel]="adgroupItem.pub_adgroup_name"
+                    [nzValue]="adgroupItem.pub_adgroup_id">
+                  </nz-option>
+                </nz-select>-->
+            <nz-select class="w100p"
+                       [nzPlaceHolder]="'搜索单元'"
+                       [(ngModel)]="addNegativeData.pub_adgroup_id"
+                       [nzSize]="'small'"
+                       [nzShowSearch]="true">
+              <nz-option
+                *ngFor="let adgroupItem of unitList"
+                [nzLabel]="adgroupItem.pub_adgroup_name"
+                [nzValue]="adgroupItem.pub_adgroup_id">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>匹配模式</div>
+          <div class="pull-left w150">
+            <nz-radio-group [(ngModel)]="addNegativeData.match_type">
+              <div>
+                <label class="mr20" nz-radio [nzValue]="1">
+                  <span>短语否定</span>
+                </label>
+              </div>
+              <div>
+                <label class="mr20" nz-radio [nzValue]="2">
+                  <span>精确否定</span>
+                </label>
+              </div>
+            </nz-radio-group>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item" style="padding-right: 10px;">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>加入否词库</div>
+          <div class="pull-left w150">
+            <nz-radio-group [(ngModel)]="addNegativeWordGroupData.is_add">
+              <div>
+                <label class="mr20" nz-radio [nzValue]="0">
+                  <span>否</span>
+                </label>
+                <label class="mr20" nz-radio [nzValue]="1">
+                  <span>是</span>
+                </label>
+              </div>
+            </nz-radio-group>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="mt10 add-search-keyword-item" style="padding-right: 10px;" *ngIf="addNegativeWordGroupData.is_add === 1">
+          <div class="pull-left w80 mr8 text-right"><span class="redStart">*</span>否词包</div>
+          <div class="pull-left w150">
+            <nz-select #nzSelectOper class="w100p"
+                       [nzSize]="'small'"
+                       [(ngModel)]="addNegativeWordGroupData.group_id"
+                       [nzPlaceHolder]="'请选择否词包'">
+              <nz-option
+                *ngFor="let group of negativeWordGroupList"
+                [nzLabel]="group.group_name"
+                [nzValue]="group.group_id * 1">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+      <div class="mb20" style="text-align: right">
+        <button  [nzSize]="'small'"
+                 class="mr5"
+                 nz-button (click)='clickNagativeCancel(data)'>取消</button>
+        <button  nzType="primary"
+                 [nzSize]="'small'"
+                 nz-button (click)='clickNagativeOk(data)'>确定</button>
+      </div>
+      <div *ngIf="data['addPadding']" style="text-align: right;margin-bottom: 120px;"></div>
+    </ng-template>
+  </ng-container>
+  <!--pauseCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'pauseCell'">
+    <!--<a class="editPriceBtn" [ngClass]="{'visible': row['showPriceBtn']}"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a>-->
+    <span>{{data.pause_name}}</span>
+    <a *ngIf="data.pause_name === '暂停'" title="开启" class="editPriceBtn manage-start ml2" [ngClass]="{'visible': data['showPriceBtn']}" (click)="setStatus(data, false, '有效')">
+      <i nz-icon nzType="caret-right" nzTheme="outline" style="background: #bfe4ac;color: #44941b;" ></i>
+    </a>
+    <a *ngIf="data.pause_name !== '暂停'" title="暂停" class="editPriceBtn manage-start ml2" [ngClass]="{'visible': data['showPriceBtn']}" (click)="setStatus(data, true, '暂停推广')">
+      <i nz-icon nzType="pause" nzTheme="outline" style="background: #f5dfb1;color: #ab8330;"  ></i>
+    </a>
+  </ng-container>
+  <!--statusCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'statusCell'">
+    <!--<a class="editPriceBtn" [ngClass]="{'visible': row['showPriceBtn']}"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a>-->
+    <span>{{data.status}}</span>
+    <a *ngIf="data.status === '暂停推广'" title="开启" class="editPriceBtn manage-start ml2" [ngClass]="{'visible': data['showPriceBtn']}" (click)="setStatus(data, false, '有效')">
+      <i nz-icon nzType="caret-right" nzTheme="outline" style="background: #bfe4ac;color: #44941b;" ></i>
+    </a>
+    <a *ngIf="data.status !== '暂停推广'" title="暂停" class="editPriceBtn manage-start ml2" [ngClass]="{'visible': data['showPriceBtn']}" (click)="setStatus(data, true, '暂停推广')">
+      <i nz-icon nzType="pause" nzTheme="outline" style="background: #f5dfb1;color: #ab8330;"  ></i>
+    </a>
+  </ng-container>
+  <!--scheduleCell  推广时段-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'scheduleCell'">
+    <a nz-popover [(nzPopoverVisible)]="data['showSchedule']" nzPopoverTrigger="click" [nzPopoverContent]="addKordTemplate">查看</a>
+    <ng-template #addKordTemplate>
+      <div style="width: 610px" class="mb8">
+        <app-show-schedule [parentTimeDate]="data['schedule']"></app-show-schedule>
+      </div>
+      <!--<div class="mb10" style="text-align: right">-->
+      <!--<button  [nzSize]="'small'"-->
+      <!--class="mr5"-->
+      <!--nz-button (click)='clickCancel(row)'>取消</button>-->
+      <!--<button  nzType="primary"-->
+      <!--[nzSize]="'small'"-->
+      <!--nz-button (click)='clickOk(row)'>确定</button>-->
+      <!--</div>-->
+    </ng-template>
+  </ng-container>
+  <!--budgetCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'budgetCell'">
+    <span nz-popover  [(nzPopoverVisible)]="data['showBudget']" nzPopoverTrigger="click" [nzPopoverContent]="editBudgetTemplate" [nzPopoverPlacement]="'bottom'" ><a class="editPriceBtn" [ngClass]="{'visible': data['showBudgetBtn']}" (click)="editBudget(data)"><i class="mr2" nz-icon nzType="form" nzTheme="outline"></i></a></span>{{data.budget}}
+    <ng-template #editBudgetTemplate class="addSearchKeyword">
+      <div style="width:390px; padding: 10px 8px;" class="mb8">
+        <div class="mt10" style=" position: relative">
+          <div style="width: 60px;display: inline-block;float: left;">
+            <span *ngIf="source_summary === 'account'">账户预算:</span>
+            <span *ngIf="source_summary === 'campaign'">计划预算:</span>
+          </div>
+          <div>
+            <!--<div style="position: absolute;left: 54px;top: 0px;width: 258px;">
+                 <nz-input-number class="ml5" [(ngModel)]="editBudgetParam.budget" (ngModelChange)="budgetChange($event)" [nzStep]="0.1" [nzSize]="'small'">
+                 </nz-input-number>
+                 <span class="ml5">元</span>
+                 <span [ngClass]="{'up-color': editBudgetParam.iswraing}" class="ml5" style="color: #afabab">范围:>={{editBudgetParam.budgetRanges[editBudgetParam.publisherId]['min']}}</span>
+                 <ng-container *ngIf="source_summary === 'account'">{{editBudgetParam.budgetRanges[editBudgetParam.publisherId]['extraInfo']}}</ng-container>
+               </div>-->
+            <nz-radio-group [(ngModel)]="editBudgetParam.budgetRadio" (ngModelChange)="budgetRadioChange($event)">
+              <div style="display: inline-block;">
+                <div class="h20 pull-left">
+                  <label nz-radio
+                         [nzValue]="1">
+                    <span>每日</span>
+                  </label>
+                </div>
+                <nz-input-number [(ngModel)]="editBudgetParam.budget"
+                                 (ngModelChange)="budgetChange($event)"
+                                 [nzSize]="'small'">
+                </nz-input-number>
+                <span class="ml5">元</span>
+                <ng-container >
+                  <span [ngClass]="{'up-color': editBudgetParam.iswraing}" class="ml5" style="color: #afabab">范围:>={{editBudgetParam.budgetRanges[editBudgetParam.publisherId]['min']}}<ng-container *ngIf="source_summary === 'account'">{{editBudgetParam.budgetRanges[editBudgetParam.publisherId]['extraInfo']}}</ng-container></span>
+                </ng-container>
+              </div>
+              <div class="mt5">
+                <label
+                  nz-radio
+                  [nzValue]="2">
+                  <span>不限定</span>
+                </label>
+              </div>
+            </nz-radio-group>
+          </div>
+        </div>
+      </div>
+      <div class="mb10" style="text-align: right">
+        <button  [nzSize]="'small'"
+                 class="mr5"
+                 nz-button (click)='clickEditBudgetCancel(data)'>取消</button>
+        <button  nzType="primary"
+                 [nzSize]="'small'"
+                 [nzLoading]="data['saveing']"
+                 [disabled]="editPriceParam.iswraing"
+                 nz-button (click)='clickEditBudgetOk(data)'>确定</button>
+      </div>
+    </ng-template>
+  </ng-container>
+  <!--wapUrlCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'wapUrlCell'">
+    <a *ngIf="data.wap_destination_url" title="复制url" class="editPriceBtn mr2" [ngClass]="{'visible': data['showUrlBtn']}" (click)="copyUrl(data.wap_destination_url)"><i nz-icon nzType="copy" nzTheme="outline"></i></a>{{data.wap_destination_url}}
+  </ng-container>
+  <!--pcUrlCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'pcUrlCell'">
+    <a *ngIf="data.pc_destination_url" title="复制url" class="editPriceBtn mr2" [ngClass]="{'visible': data['showUrlBtn']}" (click)="copyUrl(data.pc_destination_url)"><i nz-icon nzType="copy" nzTheme="outline"></i></a>{{data.pc_destination_url}}
+  </ng-container>
+  <!--deepLinkUrlCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'deepLinkUrlCell'">
+    <a *ngIf="data.deeplink_url" title="复制url" class="editPriceBtn mr2" [ngClass]="{'visible': data['showUrlBtn']}" (click)="copyUrl(data.deeplink_url)"><i nz-icon nzType="copy" nzTheme="outline"></i></a>{{data.deeplink_url}}
+  </ng-container>
+  <!--priceRatioPCCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'priceRatioPCCell'">
+    <!--{{row['publisher_id']}}-->
+    <!--{{row['bid_prefer']}}-->
+    <ng-container *ngIf="data['publisher_id']*1 !== 1 || data.bid_prefer*1 === 1">-</ng-container>
+    <ng-container *ngIf="data['publisher_id']*1 === 1 && data.bid_prefer*1 === 2">
+                    <span nz-popover
+                          [(nzPopoverVisible)]="data['showPriceRatioPC']"
+                          nzPopoverTrigger="click"
+                          [nzPopoverContent]="priceRatioPcTemplate"
+                          [nzPopoverPlacement]="'bottom'" >
+                      <a class="editPriceBtn" [ngClass]="{'visible': data['showPriceRatioPCBtn']}" (click)="editPriceRatio(data, 'priceRatioPC')">
+                        <i class="mr2" nz-icon nzType="form" nzTheme="outline"></i>
+                      </a>
+                    </span>{{data.pc_price_ratio}}
+    </ng-container>
+    <ng-template #priceRatioPcTemplate class="addSearchKeyword">
+      <div style="width:325px; padding: 10px;" class="mb8">
+        <div class="mt10" style=" position: relative">
+          <span>出价比例:</span>
+          <div style="position: absolute;left: 64px;top: 0px;width: 256px;">
+            <nz-input-number class="ml5"
+                             [(ngModel)]="editPriceRatioParam.priceRatio"
+                             (ngModelChange)="priceRatioChange($event, 'priceRatioPC')"
+                             [nzStep]="0.1"
+                             [nzSize]="'small'">
+            </nz-input-number>
+            <p style="width: 153px;color: #afabab; float: right;" [ngClass]="{'up-color': editPriceRatioParam.iswraing}" class="ml5">
+              范围: {{editPriceRatioParam.priceRatioRanges['min']}}~{{editPriceRatioParam.priceRatioRanges['max']}}
+              <ng-container *ngIf="editPriceRatioParam.priceRatioRanges['extraInfo']">{{editPriceRatioParam.priceRatioRanges['extraInfo']}}</ng-container>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="mb10" style="text-align: right">
+        <button  [nzSize]="'small'"
+                 class="mr5"
+                 nz-button (click)="clickPriceRatioCancel(data, 'priceRatioPC')">取消</button>
+        <button  nzType="primary"
+                 [nzSize]="'small'"
+                 [nzLoading]="data.saveing"
+                 [disabled]="editPriceRatioParam.iswraing"
+                 nz-button (click)="clickPriceRatioOk(data, 'priceRatioPC')">确定</button>
+      </div>
+    </ng-template>
+  </ng-container>
+  <!--priceRatioWapCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'priceRatioWapCell'">
+    <ng-container *ngIf="data['publisher_id']*1 === 4 || data.bid_prefer*1 === 2"><i>-</i></ng-container>
+    <ng-container *ngIf="data['publisher_id']*1 === 2 || data['publisher_id']*1 === 3 || data.bid_prefer*1 === 1">
+                    <span nz-popover
+                          [(nzPopoverVisible)]="data['showPriceRatioWap']"
+                          nzPopoverTrigger="click"
+                          [nzPopoverContent]="priceRatioWapTemplate"
+                          [nzPopoverPlacement]="'bottom'" >
+                      <a class="editPriceBtn" [ngClass]="{'visible': data['showPriceRatioPCBtn']}" (click)="editPriceRatio(data, 'priceRatioWap')">
+                        <i class="mr2" nz-icon nzType="form" nzTheme="outline"></i>
+                      </a>
+                    </span>
+      <span>{{data.wap_price_ratio}}</span>
+    </ng-container>
+    <ng-template #priceRatioWapTemplate class="addSearchKeyword">
+      <div style="width:325px; padding: 10px;" class="mb8">
+        <div class="mt10" style=" position: relative">
+          <span>出价比例:</span>
+          <div style="position: absolute;left: 64px;top: 0px;width: 256px;">
+            <nz-input-number class="ml5"
+                             [(ngModel)]="editPriceRatioParam.priceRatio"
+                             (ngModelChange)="priceRatioChange($event, 'priceRatioWap')"
+                             [nzStep]="0.1"
+                             [nzSize]="'small'">
+            </nz-input-number>
+            <p style="width: 153px;color: #afabab; float: right;" [ngClass]="{'up-color': editPriceRatioParam.iswraing}" class="ml5">
+              范围: {{editPriceRatioParam.priceRatioWapRanges[editPriceRatioParam.publisherId]['min']}}~{{editPriceRatioParam.priceRatioWapRanges[editPriceRatioParam.publisherId]['max']}}
+              <ng-container *ngIf="editPriceRatioParam.priceRatioWapRanges[editPriceRatioParam.publisherId]['extraInfo']">{{editPriceRatioParam.priceRatioWapRanges[editPriceRatioParam.publisherId]['extraInfo']}}</ng-container>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="mb10" style="text-align: right">
+        <button  [nzSize]="'small'"
+                 class="mr5"
+                 nz-button (click)="clickPriceRatioCancel(data, 'priceRatioWap')">取消</button>
+        <button  nzType="primary"
+                 [nzSize]="'small'"
+                 [nzLoading]="data.saveing"
+                 [disabled]="editPriceRatioParam.iswraing"
+                 nz-button (click)="clickPriceRatioOk(data, 'priceRatioWap')">确定</button>
+      </div>
+    </ng-template>
+  </ng-container>
+  <!--viewTitleCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'viewTitleCell'">
+    <a  (click)="clickViewTitle(data)">
+      <span *ngIf="source_summary === 'publisher'">{{data['publisher']}}</span>
+      <span *ngIf="source_summary === 'account'">{{data['pub_account_name']}}</span>
+      <span *ngIf="source_summary === 'campaign'">{{data['pub_campaign_name']}}</span>
+      <span *ngIf="source_summary === 'adgroup'">{{data['pub_adgroup_name']}}</span>
+    </a>
+  </ng-container>
+  <!--creativeCell-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'creativeCell'">
+    <div class="create-title">{{data['pub_creative_title']}}</div>
+    <div class="create-desc">{{data['pub_creative_description1']}}</div>
+    <div class="create-desc">{{data['pub_creative_description2']}}</div>
+    <div class="create-title-url">{{data['pc_display_url']!=''?data['pc_display_url']:data['wap_display_url']}}</div>
+  </ng-container>
+  <!--creativeCellTemp-->
+  <ng-container *ngIf="column['cellTemplateType'] && column['cellTemplateType'] === 'creativeCellTemp'">
+    <div class="create-title">{{data['pub_creative_title_temp']}}</div>
+    <div class="create-desc">{{data['pub_creative_description1_temp']}}</div>
+    <div class="create-desc">{{data['pub_creative_description2_temp']}}</div>
+    <div class="create-title-url">{{data['pc_display_url_temp']!=''?data['pc_display_url_temp']:data['wap_display_url_temp']}}</div>
+  </ng-container>
+</ng-template>

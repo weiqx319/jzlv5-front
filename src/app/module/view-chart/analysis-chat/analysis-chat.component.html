@@ -1,0 +1,310 @@
+
+<div class="jzl-new-chart"  *ngIf="chartType !== 'card'" >
+  <div class="jzl-new-chart-container">
+    <div class="title_container" [ngClass]="{'card-title': chartType === 'card'}">
+      <h2 class="title">{{chartSetting.chart_name}}</h2>
+    </div>
+    <div class="analysis-chart-container">
+      <nz-spin [nzSpinning]="chartLoading">
+        <ng-container *ngIf="chartType !== 'card'">
+          <div class="chart-container">
+            <div class="timeTipMini ml20" [innerHTML]="dateRangeTip"></div>
+            <div echarts [options]="chartOption" class="analysis-chart"></div>
+          </div>
+        </ng-container>
+      </nz-spin>
+    </div>
+  </div>
+  <div class="jzl-new-chart-operate" *ngIf="chartType !== 'card'">
+    <div class="ml8"><i style="font-size: 20px;" nz-icon nzType="setting" nzTheme="outline" nz-popover [nzPopoverContent]="settingSquareContent"  nzPopoverPlacement="bottomRight" nzPopoverTrigger="click"></i></div>
+    <ng-template #settingSquareContent>
+      <div class="chart-config" *ngIf="chartType !== 'funnel'" >
+        <ng-container  *ngIf="chartType !== 'pie'&&chartType !== 'table'">
+          <div class="mb10" *ngIf="chartKey==='type_time'">
+            <label class="pull-left mr10 chart-config-title">粒度:</label>
+            <nz-select class="w150" [nzSize]="'small'" [(ngModel)]="chartSetting.chart_config['grain']" (ngModelChange)="grainChange()">
+              <ng-container *ngFor="let option of grainList">
+                <nz-option
+                  *ngIf="(option.key !== 'data_dimension' && option.key !== 'summary') || (option.key === 'data_dimension' && dimensionAry.length) || (option.key === 'summary' && chartType === 'table')"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+              </ng-container>
+            </nz-select>
+          </div>
+          <div class="mb10" *ngIf="chartType !== 'scatter'">
+            <label class="pull-left mr10 chart-config-title">选择指标:</label>
+            <div class="ml10">
+              <nz-select class="w150" [nzSize]="'small'" [nzMode]="'multiple'" [nzMaxMultipleCount]="3" [(ngModel)]="chartSetting.chart_config.metrics" (ngModelChange)="changeSelectedMetric()" [nzPlaceHolder]="'请选择指标项'">
+                <nz-option *ngFor="let item of metricAry" [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+              </nz-select>
+            </div>
+            <div style="margin-left:75px;margin-top:2px;color: #f09200"><i nz-icon nzType="info-circle" nzTheme="outline"></i> 指标同时最多可选3个</div>
+          </div>
+          <!-- <div class="mb10" *ngIf="chartType !== 'scatter'">
+            <label class="pull-left mr10 chart-config-title">显示Y轴:</label>
+            <nz-radio-group [nzSize]="'small'" [(ngModel)]="chartSetting.chart_config.is_showYAxis" (ngModelChange)="chartConfigChange()">
+              <label nz-radio [nzValue]="true" >
+                <span>是</span>
+              </label>
+              <label nz-radio [nzValue]="false">
+                <span>否</span>
+              </label>
+            </nz-radio-group>
+          </div> -->
+          <!-- <div class="mb10" *ngIf="chartType !== 'bar_h'&&chartType !== 'scatter'">
+            <label class="pull-left mr10 chart-config-title">Y轴设置:</label>
+            <nz-radio-group [nzSize]="'small'" [(ngModel)]="chartSetting.chart_config.is_multiYAxis" (ngModelChange)="chartConfigChange()">
+              <label nz-radio [nzValue]="'single'" >
+                <span>单一</span>
+              </label>
+              <label nz-radio [nzValue]="'multi'">
+                <span>多轴</span>
+              </label>
+            </nz-radio-group>
+          </div> -->
+          <div class="mb10" *ngIf="chartType !== 'scatter'" >
+            <label class="pull-left mr10 chart-config-title">数据显示:</label>
+            <nz-select class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.bar_show_type" (ngModelChange)="sortTypeChange($event)">
+              <nz-option [nzValue]="'blank'" [nzLabel]="'不显示'"></nz-option>
+              <nz-option [nzValue]="'number'" [nzLabel]="'显示数值'"></nz-option>
+              <nz-option  *ngIf="(chartType==='bar'||chartType==='bar_h')&& selectedMetricAry.length>0 && selectedMetricAry[0]['key']" [nzValue]="'percent'" [nzLabel]="'显示百分比'"></nz-option>
+            </nz-select>
+          </div>
+          <div class="mb10">
+            <label class="pull-left mr10 chart-config-title">单位设置:</label>
+            <nz-radio-group [nzSize]="'small'" [(ngModel)]="chartSetting.chart_config.unit_type" (ngModelChange)="chartConfigChange()">
+              <label nz-radio nzValue="thousand" >
+                <span>千</span>
+              </label>
+              <label nz-radio nzValue="myriad">
+                <span>万</span>
+              </label>
+            </nz-radio-group>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="chartType !== 'scatter'">
+          <!-- 是否按维度拆分 -->
+          <div class="mb10" *ngIf="chartKey!=='type_region'">
+            <label class="pull-left mr10 chart-config-title">按维度拆分:</label>
+            <nz-radio-group [nzSize]="'small'" [(ngModel)]="chartSetting.chart_config.split_by_fields" (ngModelChange)="chartConfigChange()">
+              <label nz-radio [nzValue]="true" >
+                <span>是</span>
+              </label>
+              <label nz-radio [nzValue]="false">
+                <span>否</span>
+              </label>
+            </nz-radio-group>
+          </div>
+
+          <!-- 排序列设置 -->
+          <!-- <ng-container>
+            <div class="mb10">
+              <label class="pull-left mr10 chart-config-title">排序设置:</label>
+              <nz-select class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.sort_type" (ngModelChange)="sortTypeChange($event)">
+                <ng-container *ngFor="let item of sortTypeList">
+                  <nz-option [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+                </ng-container>
+              </nz-select>
+            </div>
+            <ng-container *ngIf="chartSetting.chart_config.sort_type&&chartSetting.chart_config.sort_type!=='0'">
+              <ng-container *ngFor="let item of chartSetting.chart_config.sort_setting; let i = index;">
+                <div class="mb10">
+                  <label class="pull-left mr10 chart-config-title">排序列:</label>
+                  <ng-container *ngIf="chartSetting.chart_config.sort_type=='1'">
+                    <nz-select class="w150" nzSize="small" [(ngModel)]="item.sort_key" (ngModelChange)="chartConfigChange()">
+                      <ng-container *ngFor="let item of dimensionAry; let i = index;">
+                        <nz-option [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+                      </ng-container>
+                    </nz-select>
+                  </ng-container>
+                  <ng-container *ngIf="chartSetting.chart_config.sort_type=='2'">
+                    <nz-select class="w150" nzSize="small" [(ngModel)]="item.sort_key" (ngModelChange)="chartConfigChange()">
+                      <ng-container  *ngFor="let item of selectedMetricAry; let i = index;">
+                        <nz-option [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+                      </ng-container>
+                    </nz-select>
+                  </ng-container>
+                  <nz-select style="width:70px" nzSize="small" [(ngModel)]="item.sort_dir" (ngModelChange)="chartConfigChange()">
+                    <nz-option nzValue="asc" nzLabel="升序"></nz-option>
+                    <nz-option nzValue="desc" nzLabel="降序"></nz-option>
+                  </nz-select>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container> -->
+        </ng-container>
+        <ng-container *ngIf="chartType === 'scatter'">
+          <div class="mb10">
+            <label class="pull-left mr10 chart-config-title">数据项设置:</label>
+            <nz-select class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.data_setting" (ngModelChange)="chartConfigChange()">
+              <nz-option [nzDisabled]="['publisher','account','responsible_account'].indexOf(summaryType)===-1" nzValue="all" nzLabel="全部数据"></nz-option>
+              <nz-option nzValue="top" nzLabel="top数据"></nz-option>
+            </nz-select>
+          </div>
+          <ng-container *ngIf="chartSetting.chart_config.data_setting==='top'">
+            <div class="mb10">
+              <label class="pull-left mr10 chart-config-title">top数据值:</label>
+              <nz-input-number class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.top_val" [nzMin]="1" [nzStep]="1" (nzBlur)="chartConfigChange()"></nz-input-number>
+            </div>
+            <div class="mb10">
+              <label class="pull-left mr10 chart-config-title">top指标:</label>
+              <nz-select class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.top_metric" (ngModelChange)="chartConfigChange()">
+                <nz-option *ngFor="let item of metricAry" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+              </nz-select>
+            </div>
+          </ng-container>
+        </ng-container>
+
+        <div class="mb10" *ngIf="summaryType.startsWith('biz_unit_')||chartKey==='type_region'">
+          <label class="pull-left mr10 chart-config-title">选择维度:</label>
+          <div class="ml10">
+            <nz-select class="w150" [nzSize]="'small'" [nzMode]="'multiple'"  [(ngModel)]="chartSetting.chart_config.dimensions" (ngModelChange)="chartConfigChange()" [nzPlaceHolder]="'请选择维度'">
+              <nz-option *ngFor="let item of dimensions" [nzLabel]="item.name" [nzValue]="item.key" [nzDisabled]="chartSetting.chart_config.dimensions.length===1&&chartSetting.chart_config.dimensions[0]===item.key"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+       <ng-container *ngIf="chartType === 'scatter'">
+        <div class="mb10">
+          <label class="pull-left mr10 chart-config-title">x轴指标:</label>
+          <nz-select class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.scatter_setting.x" (ngModelChange)="scatterSettingChange('x')">
+            <nz-option *ngFor="let item of metricAry" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </div>
+        <div class="mb10">
+          <label class="pull-left mr10 chart-config-title">y轴指标:</label>
+          <nz-select class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.scatter_setting.y" (ngModelChange)="scatterSettingChange('y')">
+            <nz-option *ngFor="let item of metricAry" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </div>
+        <div class="mb10">
+          <label class="pull-left mr10 chart-config-title">气泡值指标:</label>
+          <nz-select class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.scatter_setting.z" (ngModelChange)="scatterSettingChange('z')">
+            <nz-option [nzValue]="''" [nzLabel]="'不设置'"></nz-option>
+            <nz-option *ngFor="let item of metricAry" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </div>
+        <div class="mb10 flexLayout" *ngIf="chartSetting.chart_config.scatter_setting.z">
+          <label class="pull-left mr10 chart-config-title">气泡大小:</label>
+          <nz-slider class="w160" nzRange [nzMin]="2" [(ngModel)]="chartSetting.chart_config.scatter_setting.symbolSize" [nzTipFormatter]="symbolSizeFormatter" (ngModelChange)="scatterSettingChange('delay')"></nz-slider>
+        </div>
+        <div class="mb10">
+          <label class="pull-left mr10 chart-config-title">开启四象限:</label>
+          <nz-radio-group [nzSize]="'small'" [(ngModel)]="chartSetting.chart_config.scatter_setting.is_quadrant" (ngModelChange)="chartConfigChange()">
+            <label nz-radio [nzValue]="true"><span>是</span></label>
+            <label nz-radio [nzValue]="false"><span>否</span></label>
+          </nz-radio-group>
+        </div>
+        <!-- 开启四象限后的配置项 -->
+        <ng-container *ngIf="chartSetting.chart_config.scatter_setting.is_quadrant">
+          <div class="mb10">
+            <div class="mb5">象限名称:</div>
+            <div>
+              <div class="mb10 flexLayout">
+                <label class="pull-left mr10 chart-config-title">左上象限:</label>
+                <input class="w150" [nzSize]="'small'"  nz-input placeholder="请输入象限名" [(ngModel)]="chartSetting.chart_config.scatter_setting.lt" (ngModelChange)="scatterSettingChange('delay')" />
+                <input class="ml5 colorPiker" type='color' [(ngModel)]="chartSetting.chart_config.scatter_setting.ltColor" (ngModelChange)="chartConfigChange()" />
+              </div>
+              <div class="mb10 flexLayout">
+                <label class="pull-left mr10 chart-config-title">右上象限:</label>
+                <input class="w150" [nzSize]="'small'"  nz-input placeholder="请输入象限名" [(ngModel)]="chartSetting.chart_config.scatter_setting.rt" (ngModelChange)="scatterSettingChange('delay')" />
+                <input class="ml5 colorPiker" type='color' [(ngModel)]="chartSetting.chart_config.scatter_setting.rtColor" (ngModelChange)="chartConfigChange()" />
+              </div>
+              <div class="mb10 flexLayout">
+                <label class="pull-left mr10 chart-config-title">左下象限:</label>
+                <input class="w150" [nzSize]="'small'"  nz-input placeholder="请输入象限名" [(ngModel)]="chartSetting.chart_config.scatter_setting.lb" (ngModelChange)="scatterSettingChange('delay')" />
+                <input class="ml5 colorPiker" type='color' [(ngModel)]="chartSetting.chart_config.scatter_setting.lbColor" (ngModelChange)="chartConfigChange()" />
+              </div>
+              <div class="mb10 flexLayout">
+                <label class="pull-left mr10 chart-config-title">右下象限:</label>
+                <input class="w150" [nzSize]="'small'"  nz-input placeholder="请输入象限名" [(ngModel)]="chartSetting.chart_config.scatter_setting.rb" (ngModelChange)="scatterSettingChange('delay')" />
+                <input class="ml5 colorPiker" type='color' [(ngModel)]="chartSetting.chart_config.scatter_setting.rbColor" (ngModelChange)="chartConfigChange()" />
+              </div>
+            </div>
+          </div>
+          <div class="mb10">
+            <div class="mb5">象限轴:</div>
+            <div>
+              <div class="mb10 flexLayout">
+                <label class="pull-left mr10 chart-config-title">轴值:</label>
+                <nz-select class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.scatter_setting.axis" (ngModelChange)="chartConfigChange()">
+                  <nz-option [nzValue]="'center'" [nzLabel]="'图表内居中'"></nz-option>
+                  <nz-option [nzValue]="'average'" [nzLabel]="'xy轴度量平均值'"></nz-option>
+                  <nz-option [nzValue]="'median'" [nzLabel]="'xy轴度量中位数'"></nz-option>
+                  <nz-option [nzValue]="'custom'" [nzLabel]="'自定义'"></nz-option>
+                </nz-select>
+              </div>
+              <ng-container *ngIf="chartSetting.chart_config.scatter_setting.axis==='custom'">
+                <div class="mb10 flexLayout">
+                  <label class="pull-left mr10 chart-config-title">横轴:</label>
+                  <nz-input-number class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.scatter_setting.xAxis"  [nzStep]="1" (ngModelChange)="scatterSettingChange('delay')"></nz-input-number>
+                </div>
+                <div class="mb10 flexLayout">
+                  <label class="pull-left mr10 chart-config-title">纵轴:</label>
+                  <nz-input-number class="w150" nzSize="small" [(ngModel)]="chartSetting.chart_config.scatter_setting.yAxis" [nzStep]="1" (ngModelChange)="scatterSettingChange('delay')"></nz-input-number>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+       </ng-container>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<div *ngIf="chartType === 'card'">
+  <div class="metric-card">
+    <ng-container *ngFor="let item of cardMetricAry">
+      <div class="metric-card-item">
+        <div class="jzl-new-chart">
+          <div class="jzl-new-chart-container">
+            <div class="title_container card-title">
+              <h2 class="title">{{item.name}}</h2>
+              <div class="timeTipMini" [innerHTML]="dateRangeTip"></div>
+            </div>
+            <div class="analysis-chart-container">
+              <nz-spin [nzSpinning]="chartLoading">
+                <div class="card-value" *ngIf="cardVale[item.key]">
+                  <div class="value-total">
+                    <div>
+                      <span class="card-value-item mr4">{{ cardVale[item.key].conversion_value }}</span>
+                      <span>{{chartOption[item.key].unit}}</span>
+                    </div>
+                    <div class="ml4" *ngIf="chartSetting.is_compare">
+                      <span class="kpi_con" [ngClass]="{'kpi_rise': chartCompareData[item.key].rat >= 0, 'kpi_drop': chartCompareData[item.key].rat < 0}">
+                          <i *ngIf="chartCompareData[item.key].rat >= 0" nz-icon nzType="caret-up" nzTheme="outline"></i>
+                          <i *ngIf="chartCompareData[item.key].rat < 0" nz-icon nzType="caret-down" nzTheme="outline"></i>
+                        {{chartCompareData[item.key].rat}}%
+                        </span>
+                    </div>
+                  </div>
+                  <ng-container *ngIf="chartSetting.is_compare">
+                    <div class="number_kpi">
+                      <div class="mr8">
+                        <span>对比值: </span>
+                        {{ cardVale[item.key].conversion_cmp }}
+                        <span>{{chartOption[item.key].unit}}</span>
+                      </div>
+                      <div>
+                        <span>变化值: </span>
+                        <span class="kpi_con" [ngClass]="{'kpi_rise': chartCompareData[item.key].abs >= 0, 'kpi_drop': chartCompareData[item.key].abs < 0}">
+                          <i *ngIf="chartCompareData[item.key].abs >= 0" nz-icon nzType="caret-up" nzTheme="outline"></i>
+                          <i *ngIf="chartCompareData[item.key].abs < 0" nz-icon nzType="caret-down" nzTheme="outline"></i>
+                          {{ cardVale[item.key].conversion_abs }}
+                          <span>{{chartOption[item.key].unit}}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+              </nz-spin>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+

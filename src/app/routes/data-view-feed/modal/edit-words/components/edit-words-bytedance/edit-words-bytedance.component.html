@@ -1,0 +1,289 @@
+<div>
+  <h3 *ngIf="selectData['update_type'] == 'single'">
+    编辑(否词): <span>{{ singleData['currentShowName'] }}</span>
+    {{singleData['currentShowParentName']}}
+  </h3>
+  <h3 *ngIf="selectData['update_type'] != 'single'">
+    批量编辑否词：
+  </h3>
+  <ng-template #negativeDataAdd>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">添加短语否定关键词</span>
+      <p class="mt5">保留所选计划的原有否定关键词不变，批量追加设置的短语否定关键词</p>
+    </div>
+  </ng-template>
+
+  <ng-template #negativeDataDeleteCommon>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">删除公共部分短语否定关键词</span>
+      <p class="mt5">将所选的计划的公共否定关键词进行有选择的删除操作</p>
+    </div>
+  </ng-template>
+
+  <ng-template #negativeReplaceAll>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">全部替换短语否定关键词</span>
+      <p class="mt5">将所选的计划全部替换更改为所设置的否定关键词进</p>
+    </div>
+  </ng-template>
+
+  <ng-template #negativeDelete>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">删除短语否定关键词</span>
+      <p class="mt5">在所选计划的原有短语否定关键词中查找所设置的短语否定关键词，如果有对应否定关键词则进行删除</p>
+    </div>
+  </ng-template>
+
+  <ng-template #exactNegativeDataAdd>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">添加精确否定关键词</span>
+      <p class="mt5">保留所选计划的原有精确否定关键词不变，批量追加设置的精确否定关键词</p>
+    </div>
+  </ng-template>
+
+  <ng-template #exactNegativeDataDeleteCommon>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">删除公共部分精确否定关键词</span>
+      <p class="mt5">将所选的计划的公共精确否定关键词进行有选择的删除操作</p>
+    </div>
+  </ng-template>
+
+  <ng-template #exactNegativeReplaceAll>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">全部替换精确否定关键词</span>
+      <p class="mt5">将所选的计划全部替换更改为所设置的精确否定关键词</p>
+    </div>
+  </ng-template>
+
+  <ng-template #exactNegativeDelete>
+    <div class="w300" style="padding:8px 8px 10px 8px;">
+      <span style="font-size: 14px; color: #000">删除精确否定关键词</span>
+      <p class="mt5">在所选计划的原有精确否定关键词中查找所设置的精确否定关键词，如果有对应精确否定关键词则进行删除</p>
+    </div>
+  </ng-template>
+
+
+  <!--否定词-->
+  <div class="inpRow mt10" [ngClass]="{disabled:editWordsData['phrase_words']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="editWordsData['phrase_words']['is_edit']">
+        <span>短语否定词:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+
+        <nz-radio-group [(ngModel)]="editWordsData.phrase_words['edit_type']"
+                        [nzDisabled]="!editWordsData['phrase_words']['is_edit']">
+          <div *ngIf="selectData['update_type']!='single'">
+            <div>
+              <label class="mr20"
+                     nz-radio
+                     [nzValue]="'add'">
+                <span>添加短语否定关键词</span>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   nz-popover
+                   [ngClass]="{c8c8c8:!editWordsData['phrase_words']['is_edit']}"
+                   [nzPopoverContent]="negativeDataAdd"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </label>
+            </div>
+            <div class="mb10 pl22" *ngIf="editWordsData['phrase_words']['is_edit'] && editWordsData.phrase_words['edit_type'] === 'add'">
+              <p class="countTip"></p>
+              <div class="textareaDiv">
+                <div class="textarea-top">
+                  <span>短语否定关键词({{tips.length.addValue}}/{{tips.negativeData_max_length}})</span>
+                  <span class="pull-right"><a (click)="deleteAll(negativeData, 'addValue', 'addValue')">全部删除</a></span>
+                </div>
+                <div class="textarea-content" [ngClass]="{'border-warning': tips.length['addValue'] > tips.negativeData_max_length}">
+                  <textarea placeholder="一个否定词一行" [(ngModel)]="negativeData.addValue" (ngModelChange)="contentChange('addValue', negativeData.addValue)" class="titleColor"  rows="5"></textarea>
+                </div>
+              </div>
+              <p class="mt8 f09200" *ngIf="tips.length['addValue'] > tips.negativeData_max_length">词数最多为{{tips.negativeData_max_length}}个</p>
+
+            </div>
+
+          </div>
+
+          <div>
+            <div>
+              <label nz-radio
+                     [nzValue]="'replace_all'">
+                <span>全部替换短语否定关键词</span>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   nz-popover
+                   [ngClass]="{c8c8c8:!editWordsData['phrase_words']['is_edit']}"
+                   [nzPopoverContent]="negativeReplaceAll"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </label>
+            </div>
+
+            <div class="mb10 pl22" *ngIf="editWordsData['phrase_words']['is_edit'] && editWordsData.phrase_words['edit_type'] === 'replace_all'">
+              <p class="countTip"></p>
+              <div class="textareaDiv">
+                <div class="textarea-top">
+                  <span>短语否定关键词({{tips.length.replaceAllValue}}/{{tips.negativeData_max_length}})</span>
+                  <span class="pull-right"><a (click)="deleteAll(negativeData, 'replaceAllValue', 'replaceAllValue')">全部删除</a></span>
+                </div>
+                <div class="textarea-content" [ngClass]="{'border-warning': tips.length['replaceAllValue'] > tips.negativeData_max_length}">
+                  <textarea placeholder="一个否定词一行" [(ngModel)]="negativeData.replaceAllValue" (ngModelChange)="contentChange('replaceAllValue', negativeData.replaceAllValue)" class="titleColor"  rows="5"></textarea>
+                </div>
+              </div>
+              <p class="mt8 f09200" *ngIf="tips.length['replaceAllValue'] > tips.negativeData_max_length">词数最多为{{tips.negativeData_max_length}}个</p>
+
+            </div>
+          </div>
+          <div *ngIf="selectData['update_type']!='single'">
+            <div>
+              <label nz-radio
+                     [nzValue]="'delete'">
+                <span>删除短语否定关键词</span>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   nz-popover
+                   [ngClass]="{c8c8c8:!editWordsData['phrase_words']['is_edit']}"
+                   [nzPopoverContent]="negativeDelete"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </label>
+            </div>
+
+            <div class="mb10 pl22" *ngIf="editWordsData['phrase_words']['is_edit'] && editWordsData.phrase_words['edit_type'] === 'delete'">
+              <p class="countTip"></p>
+              <div class="textareaDiv">
+                <div class="textarea-top">
+                  <span>短语否定关键词({{tips.length.deleteValue}}/{{tips.negativeData_max_length}})</span>
+                  <span class="pull-right"><a (click)="deleteAll(negativeData, 'deleteValue', 'deleteValue')">全部删除</a></span>
+                </div>
+                <div class="textarea-content" [ngClass]="{'border-warning': tips.length['deleteValue'] > tips.negativeData_max_length}">
+                  <textarea placeholder="一个否定词一行" [(ngModel)]="negativeData.deleteValue" (ngModelChange)="contentChange('deleteValue', negativeData.deleteValue)" class="titleColor"></textarea>
+                </div>
+              </div>
+              <p class="mt8 f09200" *ngIf="tips.length['deleteValue'] > tips.negativeData_max_length">词数最多为{{tips.negativeData_max_length}}个</p>
+
+            </div>
+          </div>
+
+
+        </nz-radio-group>
+
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--精确否定词-->
+  <div class="inpRow mt10" [ngClass]="{disabled:editWordsData['precise_words']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w117 inline-block" nz-checkbox [(ngModel)]="editWordsData['precise_words']['is_edit']">
+        <span>精确否定词:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+        <nz-radio-group [(ngModel)]="editWordsData.precise_words['edit_type']"
+                        [nzDisabled]="!editWordsData['precise_words']['is_edit']">
+          <div *ngIf="selectData['update_type']!='single'">
+            <div>
+              <label class="mr20"
+                     nz-radio
+                     [nzValue]="'add'">
+                <span>添加精确否定关键词</span>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   nz-popover
+                   [ngClass]="{c8c8c8:!editWordsData['precise_words']['is_edit']}"
+                   [nzPopoverContent]="exactNegativeDataAdd"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </label>
+            </div>
+            <div class="mb10 pl22" *ngIf="editWordsData['precise_words']['is_edit'] && editWordsData.precise_words['edit_type'] === 'add'">
+              <p class="countTip"></p>
+              <div class="textareaDiv">
+                <div class="textarea-top">
+                  <span>精确否定关键词({{tips.length.exactAddValue}}/{{tips.exact_negativeData_max_length}})</span>
+                  <span class="pull-right"><a (click)="deleteAll(exactNegativeData, 'addValue', 'exactAddValue')">全部删除</a></span>
+                </div>
+                <div class="textarea-content" [ngClass]="{'border-warning': tips.length['exactAddValue'] > tips.exact_negativeData_max_length}">
+                  <textarea placeholder="一个否定词一行" [(ngModel)]="exactNegativeData.addValue" (ngModelChange)="contentChange('exactAddValue', exactNegativeData.addValue)" class="titleColor"  rows="5"></textarea>
+                </div>
+              </div>
+              <p class="mt8 f09200" *ngIf="tips.length['exactAddValue'] > tips.exact_negativeData_max_length">词数最多为{{tips.exact_negativeData_max_length}}个</p>
+
+            </div>
+
+          </div>
+
+          <div>
+            <div>
+              <label nz-radio
+                     [nzValue]="'replace_all'">
+                <span>全部替换精确否定关键词</span>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   nz-popover
+                   [ngClass]="{c8c8c8:!editWordsData['precise_words']['is_edit']}"
+                   [nzPopoverContent]="exactNegativeReplaceAll"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </label>
+            </div>
+
+            <div class="mb10 pl22" *ngIf="editWordsData['precise_words']['is_edit'] && editWordsData.precise_words['edit_type'] === 'replace_all'">
+              <p class="countTip"></p>
+              <div class="textareaDiv">
+                <div class="textarea-top">
+                  <span>精确否定关键词({{tips.length.exactReplaceAllValue}}/{{tips.exact_negativeData_max_length}})</span>
+                  <span class="pull-right"><a (click)="deleteAll(exactNegativeData, 'replaceAllValue', 'exactReplaceAllValue')">全部删除</a></span>
+                </div>
+                <div class="textarea-content" [ngClass]="{'border-warning': tips.length['exactReplaceAllValue'] > tips.exact_negativeData_max_length}">
+                  <textarea placeholder="一个否定词一行" [(ngModel)]="exactNegativeData.replaceAllValue" (ngModelChange)="contentChange('exactReplaceAllValue', exactNegativeData.replaceAllValue)" class="titleColor"  rows="5"></textarea>
+                </div>
+              </div>
+              <p class="mt8 f09200" *ngIf="tips.length['exactReplaceAllValue'] > tips.exact_negativeData_max_length">词数最多为{{tips.exact_negativeData_max_length}}个</p>
+
+            </div>
+          </div>
+          <div *ngIf="selectData['update_type']!='single'">
+            <div>
+              <label nz-radio
+                     [nzValue]="'delete'">
+                <span>删除精确否定关键词</span>
+                <i nz-icon nzType="question-circle" nzTheme="outline"
+                   nz-popover
+                   [ngClass]="{c8c8c8:!editWordsData['precise_words']['is_edit']}"
+                   [nzPopoverContent]="exactNegativeDelete"
+                   nzPopoverPlacement="right"
+                   class="ml8"
+                   style="color: #f09200"></i>
+              </label>
+            </div>
+
+            <div class="mb10 pl22" *ngIf="editWordsData['precise_words']['is_edit'] && editWordsData.precise_words['edit_type'] === 'delete'">
+              <p class="countTip"></p>
+              <div class="textareaDiv">
+                <div class="textarea-top">
+                  <span>精确否定关键词({{tips.length.exactDeleteValue}}/{{tips.exact_negativeData_max_length}})</span>
+                  <span class="pull-right"><a (click)="deleteAll(exactNegativeData, 'deleteValue', 'exactDeleteValue')">全部删除</a></span>
+                </div>
+                <div class="textarea-content" [ngClass]="{'border-warning': tips.length['exactDeleteValue'] > tips.exact_negativeData_max_length}">
+                  <textarea placeholder="一个否定词一行" [(ngModel)]="exactNegativeData.deleteValue" (ngModelChange)="contentChange('exactDeleteValue', exactNegativeData.deleteValue)" class="titleColor"></textarea>
+                </div>
+              </div>
+              <p class="mt8 f09200" *ngIf="tips.length['exactDeleteValue'] > tips.exact_negativeData_max_length">词数最多为{{tips.exact_negativeData_max_length}}个</p>
+
+            </div>
+          </div>
+
+        </nz-radio-group>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+
+
+</div>

@@ -1,0 +1,78 @@
+<div class="query-ranking-content">
+  <div class="query-ranking-form">
+    <div>
+      <div class="query-ranking-content-row">
+        <div class="pull-left w30 form-label">
+          <label [attr.for]="'province_id'">地域:</label>
+        </div>
+        <div class="w270 ml8 pull-left" style="position: relative">
+          <nz-select style="width: 200px;"
+                     [nzDisabled]="!isFeed&&region_default_flag"
+                     [(ngModel)]="province_id"
+                     (ngModelChange)="changeProvince(province_id)"
+                     nzPlaceHolder="请选择省"
+                     [nzSize]="'small'">
+            <nz-option
+              *ngFor="let option of provinceList"
+              [nzLabel]="option.name"
+              [nzValue]="option.code">
+            </nz-option>
+          </nz-select>
+          <label *ngIf="!isFeed" style="position: absolute; right: -42px; top: 0;" class="titleLa inline-block" nz-checkbox [(ngModel)]="region_default_flag">
+            <span>使用默认地域</span>
+          </label>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="query-ranking-content-row mt10" *ngIf="cityList.length || city_id">
+        <div class="pull-left ">
+          <label class="w30 inline-block" [attr.for]="'city_id'"></label>
+        </div>
+        <div class="w270 ml8 pull-left">
+          <nz-select style="width: 200px;"
+                     [(ngModel)]="city_id"
+                     [nzDisabled]="region_default_flag&&!isFeed "
+                     nzPlaceHolder="请选择市"
+                     [nzSize]="'small'">
+            <nz-option
+              *ngFor="let option of cityList"
+              [nzLabel]="option.name"
+              [nzValue]="option.code">
+            </nz-option>
+          </nz-select>
+          <div style="color: #f09200;" class="mt5" *ngIf="is_wroing && ((this.publisherCount === 1 && this.publisherId * 1 !== 1) || this.publisherCount > 1) && !city_id"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>输入选择市</div>
+
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="query-ranking-content-row mt10">
+        <div class="pull-left w30">
+          <label [attr.for]="'device'">设备</label>
+        </div>
+        <div class="w270 ml8 pull-left">
+          <nz-select style="width: 200px;"
+                     [(ngModel)]="query_ranking_data['device']"
+                     nzPlaceHolder="设备"
+                     [nzSize]="'small'">
+            <nz-option *ngIf="( publisherCount === 1 && publisherId !== 4  && publisherId !== 17 ) || publisherCount > 1" [nzValue]="1" [nzLabel]="'计算机'"></nz-option>
+            <nz-option [nzValue]="2" [nzLabel]="'移动'"></nz-option>
+          </nz-select>
+
+          <nz-select class="mt10" *ngIf=" publisherId === 4 && query_ranking_data['device'] * 1 === 2" style="width: 200px;"
+                     [(ngModel)]="device_os"
+                     [nzSize]="'small'">
+            <nz-option [nzValue]="1" [nzLabel]="'安卓'"></nz-option>
+            <nz-option [nzValue]="2" [nzLabel]="'ios'"></nz-option>
+          </nz-select>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+    <div class="query-ranking-footer mt30">
+      <nz-form-control [nzSpan]="24">
+        <button class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelForm()">取消</button>
+        <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'"  (click)="submitForm()">确认</button>
+      </nz-form-control>
+    </div>
+  </div>
+</div>

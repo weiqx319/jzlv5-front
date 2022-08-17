@@ -1,0 +1,51 @@
+<div class="sub-company-content">
+  <div class="sub-company-form-content">
+    <div class="sub-company-form-item mb20 sub-company-form-item-flex">
+      <div class="form-label pull-left">
+        <label><span class="redStart">*</span>否词包:</label>
+      </div>
+      <div class="w300 ml8 pull-left">
+        <input nz-input
+               class="w100p"
+               [nzSize]="'default'"
+               type="text"
+               placeholder="否词包名称, 上限30字"
+               [(ngModel)]="defaultData.group_name">
+      </div>
+    </div>
+<!--    <div class="sub-company-form-item  mb20">-->
+<!--      <div class="form-label pull-left">-->
+<!--        <label><span class="redStart">*</span>适用媒体:</label>-->
+<!--      </div>-->
+<!--      <div class="w300 ml8 pull-left" >-->
+<!--        <nz-checkbox-group-->
+<!--          class="ml8"-->
+<!--          [(ngModel)]="availableMedia"-->
+<!--          (ngModelChange)="availableMediaChange()"-->
+<!--          ></nz-checkbox-group>-->
+<!--      </div>-->
+<!--    </div>-->
+    <div class="sub-company-form-item  mb20">
+      <div class="form-label pull-left">
+        <label>备注说明:</label>
+      </div>
+      <div class="sub-company-form-textarea w300 ml8 pull-left">
+        <textarea nz-input
+                  [nzSize]="'small'"
+                  class="w100p"
+                  placeholder="备注说明, 上限50字"
+                  [(ngModel)]="defaultData.remark"
+                  [nzAutosize]>
+        </textarea>
+      </div>
+    </div>
+  </div>
+  <div class="sub-company-form-footer">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="submitting" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

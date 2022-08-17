@@ -1,0 +1,321 @@
+<div class="lab-row pl20 mb20 w100p">
+  <label><span class="redStart">*</span>素材选取:</label>
+  <div style="flex:1">
+    <div class="creative-maker-header ml8 mr8 mb10">
+      <div class="header-num">
+        <span class="mr10">创意组数量：{{defaultData.template_struct.material.material_type_lst['all'].materials.length}}</span>
+        <span style="color: #999999"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20);font-size: 12px;"class="ml5 mt5"></i>
+              批量添加素材样式以第一个创意组当前选中的创意形式为准;
+        </span>
+      </div>
+      <div class="header-operate">
+        <a nz-button nzType="primary" (click)="openMaterials(defaultData.template_struct.material.material_type_lst['all'].materials[0].limit[defaultData.template_struct.material.material_type_lst['all'].materials[0].curIndex],defaultData.template_struct.material.material_type_temp.limit[defaultData.template_struct.material.material_type_lst['all'].materials[0].curIndex],true)">批量添加素材</a>
+        <ng-container *ngIf="defaultData.template_struct.material.by_creative_group_set_title">
+          <a nz-button nzType="primary" class="ml8" (click)="batchAddTitle('titles',defaultData.template_struct.material.material_type_temp.titleNum)">批量添加标题</a>
+          <a *ngIf="defaultData.template_struct.campaign.subject!=1" nz-button nzType="primary" class="ml8" (click)="batchAddTitle('sub_titles',1)">批量添加短标题</a>
+        </ng-container>
+      </div>
+    </div>
+    <ng-container *ngIf="defaultData.template_struct.material.material_type_lst.all.materials.length>0">
+      <ng-container *ngIf="defaultData.template_struct.material.by_material_set_title">
+        <ng-container
+          *ngFor="let creative of defaultData.template_struct.material.material_type_lst.all.materials;let index=index">
+          <ng-container [ngTemplateOutlet]="creativeTitleGroupShow"
+                        [ngTemplateOutletContext]="{sourceData:defaultData.template_struct.material.material_type_lst['all'].materials,materialList:creative,index:index}"></ng-container>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!defaultData.template_struct.material.by_material_set_title">
+        <ng-container
+          *ngFor="let creative of defaultData.template_struct.material.material_type_lst.all.materials;let index=index">
+          <ng-container [ngTemplateOutlet]="creativeGroupShow"
+                        [ngTemplateOutletContext]="{sourceData:defaultData.template_struct.material.material_type_lst['all'].materials,materialList:creative,index:index}"></ng-container>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+    <button class="ml8 mr8" nz-button [nzType]="'default'"
+            (click)="addCreativeGroup(defaultData.template_struct.material.material_type_lst.all.materials)">
+      <span>添加创意组</span>
+    </button>
+    <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.material_lst.is_show">
+      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+      <span style="color: red;">{{ checkErrorTip.material_lst.tip_text }}</span>
+    </div>
+    <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.material_title_lst.is_show">
+      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+      <span style="color: red;">{{ checkErrorTip.material_title_lst.tip_text }}</span>
+    </div>
+  </div>
+</div>
+
+<!--标题-->
+<ng-template #titleSelectedShow let-titles="titles" let-title="title" let-num="num">
+  <div class="ml8 mt8 title-selected-show-container">
+    <div class="title-action">
+      <div>已选（{{titles.length}}）</div>
+      <div>
+        <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="clearAllSelected(titles)">
+          <span>清空</span>
+        </button>
+        <button class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addLaunchTitle(titles,num)">
+          <span>添加{{title}}</span>
+        </button>
+      </div>
+    </div>
+    <div class="title-item-wrapper mt10">
+      <div class="title-item" *ngFor="let title of titles;let idx=index">
+        <span class="txt" title="{{title}}">{{title}}</span>
+        <i nz-icon nzType="close" nzTheme="outline" class="hand" (click)="clearSingleSelected(titles,idx,'title')"></i>
+      </div>
+
+    </div>
+  </div>
+
+</ng-template>
+<!--创意组素材-->
+<ng-template #creativeGroupShow let-sourceData="sourceData" let-materialList="materialList" let-index="index"
+             let-cssType="cssType">
+  <div class="ml8 mr8 creative-container">
+    <div class="creative-group">
+      <div class="creative-group-header">
+        <span class="creative-group-header-name">创意组{{index + 1}}</span>
+        <div style="position: absolute;right: 20px;">
+          <span class="creative-group-header-btn mr8" (click)="copyCreativeGroup(materialList,sourceData)"><a><i nz-icon
+                                                                                                                 nzType="copy"
+                                                                                                                 nzTheme="outline"></i></a></span>
+          <span class="creative-group-header-btn mr8" (click)="deleteCreativeGroup(index,sourceData)"><a><i nz-icon
+                                                                                                            nzType="delete"
+                                                                                                            nzTheme="outline"></i></a></span>
+        </div>
+      </div>
+      <div class="creative-group-body">
+        <div class="add-btn">
+          <button *ngIf="materialList.curIndex<materialList.limit.length" class="mr8 pull-right" nz-button
+                  [nzType]="'primary'" [nzSize]="'small'"
+                  (click)="openMaterials(materialList.limit[materialList.curIndex],defaultData.template_struct.material.material_type_temp.limit[materialList.curIndex])"
+                  [disabled]="defaultData.template_struct.material.material_type_temp.num===0">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+            <span>添加素材</span>
+          </button>
+          <button
+            *ngIf="defaultData.template_struct.material.by_creative_group_set_title&&materialList.curIndex==materialList.limit.length"
+            class="mr8 pull-right" nz-button [nzType]="'primary'" [nzSize]="'small'"
+            (click)="addLaunchTitle(materialList['titles'],defaultData.template_struct.material.material_type_temp.titleNum)">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+            <span>添加标题</span>
+          </button>
+          <button
+            *ngIf="defaultData.template_struct.material.by_creative_group_set_title&&materialList.curIndex==materialList.limit.length+1"
+            class="mr8 pull-right" nz-button [nzType]="'primary'" [nzSize]="'small'"
+            (click)="addLaunchTitle(materialList['sub_titles'],1)">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+            <span>添加短标题</span>
+          </button>
+        </div>
+        <div style="display: flex">
+          <nz-tabset class="ml8 mr100 card-tab" [(nzSelectedIndex)]="materialList.curIndex">
+            <ng-container *ngFor="let idea of materialList['limit'];let idex=index">
+              <nz-tab
+                [nzTitle]="idea.label+idea.list.length+'/'+defaultData.template_struct.material.material_type_temp.num">
+                <div class="creative-item-wrapper">
+                  <ng-container *ngIf="idea.list&&idea.list.length">
+                    <div class="ml10 mt10 mb10 creative-item" *ngFor="let material of idea.list;let idx=index">
+                      <div class="creative-card-box" *ngIf="idea.css_type!==102&&idea.css_type!==104">
+                        <div class="creative-card">
+                          <div class="img-content creative-preview">
+                            <img class="cover" [src]="material['preview_img']" nz-popover
+                                 [nzPopoverContent]="contentTemplate" [nzPopoverOverlayClassName]="'image-drop-class'"
+                                 nzPopoverPlacement="topLeft" nzPopoverTrigger="click">
+                            <ng-template #contentTemplate>
+                              <div class="image-cnt-drop">
+                                <img *ngIf="idea.type==='image'" [src]="material['preview_img']">
+                                <a *ngIf="idea.type==='video'" target="_blank" [href]="material['preview_video']">
+                                  <video poster="{{material['preview_img']}}" [src]="material['preview_video']"
+                                         controls="controls" controlslist="nodownload"></video>
+                                </a>
+                              </div>
+                            </ng-template>
+                          </div>
+                          <div class="creative-name">{{material['material_name']}}</div>
+                        </div>
+                      </div>
+                      <div class="creative-card-box" *ngIf="idea.css_type===102||idea.css_type===104">
+                        <div class="creative-card" style="width: 500px">
+                          <div style="display: flex">
+                            <div class="three-card" *ngFor="let image of material['materials']">
+                              <div class="img-content creative-preview">
+                                <img class="cover" [src]="image['preview_img']" nz-popover
+                                     [nzPopoverContent]="contentTemplate" [nzPopoverOverlayClassName]="'image-drop-class'"
+                                     nzPopoverPlacement="topLeft" nzPopoverTrigger="click">
+                                <ng-template #contentTemplate>
+                                  <div class="image-cnt-drop">
+                                    <img [src]="material['preview_img']">
+                                  </div>
+                                </ng-template>
+                              </div>
+                              <div class="creative-name">{{image['material_name']}}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <i nz-icon class="close-icon" nzType="close-circle" nzTheme="outline"
+                         (click)="clearSingleSelected(idea['list'],idx,'material')"></i>
+                    </div>
+                  </ng-container>
+                </div>
+              </nz-tab>
+            </ng-container>
+            <ng-container
+              *ngIf="defaultData.template_struct.material.by_creative_group_set_title">
+              <nz-tab [nzTitle]="'标题'+(materialList.titles?materialList.titles.length:0)+'/'+defaultData.template_struct.material.material_type_temp.titleNum">
+                <div class="creative-item-wrapper">
+                  <ng-container *ngIf="materialList['titles'] && materialList['titles'].length>0"
+                                [ngTemplateOutlet]="titleSelectedShow"
+                                [ngTemplateOutletContext]="{titles:materialList['titles'],title:'标题',num:defaultData.template_struct.material.material_type_temp.titleNum}">
+                  </ng-container>
+                </div>
+              </nz-tab>
+            </ng-container>
+            <ng-container
+              *ngIf="defaultData.template_struct.material.by_creative_group_set_title&&defaultData.template_struct.campaign.subject!=1">
+              <nz-tab [nzTitle]="'短标题'+(materialList.sub_titles?materialList.sub_titles.length:0)+'/'+1">
+                <div class="creative-item-wrapper">
+                  <ng-container *ngIf="materialList['sub_titles'] && materialList['sub_titles'].length>0"
+                                [ngTemplateOutlet]="titleSelectedShow"
+                                [ngTemplateOutletContext]="{titles:materialList['sub_titles'],title:'短标题',num:defaultData.template_struct.material.material_type_temp.titleNum}">
+                  </ng-container>
+                </div>
+              </nz-tab>
+            </ng-container>
+          </nz-tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--创意组素材标题-->
+<ng-template #creativeTitleGroupShow let-sourceData="sourceData" let-materialList="materialList" let-index="index"
+             let-cssType="cssType">
+  <div class="ml8 mr8 creative-container">
+    <div class="creative-group">
+      <div class="creative-group-header">
+        <span class="creative-group-header-name">创意组{{index + 1}}</span>
+        <div style="position: absolute;right: 20px;">
+          <span class="creative-group-header-btn mr8" (click)="copyCreativeGroup(materialList,sourceData)"><a><i nz-icon
+                                                                                                                 nzType="copy"
+                                                                                                                 nzTheme="outline"></i></a></span>
+          <span class="creative-group-header-btn mr8" (click)="deleteCreativeGroup(index,sourceData)"><a><i nz-icon
+                                                                                                            nzType="delete"
+                                                                                                            nzTheme="outline"></i></a></span>
+        </div>
+      </div>
+      <div class="creative-group-body">
+        <button class="mr8 pull-right add-btn" nz-button [nzType]="'primary'" [nzSize]="'small'"
+                (click)="openMaterials(materialList.limit[materialList.curIndex],defaultData.template_struct.material.material_type_temp.limit[materialList.curIndex])"
+                [disabled]="defaultData.template_struct.material.material_type_temp.num===0">
+          <i nz-icon nzType="plus" nzTheme="outline"></i>
+          <span>添加素材</span>
+        </button>
+        <div>
+          <nz-tabset class="ml8 mr100 card-tab" [(nzSelectedIndex)]="materialList.curIndex">
+            <ng-container *ngFor="let idea of materialList['limit'];let idex=index">
+              <nz-tab
+                [nzTitle]="idea.label+idea.list.length+'/'+defaultData.template_struct.material.material_type_temp.num">
+                <div class="creative-item-wrapper">
+                  <ng-container *ngIf="idea.list&&idea.list.length">
+                    <div class="ml10 mt10 mb10 creative-item" *ngFor="let material of idea.list;let idx=index">
+                      <div class="creative-card-box" *ngIf="idea.css_type!==102&&idea.css_type!==104">
+                        <div class="creative-card">
+                          <div class="img-content creative-preview">
+                            <img class="cover" [src]="material['preview_img']" nz-popover
+                                 [nzPopoverContent]="contentTemplate" [nzPopoverOverlayClassName]="'image-drop-class'"
+                                 nzPopoverPlacement="topLeft" nzPopoverTrigger="click">
+                            <ng-template #contentTemplate>
+                              <div class="image-cnt-drop">
+                                <img *ngIf="idea.type==='image'" [src]="material['preview_img']">
+                                <a *ngIf="idea.type==='video'" target="_blank" [href]="material['preview_video']">
+                                  <video poster="{{material['preview_img']}}" [src]="material['preview_video']"
+                                         controls="controls" controlslist="nodownload"></video>
+                                </a>
+                              </div>
+                            </ng-template>
+                          </div>
+                          <div class="creative-name">{{material['material_name']}}</div>
+                          <div class="creative-title">
+                            <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                                    *ngIf="!(material['title'] && material['title'].length>0)"
+                                    (click)="addLaunchTitle(material['title'],1)">
+                              <span>添加标题</span>
+                            </button>
+                            <ng-container *ngIf="material['title'] && material['title'].length>0"
+                                          [ngTemplateOutlet]="titleSelectedShow"
+                                          [ngTemplateOutletContext]="{titles:material['title'],title:'标题',num:1}">
+                            </ng-container>
+                          </div>
+                          <div class="creative-title mt10" *ngIf="resultData.template_struct.campaign.subject!=1">
+                            <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                                    *ngIf="!(material['sub_title'] && material['sub_title'].length>0)"
+                                    (click)="addLaunchTitle(material['sub_title'],1)">
+                              <span>添加短标题</span>
+                            </button>
+                            <ng-container *ngIf="material['sub_title'] && material['sub_title'].length>0"
+                                          [ngTemplateOutlet]="titleSelectedShow"
+                                          [ngTemplateOutletContext]="{titles:material['sub_title'],title:'短标题',num:1}">
+                            </ng-container>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="creative-card-box" *ngIf="idea.css_type===102||idea.css_type===104">
+                        <div class="creative-card" style="width: 500px">
+                          <div style="display: flex">
+                            <div class="three-card" *ngFor="let image of material['materials']">
+                              <div class="img-content creative-preview">
+                                <img class="cover" [src]="image['preview_img']" nz-popover
+                                     [nzPopoverContent]="contentTemplate" [nzPopoverOverlayClassName]="'image-drop-class'"
+                                     nzPopoverPlacement="topLeft" nzPopoverTrigger="click">
+                                <ng-template #contentTemplate>
+                                  <div class="image-cnt-drop">
+                                    <img [src]="material['preview_img']">
+                                  </div>
+                                </ng-template>
+                              </div>
+                              <div class="creative-name">{{image['material_name']}}</div>
+                            </div>
+                          </div>
+                          <div class="creative-title">
+                            <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                                    *ngIf="!(material['title'] && material['title'].length>0)"
+                                    (click)="addLaunchTitle(material['title'],1)">
+                              <span>添加标题</span>
+                            </button>
+                            <ng-container *ngIf="material['title'] && material['title'].length>0"
+                                          [ngTemplateOutlet]="titleSelectedShow"
+                                          [ngTemplateOutletContext]="{titles:material['title'],title:'标题',num:1}">
+                            </ng-container>
+                          </div>
+                          <div class="creative-title mt10" *ngIf="resultData.template_struct.campaign.subject!=1">
+                            <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                                    *ngIf="!(material['sub_title'] && material['sub_title'].length>0)"
+                                    (click)="addLaunchTitle(material['sub_title'],1)">
+                              <span>添加短标题</span>
+                            </button>
+                            <ng-container *ngIf="material['sub_title'] && material['sub_title'].length>0"
+                                          [ngTemplateOutlet]="titleSelectedShow"
+                                          [ngTemplateOutletContext]="{titles:material['sub_title'],title:'短标题',num:1}">
+                            </ng-container>
+                          </div>
+                        </div>
+                      </div>
+                      <i nz-icon class="close-icon" nzType="close-circle" nzTheme="outline"
+                         (click)="clearSingleSelected(idea['list'],idx,'material')"></i>
+                    </div>
+                  </ng-container>
+                </div>
+              </nz-tab>
+            </ng-container>
+          </nz-tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

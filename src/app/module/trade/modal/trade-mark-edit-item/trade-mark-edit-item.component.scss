@@ -1,0 +1,85 @@
+@import "../../../../../styles/util/mixin";
+
+.delete-color{
+  color:#F04134;
+}
+.worning{
+  color: #F9C137
+}
+.button-controller{
+  display: flex;
+  display: -webkit-flex;
+  justify-content: flex-end;
+}
+
+.clear{
+  clear: both;
+}
+
+.conversion-container{
+  max-height:500px;
+  //overflow: auto;
+  .add-content{
+    padding-left: 128px;
+  }
+  .ant-calendar-picker{
+    width: 190px;
+  }
+  .lab-row{
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+  }
+  .lab-row > label:first-child{
+    width: 120px;
+    text-align: right;
+    display: inline-block;
+  }
+  .lab-row .add-label{
+    width: auto !important;
+  }
+  .trade-mark-content{
+    margin-top: 30px;
+    max-height: 400px;
+    overflow: auto;
+    .two-item{
+      padding: 10px;
+      border: 1px solid #e4e4e4;
+      padding-bottom: 0;
+      margin-bottom: 10px;
+      padding-left: 30px;
+      position: relative;
+      //width: 90%;
+      .order_number{
+        position: absolute;
+        left: 30px;
+        top: 10px;
+      }
+      .two-delete{
+        position: absolute;
+        right: 15px;
+        top: 10px;
+
+      }
+    }
+
+  }
+  .trade-mark-btns{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  .addBtn{
+    margin-left: 128px;
+  }
+
+}
+
+.create-one-content{
+  padding:10px;
+  .btn{
+    margin-top: 20px;
+    text-align: right;
+  }
+}
+

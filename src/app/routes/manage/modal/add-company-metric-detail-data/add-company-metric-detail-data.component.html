@@ -1,0 +1,97 @@
+<div class="filter-item-container mt20 mb20">
+  <div class="lab-row mt10">
+    <label>广告主:</label>
+    <nz-select class="w200 ml8" [nzSize]="'small'" [nzPlaceHolder]="'请选择广告主'"
+               [nzShowSearch]="true"
+               [(ngModel)]="defaultMetric.cid"
+               [nzDisabled]="metricDataId>0"
+               (ngModelChange)="defaultMetricChannel('cid')">
+      <nz-option [nzLabel]="'全部'" [nzValue]="0"></nz-option>
+      <ng-container *ngFor="let item of advertiserList">
+        <nz-option [nzLabel]="item.advertiser_name" [nzValue]="item.cid" [nzDisabled]="disabledItem[item.cid] && disabledItem[item.cid].disabled"></nz-option>
+      </ng-container>
+    </nz-select>
+  </div>
+  <div class="lab-row mt10">
+    <label>渠道:</label>
+    <nz-select class="w200 ml8" [nzSize]="'small'" [nzPlaceHolder]="'请选择渠道'"
+               [nzShowSearch]="true"
+               [(ngModel)]="defaultMetric.channel_id"
+               (ngModelChange)="defaultMetricChannel('channel_id')"
+               [nzDisabled]="metricDataId>0 || defaultMetric.cid === null">
+      <ng-container *ngFor="let item of channelItems">
+        {{item | json}}
+        <nz-option [nzLabel]="item.name" [nzValue]="item.key"
+                   [nzDisabled]="(defaultMetric.cid !== 0 && ((disabledItem['0'] && disabledItem['0'].channel['channel_'+ item.key] &&disabledItem['0'].channel['channel_'+ item.key].disabled) || (disabledItem[defaultMetric.cid] && disabledItem[defaultMetric.cid].channel['channel_'+ item.key] &&  disabledItem[defaultMetric.cid].channel['channel_'+ item.key].disabled)))
+                   || (defaultMetric.cid === 0 && disabledItem['0'].channel['channel_'+ item.key] && (disabledItem['0'].channel['channel_'+ item.key].disabled || disabledItem['0'].channel['channel_'+ item.key].disabledOther))"></nz-option>
+      </ng-container>
+    </nz-select>
+  </div>
+  <div class="lab-row mt10">
+    <label>媒体:</label>
+    <nz-select class="w200 ml8" [nzSize]="'small'" [nzPlaceHolder]="'请选择媒体'"
+               [nzShowSearch]="true"
+               [(ngModel)]="defaultMetric.publisher_id" (ngModelChange)="onChangePublisher(true)"
+               [nzDisabled]="metricDataId>0 || defaultMetric.cid === null || defaultMetric.channel_id === null">
+      <ng-container *ngFor="let item of publishItems[defaultMetric.channel_id]">
+        <nz-option [nzLabel]="item.publisher_name" [nzValue]="item.publisher_id"
+                   [nzDisabled]="(defaultMetric.cid !== 0 && (disabledItem['0'].channel['channel_'+ defaultMetric.channel_id].publisher['publisher_' + item.publisher_id].disabled || (disabledItem[defaultMetric.cid] && disabledItem[defaultMetric.cid].channel['channel_'+ defaultMetric.channel_id].publisher['publisher_' + item.publisher_id].disabled)))
+                   || (defaultMetric.cid === 0 && (disabledItem['0'].channel['channel_'+ defaultMetric.channel_id].publisher['publisher_' + item.publisher_id].disabled || disabledItem['0'].channel['channel_'+ defaultMetric.channel_id].publisher['publisher_' + item.publisher_id].disabledOther))"></nz-option>
+      </ng-container>
+    </nz-select>
+  </div>
+
+
+  <div class="lab-row mt10">
+    <label>计算公式:</label>
+    <div class="conversion-setting">
+      <div class="metric-detail ml8 ">
+        <div class="custom-report-formula-item" *ngFor="let struct of formualData;let i = index;" [ngClass]="{mt10:i>0}">
+          <div class="custom-obj-select">
+            <div class="sem-brackets" (click)="checkBracket(struct,'left_bracket')" [ngClass]="{'brackets-blue':struct.left_bracket,'brackets-gray':!struct.left_bracket}">(</div>
+            <nz-select [nzShowSearch]="true" class="w150 ml8" [nzSize]="'small'"   [(ngModel)]="struct.type" (ngModelChange)="structTypeChange(struct)">
+              <ng-container *ngFor="let item of itemTypeRelation">
+                <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+              </ng-container>
+            </nz-select>
+            <div class="w200 ml8" style="display: inline-block" *ngIf="struct.type ==='normal_data'">
+              <input nz-input
+                [nzSize]="'small'"
+                type="text"
+                [(ngModel)]="struct.value"
+                placeholder="请输入数据">
+
+            </div>
+            <nz-select [nzShowSearch]="true" class="w200 ml8" [nzSize]="'small'"   [(ngModel)]="struct.value" (ngModelChange)="refreshName($event,struct)"  *ngIf="struct.type !=='normal_data'" >
+              <ng-container *ngFor="let item of itemTypeDataDetail[struct.type]" >
+                <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+              </ng-container>
+            </nz-select>
+            <div class="sem-brackets ml8" *ngIf="i>0" (click)="checkBracket(struct,'right_bracket')" [ngClass]="{'brackets-blue':struct.right_bracket,'brackets-gray':!struct.right_bracket}">)</div>
+            <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  *ngIf="i >0" (click)="deleteLine(i)"></i>
+          </div>
+          <div class="mt10 custom-operator-select">
+            <nz-select [nzShowSearch]="true" class="w80 ml8" [nzSize]="'small'"  [(ngModel)]="struct.operator">
+              <ng-container *ngFor="let item of operatorLists">
+                <nz-option [nzLabel]="item.value" [nzValue]="item.oper"></nz-option>
+              </ng-container>
+            </nz-select>
+            <a class="btn btn-default btn-primary ml8" (click)="addLine(i)" >添加</a>
+          </div>
+        </div>
+
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="button-controller">
+  <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+    <span>取消</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="submitting" (click)="doSave()">
+    <span>完成</span>
+  </button>
+</div>

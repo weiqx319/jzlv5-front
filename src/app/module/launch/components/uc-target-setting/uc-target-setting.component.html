@@ -1,0 +1,209 @@
+<div class="target-setting-container">
+  <div class="form-content">
+    <!--自定义人群-->
+    <div class="lab-row mb20" *ngIf="!isRemoveTargetingAudience">
+      <label>{{targetConfig['audience_targeting']['name']}}:</label>
+      <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.audience_targeting" (ngModelChange)="changeAudienceType()">
+        <ng-container *ngFor="let option of targetConfig['audience_targeting']['sub']">
+          <label nz-radio-button [nzValue]="option.value">{{option.label}}</label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20" *ngIf="editDefaultDataOption.audience_targeting === 1">
+          <label>定向人群:</label>
+          <div class="crowd-body-content mb20 ml8">
+            <nz-tree #tree
+                     nzCheckable
+                     [nzData]="editDefaultDataOption.includeList.list"
+                     (nzCheckBoxChange)="changeAudience($event,'crowd')"
+                     [nzCheckedKeys]="editDefaultDataOption.includeList.resultData"
+                     nzBlockNode
+            ></nz-tree>
+          </div>
+        </div>
+    <div class="lab-row mb20" *ngIf="editDefaultDataOption.audience_targeting === 2">
+          <label>排除人群:</label>
+          <div class="crowd-body-content mb20 ml8">
+            <nz-tree #tree
+                     nzCheckable
+                     [nzData]="editDefaultDataOption.excludeList.list"
+                     (nzCheckBoxChange)="changeAudience($event,'exclude')"
+                     [nzCheckedKeys]="editDefaultDataOption.excludeList.resultData"
+                     nzBlockNode
+            ></nz-tree>
+          </div>
+        </div>
+    <div *ngIf="editDefaultDataOption.audience_targeting === 3">
+      <div class="lab-row mb20">
+        <label>定向人群:</label>
+        <div class="crowd-body-content mb20 ml8">
+          <nz-tree #tree
+                   nzCheckable
+                   [nzData]="editDefaultDataOption.includeList.list"
+                   (nzCheckBoxChange)="treeCrowdOnCheck($event)"
+                   [nzCheckedKeys]="editDefaultDataOption.includeList.resultData"
+                   nzBlockNode
+          ></nz-tree>
+        </div>
+      </div>
+      <div class="lab-row mb20">
+        <label>排除人群:</label>
+        <div class="crowd-body-content mb20 ml8">
+          <nz-tree #tree
+                   nzCheckable
+                   [nzData]="editDefaultDataOption.excludeList.list"
+                   (nzCheckBoxChange)="treeExcludeCrowdOnCheck($event)"
+                   [nzCheckedKeys]="editDefaultDataOption.excludeList.resultData"
+                   nzBlockNode
+          ></nz-tree>
+        </div>
+      </div>
+    </div>
+    <div class="lab-row mb20">
+      <label>{{targetConfig['all_region']['name']}}:</label>
+      <div>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.allRegion">
+          <ng-container *ngFor="let option of targetConfig['all_region']['sub']">
+            <label nz-radio-button [nzValue]="option.value">{{option.label}}</label>
+          </ng-container>
+        </nz-radio-group>
+
+        <div class="ml8 mt20" *ngIf="editDefaultDataOption.allRegion === 0">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption.cityList.resultData"
+                            (nzChange)="transferTreeChange(editDefaultDataOption.cityList,$event,'region')"
+                            [source]="editDefaultDataOption.cityList.list"></nz-transfer-tree>
+        </div>
+
+        <div class="ml8 mt20" *ngIf="editDefaultDataOption.allRegion === 2">
+          <nz-transfer-tree [getParentKey]="false" [target]="editDefaultDataOption.countyList.resultData"
+                            (nzChange)="transferTreeChange(editDefaultDataOption.countyList,$event,'region')"
+                            [source]="editDefaultDataOption.countyList.list"></nz-transfer-tree>
+        </div>
+      </div>
+
+    </div>
+    <!-- 性别-->
+    <div class="lab-row mb20">
+      <label>{{targetConfig['gender']['name']}}:</label>
+      <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.gender">
+        <ng-container *ngFor="let option of targetConfig['gender']['sub']">
+          <label nz-radio-button [nzValue]="option.value">{{option.label}}</label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <!--年龄-->
+    <div class="lab-row mb20">
+      <label>{{targetConfig['age']['name']}}:</label>
+      <div class="ml8">
+        <label nz-checkbox [(ngModel)]="editDefaultDataOption.ageList.checked" (ngModelChange)="changeNoLimit('age')">
+          不限
+        </label>
+        <nz-checkbox-group class="mr8" [(ngModel)]="targetConfig['age']['sub']"
+                           (ngModelChange)="updateSingleChecked($event,'age')"></nz-checkbox-group>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.age.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.age.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <!--操作系统-->
+    <div class="lab-row mb20">
+      <label>{{targetConfig['platform']['name']}}:</label>
+      <div class="ml8">
+        <label nz-checkbox [nzDisabled]="objectiveType !== '1'" [(ngModel)]="editDefaultDataOption.platformList.checked" (ngModelChange)="changeNoLimit('platform')">
+          不限
+        </label>
+        <nz-checkbox-group class="mr8" [(ngModel)]="targetConfig['platform']['sub']"
+                           (ngModelChange)="updateSingleChecked($event,'platform')"></nz-checkbox-group>
+        <div class="error-tip mt5 ml8" *ngIf="errorTip.platform.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ errorTip.platform.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <!--网络环境-->
+    <div class="lab-row mb20">
+      <label>{{targetConfig['network_env']['name']}}:</label>
+      <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.network_env">
+        <ng-container *ngFor="let option of targetConfig['network_env']['sub']">
+          <label nz-radio-button [nzValue]="option.value">{{option.label}}</label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <!--兴趣分类-->
+    <div class="lab-row mb20">
+      <label>兴趣分类:</label>
+      <div>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.interest_slt">
+          <ng-container>
+            <ng-container>
+              <label nz-radio-button [nzValue]="'nolimit'">不限</label>
+              <label nz-radio-button [nzValue]="'custom'">自定义</label>
+            </ng-container>
+          </ng-container>
+
+        </nz-radio-group>
+        <div class="ml8 mt20" *ngIf="editDefaultDataOption.interest_slt === 'custom'">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption.interestList.resultData"
+                            (nzChange)="transferTreeChange(editDefaultDataOption.interestList,$event,'interest')"
+                            [source]="editDefaultDataOption.interestList.list"></nz-transfer-tree>
+        </div>
+      </div>
+    </div>
+    <!--APP定向-->
+    <div class="lab-row mb20">
+      <label>APP定向:</label>
+      <div>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.app_category_slt">
+          <ng-container>
+            <ng-container>
+              <label nz-radio-button [nzValue]="'nolimit'">不限</label>
+              <label nz-radio-button [nzValue]="'custom'">自定义</label>
+            </ng-container>
+          </ng-container>
+
+        </nz-radio-group>
+        <div class="ml8 mt20" *ngIf="editDefaultDataOption.app_category_slt === 'custom'">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption.appCategoryList.resultData"
+                            (nzChange)="transferTreeChange(editDefaultDataOption.appCategoryList,$event,'app_category')"
+                            [source]="editDefaultDataOption.appCategoryList.list"></nz-transfer-tree>
+        </div>
+      </div>
+    </div>
+
+    <!--智能定向-->
+    <div class="lab-row mb20 w100p">
+      <label>{{targetConfig['intelli_targeting']['name']}}:</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="editDefaultDataOption.intelli_targeting"
+      >
+        <ng-container *ngFor="let option of targetConfig['intelli_targeting']['sub']">
+          <label nz-radio-button [nzValue]="option.value">
+            <span>{{option.label}}</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+      <div class="lab-tip mt5 ml8">
+        <i nz-icon nzType="exclamation-circle" nzTheme="outline"
+           style="color: rgb(250, 173, 20)" class="mr5"></i>
+        <span>自定义添加可突破维度</span>
+      </div>
+      <nz-checkbox-group class="ml10" [nzDisabled]="editDefaultDataOption.intelli_targeting === 0"
+                         [(ngModel)]="targetConfig['auto_expand']['sub']"
+                         (ngModelChange)="updateSingleChecked($event,'auto_expand')"></nz-checkbox-group>
+    </div>
+
+    <!--已转化过滤-->
+    <div class="lab-row mb20" *ngIf="data.opt_target === 3">
+      <label>{{targetConfig['convert_filter']['name']}}:</label>
+      <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.convert_filter">
+        <ng-container *ngFor="let option of targetConfig['convert_filter']['sub']">
+          <label nz-radio-button [nzValue]="option.value">{{option.label}}</label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+
+  </div>
+</div>

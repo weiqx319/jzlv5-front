@@ -1,0 +1,45 @@
+<div class="dashboard-nav">
+  <div class="dashboard-nav-col">
+    <div class="dashboard-nav-btn">
+      <a class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="editDashboard()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>新建概览页</span>
+      </a>
+      <button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="downloadPdf()">
+       <i nz-icon nzType="download" nzTheme="outline"></i><span>下载概览页</span>
+      </button>
+      <ng-container *ngIf="(currentDashBoard$|async)?.is_default===0">
+        <app-add-chart [btn_size]="'small'" [source]="'dashboard-nav'" class="ml10"></app-add-chart>
+      </ng-container>
+    </div>
+    <div class="dashboard-name-show">
+      {{(currentDashBoard$|async)?.dashboard_name}}
+    </div>
+    <div class="dashboard-nav-size">
+      <app-table-time-tip (dateChange)="emitDate($event)" ></app-table-time-tip>
+
+      <a class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="refreshData()" title="刷新数据">
+        <i nz-icon nzType="reload" nzTheme="outline"></i>
+      </a>
+      <a class="mr8 ml8" *ngIf="!is_fullscreen" nz-button [nzSize]="'small'"
+              [nzType]="'default'" nz-popover title="全屏" (click)="changeFullscreen(true)">
+        <i nz-icon nzType="fullscreen" nzTheme="outline"></i>
+      </a>
+      <a class="mr8 ml8" *ngIf="is_fullscreen" nz-button [nzSize]="'small'"
+              [nzType]="'default'" nz-popover title="退出全屏" (click)="changeFullscreen(false)">
+        <i nz-icon nzType="fullscreen-exit" nzTheme="outline"></i>
+      </a>
+
+      <nz-button-group>
+        <button nz-button [nzType]="'default'" (click)="changeSize(8)" [nzSize]="'small'" [class.active]="size===8">
+          <span>S</span>
+        </button>
+        <button nz-button [nzType]="'default'" (click)="changeSize(12)" [nzSize]="'small'" [class.active]="size===12">
+          <span>M</span>
+        </button>
+        <button nz-button [nzType]="'default'" (click)="changeSize(24)" [nzSize]="'small'" [class.active]="size===24">
+          <span>L</span>
+        </button>
+      </nz-button-group>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<div>
+  <div>
+    <!-- <div class="manage-operation">
+      <div class="manage-header-left"></div>
+      <div class="manage-header-right">
+        <span [ngStyle]="{'color': message_status !== 2? '#404040':'#1890ff'}" (click)="changeMessageStatus(2)">全部</span>
+        <div class="ml8 mr8">|</div>
+        <span [ngStyle]="{'color': message_status !== 1? '#404040':'#1890ff'}" (click)="changeMessageStatus(1)">已读</span>
+        <div class="ml8 mr8">|</div>
+        <span [ngStyle]="{'color': message_status !== 0? '#404040':'#1890ff'}" (click)="changeMessageStatus(0)">未读</span>
+      </div>
+    </div> -->
+  </div>
+  <div class="message-table" [ngStyle]="{'padding-bottom': messageList.length ? '0px' : '50px'}">
+    <nz-table
+      #nzTable
+      nzShowSizeChanger
+      [nzPageSizeOptions]="[30,50,100,500]"
+      [nzSize]="'default'"
+      [nzData]="messageList"
+      [nzFrontPagination]="false"
+      [(nzPageSize)]="pageSize"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="refreshData()"
+      (nzPageSizeChange)="refreshData(true)"
+      [nzTotal]="total"
+      [nzLoading]="loading"
+      [nzShowTotal]="totalItemTemplate"
+      [nzScroll]="{ x: '1000px', y: noResultHeight+'px' }"
+    >
+      <thead>
+        <tr>
+          <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="isAllChecked" (nzCheckedChange)="updateAllChecked($event)">
+          </th>
+          <th [nzWidth]="'400px'">
+            <span>标题内容</span>
+          </th>
+          <th [nzWidth]="'300px'">
+            <span>发布时间</span>
+          </th>
+          <th [nzWidth]="'300px'">
+            <span>是否已读</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of messageList" routerLink="../../message_detail" [queryParams]="{message_id:item.message_id,is_read:item.is_read}">
+          <td
+            nzShowCheckbox
+            [(nzChecked)]="item.checked"
+            (nzCheckedChange)="checkedChange()"
+          ></td>
+          <td class="msg_title">
+            <nz-badge nzStatus="processing" class="show-status" *ngIf="item.is_read === 0"></nz-badge>{{item.message_title}}
+          </td>
+          <td>{{item.message_start_time}}</td>
+          <td>
+            {{item.is_read === 0? '否' : '是'}}
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+    <div class="operate">
+        <button class="mr8" nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteMsgData()" [nzPopconfirmPlacement]="'bottomLeft'" nz-button [nzType]="'default'" [nzSize]="'default'"
+                [ngClass]="{'disabled-status': !isIndeterminate}"
+                [disabled]="!isIndeterminate">
+          删除
+        </button>
+        <button class="mr8" nz-popconfirm [nzPopconfirmTitle]="'确定要标记已读吗？'" (nzOnConfirm)="readedMsgData()" [nzPopconfirmPlacement]="'bottomLeft'" nz-button [nzType]="'primary'" [nzSize]="'default'"
+                [ngClass]="{'disabled-status': !isIndeterminate}"
+                [disabled]="!isIndeterminate">
+          标记已读
+        </button>
+    </div>
+  </div>
+</div>

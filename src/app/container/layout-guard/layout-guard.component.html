@@ -1,0 +1,13 @@
+<div class="container">
+  <div class="top">
+    <div class="head">
+      <a *ngIf="productInfo['logo']" [routerLink]="['/']">
+        <img class="logo" src="{{productInfo['logo']}}">
+      </a>
+      <h1 class="login-title" *ngIf="!productInfo['logo']">{{productInfo['name']}}</h1>
+    </div>
+    <p class="desc">{{productInfo['slogan']}}
+    </p>
+  </div>
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,8 @@
+<router-outlet></router-outlet>
+<app-dashboard-right-sidebar [dataList]="dashBoardList"></app-dashboard-right-sidebar>
+<div  class="dashboard-loading" style="display: block;" *ngIf="loading">
+  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 30 30" style="enable-background:new 0 0 30 30" xml:space="preserve"><style type="text/css">.st0{fill:#56acef}</style><path class="st0" d="M19.8,21L19.8,21c-0.6,0-1-0.4-1-1V10c0-0.5,0.4-1,1-1h0c0.5,0,1,0.4,1,1v10C20.8,20.6,20.4,21,19.8,21z" transform="scale(1 1.33543)"><animateTransform attributeType="xml" attributeName="transform" type="scale" values="1,1; 1,2; 1,1" begin="0s" dur="0.8s" repeatCount="indefinite"></animateTransform></path><path class="st0" d="M10.2,21L10.2,21c-0.6,0-1-0.4-1-1V10c0-0.5,0.4-1,1-1h0c0.5,0,1,0.4,1,1v10C11.2,20.6,10.7,21,10.2,21z" transform="scale(1 1.83543)"><animateTransform attributeType="xml" attributeName="transform" type="scale" values="1,1; 1,2; 1,1" begin="0.2s" dur="0.8s" repeatCount="indefinite"></animateTransform></path><path class="st0" d="M15,21L15,21c-0.6,0-1-0.4-1-1V10c0-0.5,0.4-1,1-1h0c0.5,0,1,0.4,1,1v10C16,20.6,15.6,21,15,21z" transform="scale(1 1.66457)"><animateTransform attributeType="xml" attributeName="transform" type="scale" values="1,1; 1,2; 1,1" begin="0.4s" dur="0.8s" repeatCount="indefinite"></animateTransform></path></svg>
+  <div class="tip">正在加载数据...</div>
+</div>
+
+

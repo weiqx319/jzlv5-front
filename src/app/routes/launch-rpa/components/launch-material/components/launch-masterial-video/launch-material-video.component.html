@@ -1,0 +1,233 @@
+<div class="launch-rpa-contents">
+  <div class="launch-rpa-operation">
+    <div class="header-left">
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="uploadMaterialsBatch()">
+        <i nz-icon nzType="plus"></i><span>批量本地上传</span>
+      </a>
+
+      <ng-container *ngIf="menuService.currentPublisherId !== 17&&menuService.currentPublisherId !== 23&&menuService.currentPublisherId !== 1">
+        <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="syncLaunchTitle()">
+          <i nz-icon nzType="sync" nzTheme="outline"></i><span>同步视频</span>
+        </a>
+      </ng-container>
+
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="batchEditTag()">
+        <i nz-icon nzType="edit" nzTheme="outline"></i><span>编辑标签</span>
+      </a>
+
+        <a nz-popconfirm [nzPopconfirmTitle]="'批量删除不支持跨页选取,确定要删除选中项?'" title="只在{{productInfo['name']}}视频库中删除视频，不影响媒体素材库" (nzOnConfirm)="batchDeleteMaterial()" nzPopconfirmTrigger="click" class="btn-jzl mr8" nz-button  [nzType]="'primary'" href="javascript:">
+          <i nz-icon nzType="delete" nzTheme="outline"></i><span>批量删除</span>
+        </a>
+
+    </div>
+    <div class="header-right">
+      <div class="lab-row ml10">
+        <label>标签:</label>
+        <nz-select class="w40 ml8"
+                   [(ngModel)]="queryItem.material_tags.op"
+                   [nzPlaceHolder]="'请选择'"
+                   (ngModelChange)="reloadData(true)"
+                   nzShowSearch>
+          <nz-option [nzLabel]="'或'"  [nzValue]="'json_contains_or'"> </nz-option>
+          <nz-option [nzLabel]="'且'"  [nzValue]="'json_contains_and'"> </nz-option>
+        </nz-select>
+        <nz-select class="w150 ml8"
+                   [nzMode]="'tags'"
+                   [(ngModel)]="queryItem.material_tags.value"
+                   [nzPlaceHolder]="'请选择标签或手动输入'"
+                   [nzMaxTagCount]="1"
+                   [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                   (ngModelChange)="reloadData(true)"
+                   nzShowSearch>
+          <ng-container *ngFor="let data of tagsList">
+            <nz-option [nzLabel]="data['tags_content']"  [nzValue]="data['tags_content']"> </nz-option>
+          </ng-container>
+        </nz-select>
+      </div>
+      <div class="lab-row ml10">
+        <label>排除标签:</label>
+        <nz-select class="w40 ml8"
+                   [(ngModel)]="queryItem.exclude_material_tags.op"
+                   [nzPlaceHolder]="'请选择'"
+                   (ngModelChange)="reloadData(true)"
+                   nzShowSearch>
+          <nz-option [nzLabel]="'或'"  [nzValue]="'not_json_contains_or'"> </nz-option>
+          <nz-option [nzLabel]="'且'"  [nzValue]="'not_json_contains_and'"> </nz-option>
+        </nz-select>
+        <nz-select class="w150 ml8"
+                   [nzMode]="'tags'"
+                   [(ngModel)]="queryItem.exclude_material_tags.value"
+                   [nzPlaceHolder]="'请选择标签或手动输入'"
+                   [nzMaxTagCount]="1"
+                   [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                   (ngModelChange)="reloadData(true)"
+                   nzShowSearch>
+          <ng-container *ngFor="let data of tagsList">
+            <nz-option [nzLabel]="data['tags_content']"  [nzValue]="data['tags_content']"> </nz-option>
+          </ng-container>
+        </nz-select>
+      </div>
+      <app-table-time-tip [defaultSummaryDate]="queryParam.sheets_setting.table_setting.summary_date" [globalTimeFlag]="true" [canClearFlag]="false" (dateChange)="dateChange($event)" [styleTheme]="'normal'" ></app-table-time-tip>
+    </div>
+  </div>
+  <div class="pt20">
+    <nz-table #basicTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzFrontPagination] = false
+              [nzShowTotal]="globalTemplate.totalItemTemplate"
+              [nzSize]="'small'"
+              [nzData]="apiData"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzNoResult]="noResultTd"
+              [nzScroll]="{ x: '1572px', y: noResultHeight + 'px' }">
+      <thead>
+      <tr>
+        <th nzWidth="62px"  nzLeft="0px" class="jzlCheckboxHeader">
+            <a nz-dropdown [nzDropdownMenu]="menu">
+              <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)"></label>
+            </a>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu nzSelectable>
+              <li nz-menu-item (click)="_checkAll(true)" [nzSelected]="currentSelectedPage=='current'">
+                <a>选择当前页</a>
+              </li>
+              <li nz-menu-item  (click)="_checkAllPage(true)" [nzSelected]="currentSelectedPage=='all'">
+                <a>选择全部</a>
+              </li>
+            </ul>
+            </nz-dropdown-menu>
+
+        </th>
+        <th nzWidth="320px" nzLeft="62px">视频</th>
+        <th nzWidth="100px" nzLeft="382px">操作</th>
+        <th nzWidth="120px" nzLeft="482px">标签</th>
+        <th nzShowSort (nzSortOrderChange)="sortData($event,'material_name')"  nzSortKey="material_name"  nzWidth="200px">素材名称<app-filter [filterType]="'multiValue'" [filterKey]="{key:'material_name',name:'素材名称'}" [(filterResult)]="filterResult['material_name']" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort (nzSortOrderChange)="sortData($event,'create_time')" nzWidth="150px">创建时间<app-filter [filterType]="'timeFilter'" [filterKey]="{key:'create_time',name:'创建时间'}" [(filterResult)]="filterResult['create_time']" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort (nzSortOrderChange)="sortData($event,'video_type')" nzWidth="100px">素材类型<app-filter [filterType]="'singleList'" [filterKey]="{key:'video_type',name:'素材类型'}" [(filterResult)]="filterResult['video_type']" [filterOption]="launchRpaService.VideoTypeConfigList['publisher_'+menuService.currentPublisherId]|objList" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort (nzSortOrderChange)="sortData($event,'director_id')" nzWidth="100px">编导<app-filter [filterType]="'singleList'" [filterKey]="{key:'director_id',name:'编导'}" [(filterResult)]="filterResult['director_id']" [filterOption]="choreographerList" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort (nzSortOrderChange)="sortData($event,'camerist_id')" nzWidth="100px">摄影<app-filter [filterType]="'singleList'" [filterKey]="{key:'camerist_id',name:'摄影'}" [(filterResult)]="filterResult['camerist_id']" [filterOption]="photographList" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort (nzSortOrderChange)="sortData($event,'movie_editor_id')" nzWidth="100px">剪辑<app-filter [filterType]="'singleList'" [filterKey]="{key:'movie_editor_id',name:'剪辑'}" [(filterResult)]="filterResult['movie_editor_id']" [filterOption]="clipList" (submit)="reloadData(true)"></app-filter></th>
+        <th nzWidth="100px">素材尺寸</th>
+<!--        <th nzShowSort   nzSortKey="pub_cost"       nzWidth="120px">消耗<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_cost',name:'消耗'}" [(filterResult)]="filterResult['pub_cost']" (submit)="reloadData(true)"></app-filter></th>-->
+<!--        <th nzShowSort   nzSortKey="pub_cpm"        nzWidth="120px">CPM<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_cpm',name:'CPM'}" [(filterResult)]="filterResult['pub_cpm']" (submit)="reloadData(true)"></app-filter></th>-->
+<!--        <th nzShowSort   nzSortKey="pub_cpc"        nzWidth="120px">CPC<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_cpc',name:'CPC'}" [(filterResult)]="filterResult['pub_cpc']" (submit)="reloadData(true)"></app-filter></th>-->
+<!--        <th nzShowSort   nzSortKey="pub_ctr"        nzWidth="120px">点击率<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_ctr',name:'点击率'}" [(filterResult)]="filterResult['pub_ctr']" (submit)="reloadData(true)"></app-filter></th>-->
+<!--        <th nzShowSort   nzSortKey="b_convert_rate" nzWidth="120px">转化率<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'b_convert_rate',name:'转化率'}" [(filterResult)]="filterResult['b_convert_rate']" (submit)="reloadData(true)"></app-filter></th>-->
+<!--        <th nzShowSort   nzSortKey="b_convert"      nzWidth="120px">转化数<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'b_convert',name:'转化数'}" [(filterResult)]="filterResult['b_convert']" (submit)="reloadData(true)"></app-filter></th>-->
+<!--        <th nzShowSort   nzSortKey="b_convert_cost" nzWidth="120px">转化成本<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'b_convert_cost',name:'转化成本'}" [(filterResult)]="filterResult['b_convert_cost']" (submit)="reloadData(true)"></app-filter></th>-->
+        <th nzWidth="120px">大小</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td nzLeft="0px" nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshSingleChangeStatus($event)">
+        <td nzLeft="62px">
+          <div class="video-cell" (click)="materialsDetail(data)">
+            <div  class="video-info">
+              <div  class="video-poster">
+                <img [src]="data['preview_img']" alt=""></div>
+              <div  class="video-title"> {{data['material_name']}}</div>
+            </div>
+          </div>
+        </td>
+        <td nzLeft="382px">
+          <a href="javascript:" (click)="materialsDetail(data)">编辑</a>
+          <span class="ml4 mr4">|</span>
+            <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="delMaterialsSingle(data)" [nzPopconfirmPlacement]="'bottomLeft'" >删除</a>
+        </td>
+        <td nzLeft="482px">{{data['material_tags']}}</td>
+        <td>{{data['material_name']}}</td>
+        <td>{{data['create_time']}}</td>
+        <td>{{data['video_type'] | objMap:launchRpaService.VideoTypeConfig['publisher_'+menuService.currentPublisherId]:'video_type_' }}</td>
+        <td>{{data['director_name']}}</td>
+        <td>{{data['camerist_name']}}</td>
+        <td>{{data['movie_editor_name']}}</td>
+        <td>{{data['upload_video_width']}}*{{data['upload_video_height']}}</td>
+<!--        <td>{{data['pub_cost']}}</td>-->
+<!--        <td>{{data['pub_cpm']}}</td>-->
+<!--        <td>{{data['pub_cpc']}}</td>-->
+<!--        <td>{{data['pub_ctr']}}%</td>-->
+<!--        <td>{{data['b_convert_rate']}}%</td>-->
+<!--        <td>{{data['b_convert']}}</td>-->
+<!--        <td>{{data['b_convert_cost']}}</td>-->
+        <td>{{data['size']}}</td>
+
+      </tr>
+
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+
+<ng-template #noResultTd>
+  <div class="table-no-result" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+    <div class="table-no-result-content">
+
+      <div class="mt8">无数据</div>
+    </div>
+  </div>
+</ng-template>
+
+<nz-modal [(nzVisible)]="syncVisible" nzTitle="同步视频" (nzOnCancel)="cancelSync()" (nzOnOk)="handSync()">
+  <div style="padding: 30px 10px">
+    <div class="lab-row mt10">
+      <label>选择帐户:</label>
+      <nz-select class="w400 ml8"
+                 [nzSize]="'small'"
+                 [nzMaxTagCount]="1"
+                 [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                 [(ngModel)]="syncChanPubIds"
+                 (ngModelChange)="changeAccount()"
+                 nzMode="multiple"
+                 [nzPlaceHolder]="'请选择帐户'"
+                 [nzAllowClear]="true"
+                 [nzDropdownRender]="renderTemplate"
+                 nzShowSearch>
+        <nz-option
+          *ngFor="let option of accountsList"
+          [nzLabel]="option.pub_account_name"
+          [nzValue]="option.chan_pub_id">
+        </nz-option>
+      </nz-select>
+      <ng-template #renderTemplate>
+        <div *ngIf="!allAccountCheck" style="padding: 5px;text-align: center;">
+          <a style="font-size: 15px" (click)="checkAllAccount()">选择全部</a>
+        </div>
+        <div *ngIf="allAccountCheck" style="padding: 5px;text-align: center;background-color: #e6f7ff;">
+          <a style="font-size: 15px" (click)="checkAllAccount()">选择全部</a>
+        </div>
+      </ng-template>
+
+
+    </div>
+    <div class="lab-row mt20">
+      <label>选择标签:</label>
+      <nz-select class="w400 ml8"
+                 [nzSize]="'small'"
+                 [nzMode]="'tags'"
+                 [(ngModel)]="syncMaterialTags"
+                 [nzPlaceHolder]="'请选择标签或手动输入'"
+                 [nzMaxTagCount]="1"
+                 [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                 nzShowSearch>
+        <ng-container *ngFor="let data of tagsList">
+          <nz-option [nzLabel]="data['tags_content']"  [nzValue]="data['tags_content']"> </nz-option>
+        </ng-container>
+      </nz-select>
+    </div>
+  </div>
+  <div *nzModalFooter>
+    <button [nzSize]="'small'" nz-button nzType="default" (click)="cancelSync()">取消</button>
+    <button [nzSize]="'small'" nz-button nzType="primary" (click)="handSync()">确定</button>
+  </div>
+</nz-modal>
+
+
+<app-global-template></app-global-template>

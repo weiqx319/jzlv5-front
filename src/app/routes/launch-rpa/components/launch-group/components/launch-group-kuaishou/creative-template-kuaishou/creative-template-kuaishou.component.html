@@ -1,0 +1,496 @@
+<div class="form-content">
+  <div class="lab-row pl20 mb20 w100p">
+    <label><span class="redStart">*</span>单广告组素材数:</label>
+    <div>
+      <nz-input-number class="w200 ml8" nzSize="small" [nzDisabled]="materialData.by_material_set_title"
+                       [(ngModel)]="materialData.single_adgroup_material_num" [nzMin]="1" [nzMax]="5"
+                       (ngModelChange)="getItemErrorTip('single_adgroup_material_num', materialData.single_adgroup_material_num)"
+                       [nzStep]="1"></nz-input-number>
+      <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.single_adgroup_material_num.is_show">
+        <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+        <span style="color: red;">{{ checkErrorTip.single_adgroup_material_num.tip_text }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="lab-row pl20 mb20 w100p" *ngIf="!materialData.by_material_set_title">
+    <label><span class="redStart">*</span>单广告组标题数:</label>
+    <div>
+      <nz-input-number class="w200 ml8" nzSize="small" [(ngModel)]="materialData.single_adgroup_title_num" [nzMin]="1"
+                       (ngModelChange)="getItemErrorTip('single_adgroup_title_num', materialData.single_adgroup_title_num)"
+                       [nzMax]="5" [nzStep]="1"></nz-input-number>
+      <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.single_adgroup_title_num.is_show">
+        <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+        <span style="color: red;">{{ checkErrorTip.single_adgroup_title_num.tip_text }}</span>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngFor="let item of creativeElementsList">
+    <ng-container [ngTemplateOutlet]="getTemplateRef(item.key)" [ngTemplateOutletContext]="{}"></ng-container>
+  </ng-container>
+
+  <!--分渠道号选择素材-->
+  <div class="lab-row pl20 mb20 w100p">
+    <label><span class="redStart">*</span>分渠道号选择素材:</label>
+    <nz-radio-group
+      class="ml8"
+      [(ngModel)]="materialData.by_channel_set_material"
+      (ngModelChange)="changeMaterialByChannel()"
+      [nzSize]="'small'"
+    >
+      <label nz-radio-button [nzValue]="true" [nzDisabled]="defaultData.convert_channel_id_lst.length === 0">
+        <span>是</span>
+      </label>
+      <label nz-radio-button [nzValue]="false">
+        <span>否</span>
+      </label>
+    </nz-radio-group>
+  </div>
+  <!--分素材选择标题-->
+  <div class="lab-row pl20 mb20 w100p">
+    <label><span class="redStart">*</span>分素材选择标题:</label>
+    <nz-radio-group
+      class="ml8"
+      [(ngModel)]="materialData.by_material_set_title"
+      (ngModelChange)="changeTitleByChannel($event)"
+      [nzSize]="'small'"
+    >
+      <label nz-radio-button [nzValue]="true">
+        <span>是</span>
+      </label>
+      <label nz-radio-button [nzValue]="false">
+        <span>否</span>
+      </label>
+    </nz-radio-group>
+  </div>
+
+  <ng-container *ngIf="materialData.by_channel_set_material">
+    <div class="w100p">
+      <nz-tabset class="materials-tab" [nzType]="'card'" *ngIf="targetChannelList.length"
+                 [nzSelectedIndex]="curDeliveryIndex">
+        <nz-tab class="mb20 w100p" *ngFor="let item of targetChannelList" [nzTitle]="item.convert_channel_name">
+          <!--素材选取-->
+          <div class="lab-row pl20 mb20 w100p">
+            <label><span class="redStart">*</span>素材选取:</label>
+            <div style="flex:1">
+              <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                      (click)="openMaterials(materialData.material_type_lst[item.convert_channel_id].materials,adcreativeData.adcreative_template_id)">
+                <span>素材库</span>
+              </button>
+              <ng-container *ngIf="materialData.material_type_lst[item.convert_channel_id].materials.length>0">
+                <ng-container *ngIf="materialData.by_material_set_title"
+                              [ngTemplateOutlet]="materialSelectedShowAndTitle"
+                              [ngTemplateOutletContext]="{materialList:materialData.material_type_lst[item.convert_channel_id].materials,cssType:adcreativeData.adcreative_template_id}"></ng-container>
+                <ng-container *ngIf="!materialData.by_material_set_title" [ngTemplateOutlet]="materialSelectedShow"
+                              [ngTemplateOutletContext]="{materialList:materialData.material_type_lst[item.convert_channel_id].materials,cssType:adcreativeData.adcreative_template_id}"></ng-container>
+              </ng-container>
+
+              <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.material_lst.is_show">
+                <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                <span style="color: red;">{{ checkErrorTip.material_lst.tip_text }}</span>
+              </div>
+
+              <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.material_title_lst.is_show">
+                <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                <span style="color: red;">{{ checkErrorTip.material_title_lst.tip_text }}</span>
+              </div>
+            </div>
+          </div>
+          <!--广告语选取-->
+          <div class="lab-row pl20 mb20 w100p"
+               *ngIf="!materialData.by_material_set_title">
+            <label><span class="redStart">*</span>广告语选取:</label>
+            <div>
+              <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                      (click)="addLaunchTitle(materialData.material_type_lst[item.convert_channel_id].description,'description')">
+                <span>添加广告语</span>
+              </button>
+              <ng-container *ngIf="materialData.material_type_lst[item.convert_channel_id].description.length>0"
+                            [ngTemplateOutlet]="titleSelectedShow"
+                            [ngTemplateOutletContext]="{titles:materialData.material_type_lst[item.convert_channel_id].description,type: 'description'}">
+              </ng-container>
+              <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.description_lst.is_show">
+                <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                <span style="color: red;">{{ checkErrorTip.description_lst.tip_text }}</span>
+              </div>
+            </div>
+          </div>
+          <!--短广告语选取-->
+          <div class="lab-row pl20 mb20 w100p"
+               *ngIf="adcreativeData.creative_material_type===4 && !materialData.by_material_set_title">
+            <label><span class="redStart">*</span>短广告语选取:</label>
+            <div>
+              <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                      (click)="addLaunchTitle(materialData.material_type_lst[item.convert_channel_id].short_slogan,'short_slogan')">
+                <span>添加短广告语</span>
+              </button>
+              <ng-container *ngIf="materialData.material_type_lst[item.convert_channel_id].short_slogan.length>0"
+                            [ngTemplateOutlet]="titleSelectedShow"
+                            [ngTemplateOutletContext]="{titles:materialData.material_type_lst[item.convert_channel_id].short_slogan,type: 'short_slogan'}">
+              </ng-container>
+              <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.title_lst.is_show">
+                <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                <span style="color: red;">{{ checkErrorTip.title_lst.tip_text }}</span>
+              </div>
+            </div>
+          </div>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!materialData.by_channel_set_material">
+    <!--素材选取-->
+    <div class="lab-row pl20 mb20 w100p">
+      <label><span class="redStart">*</span>素材选取:</label>
+      <div style="flex:1">
+        <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="openMaterials(materialData.material_type_lst.all.materials,adcreativeData.adcreative_template_id)">
+          <span>素材库</span>
+        </button>
+        <ng-container *ngIf="materialData.material_type_lst.all.materials.length>0">
+          <ng-container *ngIf="materialData.by_material_set_title" [ngTemplateOutlet]="materialSelectedShowAndTitle"
+                        [ngTemplateOutletContext]="{materialList:materialData.material_type_lst.all.materials,cssType:adcreativeData.adcreative_template_id}"></ng-container>
+          <ng-container *ngIf="!materialData.by_material_set_title" [ngTemplateOutlet]="materialSelectedShow"
+                        [ngTemplateOutletContext]="{materialList:materialData.material_type_lst.all.materials,cssType:adcreativeData.adcreative_template_id}"></ng-container>
+        </ng-container>
+
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.material_lst.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.material_lst.tip_text }}</span>
+        </div>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.material_title_lst.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.material_title_lst.tip_text }}</span>
+        </div>
+
+      </div>
+    </div>
+    <!--广告语选取-->
+    <div class="lab-row pl20 mb20 w100p" *ngIf="!materialData.by_material_set_title">
+      <label><span class="redStart">*</span>广告语选取:</label>
+      <div>
+        <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="addLaunchTitle(materialData.material_type_lst.all.description,'description')">
+          <span>添加广告语</span>
+        </button>
+        <ng-container *ngIf="materialData.material_type_lst.all.description.length>0"
+                      [ngTemplateOutlet]="titleSelectedShow"
+                      [ngTemplateOutletContext]="{titles:materialData.material_type_lst.all.description,type: 'description'}">
+        </ng-container>
+
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.description_lst.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.description_lst.tip_text }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!--短广告语选取-->
+    <div class="lab-row pl20 mb20 w100p" *ngIf="adcreativeData.creative_material_type===4&&!materialData.by_material_set_title">
+      <label><span class="redStart">*</span>短广告语选取:</label>
+      <div>
+        <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="addLaunchTitle(materialData.material_type_lst.all.short_slogan,'short_slogan')">
+          <span>添加短广告语</span>
+        </button>
+        <ng-container *ngIf="materialData.material_type_lst.all.short_slogan.length>0"
+                      [ngTemplateOutlet]="titleSelectedShow"
+                      [ngTemplateOutletContext]="{titles:materialData.material_type_lst.all.short_slogan,type: 'short_slogan'}">
+        </ng-container>
+
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.title_lst.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.title_lst.tip_text }}</span>
+        </div>
+      </div>
+
+    </div>
+  </ng-container>
+
+  <!--  行动号召按钮文案 button_text-->
+  <div class="lab-row pl20 mb20 w100p">
+      <label><span class="redStart">*</span>行动号召按钮文案:</label>
+      <div>
+        <nz-select class="w200 ml8 mr8" nzSize="small" [(ngModel)]="adcreativeData.action_bar_text"
+                   (ngModelChange)="getItemErrorTip('action_bar_text',adcreativeData.action_bar_text)"
+                   nzPlaceHolder="请输入按钮文案" nzShowSearch>
+          <nz-option *ngFor="let item of actionBarList" [nzValue]="item" [nzLabel]="item"></nz-option>
+        </nz-select>
+<!--        <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)"-->
+<!--           class="ml5 mt5 mr5"></i>-->
+<!--        <span>长度范围2-4</span>-->
+
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.action_bar_text.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.action_bar_text.tip_text }}</span>
+        </div>
+      </div>
+  </div>
+
+  <!--  推荐理由-->
+  <div class="lab-row pl20 mb20 w100p" *ngIf="exposeTagList&&exposeTagList.length>0">
+      <label>推荐理由:</label>
+      <div>
+        <nz-select class="w200 ml8 mr8" nzMode="multiple" [nzMaxMultipleCount]="2" nzSize="small" [(ngModel)]="adcreativeData.expose_tag" nzPlaceHolder="请输入文案">
+          <ng-container *ngFor="let item of exposeTagList">
+            <nz-option [nzValue]="item.text" [nzLabel]="item.text"></nz-option>
+          </ng-container>
+        </nz-select>
+        <span class="lab-tip"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)"
+                                 class="ml5 mt5 mr5"></i>最多选2个</span>
+      </div>
+  </div>
+
+  <!--  创意分类 -->
+  <div class="lab-row pl20 mb20 w100p">
+    <label><span class="redStart">*</span>创意分类:</label>
+    <div>
+      <nz-tabset class="ml8" style="margin-top: -13px;">
+        <nz-tab [nzTitle]="item.name" *ngFor="let item of chanPubIdList">
+          <div class="lab-row mt20">
+            <div>
+              <div class="lab-row ">
+                <nz-cascader class="w_full ml8"
+                             [nzSize]="'small'"
+                             [nzOptions]="creativeCategoryList"
+                             [(ngModel)]="adcreativeData.creative_category_list[item.id]">
+                </nz-cascader>
+              </div>
+            </div>
+          </div>
+        </nz-tab>
+      </nz-tabset>
+      <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.creative_category_list.is_show">
+        <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+        <span style="color: red;">{{ checkErrorTip.creative_category_list.tip_text }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!--  创意标签 label-->
+  <div class="lab-row pl20 mb20">
+      <label><span class="redStart">*</span>创意标签:</label>
+      <div>
+        <div class="ml8" style="border:1px solid #d9d9d9;width: 250px">
+          <nz-input-group [nzSuffix]="suffixIcon">
+            <input type="text" nz-input placeholder="Search" [(ngModel)]="treeSearchValue" />
+          </nz-input-group>
+          <ng-template #suffixIcon>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+          <div style="height: 250px;overflow: auto">
+            <nz-tree #tree
+              nzCheckable
+              [nzData]="creativeLabelList['arrList']"
+              [nzSearchValue]="treeSearchValue"
+              [nzCheckedKeys]="adcreativeData['creative_tag_label']"
+              (nzCheckBoxChange)="nzTreeChange($event)"
+              [nzHideUnMatched]="true"
+            >
+            </nz-tree>
+          </div>
+
+        </div>
+      </div>
+    <div>
+      <div class="ml20" style="width: 400px;">
+        <div style="height: 280px;padding: 5px;border:1px solid #d9d9d9;overflow: auto">
+          <div style="height: 30px;line-height: 30px;margin-bottom: 8px;border-bottom:1px solid #d9d9d9;overflow: hidden;text-overflow: ellipsis">
+            <ng-container *ngFor="let item of adcreativeData.creative_tag;">
+              <span>{{item}}、</span>
+            </ng-container>
+          </div>
+          <ng-container *ngFor="let item of creativeMapTagList">
+            <span class="tag-span" [ngClass]="{'tag-active':adcreativeData.creative_tag.indexOf(item)>-1}" (click)="addMapTag(item)">{{item}}</span>
+          </ng-container>
+        </div>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.creative_tag.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.creative_tag.tip_text }}</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!--  创意名称-->
+  <div class="lab-row pl20 mb20 w100p">
+      <label>创意名称:</label>
+      <div>
+        <input nz-input
+               class="w200 ml8 mr8"
+               [nzSize]="'small'"
+               [placeholder]="'请输入创意名称'"
+               [(ngModel)]="adcreativeData.creative_name"
+               (ngModelChange)="getItemErrorTip('creative_name', adcreativeData.creative_name)"
+               >
+
+        <span class="lab-tip"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)"
+                                 class="ml5 mt5 mr5"></i>长度范围1-100</span>
+
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.creative_name.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.creative_name.tip_text }}</span>
+        </div>
+      </div>
+
+  </div>
+
+</div>
+
+<ng-template #titleSelectedShow let-titles="titles" let-type="type">
+  <div class="ml8 mt8 title-selected-show-container">
+    <div class="title-action">
+      <div>已选（{{titles.length}}）</div>
+      <div>
+        <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="clearAllSelected(titles,'title')">
+          <span>清空</span>
+        </button>
+        <button class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addLaunchTitle(titles,type)">
+          <span>添加标题</span>
+        </button>
+      </div>
+    </div>
+    <div class="title-item-wrapper mt10">
+      <div class="title-item" *ngFor="let title of titles;let idx=index">
+        <span class="txt" title="{{title}}">{{title}}</span>
+        <i nz-icon nzType="close" nzTheme="outline" class="hand" (click)="clearSingleSelected(titles,idx,'title')"></i>
+      </div>
+
+    </div>
+  </div>
+
+</ng-template>
+
+<ng-template #materialSelectedShow let-materialList="materialList" let-cssType="cssType">
+  <div class="ml8 mt8 mr8 material-selected-show-container">
+    <div class="title-action">
+      <div>已选（{{materialList.length}}）</div>
+      <div>
+        <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="clearAllSelected(materialList,'material')">
+          <span>清空</span>
+        </button>
+        <button class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="openMaterials(materialList,cssType)">
+          <span>添加素材</span>
+        </button>
+      </div>
+    </div>
+    <div class="material-item-wrapper mt10">
+      <ng-container *ngIf="materialList">
+        <div class="material-item">
+          <div class="material-item-left">
+            <div class="material-item-content" *ngFor="let material of materialList;let idx=index">
+              <div class="material-card-box">
+                <div class="material-card">
+                  <div class="material-card-content small">
+                    <div class="image-preview material-preview">
+                      <div class="img-content">
+                        <img class="cover size img" [src]="material['preview_img']" nz-popover [nzPopoverContent]="contentTemplate" [nzPopoverOverlayClassName]="'image-drop-class'" nzPopoverPlacement="topLeft" nzPopoverTrigger="click">
+                        <ng-template #contentTemplate>
+                          <div class="image-cnt-drop">
+                            <img *ngIf="cssType!=3" [src]="material['preview_img']">
+                            <a *ngIf="cssType==3" target="_blank" [href]="material['preview_video']"><video poster="{{material['preview_img']}}" [src]="material['preview_video']" controls="controls" controlslist="nodownload"></video></a>
+                          </div>
+                        </ng-template>
+                        <!--                        <i *ngIf="cssType==3" class="play-icon" style="font-size:18px;color:white;" nz-icon nzType="play-circle" nzTheme="fill"></i>-->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="material-name">{{material['material_name']}}</div>
+                </div>
+
+              </div>
+              <i nz-icon class="close-icon" nzType="close-circle" nzTheme="outline"
+                 (click)="clearSingleSelected(materialList,idx,'material')"></i>
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #materialSelectedShowAndTitle let-materialList="materialList" let-cssType="cssType">
+  <div class="ml8 mt8 mr8 material-selected-show-container">
+    <div class="title-action">
+      <div>已选（{{materialList.length}}）</div>
+      <div>
+        <button class="mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="clearAllSelected(materialList,'material')">
+          <span>清空</span>
+        </button>
+        <button class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                (click)="openMaterials(materialList,cssType)">
+          <span>添加素材</span>
+        </button>
+      </div>
+    </div>
+    <div class="material-item-wrapper mt10">
+      <ng-container *ngIf="materialList">
+        <div class="material-item multiline" *ngFor="let material of materialList;let idx=index">
+          <div class="material-item-left">
+            <div class="material-item-content">
+              <div class="material-card-box">
+                <div class="material-card">
+                  <div class="material-card-content small">
+                    <div class="image-preview material-preview">
+                      <div class="img-content">
+                        <img class="cover size img" [src]="material['preview_img']" nz-popover [nzPopoverContent]="contentTemplate" [nzPopoverOverlayClassName]="'image-drop-class'" nzPopoverPlacement="topLeft" nzPopoverTrigger="click">
+                        <ng-template #contentTemplate>
+                          <div class="image-cnt-drop">
+                            <img *ngIf="cssType!=3" [src]="material['preview_img']">
+                            <a *ngIf="cssType==3" target="_blank" [href]="material['preview_video']"><video poster="{{material['preview_img']}}" [src]="material['preview_video']" controls="controls" controlslist="nodownload"></video></a>
+                          </div>
+                        </ng-template>
+                        <!--                        <i *ngIf="cssType==3" class="play-icon" style="font-size:18px;color:white;" nz-icon nzType="play-circle" nzTheme="fill"></i>-->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="material-name">{{material['material_name']}}</div>
+                </div>
+
+              </div>
+
+              <i nz-icon class="close-icon" nzType="close-circle" nzTheme="outline"
+                 (click)="clearSingleSelected(materialList,idx,'material')"></i>
+            </div>
+          </div>
+          <div class="material-item-right"
+               [ngClass]="{empty:!(material['description'] && material['description'].length>0)}">
+            <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                    *ngIf="!(material['description'] && material['description'].length>0)"
+                    (click)="addLaunchTitle(material['description'],'description')">
+              <span>添加长广告语</span>
+            </button>
+            <ng-container *ngIf="material['description'] && material['description'].length>0"
+                          [ngTemplateOutlet]="titleSelectedShow"
+                          [ngTemplateOutletContext]="{titles:material['description'],type: 'description'}">
+            </ng-container>
+          </div>
+          <div class="material-item-right" [ngClass]="{empty:!(material['short_slogan'] && material['short_slogan'].length>0)}"
+               *ngIf="adcreativeData.creative_material_type===4">
+            <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                    *ngIf="!(material['short_slogan'] && material['short_slogan'].length>0)"
+                    (click)="addLaunchTitle(material['short_slogan'],'title')">
+              <span>添加短广告语</span>
+            </button>
+            <ng-container *ngIf="material['short_slogan'] && material['short_slogan'].length>0"
+                          [ngTemplateOutlet]="titleSelectedShow" [ngTemplateOutletContext]="{titles:material['short_slogan'],type: 'title'}">
+            </ng-container>
+          </div>
+
+        </div>
+
+      </ng-container>
+
+    </div>
+  </div>
+</ng-template>

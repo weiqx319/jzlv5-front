@@ -1,0 +1,51 @@
+<div class="channels-edit-content">
+  <div class="basic-setting setting-block pl20 mt20">
+    <div class="lab-row pl20 mb20 tips">*点击选择您要编辑的内容</div>
+    <div class="lab-row pl20 mb20" *ngFor="let key of defaultDataKeys">
+      <label nz-checkbox [(ngModel)]="defaultData[key].is_open" (nzCheckedChange)="defaultData[key].is_open===!defaultData[key].is_open"><span *ngIf="key!=='app_logo_image_id'" class="redStart">*</span>{{defaultData[key].label_text}}</label>
+      <div>
+        <input *ngIf="key!=='app_logo_image_id'&&key!=='update_time'"
+               nz-input
+               class="w_full ml8"
+               [nzSize]="'small'"
+               type="text"
+               [(ngModel)]="defaultData[key].value"
+               (ngModelChange)="checkBasicData(key)"
+               [disabled]="!defaultData[key].is_open"
+               placeholder="请输入">
+
+        <nz-date-picker *ngIf="key==='update_time'"
+               class="w_full ml8"
+               [nzSize]="'small'"
+               [(ngModel)]="defaultData[key].value"
+               (ngModelChange)="checkBasicData(key)"
+               [disabled]="!defaultData[key].is_open"></nz-date-picker>
+
+        <div *ngIf="key==='app_logo_image_id'">
+          <div class="mb10 ml8" *ngIf="defaultData[key].imgUrl">
+            <img style="max-width: 80px; max-height: 80px" [src]="defaultData[key].imgUrl" />
+          </div>
+          <div>
+            <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" [disabled]="!defaultData[key].is_open" (click)="uploadAppLogo()">
+              <span>上传头像</span>
+            </button>
+            <button class="ml8 mr8" nz-button [nzType]="'default'" [nzSize]="'small'" [disabled]="!defaultData[key].is_open" (click)="openGallery(defaultData[key],1)">
+              <i nz-icon nzType="select" nzTheme="outline"></i><span>选择头像</span>
+            </button>
+          </div>
+        </div>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip[key].is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip[key].tip_text }}</span>
+        </div>
+    </div>
+  </div>
+
+  <div class="channels-edit-btn">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+</div>

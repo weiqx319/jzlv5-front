@@ -1,0 +1,17 @@
+<div class="lab-row-more-publisher">
+  <!--<span class="row-title">投放状态：</span>-->
+  <nz-radio-group [nzSize]="'small'"
+                  [(ngModel)]="status">
+    <div>
+      <label class="mr20" nz-radio [nzValue]="false">
+        <span>开启</span>
+      </label>
+    </div>
+    <div>
+      <label nz-radio [nzValue]="true">
+        <span>暂停</span>
+      </label>
+    </div>
+  </nz-radio-group>
+</div>
+

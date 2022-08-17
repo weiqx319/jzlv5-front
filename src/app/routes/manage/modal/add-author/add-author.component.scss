@@ -1,0 +1,30 @@
+.conver-author{
+  padding: 0 32px;
+  .title{
+    font-size: 30px;
+    color: #56ACEF;
+    text-align: center;
+    line-height: 90px;
+  }
+
+  .green{
+    color: #A9DE5B;
+  }
+  .red{
+    color: red;
+  }
+  .conver-author-container{
+    font-size: 14px;
+    line-height: 28px;
+  }
+  .button-controller{
+    text-align: center;
+    margin-top: 20px;
+  }
+  .button-controller button{
+    width: 50px;
+    height: 24px;
+    background: #56ACEF;
+    border-color: #56ACEF;
+  }
+}

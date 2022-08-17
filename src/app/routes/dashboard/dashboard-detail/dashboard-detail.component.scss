@@ -1,0 +1,34 @@
+.dashboard-empty-content{
+
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  text-align: center;
+  margin-top: 36px;
+}
+.dashboard-empty-content-hint{
+  margin-top: 8px;
+}
+
+.modalContext{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items:center;
+  padding: 18px;
+  font-size: 14px;
+  .load{
+    margin-bottom: 22px;
+  }
+  .file-pdf{
+    margin-bottom: 20px;
+    font-size: 30px;
+  }
+  .downloadBtn{
+    margin-top: 20px;
+  }
+}
+.tips{
+  font-size: 10px;
+  color: #e43911;
+}

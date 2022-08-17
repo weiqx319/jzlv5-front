@@ -1,0 +1,140 @@
+<div >
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="manage-operation">
+      <div class="manage-header-left">
+        <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addTradeMark()">
+         <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加维度</span>
+        </a>
+        <span style="color:orange;">*注：每个广告主最多增加3个维度,每个维度都可设置多个维度值及维度值判定规则。</span>
+      </div>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="manage-table manage-no-result-table">
+      <nz-table #nzTable [nzShowPagination]="false"
+                [nzPageSizeOptions]="[30,50,100,500]"
+                [nzSize]="'default'"
+                [nzData]="apiData"
+                [nzFrontPagination]="false"
+                [(nzPageSize)]="pageSize"
+                [(nzPageIndex)]="currentPage"
+                (nzPageIndexChange)="refreshData()"
+                (nzPageSizeChange)="refreshData(true)"
+                [nzTotal]="total"
+                [nzLoading]="loading"
+                [nzShowTotal]="totalItemTemplate"
+                [nzScroll]="{x:'1190px', y: noResultHeight+'px' }">
+        <thead>
+        <tr>
+          <!--<th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll($event)"></th>-->
+          <th [nzWidth]="'200px'">
+            <span>维度名称</span>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>维度类别</span>
+            <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="levelTypeTip" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+            <ng-template #levelTypeTip>
+              <p>自定义规则：表示该维度可以直接设定判定规则</p>
+              <p>从属规则：表示该维度下有子维度，根据子维度值设置从属关系。</p>
+            </ng-template>
+          </th>
+          <th [nzWidth]="'150px'">
+            <span>所属一级维度</span>
+          </th>
+          <th [nzWidth]="'120px'">
+            <span>设置维度值</span>
+          </th>
+          <th [nzWidth]="'120px'">
+            <span>设置维度规则</span>
+          </th>
+
+          <th [nzWidth]="'150px'">
+            <span>所属广告主</span>
+          </th>
+          <th [nzWidth]="'150px'">
+            <span>操作人</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of apiData">
+          <!--<td nzShowCheckbox [nzDisabled]="data.disabled" [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)"></td>-->
+          <td>
+            {{data['biz_unit_type_name']}}
+            <a class="ml4" (click)="editTradeNameFirst(data)" title="'编辑"><i class="ml4" nz-icon nzType="edit" nzTheme="outline"></i></a>
+
+          </td>
+          <td>
+            {{data.level == 1 ?'一级维度':'二级维度'}}
+            {{data.define_type == 1 ?'(从属规则)':'(自定义规则)'}}
+          </td>
+          <td>
+            {{data.parent_name}}
+          </td>
+          <td>
+
+            <a [routerLink]="['../one_mark/', data.id+'_'+data.cid]" *ngIf="data.level == 1">设置维度值</a>
+            <a [routerLink]="['../two_mark/', data.id+'_'+data.cid+'_'+data.parent_id.split('_')[2]+'_'+data.parent_name_id]" *ngIf="data.level != 1" >设置维度值</a>
+  <!--          <a [routerLink]="['/manage/trade_mark/two_mark/', data['child'].id+'_'+data.cid+'_'+data.biz_unit_type.split('_')[2]+'_'+data.id]">设置</a-->
+          </td>
+          <td>
+            <ng-container *ngIf="data.define_type != 1">
+              <a [routerLink]="['../trade_rule/', data.id+'_'+data.cid]">设置维度规则</a>
+            </ng-container>
+          </td>
+          <td>{{data['advertiser_name']}}</td>
+          <td>{{data['user_name']}}</td>
+          <td><a *ngIf="data.level == 1" (click)="openCopyModal(data)" href="javascript:">复制</a></td>
+        </tr>
+        <tr *ngIf="apiData.length===0">
+          <td #noResultTd [attr.colspan]="8"  [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+            <div class="table-no-result">
+              <div class="table-no-result-content">
+                <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addTradeMark()">
+                 <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加行业标识项</span>
+                </button>
+                <div class="mt8">您还未创建行业标识项，点击按钮创建行业标识项</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+    </div>
+  </div>
+</div>
+
+<nz-modal [(nzVisible)]="isCopyVisible" nzTitle="复制维度" (nzOnCancel)="cancelCopy()" (nzOnOk)="copyOk()">
+  <div class="trade-mark-copy-content mt20 mb20">
+    <div class="lab-row mb10">
+      <label class="">广告主:</label>
+      <div class="ml8">
+        <nz-select class="ml8 w240"
+                   [nzSize]="'default'"
+                   nzPlaceHolder="请选择广告主"
+                   nzMode="multiple"
+                   [nzMaxTagCount]="2"
+                   [nzMaxTagPlaceholder]="tagPlaceHolder"
+                   [(ngModel)]="copyData.add_cid"
+                   [nzShowSearch]="true"
+                   [nzAutoClearSearchValue]="false">
+          <nz-option
+            *ngFor="let option of advertiserList"
+            [nzDisabled]="option.key==copyData.copy_cid"
+            [nzLabel]="option.name"
+            [nzValue]="option.key">
+          </nz-option>
+        </nz-select>
+        <ng-template #tagPlaceHolder let-selectedList> 已选{{ copyData.add_cid.length}}项</ng-template>
+      </div>
+    </div>
+    <div *nzModalFooter>
+      <button [nzSize]="'default'" nz-button nzType="default" (click)="cancelCopy()">取消</button>
+      <button [nzSize]="'default'" nz-button nzType="primary" [nzLoading]="copyLoading" (click)="copyOk()">确定</button>
+    </div>
+  </div>
+</nz-modal>

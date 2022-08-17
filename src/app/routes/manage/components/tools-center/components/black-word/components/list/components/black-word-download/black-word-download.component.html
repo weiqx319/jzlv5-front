@@ -1,0 +1,68 @@
+<div class="message-container">
+  <div class="table">
+    <nz-table
+      #nzTable
+      nzShowSizeChanger
+      [nzPageSizeOptions]="[30,50,100,500]"
+      [nzSize]="'default'"
+      [nzData]="blackWordDownloadList"
+      [nzFrontPagination]="false"
+      [(nzPageSize)]="pageSize"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="refreshData()"
+      (nzPageSizeChange)="refreshData(true)"
+      [nzTotal]="total"
+      [nzLoading]="loading"
+      [nzShowTotal]="totalItemTemplate"
+      [nzScroll]="{ x: '1000px', y: noResultHeight+'px' }"
+    >
+      <thead>
+      <tr>
+        <!--        <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="isAllChecked" (nzCheckedChange)="updateAllChecked($event)">-->
+        <!--        </th>-->
+        <th [nzWidth]="'200px'">
+          <span>下载任务ID</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'task_id',name:'下载任务ID',type:'multiValue'}" [(filterResult)]="filterResult['task_id']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>媒体名称</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'publisher_id',name:'筛查媒体',type:'singleList'}" [(filterResult)]="filterResult['publisher_id']" [filterOption]="filterPublisherOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>层级</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'apply_level',name:'层级',type:'singleList'}" [(filterResult)]="filterResult['apply_level']" [filterOption]="filterApplyLevelOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>状态</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'status',name:'状态',type:'singleList'}" [(filterResult)]="filterResult['status']" [filterOption]="filterStatusOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>下载时间</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of blackWordDownloadList">
+        <!--        <td-->
+        <!--          nzShowCheckbox-->
+        <!--          [(nzChecked)]="data.checked"-->
+        <!--          (nzCheckedChange)="checkedChange()"-->
+        <!--        ></td>-->
+        <td>{{data.task_id}}</td>
+        <td>{{data.publisher_name}}</td>
+        <td>{{applyLevelList[data.apply_level]}}</td>
+        <td>{{ taskStatusList[data.status] }}</td>
+        <td>{{data.create_time}}</td>
+        <td>
+          <a *ngIf="data.status==2" href="javascript:" (click)="download(data)">下载</a>
+          <span *ngIf="data.status!=2">下载</span>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>

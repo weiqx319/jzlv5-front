@@ -1,0 +1,86 @@
+//.upload-container{
+//  display: flex;
+//  display: -webkit-flex;
+//  justify-content: flex-end;
+//  .upload-content{
+//    .upload-item{
+//      overflow: hidden;
+//    }
+//  }
+//}
+
+.sub-company-content{
+  //display: flex;
+  //display: -webkit-flex;
+  //justify-content: flex-start;
+}
+.sub-company-form{
+  //width: 450px;
+  padding: 15px 0;
+  width: 100%;
+}
+.sub-company-form-footer{
+  padding-top: 8px;
+  text-align: right;
+}
+
+.upload-item{
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+.upload-title{
+  display: block;
+  float: left;
+  width: 80px;
+  text-align: right;
+  height: 22px;
+  line-height: 22px;
+  margin-right: 8px;
+}
+.uploadDiv{
+  float: left;
+  position: relative;
+  width: 80%;
+  .example{
+    display: inline-block;
+    margin-top: 3px;
+    position: absolute;
+    left: 95px;
+  }
+}
+.height20{
+  height: 20px !important;
+}
+.progressDiv{
+  margin-right: 25px;
+  width: 82%;
+}
+.zhushi{
+  display: inline-block;
+  margin-top: 3px;
+  position: absolute;
+  left: 95px;
+
+}
+.overHidden{
+  overflow: hidden;
+}
+.fontSize12{
+  font-size: 12px !important;
+}
+
+.lab-row-new {
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+  > label:first-child {
+    width: 80px;
+    text-align: right;
+    margin-right: 8px;
+  }
+  .content{
+    display: flex;
+    align-items: center;
+  }
+
+}

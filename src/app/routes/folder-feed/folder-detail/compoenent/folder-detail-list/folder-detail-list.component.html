@@ -1,0 +1,342 @@
+<ng-container *ngIf="isJump === ''">
+  <nz-drawer [nzClosable]="false" [nzWidth]="1200" [nzTitle]="summary_type_name[source_summary]+'数据'" [nzVisible]="viewChartShow" nzPlacement="right" (nzOnClose)="toggleChart()">
+    <ng-container *ngIf="viewChartShow">
+      <app-view-chart (closeCharts)="closeChart($event)"
+                      [is_refresh] = 'is_refresh'
+                      [chartItems] = 'chartItems'
+                      [viewTableData]="viewTableData"
+                      [chartType]="showChartType"></app-view-chart>
+    </ng-container>
+  </nz-drawer>
+</ng-container>
+<div class="app-module-condition pt8 pb8 pl30 pr30" *ngIf="isJump === ''" [ngClass]="{'view-chart-show':viewChartShow}">
+  <div>
+    <button class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeCondition()" >
+     <i nz-icon nzType="filter" nzTheme="outline"></i><span>高级筛选</span>
+    </button>
+    <button class="manage-add mr8" [ngClass]="{activity_button:viewChartShow}" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="toggleChart()">
+      <i nz-icon nzType="line-chart" nzTheme="outline"></i><span>图表</span>
+    </button>
+    <div class="inline-block ml8 fs12">
+      <app-table-query-show [summary_type]="viewTableData.summary_type" [filterConditions] = "allFilterOption" [dataRange]="viewTableData['data_range']" [conditions]="viewTableData['condition']" (changed)="reloadData()"></app-table-query-show>
+    </div>
+  </div>
+  <div class="app-module-operations mr0 mt8">
+    <div class="app-module-operations-left">
+        <button *ngIf="folderLevel=='keyword'" class="manage-add mr8" nz-button [nzType]="'default'" (click)="jumpToEdit()" [nzSize]="'small'" >
+         <i nz-icon nzType="edit" nzTheme="outline"></i><span>编辑</span>
+        </button>
+
+
+          <button class="manage-add mr8"  nz-button  [nzType]="'default'" [nzSize]="'small'" nz-popconfirm [nzPopconfirmTitle]="'确定要删除所选项吗?'" (nzOnConfirm)="delFolderDetails()" [nzPopconfirmPlacement]="'bottomLeft'">
+            <i nz-icon nzType="close" nzTheme="outline"></i><span>移除</span>
+          </button>
+
+      <button class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="$event.srcElement.blur();changeField()">
+        <i nz-icon nzType="bars" nzTheme="outline"></i><span>修改列</span>
+      </button>
+
+
+    </div>
+    <div class="app-module-operations-right fs12">
+      <nz-select class="w100 mr8" (ngModelChange)="mainRangeChange($event)"
+                 [(ngModel)]="viewTableData['main_device']"
+                 [nzSize]="'small'">
+        <nz-option [nzValue]="'all'" [nzLabel]="'设备:全部'"></nz-option>
+        <nz-option [nzValue]="'pc'" [nzLabel]="'设备:计算机'"></nz-option>
+        <nz-option [nzValue]="'wap'" [nzLabel]="'设备:移动'"></nz-option>
+      </nz-select>
+      <div class="inline-block">
+        <button class="manage-add" nz-popconfirm [nzPopconfirmTitle]="createReportTpl" (nzOnCancel)="cancelCreateReport()" (nzOnConfirm)="handCreateReport()" [(nzPopconfirmVisible)]="showCreateReport"  [nzPopconfirmPlacement]="'bottomRight'" [nzPopconfirmOverlayClassName]="'pop-report-wrap'"  nz-button [nzType]="'default'" [nzSize]="'small'">
+          <span>生成报表</span>
+        </button>
+        <ng-template #createReportTpl>
+          <div class="pop-report">
+            <div class="lab-row">
+              <span>名称：</span>
+              <input nz-input type="text" placeholder="报表1" [nzSize]="'small'" style="width: 160px;"
+                     [(ngModel)]="viewReportSetting.report_name">
+            </div>
+            <div class="lab-row">
+              <span>格式：</span>
+              <nz-select class="w160" [nzSize]="'small'" [(ngModel)]="viewReportSetting.report_format">
+                <nz-option [nzLabel]="'Excel'" [nzValue]="'excel'"></nz-option>
+                <nz-option [nzLabel]="'PDF'" [nzValue]="'pdf'"></nz-option>
+              </nz-select>
+            </div>
+
+            <div class="lab-row">
+              <span>时间粒度：</span>
+              <nz-select class="w160" [nzSize]="'small'" [(ngModel)]="time_grain">
+                <nz-option [nzLabel]="'合计'" [nzValue]="'summary'"></nz-option>
+                <nz-option [nzLabel]="'分日'" [nzValue]="'day'"></nz-option>
+                <nz-option [nzLabel]="'分星期'" [nzValue]="'weekSplit'"></nz-option>
+                <nz-option [nzLabel]="'分周'" [nzValue]="'week'"></nz-option>
+                <nz-option [nzLabel]="'分月'" [nzValue]="'month'"></nz-option>
+              </nz-select>
+            </div>
+            <div class="lab-row">
+              <span>频率：</span>
+              <nz-select class="w160" [nzSize]="'small'" [(ngModel)]="viewReportSetting.report_freq">
+                <nz-option [nzLabel]="'每天'" [nzValue]="'day'"></nz-option>
+                <nz-option [nzLabel]="'每周'" [nzValue]="'week'"></nz-option>
+                <nz-option [nzLabel]="'每月'" [nzValue]="'month'"></nz-option>
+                <nz-option [nzLabel]="'立即执行'" [nzValue]="'now'"></nz-option>
+              </nz-select>
+            </div>
+            <div class="lab-row">
+              <span>接收邮箱：</span>
+              <span>（一行一个）</span>
+            </div>
+            <div class="mt5">
+              <textarea  nz-input type ="'textarea'" rows="4" [(ngModel)]="viewReportSetting.email_list" style="width: 220px"></textarea>
+            </div>
+
+          </div>
+        </ng-template>
+
+        <!--<button nz-button [nzType]="'default'" [nzSize]="'small'" (click)="downloadReport()">生成报表</button>-->
+      </div>
+      <div class="module-time inline-block ml8" (click)="changeDate()">
+        <div class="time-content pl8 pr8">
+          <span>{{timeDesc}}</span>
+        </div>
+        <div class="module-icon time-icon">
+          <i nz-icon nzType="calendar" nzTheme="outline"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="view-table" [ngClass]="{hidden:isJump == 'true'}"   [ngStyle]="{'height':tableHeight+'px'}">
+  <ngx-datatable
+    #viewTable
+    class="jzl"
+    [rows]="rows"
+    [loadingIndicator]="loadingIndicator"
+    [columns]="columns"
+    [columnMode]="'force'"
+    [headerHeight]="44"
+    [footerHeight]="40"
+    [rowHeight]="viewTableData['sub_summary_type']==='creative'?getRowHeight:rowHeight"
+    [count]="pageInfo.currentPageCount"
+    [scrollbarV]="true"
+    [scrollbarH]="true"
+    [externalPaging]="true"
+    [externalSorting]="true"
+    [virtualization]="true"
+    [sorts]="defaultSortItems"
+    [sortType]="'single'"
+    (sort)="sortView($event)"
+    (resize)="refreshTableSize()"
+    [reorderable]="reorderable"
+    [selected]="selected"
+    [selectionType]="'checkbox'"
+    [messages]="dataMessages"
+    (select)='onSelect($event)' >
+
+    <!--<ngx-datatable-column [width]="300" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">-->
+    <ng-template #chkHeader ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+      <label
+        class="datatable-checkbox" [ngClass]="{selectedCurrent:selectedType=='current' && selected.length>0}">
+        <a nz-dropdown [nzDropdownMenu]="menu">
+            <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"/>
+          </a>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu nzSelectable>
+            <li nz-menu-item (click)="selectedChange('current',allRowsSelected,selectFn)">
+              <a>选择当前页</a>
+            </li>
+            <li nz-menu-item  (click)="selectedChange('all',allRowsSelected,selectFn)">
+              <a>选择全部</a>
+            </li>
+          </ul>
+          </nz-dropdown-menu>
+
+
+      </label>
+    </ng-template>
+    <ng-template #refreshRankingHeader ngx-datatable-header-template  let-column="column" let-value="value" let-sortFn="sortFn">
+      <span class="datatable-header-cell-wrapper" (click)="sortFn()">
+          <span class="datatable-header-cell-label"> {{column.name}}</span>
+      </span>
+      <app-filter [filterType]="column.data['filterType']" [filterKey]="column.data['filterKey']" [(filterResult)]="column.data['filterResult']" [extraOption]="column.data['extraOption']" [filterOption]="column.data['filterOption']" (submit)="reloadFirstPage()"></app-filter>
+      <i nz-icon nzType="sync" nzTheme="outline" *ngIf="refreshRankingSetting.status=='stop'" (click)="queryRanking()"></i>
+      <i nz-icon nzType="pause" nzTheme="outline" *ngIf="refreshRankingSetting.status !=='stop'" (click)="stopRanking()"></i>
+      <!--<app-filter [filterType]="column.data['filterType']" [filterKey]="column.data['filterKey']" [(filterResult)]="column.data['filterResult']"  [filterOption]="column.data['filterOption']" (submit)="reloadData()"></app-filter>-->
+    </ng-template>
+
+    <ng-template #dataAnalysisHeader ngx-datatable-header-template let-value="value" let-column="column" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+      <span class="datatable-add-column">{{column['name']}}</span>
+    </ng-template>
+
+    <ng-template #dataAnalysisCell let-row="row" let-value="value" let-column="column">
+      <a><i nz-icon nzType="stock" nzTheme="outline" (click)="openDataAnalysis(row)"></i></a>
+
+      <nz-drawer [nzClosable]="false" [nzWidth]="750" [nzVisible]="row['analysis']" nzPlacement="right" [nzTitle]="'数据分析('+row[dataAnalysisTitleKey[source_summary]]+')'" (nzOnClose)="closeDataAnalysis(row)">
+        <ng-container *ngIf="row['analysis']">
+          <app-data-analysis-chart (closeCharts)="closeChart($event)" [channelId]="1" [publisherId]="0"
+                                   [chartItems] ='chartItems'
+                                   [summaryType]="folderLevel"
+                                   [rowData]='row'></app-data-analysis-chart>
+        </ng-container>
+
+      </nz-drawer>
+
+    </ng-template>
+
+
+
+    <ng-template #refreshRankingCell ngx-datatable-cell-template let-row="row" let-value="value">
+      <span>{{row['ranknow']?row['ranknow']:'未获取'}}</span>
+      <i nz-icon nzType="question-circle" nzTheme="outline" *ngIf="row['ranknow']"
+         [nzPopoverOverlayClassName]="'backColor'"
+         nz-popover
+         [nzPopoverContent]="rankingtemplate"
+         nzPopoverPlacement="right"
+         class="ml2"
+         style="color: #f09200"></i>
+       <i nz-icon nzType="picture" nzTheme="outline" class="ml2"*ngIf="row['ranknow'] && getDiffHour(row['ranking_time']) <= 10 && row['html_id'] !== '' && row['html_status'] !== '2'"  (click)="seeView(row)" style="cursor: pointer;" title="查看实况页面"></i>
+       <ng-template #rankingtemplate>
+        <div class="mt8 mb8">
+          <p><span class="mr8">所属地域:</span><span>{{row['region_name']}}</span></p>
+          <p class="mt8"><span class="mr8">所属设备:</span><span>{{row['ranking_device']==2?'移动':'计算机'}}</span><span *ngIf="row['publisher_id']*1 === 4">({{row['device_os'] * 1==2?'ios':'安卓'}})</span></p>
+          <p class="mt8"><span class="mr8">查询时间:</span><span>{{row['ranking_time']}}</span></p>
+        </div>
+      </ng-template>
+       <i nz-icon nzType="loading" nzTheme="outline"  *ngIf="row['realLoading']"></i>
+       <i nz-icon nzType="loading" nzTheme="outline"  *ngIf="row['rankingLoading']"></i>
+      <!--<img ng-src="assets/images/loading.gif" width="14px" ng-if="row[col.field]['loading']">-->
+      <!--<span ng-show="row[col.field]['ranknow'] || (row[col.field]['ranking_code'] && ((row[col.field]['ranking_code']/1000|number:0)!=0 || row[col.field]['ranking_code']==-1))" popover-template="'rankingPopoverTemplate.html'" popover-trigger="mouseenter" popover-placement="right"><a class="hand"><i class="jzl-icon-question-circle-o color-blue"></i></a></span>-->
+      <!--<i class="jzl-icon-refresh color-blue" ng-show="!row[col.field]['loading']" aria-hidden="true" title="刷新实时排名" ng-click="getRealTimeRanking(row,p_index)"></i>-->
+      <!--<i class="jzl-icon-refresh c-gray" ng-show="row[col.field]['loading']" aria-hidden="true" title="刷新实时排名"></i>-->
+    </ng-template>
+
+
+
+    <ng-template #chkCell ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+      <label
+        class="datatable-checkbox">
+        <input type="checkbox" [checked]="isSelected" (change)="singleSelectedChange(onCheckboxChangeFn,$event)"/>
+      </label>
+    </ng-template>
+
+    <ng-template #filterHeader ngx-datatable-header-template  let-column="column" let-value="value" let-sortFn="sortFn">
+      <span class="datatable-header-cell-wrapper" (click)="sortFn()">
+          <span class="datatable-header-cell-label"> {{column.name}}</span>
+      </span>
+      <app-filter [filterType]="column.data['filterType']" [filterKey]="column.data['filterKey']" [(filterResult)]="column.data['filterResult']" [extraOption]="column.data['extraOption']" [filterOption]="column.data['filterOption']" (submit)="reloadFirstPage()"></app-filter>
+    </ng-template>
+
+    <ng-template #rateCell ngx-datatable-cell-template let-value="value">
+      <ng-container *ngIf="value == '10000000.00'">
+        +∞
+      </ng-container>
+      <ng-container *ngIf="value == '-10000000.00'">
+        -∞
+      </ng-container>
+      <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00' && value!= null && value!=''">
+        {{ value + '%'}}
+      </ng-container>
+    </ng-template>
+
+    <ng-template #rateCell ngx-datatable-cell-template let-value="value">
+      <ng-container *ngIf="value == '10000000.00'">
+        +∞
+      </ng-container>
+      <ng-container *ngIf="value == '-10000000.00'">
+        -∞
+      </ng-container>
+      <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00' && value!= null && value!=''">
+        {{ value + '%'}}
+      </ng-container>
+    </ng-template>
+
+    <ng-template #starTpl ngx-datatable-cell-template let-value="value">
+      <span class="star-conatainer">
+        <span class="star-active" [ngStyle]="{'width': value/10*70+'px'}"></span>
+      </span>
+    </ng-template>
+
+
+    <ng-template #rateCellColor ngx-datatable-cell-template let-value="value">
+      <ng-container *ngIf="value == '10000000.00'">
+        <span>+∞</span>
+      </ng-container>
+      <ng-container *ngIf="value == '-10000000.00'">
+        <span>-∞</span>
+      </ng-container>
+      <ng-container *ngIf="value != '-10000000.00' && value != '10000000.00'">
+        <span [ngClass]="{'up-color':value>0,'down-color':value<0}">{{ value + '%'}}</span>
+      </ng-container>
+    </ng-template>
+    <ng-template #cellColor ngx-datatable-cell-template let-value="value">
+      <span [ngClass]="{'up-color':value>0,'down-color':value<0}">{{ value }}</span>
+    </ng-template>
+
+    <ng-template #rankingSettingCell let-row="row"  ngx-datatable-cell-template>
+      <ng-container *ngIf="row['ranking_setting'].length>0">
+        <span nz-popover [nzPopoverContent]="rankingDescTpl" [nzPopoverPlacement]="'bottom'">{{row['ranking_setting'][0]['desc']}}</span>
+        <ng-template #rankingDescTpl>
+           <span *ngFor="let item of row['ranking_setting']">
+                <p>{{item['desc']}}</p>
+           </span>
+        </ng-template>
+
+      </ng-container>
+      <ng-container *ngIf="row['ranking_setting'].length===0">
+        <span>请设置出价和排名</span>
+      </ng-container>
+    </ng-template>
+    <ng-template #rankingBegDateCell let-row="row"  ngx-datatable-cell-template>
+      <ng-container *ngIf="row['ranking_beg_date']">
+       <span>{{row['ranking_beg_date'].split(' ')[0]}}</span>
+      </ng-container>
+      <ng-container *ngIf="!row['ranking_beg_date']">
+        <span>请设置执行时间</span>
+      </ng-container>
+    </ng-template>
+    <ng-template #rankingEndDateCell let-row="row"  ngx-datatable-cell-template>
+      <ng-container *ngIf="row['ranking_end_date']">
+       <span>{{row['ranking_end_date'].split(' ')[0]}}</span>
+      </ng-container>
+      <ng-container *ngIf="!row['ranking_end_date']">
+        <span>请设置执行时间</span>
+      </ng-container>
+    </ng-template>
+
+    <ng-template #creativeCell let-row="row"  ngx-datatable-cell-template>
+      <app-creative-style-show [row]="row" *ngIf="menuService.currentPublisherId===1"></app-creative-style-show>
+      <app-byte-dance-creative-style-show [row]="row" *ngIf="menuService.currentPublisherId===7"></app-byte-dance-creative-style-show>
+      <app-gdt-creative-style-show [row]="row" *ngIf="menuService.currentPublisherId===6"></app-gdt-creative-style-show>
+    </ng-template>
+
+
+    <!--</ngx-datatable-column>-->
+
+    <ngx-datatable-footer>
+      <ng-template  ngx-datatable-footer-template>
+        <div class="page-count">
+          共{{pageInfo.allCount}}条
+        </div>
+        <div class="page-size-select">
+          <select [(ngModel)]="pageInfo.pageSize" (ngModelChange)="changePageSize($event)">
+            <option *ngFor="let sizeList of pageInfo.pageSizeList" [value]="sizeList.key">{{sizeList.name}}</option>
+          </select>
+        </div>
+        <datatable-pager
+          [pagerLeftArrowIcon]="'datatable-icon-left'"
+          [pagerRightArrowIcon]="'datatable-icon-right'"
+          [pagerPreviousIcon]="'datatable-icon-prev'"
+          [pagerNextIcon]="'datatable-icon-skip'"
+          [page]="pageInfo.currentPage"
+          [size]="pageInfo.pageSize"
+          [count]="pageInfo.allCount"
+          [hidden]="!((pageInfo.allCount / pageInfo.pageSize) > 1)"
+          (change)="changePage($event)">
+        </datatable-pager>
+      </ng-template>
+    </ngx-datatable-footer>
+  </ngx-datatable>
+</div>
+<app-folder-detail-edit [parentData]="editParameter"  *ngIf="isJump === 'true'" (isHidden) = 'childPageState($event)'></app-folder-detail-edit>

@@ -1,0 +1,286 @@
+<div class="target-setting-container" *ngIf="targetConfig" >
+  <div class="form-content" >
+    <!--地域类型-->
+    <div class="lab-row mb20">
+      <label>{{targetConfig['region_type']['label']}}:</label>
+      <div>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.region_type"  (ngModelChange)="noBreak('area')">
+          <ng-container *ngFor="let option of targetConfig['region_type']['sub']">
+            <label nz-radio-button [nzValue]="option.value" [nzDisabled]="isLaunchPackage && option.disabled">{{option.label}}</label>
+          </ng-container>
+        </nz-radio-group>
+
+        <!-- 城市等级 -->
+        <div class="ml8 mt20" *ngIf="editDefaultDataOption.region_type === 3">
+              <nz-transfer-tree [getParentKey]="false" [target]="editDefaultDataOption.city_level.resultData"
+                                (nzChange)="transferTreeChange(editDefaultDataOption.city_level,$event,'region')"
+                                [source]="editDefaultDataOption.city_level.list"
+                                [canSearch]="true">
+              </nz-transfer-tree>
+        </div>
+        <!-- 指定区域 -->
+        <div class="ml8 mt20" *ngIf="editDefaultDataOption.region_type === 1">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption.designated_area.resultData"
+                                (nzChange)="transferTreeChange(editDefaultDataOption.designated_area,$event,'region')"
+                                [source]="editDefaultDataOption.designated_area.list"
+                                [canSearch]="true">
+          </nz-transfer-tree>
+        </div>
+      </div>
+    </div>
+     <!--年龄-->
+    <div class="lab-row mb20">
+      <label>{{targetConfig['age']['label']}}:</label>
+      <div>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption['age_type']" (ngModelChange)="noBreak('age')">
+          <label *ngFor="let radio of targetConfig['age']['sub']" [nzDisabled]="isLaunchPackage && radio.disabled" nz-radio-button nzValue="{{radio['value']}}">
+            {{radio['label']}}
+          </label>
+        </nz-radio-group>
+        <ng-container *ngIf="editDefaultDataOption['age_type'] === 'customize_age'">
+          <div class="mt10 ml8 relative ">
+            <label><span class="redStart">*</span></label>
+            <nz-checkbox-group class="mr8 ml8" [(ngModel)]="ages_range_sub"
+                               (ngModelChange)="updateSingleChecked($event,'age')"></nz-checkbox-group>
+          </div>
+          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.age.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.age.tip_text }}</span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- 性别-->
+    <div class="lab-row mb20">
+      <label>{{targetConfig['gender_type']['label']}}:</label>
+      <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.gender_type"  (ngModelChange)="noBreak('gender_type')">
+        <ng-container *ngFor="let option of targetConfig['gender_type']['sub']">
+          <label nz-radio-button [nzValue]="option.value" [nzDisabled]="isLaunchPackage && option.disabled">{{option.label}}</label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+
+    <!-- 购物意图 -->
+    <div class="lab-row mb20">
+      <label>{{targetConfig['purchase_intention']['label']}}:</label>
+      <div>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption['purchase_intention_type']">
+          <label *ngFor="let radio of targetConfig['purchase_intention']['sub']" [nzDisabled]="isLaunchPackage && radio.disabled" nz-radio-button [nzValue]="radio['value']">
+            {{radio['label']}}
+          </label>
+        </nz-radio-group>
+        <div class="ml8 mt20" *ngIf="editDefaultDataOption['purchase_intention_type'] === 2">
+          <ng-container *ngIf="!purchaseIntentionLoading">
+            <nz-transfer-tree [getParentKey]="true" [joinParents]="true" [target]="editDefaultDataOption.purchase_intention_category.resultData"
+                (nzChange)="transferTreeChange(editDefaultDataOption.purchase_intention_category,$event,'purchase_intention')"
+                [source]="editDefaultDataOption.purchase_intention_category.list"
+                [canSearch]="true">
+            </nz-transfer-tree>
+          </ng-container>
+          <div class="lab-row mt10">
+            <label [style.width]="'70px'"><span class="redStart">*</span>投放意图:</label>
+            <div class="ml8 relative">
+              <nz-checkbox-group class="mr8" [(ngModel)]="targetConfig['interest_level_list']['sub']"
+                                 (ngModelChange)="updateSingleChecked($event,'interest_level')"></nz-checkbox-group>
+            </div>
+          </div>
+          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.interest_level.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.interest_level.tip_text }}</span>
+          </div>
+          <div class="lab-row mt10 ">
+            <label [style.width]="'70px'"><span class="redStart">*</span>行为类型:</label>
+            <div class="ml8 relative">
+              <nz-checkbox-group class="mr8" [(ngModel)]="targetConfig['purchase_level_list']['sub']"
+                                 (ngModelChange)="updateSingleChecked($event,'purchase_level')"></nz-checkbox-group>
+            </div>
+          </div>
+          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.purchase_level.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.purchase_level.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 快手网红 -->
+    <div class="lab-row mb20">
+      <label>{{targetConfig['celebrity_info']['label']}}:</label>
+      <div>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption['celebrity_info_type']">
+          <label *ngFor="let radio of targetConfig['celebrity_info']['sub']" [nzDisabled]="isLaunchPackage && radio.disabled" nz-radio-button [nzValue]="radio['value']">
+            {{radio['label']}}
+          </label>
+        </nz-radio-group>
+        <div class="ml8 mt20" *ngIf="editDefaultDataOption['celebrity_info_type'] === 2">
+          <!-- 已选快手网红 -->
+          <div class="checked-fans-stars" *ngIf="editDefaultDataOption.celebrity_info.fans_star_list.length>0">
+            <div class="clear-btn icon-button" (click)="clearFansStars()">
+              <i nz-icon nzType="close-circle" nzTheme="outline"></i>
+            </div>
+            <div class="fans-stars-container" >
+              <div class="fans-star-item" *ngFor="let item of editDefaultDataOption.celebrity_info.fans_star_list">
+               <span class="fans-star-des" nz-tooltip nzTooltipTitle="{{item.author_name}}(ID:{{item.author_id}})">{{item.author_name}}(ID:{{item.author_id}})</span>
+               <div class="delete-btn icon-button" (click)="checkFansStar(false, item)">
+                 <i nz-icon nzType="close" nzTheme="outline"></i>
+               </div>
+              </div>
+            </div>
+          </div>
+          <div class="error-tip mb5 ml8" *ngIf="checkErrorTip.fans_star.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.fans_star.tip_text }}</span>
+          </div>
+          <div style="display: flex">
+            <!-- 一级分类 -->
+            <div class="category-container">
+              <div class="category-title">一级分类</div>
+              <div class="category-detail">
+                <ng-container *ngIf="editDefaultDataOption.celebrity_info_category.list.length>0">
+                  <div class="category-item" *ngFor="let item of editDefaultDataOption.celebrity_info_category.list" [ngClass]="{'active': editDefaultDataOption.celebrity_info_category.level1_id===item.id}">
+                    <div class="select-item" (click)="changeCelebrityCategory(item,'level1')">
+                      <div class="item-label">{{item.name}}</div>
+                      <i nz-icon nzType="right" nzTheme="outline"></i>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+            <!-- 二级分类 -->
+            <div class="category-container">
+              <div class="category-title">二级分类</div>
+              <div class="category-detail">
+                <div class="category-item" *ngFor="let subItem of editDefaultDataOption.celebrity_info_category.level2_list" [ngClass]="{'active': editDefaultDataOption.celebrity_info_category.level2_id===subItem.id}">
+                  <div class="select-item"  (click)="changeCelebrityCategory(subItem,'level2')">
+                    <div class="item-label">{{subItem.name}}</div>
+                    <i nz-icon nzType="right" nzTheme="outline"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 搜索结果 -->
+            <div class="category-container" style="width: 350px;">
+              <div class="category-title" style="padding: 0;">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                  <input type="text" nz-input placeholder="搜索快手网红" [(ngModel)]="editDefaultDataOption.celebrity_info_category.searchKey"/>
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                  <i nz-icon nzType="search" class="search-btn icon-button " (click)="getFansStarList({ 'keyword': this.editDefaultDataOption.celebrity_info_category.searchKey })"></i>
+                </ng-template>
+              </div>
+              <div class="category-detail">
+                <!-- 按分类搜索的提示 -->
+                <div class="category-search-tip" *ngIf="editDefaultDataOption.celebrity_info_category.level1_name&&editDefaultDataOption.celebrity_info_category.level2_name">
+                  {{editDefaultDataOption.celebrity_info_category.level1_name}}-{{editDefaultDataOption.celebrity_info_category.level2_name}}分类下的快手网红
+                </div>
+                <nz-spin [nzSpinning]="fansStarsLoading">
+                  <div class="category-item" style="height: 50px;" *ngFor="let item of editDefaultDataOption.celebrity_info_category.fans_star_list">
+                    <div class="select-item">
+                      <label class="checkbox" nz-checkbox [(ngModel)]="item.checked" (ngModelChange)="checkFansStar($event,item)"></label>
+                      <div class="fans-star-info">
+                        <div class="fans-star-name">{{item.author_name}}</div>
+                        <div class="fans-star-detail">
+                          <span class="fans">粉丝量：{{item.fans_num}}</span>
+                          <span class="category">分类：{{item.first_label}}-{{item.second_label}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </nz-spin>
+              </div>
+            </div>
+          </div>
+          <div class="lab-row mt10">
+            <label [style.width]="'70px'"><span class="redStart">*</span>行为类型:</label>
+            <div class="ml8 relative">
+              <nz-checkbox-group class="mr8" [(ngModel)]="targetConfig['behavior_list']['sub']"
+                                 (ngModelChange)="updateSingleChecked($event,'behavior_list')"></nz-checkbox-group>
+            </div>
+          </div>
+          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.behavior_list.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.behavior_list.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--自选人群-->
+    <div class="lab-row mb20">
+      <label>{{targetConfig['population']['label']}}:</label>
+      <div>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.population_type" (ngModelChange)="changeTarget('audience')" >
+          <label *ngFor="let option of targetConfig['population']['sub']" nz-radio-button [nzValue]="option.value" [nzDisabled]="isLaunchPackage && option.disabled">
+            {{option['label']}}
+          </label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <div class="lab-row mt20 mb20" *ngIf="editDefaultDataOption.population_type == 2">
+      <label><span class="redStart">*</span>账户:</label>
+      <div style="width: 800px">
+        <nz-select class="w400 ml8"
+                   [nzSize]="'small'"
+                   [nzMaxTagCount]="1"
+                   [nzMaxTagPlaceholder]="globalTemplate?globalTemplate.tagPlaceHolder:''"
+                   nzMode="multiple"
+                   [nzPlaceHolder]="'请选择帐户'"
+                   [nzAllowClear]="true"
+                   [(ngModel)]="accounts"
+                   (ngModelChange)="changeAccount($event)"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of accountsList"
+            [nzLabel]="option.pub_account_name"
+            [nzValue]="option.chan_pub_id">
+          </nz-option>
+        </nz-select>
+        <nz-tabset class="ml8">
+          <nz-tab [nzTitle]="item.name" *ngFor="let item of curAccountsList">
+            <div class="lab-row mt20 mb20" *ngIf="editDefaultDataOption.population_type == 2">
+              <label style="width: 80px">定向人群:</label>
+              <div class="population-body-content mb20 ml8">
+                <nz-input-group [nzSuffix]="suffixIcon">
+                  <input type="text" nz-input placeholder="搜索" [(ngModel)]="searchCrowdValue" />
+                </nz-input-group>
+                <ng-template #suffixIcon>
+                  <i nz-icon nzType="search"></i>
+                </ng-template>
+                <nz-tree #tree
+                         nzCheckable
+                         [nzSearchValue]="searchCrowdValue"
+                         [nzData]="item.crowdList"
+                         (nzCheckBoxChange)="treeCrowdOnCheck($event,item)"
+                         [nzCheckedKeys]="item.crowdResultList"
+                         nzVirtualHeight="268px"
+                         nzBlockNode
+                ></nz-tree>
+              </div>
+            </div>
+
+            <div class="lab-row mb20" *ngIf="editDefaultDataOption.population_type == 2">
+              <label style="width: 80px">排除人群:</label>
+              <div class="population-body-content mb20 ml8">
+                <nz-input-group [nzSuffix]="suffixIcon">
+                  <input type="text" nz-input placeholder="搜索" [(ngModel)]="searchExcludeValue" />
+                </nz-input-group>
+                <ng-template #suffixIcon>
+                  <i nz-icon nzType="search"></i>
+                </ng-template>
+                <nz-tree #tree
+                         nzCheckable
+                         [nzData]="item.excludeCrowdList"
+                         [nzSearchValue]="searchExcludeValue"
+                         (nzCheckBoxChange)="treeExcludeCrowdOnCheck($event,item)"
+                         [nzCheckedKeys]="item.excludeCrowdResultList"
+                         nzVirtualHeight="268px"
+                         nzBlockNode
+                ></nz-tree>
+              </div>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </div>
+    </div>
+  </div>
+</div>
+<app-global-template></app-global-template>

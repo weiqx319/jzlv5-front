@@ -1,0 +1,6 @@
+<div class="quick-edit-creative-label-batch">
+  <div class="ed_shotinp mt5">
+    <nz-select style=" width: 250px;" [(ngModel)]="label" [nzSize]="'small'" nzMode="tags" nzPlaceHolder="请添加标签" (ngModelChange)="changeLabel()"></nz-select>
+  </div>
+  <p style="margin-top: 8px; color: #f09200" *ngIf="is_warning">标签必填</p>
+</div>

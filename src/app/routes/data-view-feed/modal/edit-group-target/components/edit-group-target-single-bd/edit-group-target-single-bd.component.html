@@ -1,0 +1,471 @@
+<!--单元_编辑单元-->
+<div>
+  <h3 *ngIf="selectData['update_type'] == 'single'">
+    编辑(定向): <span>{{ groupData['pub_adgroup_name'] }}</span
+  >（属于:{{ publisherOption[groupData['publisher_id']] }}/{{
+    groupData['pub_account_name']
+    }}、{{ groupData['pub_campaign_name'] }}）
+  </h3>
+  <h3 *ngIf="selectData['update_type'] != 'single'">
+    批量编辑定向设置：
+  </h3>
+  <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption['crowd'].is_edit }" *ngIf="selectData['account_list'].length === 1">
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['crowd'].is_edit"
+        (ngModelChange)="updateCrowdSelect('crowd')"
+      >
+        <span>人群包
+              <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="'人群包不支持与长期兴趣、吧主题、意图词、商圈、场所同时选择'" [nzTooltipPlacement]="'topLeft'" class="ml5" style="color: #f09200"></i>
+           :</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+      <div>
+        <nz-radio-group [(ngModel)]="editDefaultDataOption.crowd.value" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.crowd.is_edit">
+          <label nz-radio nzValue="all">不限</label>
+          <label nz-radio nzValue="define">自定义</label>
+        </nz-radio-group>
+      </div>
+      <div class="relative">
+        <div class="mt10" *ngIf="editDefaultDataOption.crowd.value!='all'">
+          <div style="display: flex"><label
+            class="titleLa w110 inline-block"
+            nz-checkbox
+            [(ngModel)]="editDefaultDataOption.crowd.crowdEdit"
+            [nzDisabled]="(editDefaultDataOption.interests.is_edit && editDefaultDataOption.interests.value == '1')|| (editDefaultDataOption.offlineVisit.is_edit && editDefaultDataOption.offlineVisit.value != '0') "
+          >选择包含人群:</label>
+            <nz-radio-group *ngIf="!onlyOne" [(ngModel)]="editDefaultDataOption.crowd.crow_edit_type" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.crowd.crowdEdit">
+              <label nz-radio nzValue="1">覆盖</label>
+              <label nz-radio nzValue="2">新增</label>
+              <label nz-radio nzValue="3">删除</label>
+            </nz-radio-group>
+          </div>
+          <div class="crowd-body-content mt10">
+            <nz-tree #tree
+                     nzCheckable
+                     [nzData]="editDefaultDataOption.crowd.crowdList"
+                     (nzCheckBoxChange)="treeCrowdOnCheck($event)"
+                     [nzCheckedKeys]="editDefaultDataOption.crowd.crowdResultList"
+                     nzBlockNode
+            ></nz-tree>
+            <div *ngIf="!editDefaultDataOption.crowd.crowdEdit" class="disableArea"></div>
+          </div>
+
+
+        </div>
+
+        <div class="mt10" *ngIf="editDefaultDataOption.crowd.value!='all'">
+          <div style="display: flex"><label
+            class="titleLa w110 inline-block"
+            nz-checkbox
+            [(ngModel)]="editDefaultDataOption.crowd.excludeCrowdEdit"
+          >选择排除人群:</label> <nz-radio-group *ngIf="!onlyOne" [(ngModel)]="editDefaultDataOption.crowd.exclude_crow_edit_type" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.crowd.excludeCrowdEdit">
+            <label nz-radio nzValue="1">覆盖</label>
+            <label nz-radio nzValue="2">新增</label>
+            <label nz-radio nzValue="3">删除</label>
+          </nz-radio-group></div>
+          <div class="crowd-body-content mt10">
+            <nz-tree #tree
+                     nzCheckable
+                     [nzData]="editDefaultDataOption.crowd.excludeCrowdList"
+                     (nzCheckBoxChange)="treeExcludeCrowdOnCheck($event)"
+                     [nzCheckedKeys]="editDefaultDataOption.crowd.excludeCrowdResultList"
+                     nzBlockNode
+            ></nz-tree>
+            <div *ngIf="!editDefaultDataOption.crowd.excludeCrowdEdit" class="disableArea"></div>
+          </div>
+        </div>
+
+        <div *ngIf="!editDefaultDataOption.crowd.is_edit" class="disableArea"></div>
+      </div>
+
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption['age'].is_edit }">
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['age'].is_edit"
+      >
+        <span>年龄:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+        <label
+          nz-checkbox
+          [nzDisabled]="!editDefaultDataOption['age'].is_edit"
+          [(ngModel)]="editDefaultDataOption.age.allChecked"
+          (ngModelChange)="updateAllChecked(editDefaultDataOption.age)"
+          [nzIndeterminate]="editDefaultDataOption.age.indeterminate"
+        >
+          全部
+        </label>
+
+        <nz-checkbox-group [(ngModel)]="editDefaultDataOption.age.sub" [nzDisabled]="!editDefaultDataOption['age'].is_edit" (ngModelChange)="updateSingleChecked('age')"></nz-checkbox-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption['sex'].is_edit }">
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['sex'].is_edit"
+      >
+        <span>性别:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+      <label
+        nz-checkbox
+        [nzDisabled]="!editDefaultDataOption['sex'].is_edit"
+        [(ngModel)]="editDefaultDataOption.sex.allChecked"
+        (ngModelChange)="updateAllChecked(editDefaultDataOption.sex)"
+        [nzIndeterminate]="editDefaultDataOption.sex.indeterminate"
+      >
+        全部
+      </label>
+      <nz-checkbox-group [(ngModel)]="editDefaultDataOption.sex.sub" [nzDisabled]="!editDefaultDataOption['sex'].is_edit" (ngModelChange)="updateSingleChecked('sex')"></nz-checkbox-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption['education'].is_edit }" >
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['education'].is_edit"
+      >
+        <span>学历:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+      <label
+        nz-checkbox
+        [nzDisabled]="!editDefaultDataOption['education'].is_edit"
+        [(ngModel)]="editDefaultDataOption.education.allChecked"
+        (ngModelChange)="updateAllChecked(editDefaultDataOption.education)"
+        [nzIndeterminate]="editDefaultDataOption.education.indeterminate"
+      >
+        全部
+      </label>
+      <nz-checkbox-group [(ngModel)]="editDefaultDataOption.education.sub" [nzDisabled]="!editDefaultDataOption['education'].is_edit"  (ngModelChange)="updateSingleChecked('education')"></nz-checkbox-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption['region'].is_edit }">
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['region'].is_edit"
+        [nzDisabled]="editDefaultDataOption['offlineVisit'].is_edit && editDefaultDataOption.offlineVisit.value == '2'"
+      >
+        <span>地域
+              <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="'注意：设置地域将会重置已设置的商圈'" [nzTooltipPlacement]="'topLeft'" class="ml5" style="color: #f09200"></i>
+           :</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+      <nz-radio-group [(ngModel)]="editDefaultDataOption.region.value" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.region.is_edit || (editDefaultDataOption['offlineVisit'].is_edit && editDefaultDataOption.offlineVisit.value == '2')" (ngModelChange)="updateRadio($event,'region')">
+        <label nz-radio nzValue="0">不限</label>
+        <label nz-radio nzValue="1">省市</label>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="mt10 ml140" *ngIf="editDefaultDataOption.region.value == '1'">
+    <div style="display: flex" *ngIf="!onlyOne">
+      <span>操作选项:</span>
+      <nz-radio-group [(ngModel)]="editDefaultDataOption.region.edit_type" nzName="radiogroup">
+        <label nz-radio nzValue="1">覆盖</label>
+        <label nz-radio nzValue="2">新增</label>
+        <label nz-radio nzValue="3">删除</label>
+      </nz-radio-group>
+    </div>
+    <app-region-select-view [is_hidden]="editDefaultDataOption['region'].is_edit" [parent_region_list]="editDefaultDataOption.region.regionList" [par_publisher]="publishId"  (regionSelected)="transferTreeChange('region',$event)"></app-region-select-view>
+
+  </div>
+
+  <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption['lifeStage'].is_edit }">
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['lifeStage'].is_edit"
+      >
+        <span>人生阶段:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+        <label
+        nz-checkbox
+        [nzDisabled]="!editDefaultDataOption['lifeStage'].is_edit"
+        [(ngModel)]="editDefaultDataOption.lifeStage.allChecked"
+        (ngModelChange)="updateAllChecked(editDefaultDataOption.lifeStage)"
+        [nzIndeterminate]="editDefaultDataOption.lifeStage.indeterminate"
+      >
+        全部
+      </label>
+        <nz-checkbox-group [(ngModel)]="editDefaultDataOption.lifeStage.sub" [nzDisabled]="!editDefaultDataOption['lifeStage'].is_edit" (ngModelChange)="updateSingleChecked('lifeStage')"></nz-checkbox-group>
+
+
+    </div>
+    <div class="clear"></div>
+  </div>
+
+
+
+
+  <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption['interests'].is_edit }">
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['interests'].is_edit"
+        [nzDisabled]="editDefaultDataOption.crowd.is_edit && editDefaultDataOption.crowd.value != 'all' && editDefaultDataOption.crowd.crowdEdit"
+      >
+        <span>长期兴趣
+              <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip  [nzTooltipTitle]="'注意：设置兴趣将会重置自定义人群包和新兴趣定向'" [nzTooltipPlacement]="'topLeft'" class="ml5"  style="color: #f09200"></i>
+            :</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+      <nz-radio-group [(ngModel)]="editDefaultDataOption.interests.value" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.interests.is_edit || (editDefaultDataOption.crowd.is_edit && editDefaultDataOption.crowd.value != 'all' && editDefaultDataOption.crowd.crowdEdit)">
+        <label nz-radio nzValue="0">不限</label>
+        <label nz-radio nzValue="1">自定义</label>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="mt10 ml140 relative" *ngIf=" '1' == editDefaultDataOption.interests.value">
+    <div style="display: flex" *ngIf="!onlyOne">
+      <span>操作选项:</span>
+      <nz-radio-group [(ngModel)]="editDefaultDataOption.interests.edit_type" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.interests.is_edit || (editDefaultDataOption.crowd.is_edit && editDefaultDataOption.crowd.value != 'all' && editDefaultDataOption.crowd.crowdEdit)">
+        <label nz-radio nzValue="1">覆盖</label>
+        <label nz-radio nzValue="2">新增</label>
+        <label nz-radio nzValue="3">删除</label>
+      </nz-radio-group>
+    </div>
+    <nz-transfer-tree [getParentKey]="false" [source]="editDefaultDataOption.interests.treeList" [target]="editDefaultDataOption.interests.resultList" (nzChange)="transferTreeChange('interests',$event)"></nz-transfer-tree>
+    <div *ngIf="!editDefaultDataOption.interests.is_edit" class="disableArea"></div>
+  </div>
+
+  <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption['offlineVisit'].is_edit }">
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['offlineVisit'].is_edit"
+        [nzDisabled]="editDefaultDataOption.crowd.is_edit && editDefaultDataOption.crowd.value != 'all' && editDefaultDataOption.crowd.crowdEdit"
+      >
+        <span>线下到访:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+      <nz-radio-group [(ngModel)]="editDefaultDataOption.offlineVisit.value" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.offlineVisit.is_edit ||  (editDefaultDataOption.crowd.is_edit && editDefaultDataOption.crowd.value != 'all' && editDefaultDataOption.crowd.crowdEdit)" (ngModelChange)="updateRadio($event,'offlineVisit')">
+        <label nz-radio nzValue="0">不限</label>
+        <label nz-radio nzValue="1">场所
+          <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="'注意：1、设置场所将会重置已设置的商圈；2、设置场所将会重置已添加的自定义人群包3、同时设置场所与商业意图时，仅以场所投放'" [nzTooltipPlacement]="'topLeft'" class="ml5" style="color: #f09200"></i>
+       </label>
+        <label nz-radio nzValue="2" *ngIf="editDefaultDataOption.region.value != '1'">商圈
+          <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="'注意：1、设置商圈将会重置已设置的地域和场所；2、设置商圈将会重置已设置的人群包；3、同时设置商圈与商业意图时，仅以商圈投放'" [nzTooltipPlacement]="'topLeft'" class="ml5" style="color: #f09200"></i>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="mt10 ml140 relative" *ngIf="'1'==editDefaultDataOption.offlineVisit.value">
+    <div style="display: flex" *ngIf="!onlyOne">
+      <span>操作选项:</span>
+      <nz-radio-group [(ngModel)]="editDefaultDataOption.offlineVisit.place_edit_type" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.offlineVisit.is_edit ||  (editDefaultDataOption.crowd.is_edit && editDefaultDataOption.crowd.value != 'all' && editDefaultDataOption.crowd.crowdEdit)">
+        <label nz-radio nzValue="1">覆盖</label>
+        <label nz-radio nzValue="2">新增</label>
+        <label nz-radio nzValue="3">删除</label>
+      </nz-radio-group>
+    </div>
+    <nz-transfer-tree [getParentKey]="true" [source]="editDefaultDataOption.offlineVisit.placeList" (nzChange)="transferTreeChange('offlineVisitPlace',$event)"></nz-transfer-tree>
+
+    <div *ngIf="!editDefaultDataOption.offlineVisit.is_edit" class="disableArea"></div>
+  </div>
+
+ <div class="mt10 ml140 relative" *ngIf="'2' == editDefaultDataOption.offlineVisit.value">
+   <div style="display: flex" *ngIf="!onlyOne">
+     <span>操作选项:</span>
+     <nz-radio-group [(ngModel)]="editDefaultDataOption.offlineVisit.biz_edit_type" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.offlineVisit.is_edit ||  (editDefaultDataOption.crowd.is_edit && editDefaultDataOption.crowd.value != 'all' && editDefaultDataOption.crowd.crowdEdit)">
+       <label nz-radio nzValue="1">覆盖</label>
+       <label nz-radio nzValue="2">新增</label>
+       <label nz-radio nzValue="3">删除</label>
+     </nz-radio-group>
+   </div>
+   <div>
+     <span>选择城市</span>
+     <nz-select class="w200 ml8"
+                   [nzSize]="'small'"
+                [(ngModel)] = "editDefaultDataOption.offlineVisit.selectCity"
+                (ngModelChange)="offlineVisitChange($event)"
+                   [nzShowSearch]="true"
+                   [nzPlaceHolder]="'请选择城市'">
+     <ng-container *ngFor="let item of editDefaultDataOption.offlineVisit.bizAreaCityList">
+       <nz-option [nzLabel]="item.name" [nzValue]="item.index"></nz-option>
+     </ng-container>
+   </nz-select>
+   </div>
+   <div class="mt10">
+     <div class="biz-area-body-content">
+     <nz-tree #tree
+              nzCheckable
+              [nzData]="editDefaultDataOption.offlineVisit.bizAreaSelectCityList"
+              (nzCheckBoxChange)="treeOnCheck($event)"
+              nzBlockNode
+     ></nz-tree>
+     </div>
+     <div class="biz-area-body-content-select-tooltip ml10">
+       {{editDefaultDataOption.offlineVisit.bizAreaDesc}}
+     </div>
+
+     <!--[nzExpandAll]="treeExpandAll"-->
+     <!--[nzCheckedKeys]="treeCheckedKeys"-->
+     <!--[nzExpandedKeys]="treeExpandedKeys"-->
+     <!--[nzSearchValue]="treeSearchValue"-->
+     <!--(nzCheckBoxChange)="treeOnCheck($event)"-->
+
+
+   <!--<nz-transfer-tree [source]="editDefaultDataOption.offlineVisit.bizAreaSelectCityList" (nzChange)="transferTreeChange('offlineVisitBizArea',$event)"></nz-transfer-tree>&ndash;&gt;-->
+   </div>
+   <div *ngIf="!editDefaultDataOption.offlineVisit.is_edit" class="disableArea"> </div>
+
+   </div>
+
+  <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption['device'].is_edit }">
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['device'].is_edit"
+      >
+        <span>平台:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+      <div>
+        <label
+          nz-checkbox
+          [nzDisabled]="!editDefaultDataOption['device'].is_edit"
+          [(ngModel)]="editDefaultDataOption.device.allChecked"
+          (ngModelChange)="updateAllChecked(editDefaultDataOption.device)"
+          [nzIndeterminate]="editDefaultDataOption.device.indeterminate"
+        >
+          全部
+        </label>
+        <nz-checkbox-group [(ngModel)]="editDefaultDataOption.device.sub" [nzDisabled]="!editDefaultDataOption['device'].is_edit" (ngModelChange)="updateSingleChecked('device')"></nz-checkbox-group>
+      </div>
+      <div *ngIf="editDefaultDataOption.device.sub[0].checked && !editDefaultDataOption.device.sub[3].checked" class="mt10">
+        <span class="inline-block w80">iOS版本:</span>
+        <label
+          nz-checkbox
+          [nzDisabled]="!editDefaultDataOption['device'].is_edit"
+          [(ngModel)]="editDefaultDataOption.device.sub[0].allChecked"
+          (ngModelChange)="updateAllChecked(editDefaultDataOption.device.sub[0])"
+          [nzIndeterminate]="editDefaultDataOption.device.sub[0].indeterminate"
+        >
+          全部
+        </label>
+        <nz-checkbox-group [(ngModel)]="editDefaultDataOption.device.sub[0].sub" [nzDisabled]="!editDefaultDataOption['device'].is_edit" (ngModelChange)="updateSubItemChecked(editDefaultDataOption.device.sub[0])"></nz-checkbox-group>
+      </div>
+
+      <div *ngIf="editDefaultDataOption.device.sub[1].checked && !editDefaultDataOption.device.sub[3].checked" class="mt10">
+        <span class="inline-block w80">Android版本:</span>
+        <label
+          nz-checkbox
+          [nzDisabled]="!editDefaultDataOption['device'].is_edit"
+          [(ngModel)]="editDefaultDataOption.device.sub[1].allChecked"
+          (ngModelChange)="updateAllChecked(editDefaultDataOption.device.sub[1])"
+          [nzIndeterminate]="editDefaultDataOption.device.sub[1].indeterminate"
+        >
+          全部
+        </label>
+        <nz-checkbox-group [(ngModel)]="editDefaultDataOption.device.sub[1].sub" [nzDisabled]="!editDefaultDataOption['device'].is_edit" (ngModelChange)="updateSubItemChecked(editDefaultDataOption.device.sub[1])"></nz-checkbox-group>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" [ngClass]="{ disabled: editDefaultDataOption['net'].is_edit }">
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['net'].is_edit"
+      >
+        <span>网络:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+      <label
+        nz-checkbox
+        [nzDisabled]="!editDefaultDataOption['net'].is_edit"
+        [(ngModel)]="editDefaultDataOption.net.allChecked"
+        (ngModelChange)="updateAllChecked(editDefaultDataOption.net)"
+        [nzIndeterminate]="editDefaultDataOption.net.indeterminate"
+      >
+        全部
+      </label>
+      <nz-checkbox-group [(ngModel)]="editDefaultDataOption.net.sub" [nzDisabled]="!editDefaultDataOption['net'].is_edit" (ngModelChange)="updateSingleChecked('net')"></nz-checkbox-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label
+        class="titleLa w130 inline-block"
+        nz-checkbox
+        [(ngModel)]="editDefaultDataOption['app'].is_edit"
+        [nzDisabled]="!(editDefaultDataOption.device.sub[1].checked && editDefaultDataOption['device'].is_edit) "
+      >
+        <span>APP偏好:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+      <nz-radio-group [(ngModel)]="editDefaultDataOption.app.value" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.app.is_edit || !editDefaultDataOption.device.sub[1].checked ">
+        <label nz-radio nzValue="all">不限</label>
+        <label nz-radio nzValue="category">APP分类</label>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+
+
+  <div class="mt10 ml140 relative" *ngIf="editDefaultDataOption.app.value == 'category'">
+    <div style="display: flex">
+      <span>操作选项:</span>
+      <ng-container *ngIf="!onlyOne">
+        <nz-radio-group [(ngModel)]="editDefaultDataOption.app.edit_type" nzName="radiogroup">
+          <label nz-radio nzValue="1">覆盖</label>
+          <label nz-radio nzValue="2">新增</label>
+        </nz-radio-group>
+      </ng-container>
+    </div>
+    <div>
+    <nz-transfer-tree [source]="editDefaultDataOption.app.treeList" [target]="editDefaultDataOption.app.resultList" (nzChange)="transferTreeChange('app',$event)"></nz-transfer-tree>
+    </div>
+    <div class="mt10">
+      <span>应用行为:</span>
+      <nz-radio-group [(ngModel)]="editDefaultDataOption.app.behavior" nzName="radiogroup" [nzDisabled]="!editDefaultDataOption.app.is_edit || !editDefaultDataOption.device.sub[1].checked ">
+        <label nz-radio nzValue="2">已安装</label>
+        <label nz-radio nzValue="4">排除已安装</label>
+      </nz-radio-group>
+    </div>
+    <div *ngIf="!editDefaultDataOption.app.is_edit" class="disableArea"> </div>
+  </div>
+
+
+</div>

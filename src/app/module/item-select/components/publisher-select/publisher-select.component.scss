@@ -1,0 +1,21 @@
+.safariItem{
+  .no-check{
+    position: relative;
+    width: 12px;
+    height: 12px;
+  }
+  .no-check::after{
+    content: "";
+    position: absolute;
+    left: 0.2px;
+    top: 0.3px;
+    width: 11px;
+    height: 11px;
+    border: 1px solid #ccc;
+  }
+  span.anticon{
+    cursor: pointer;
+  }
+
+}
+

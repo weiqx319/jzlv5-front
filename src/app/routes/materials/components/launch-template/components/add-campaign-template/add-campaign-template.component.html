@@ -1,0 +1,151 @@
+<div class="add-campaign-template-container">
+  <div class="title">投放模板</div>
+  <nz-spin [nzSpinning]="getting">
+    <div class="form-content pl20">
+      <div class="basic-setting pl20">
+        <div class="basic-card">
+          <div class="lab-row mb20 w100p">
+            <label>绑定账户:</label>
+            <nz-radio-group
+              class="ml8"
+              [(ngModel)]="defaultData.template_type"
+              (ngModelChange)="changeAccount()"
+              [nzSize]="'small'"
+              [nzDisabled]="launchTemplateId"
+            >
+              <ng-container>
+                <label nz-radio-button [nzValue]="'account'">
+                  <span>账户模板</span>
+                </label>
+                <label nz-radio-button [nzValue]="'general'">
+                  <span>通用模板</span>
+                </label>
+              </ng-container>
+            </nz-radio-group>
+          </div>
+          <div class="lab-row mb20 w100p" *ngIf="defaultData.template_type === 'account'">
+            <label>账户列表:</label>
+            <nz-select style="width: 547px" class="ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="defaultData.chan_pub_id"
+                       (ngModelChange)="changeAccountItem($event)"
+                       [nzPlaceHolder]="'请选择'"
+                       [nzDisabled]="launchTemplateId"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of accountsList"
+                [nzLabel]="option.pub_account_name"
+                [nzValue]="option.chan_pub_id">
+              </nz-option>
+            </nz-select>
+          </div>
+        </div>
+        <div class="basic-card">
+          <div class="lab-row mb20">
+            <label><span class="redStart">*</span>模板名称:</label>
+            <input nz-input
+                   class="w200 ml8"
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="defaultData.launch_template_name"
+                   placeholder="请输入模板名称">
+          </div>
+          <div class="lab-row mb20">
+            <label>模板类型:</label>
+            <nz-select class="w200 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="defaultData.landing_type"
+                       [nzDisabled]="defaultData.launch_template_id"
+                       (ngModelChange)="landingTypeChange();"
+                       [nzPlaceHolder]="'请选择'"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of landingTypeList"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+          </div>
+        </div>
+      </div>
+
+      <div class="target-setting pl20" [ngStyle]="{'height':tableHeight - 40 +'px'}">
+        <!--计划部分-->
+        <div class="form-card mb10">
+          <div class="sub_title mb10">计划部分</div>
+          <app-adgroup-section [data]="defaultData.adgroup.basic" [errorTip]="errorTip.adgroup.basic" [chan_pub_id]="defaultData.chan_pub_id" [landing_type]="defaultData.landing_type" [mediaTargetList]="mediaTargetList" (changeValue)="changeadGroupFalg()"></app-adgroup-section>
+        </div>
+        <!--定向选择-->
+        <div class="form-card mb10">
+          <div class="sub_title mb10">定向选择</div>
+          <div class="lab-row mb20">
+            <label>定向类型:</label>
+            <nz-radio-group
+              class="ml8"
+              [(ngModel)]="defaultData.target_type"
+              [nzSize]="'small'"
+            >
+              <ng-container>
+                <label nz-radio-button [nzValue]="'media'">
+                  <span>媒体定向</span>
+                </label>
+                <label nz-radio-button [nzValue]="'local'">
+                  <span>本地定向</span>
+                </label>
+              </ng-container>
+            </nz-radio-group>
+          </div>
+          <div class="lab-row mb20" *ngIf="defaultData.target_type === 'media'">
+            <label>媒体定向:</label>
+            <nz-select class="w200 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="defaultData.adgroup.audience_package_id"
+                       [nzPlaceHolder]="'请选择'"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of mediaTemplateList"
+                [nzLabel]="option.title"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="lab-row mb20" *ngIf="defaultData.target_type === 'local'">
+            <label>绑定定向:</label>
+            <nz-select class="w200 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="defaultData.adgroup.audience_template_id"
+                       (ngModelChange)="audienceTemplateSltChange($event)"
+                       [nzPlaceHolder]="'请选择'"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of targetTypeList"
+                [nzLabel]="option.audience_template_name"
+                [nzValue]="option.audience_template_id">
+              </nz-option>
+            </nz-select>
+          </div>
+        </div>
+        <!--创意部分-->
+        <div class="form-card mb10">
+          <div class="sub_title mb10">创意部分</div>
+          <app-creative-section [data]="defaultData.adgroup.creative.basic" [adgroup]="defaultData.adgroup.basic" [errorTip]="errorTip.adgroup.creative.basic" [landing_type]="defaultData.landing_type" [mediaTargetList]="mediaTargetList" (changeValue)="changeadGroupFalg()"></app-creative-section>
+        </div>
+
+        <!--推广卡片-->
+        <div class="mb10">
+<!--          <div class="sub_title mb10">推广卡片</div>-->
+          <app-card-section #cardSection [data]="defaultData.adgroup.creative.basic" [adgroup]="defaultData.adgroup.basic" [landing_type]="defaultData.landing_type" [cardTemplateId]="cardTemplateId" [errorTip]="errorTip.adgroup.creative.basic"></app-card-section>
+<!--          <app-add-card-template></app-add-card-template>-->
+        </div>
+      </div>
+    </div>
+  </nz-spin>
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

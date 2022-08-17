@@ -1,0 +1,241 @@
+<div class="fixed-condition-manage page-condition-header">
+  <a class="back-button" (click)="goBack()">
+    <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+    <span class="ml10">返回</span>
+  </a>
+  <button nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteLaunchGroup(launchGroupDetail)" nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click" class=" mr8" nz-button [nzType]="'default'" [nzSize]="'default'">
+    <span>删除投放项目</span>
+  </button>
+</div>
+<!-- <div class="launch-return">
+  <div class="launch-return-left" (click)="goBack()">
+    <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+    <span class="ml10">返回</span>
+  </div>
+  <div class="launch-return-right">
+    <button nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteLaunchGroup(launchGroupDetail)"
+            nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'"
+            nzPopconfirmTrigger="click" class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'">
+      <span>删除策略模板</span>
+    </button>
+  </div>
+</div> -->
+<div class="launch-group-detail">
+  <div class="launch-group-detail-wrapper">
+    <div class="launch-group-detail-content">
+      <div class="base-info">
+        <div class="base-info-head mb10">
+          <div class="head-title">基本信息</div>
+          <div>
+            <button class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'"
+                    (click)="editLaunchGroup(launchGroupDetail)">
+              <span>修改基本信息</span>
+            </button>
+          </div>
+        </div>
+        <div class="base-info-body">
+          <div nz-row>
+            <div nz-col nzXs="24" nzSm="12" nzMd="8">
+              <div class="base-info-term">策略名称：</div>
+              <div class="base-info-detail">{{launchGroupDetail['project_name']}}</div>
+            </div>
+            <div nz-col nzXs="24" nzSm="12" nzMd="8">
+              <div class="base-info-term">操作账户：</div>
+              <div class="base-info-detail">
+                <div class="limit-line1">
+                  <span *ngFor="let item of parent_accounts_list">{{item.pub_account_name + ','}}</span>
+                </div>
+              </div>
+            </div>
+            <div nz-col nzXs="24" nzSm="12" nzMd="8">
+              <div class="base-info-term">客户成本：</div>
+              <div class="base-info-detail">{{launchGroupDetail['convert_cost']}}</div>
+            </div>
+            <div nz-col nzXs="24" nzSm="12" nzMd="8">
+              <div class="base-info-term">备注：</div>
+              <div class="base-info-detail"><span>{{launchGroupDetail['comment']}}</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <nz-divider style="margin-top:5px;"></nz-divider>
+
+      <div class="ad-template">
+        <div class="ad-template-head">
+          <span class="head-title">策略模板</span>
+          <div style="display: flex">
+            <!--            <button [nzSize]="'small'" nz-button nz-dropdown [nzDropdownMenu]="operMenu"> 批量操作 <i nz-icon nzType="down"></i> </button>-->
+            <!--            <nz-dropdown-menu #operMenu>-->
+            <!--              <ul nz-menu>-->
+            <!--                <li nz-menu-item>开启</li>-->
+            <!--                <li nz-menu-item>关闭</li>-->
+            <!--                <li nz-menu-item>删除</li>-->
+            <!--              </ul>-->
+            <!--            </nz-dropdown-menu>-->
+            <!--            <nz-divider nzType="vertical"></nz-divider>-->
+            <button class=" mr8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="refreshData(true)">
+              <i nz-icon nzType="reload" nzTheme="outline"></i>
+              <span>刷新</span>
+            </button>
+            <button class="ml8 mr8" nz-button [nzType]="'primary'" [nzSize]="'small'"
+                    (click)="openQianchuanAcTemplate()">
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+              <span>新增策略模版</span>
+            </button>
+            <app-table-time-tip [defaultSummaryDate]="queryParam.sheets_setting.table_setting.summary_date"
+                                [globalTimeFlag]="true" [canClearFlag]="false" (dateChange)="dateChange($event)"
+                                [styleTheme]="'small'"></app-table-time-tip>
+
+          </div>
+        </div>
+        <div class="ad-template-body">
+          <nz-table #basicTable
+                    [nzShowTotal]="globalTemplate.totalItemTemplate"
+                    [nzSize]="'small'"
+                    [nzData]="apiData"
+                    [(nzPageSize)]="pageSize"
+                    [(nzPageIndex)]="currentPage"
+                    [nzTotal]="total"
+                    [nzLoading]="loading"
+                    [nzNoResult]="globalTemplate.noResultTd"
+                    [nzScroll]="{ x: '1820px', y: noResultHeight + 'px' }">
+            <thead>
+            <tr>
+              <th nzWidth="120px" nzLeft="0">策略模板名称</th>
+              <th nzWidth="200px" nzLeft="120px">操作</th>
+              <th nzWidth="120px">创建人</th>
+              <th nzWidth="200px">商品号</th>
+              <th nzWidth="120px">最近一次运行状态</th>
+              <th nzWidth="100px">运行记录</th>
+              <th nzWidth="120px">消耗</th>
+              <th nzWidth="120px">CPM</th>
+              <th nzWidth="120px">CPC</th>
+              <th nzWidth="120px">点击率</th>
+              <th nzWidth="120px">转化率</th>
+              <th nzWidth="120px">转化数</th>
+              <th nzWidth="120px">转化成本</th>
+              <th nzWidth="120px">客户成本</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let data of basicTable.data">
+              <td nzLeft="0">{{data['project_template_name']}}</td>
+              <td nzLeft="120px">
+                <a href="javascript:" (click)="copyProjectTemplate(data)">复制</a>
+                <span class="ml4 mr4">|</span>
+                <a href="javascript:" (click)="operationTemplate(data)">运行模板</a>
+                <span class="ml4 mr4">|</span>
+                <a href="javascript:" (click)="editProjectTemplate(data)">编辑</a>
+                <span class="ml4 mr4">|</span>
+                <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteProjectTemplate(data)"
+                   nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'"
+                   nzPopconfirmTrigger="click" href="javascript:">删除</a>
+              </td>
+              <td></td>
+              <td nz-popover nzPopoverTrigger="hover" [nzPopoverContent]="cardDetail">
+                <span class="limit-line1">{{data['convert_channel_id_lst_name'] | arrJoin :' | '}}</span>
+
+                <ng-template #cardDetail>
+                  <div *ngFor="let channelName of data['convert_channel_id_lst_name']">{{channelName}}</div>
+                </ng-template>
+              </td>
+              <td>{{data['template_status']| objMap:launchRpaService.TemplateStateConfig:'status_'}}</td>
+              <td><a href="javascript:" (click)="showLogDrawer(data)">查看日志</a></td>
+              <td>{{data['pub_cost']}}</td>
+              <td>{{data['pub_cpm']}}</td>
+              <td>{{data['pub_cpc']}}</td>
+              <td>{{data['pub_ctr']}}%</td>
+              <td>{{data['b_convert_rate']}}%</td>
+              <td>{{data['b_convert']}}</td>
+              <td>{{data['b_convert_cost']}}</td>
+              <td>{{data['convert_cost']}}</td>
+            </tr>
+
+            </tbody>
+          </nz-table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="target-drawer">
+
+  <nz-drawer
+    [nzVisible]="logVisible"
+    [nzBodyStyle]="{ padding: '0px', height: 'calc(100% - 55px)', overflow: 'auto','background-color': '#f4f7fc' }"
+    [nzWidth]="'100%'"
+    nzPlacement="right"
+    [nzTitle]="runTitle"
+    (nzOnClose)="closeLogDrawer()"
+  >
+    <ng-container *ngIf="logVisible">
+      <app-launch-template-run-log [projectTemplateId]="projectTemplateId"></app-launch-template-run-log>
+    </ng-container>
+  </nz-drawer>
+
+  <ng-template #runTitle>
+    <i nz-icon nzType="arrow-left" nzTheme="outline" style="cursor: pointer;" (click)="closeLogDrawer()"></i>
+    <span class="ml8">模板运行记录</span>
+  </ng-template>
+
+</div>
+
+<div class="target-drawer">
+
+  <nz-drawer
+    [nzVisible]="qianchuanAcTemplateVisible"
+    [nzBodyStyle]="{ padding: '0px', height: 'calc(100% - 55px)', overflow: 'auto','background-color': '#f4f7fc' }"
+    [nzWidth]="'100%'"
+    nzPlacement="right"
+    [nzTitle]="isEdit ? '编辑策略' : '新建策略'"
+    (nzOnClose)="closeQianchuanAcTemplate()"
+  >
+    <ng-container *ngIf="qianchuanAcTemplateVisible">
+      <app-launch-group-template-qianchuan [isCopy]="isCopy" [projectTemplateId]="projectTemplateId" (cancel)="cancel($event)"
+                                    [isEdit]="isEdit" [data]="launchGroupDetail"
+                                    [accountsList]="parent_accounts_list"></app-launch-group-template-qianchuan>
+    </ng-container>
+  </nz-drawer>
+</div>
+
+<nz-modal [nzClassName]="'operate-modal'" [(nzVisible)]="isOperationVisible" nzTitle="运行模板"
+          (nzOnCancel)="cancelTemplate()" (nzOnOk)="saveOperation()">
+  <div class="lab-row mb20 w100p">
+    <label>广告组状态:</label>
+    <nz-radio-group
+      class="ml8"
+      [(ngModel)]="operationData.set_campaign_status"
+      [nzSize]="'small'"
+    >
+      <label nz-radio-button [nzValue]="true">
+        <span>开启</span>
+      </label>
+      <label nz-radio-button [nzValue]="false">
+        <span>关闭</span>
+      </label>
+    </nz-radio-group>
+  </div>
+
+  <div class="lab-row mb20 w100p">
+    <label>计划状态:</label>
+    <nz-radio-group
+      class="ml8"
+      [(ngModel)]="operationData.set_adgroup_status"
+      [nzSize]="'small'"
+    >
+      <label nz-radio-button [nzValue]="true">
+        <span>开启</span>
+      </label>
+      <label nz-radio-button [nzValue]="false">
+        <span>关闭</span>
+      </label>
+    </nz-radio-group>
+  </div>
+</nz-modal>
+
+
+<app-global-template></app-global-template>

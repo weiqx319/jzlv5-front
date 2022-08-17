@@ -1,0 +1,6 @@
+<div class="wrapper">
+  <!--<div class="router-progress-bar" *ngIf="isFetching"></div>-->
+  <app-header class="header" [currentScope]="'manage'"></app-header>
+  <section class="app-body" #modelContent (scroll)="onScroll($event)"><router-outlet></router-outlet></section>
+  <app-footer class="footer"></app-footer>
+</div>

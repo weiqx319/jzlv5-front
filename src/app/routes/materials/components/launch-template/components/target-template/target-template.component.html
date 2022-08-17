@@ -1,0 +1,151 @@
+<div class="target-template-container">
+  <div class="materials-list-nav">
+    <div class="materials-list-nav-col">
+      <div class="materials-list-nav-btn">
+        <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" routerLink="../target_template_create" [queryParams]="{publisher_id:publisherId}">
+          <i nz-icon nzType="plus" nzTheme="outline"></i><span>新建定向模板</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="materials-list-data">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'small'"
+              [nzData]="[{}]"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ x: '1000px', y: noResultHeight+'px' }"
+    >
+      <thead>
+      <tr *ngIf="publisherId!=1 && publisherId != 17">
+        <th [nzWidth]="'200px'">
+          <span>名称</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>媒体</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>定向包类型</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>投放范围</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>定向包描述</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      <tr *ngIf="publisherId==1">
+        <th [nzWidth]="'200px'">
+          <span>名称</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>媒体</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>营销目标</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>定向包类型</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>投放流量</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>定向包描述</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+
+      <tr *ngIf="publisherId==17">
+        <th [nzWidth]="'200px'">
+          <span>名称</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>定向包类型</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>优化目标</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>定向包描述</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td>
+          {{ data.audience_template_name }}
+        </td>
+        <td *ngIf="publisherId != 17">
+          {{ publisherList[data.publisher_id] }}
+        </td>
+        <ng-container *ngIf="publisherId!=1 && publisherId !=17">
+          <td>
+            {{ targetTypeList[data.landing_type] }}
+          </td>
+          <td>
+            {{ deliveryRangeMap[data.delivery_range] }}
+          </td>
+        </ng-container>
+        <ng-container *ngIf="publisherId == 1">
+          <td>
+            {{ marketTypeList[data.marketing_target] }}
+          </td>
+          <td>
+            {{ targetTypeListBd[data.landing_type] }}
+          </td>
+          <td>
+            {{ flowTypeList['flow_'+data.flow_type] }}
+          </td>
+        </ng-container>
+
+        <ng-container *ngIf="publisherId == 17">
+          <td>
+            {{ data.objective_type === '1' ? '落地页' : data.objective_type === '2' ? 'IOS' : '安卓' }}
+          </td>
+          <td>
+            {{ data.opt_target === 1 ? '展现' : data.opt_target === 2 ? '点击' : '转化' }}
+          </td>
+        </ng-container>
+
+        <td>
+          {{ data.audience_template_comment }}
+        </td>
+        <td>
+          <a href="javascript:" [routerLink]="'/data_view/feed/materials/launch_template/target_template_create'" [queryParams]="{audience_template_id: data.audience_template_id,publisher_id:publisherId}">修改</a>
+          <span class="ml4 mr4">|</span>
+          <a href="javascript:" [routerLink]="'/data_view/feed/materials/launch_template/target_template_create'" [queryParams]="{audience_template_id: data.audience_template_id,publisher_id:publisherId, is_copy: '1'}">复制</a>
+          <span class="ml4 mr4">|</span>
+            <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteTemplate(data)" [nzPopconfirmOverlayClassName]="'dashboard-delete-card'" [nzPopconfirmPlacement]="'bottomRight'" [nzPopconfirmTrigger]="'click'" href="javascript:">删除</a>
+        </td>
+      </tr>
+      <tr *ngIf="!apiData.length && !loading">
+        <td [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height':(noResultHeight-10)+'px'}">
+          <div style="text-align: center">
+            无数据展示
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>
+
+

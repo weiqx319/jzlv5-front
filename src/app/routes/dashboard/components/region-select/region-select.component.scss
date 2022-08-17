@@ -1,0 +1,135 @@
+.region-select{
+  height: 20px;
+  line-height: 1.5;
+  padding-left: 10px;
+  padding-right: 20px;
+  position:relative;
+  border:1px solid #e4e4e4;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.region-desc{
+  overflow: hidden;
+  white-space:nowrap;
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  a{
+    color: #404040;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a:hover{
+    color: #404040;
+    text-decoration: none;
+  }
+}
+.region-arrow{
+  position:absolute;
+  right: 5px;
+  top: 2px;
+  color: #a4a4a4;
+  font-size: 9px;
+  transform: scale(0.8);
+  transform-origin: 0% 0%;
+  -ms-transform: scale(0.8);    /* IE 9 */
+  -ms-transform-origin: 0% 0%;         /* IE 9 */
+  -webkit-transform: scale(0.8);    /* Safari 和 Chrome */
+  -webkit-transform-origin: 0% 0%;    /* Safari 和 Chrome */
+  -moz-transform: scale(0.8);/* Firefox */
+  -moz-transform-origin: 0% 0%;        /* Firefox */
+  -o-transform: scale(0.8);    /* Opera */
+  -o-transform-origin: 0% 0%;
+}
+.region-content{
+  width: 587px;
+  height: 365px;
+  padding: 20px;
+  padding-top: 12px;
+  display: none;
+  border:1px solid #e4e4e4;
+  border-top-right-radius: 2px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  background-color:#fff;
+  z-index: 2;
+}
+.region-cross{
+  line-height: 30px;
+  display: flex;
+  display: -webkit-flex;
+  flex-direction:row;
+  justify-content: flex-start;
+}
+.region-cross-desc{
+  width: 85px;
+  flex:0 0 85px;
+}
+.region-cross-province{
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: baseline;
+  align-content: stretch;
+}
+.region-cross-province-desc{
+  width: 92px;
+  flex:0 0 92px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  a{
+    color: #404040;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a:hover{
+    color: #404040;
+    text-decoration: none;
+  }
+}
+.select-china{
+  flex:0 0 65px;
+}
+.select-china-right{
+  height: 1px;
+  margin-top: 15px;
+  width: 100%;
+  background: #eee;
+}
+.city-content{
+  min-width: 386px;
+  max-width: 380px;
+  display: none;
+  border:1px solid #e4e4e4;
+  border-top-right-radius: 2px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  background-color:#fff;
+  z-index: 3;
+}
+.region-cross-city{
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: baseline;
+  align-content: stretch;
+}
+.region-cross-city-desc{
+  min-width: 100px;
+}
+.city-content-show{
+  display: block;
+  position: fixed;
+}
+.add-border{
+  border:1px solid #e4e4e4;
+  border-bottom:none;
+}
+.region-footer{
+  text-align: right;
+}

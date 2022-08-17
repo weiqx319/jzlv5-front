@@ -1,0 +1,85 @@
+<div class="launch-rpa-contents">
+  <div class="launch-rpa-operation">
+    <div class="header-left">
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="createLaunchGroup()">
+        <i nz-icon nzType="plus"></i><span>创建投放项目</span>
+      </a>
+    </div>
+    <div class="header-right">
+      <app-table-time-tip [defaultSummaryDate]="queryParam.sheets_setting.table_setting.summary_date" [globalTimeFlag]="true" [canClearFlag]="false" (dateChange)="dateChange($event)" [styleTheme]="'normal'" ></app-table-time-tip>
+    </div>
+  </div>
+  <div class="pt20">
+    <nz-table #basicTable
+              [nzShowTotal]="globalTemplate.totalItemTemplate"
+              [nzFrontPagination]="false"
+              [nzSize]="'small'"
+              [nzData]="apiData"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzNoResult]="noResultTd"
+              (nzPageIndexChange)="refreshData()"
+              [nzScroll]="{ x: '1400px', y: noResultHeight + 'px' }">
+      <thead>
+      <tr>
+        <th nzWidth="80px" nzLeft="0px">状态</th>
+        <th nzWidth="120px" nzLeft="80px">投放项目名称<app-filter [filterType]="'multiValue'" [filterKey]="{key:'project_name',name:'投放项目名称'}" [(filterResult)]="filterResult['project_name']" (submit)="reloadData(true)"></app-filter></th>
+        <th nzWidth="120px" nzLeft="200px">操作</th>
+        <th nzWidth="120px">创建人</th>
+        <th nzShowSort   nzSortKey="pub_cost"       nzWidth="120px">消耗<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_cost',name:'消耗'}" [(filterResult)]="filterResult['pub_cost']" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort   nzSortKey="pub_cpm"        nzWidth="120px">CPM<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_cpm',name:'CPM'}" [(filterResult)]="filterResult['pub_cpm']" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort   nzSortKey="pub_cpc"        nzWidth="120px">CPC<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_cpc',name:'CPC'}" [(filterResult)]="filterResult['pub_cpc']" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort   nzSortKey="pub_ctr"        nzWidth="120px">点击率<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_ctr',name:'点击率'}" [(filterResult)]="filterResult['pub_ctr']" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort   nzSortKey="b_convert_rate" nzWidth="120px">转化率<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'b_convert_rate',name:'转化率'}" [(filterResult)]="filterResult['b_convert_rate']" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort   nzSortKey="b_convert"      nzWidth="120px">转化数<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'b_convert',name:'转化数'}" [(filterResult)]="filterResult['b_convert']" (submit)="reloadData(true)"></app-filter></th>
+        <th nzShowSort   nzSortKey="b_convert_cost" nzWidth="120px">转化成本<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'b_convert_cost',name:'转化成本'}" [(filterResult)]="filterResult['b_convert_cost']" (submit)="reloadData(true)"></app-filter></th>
+        <th nzWidth="120px">客户成本</th>
+        <!--        <th nzWidth="120px">帐户数</th>-->
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td nzLeft="0px">
+          <nz-switch [nzSize]="'small'" [(ngModel)]="data['enable']"></nz-switch>
+        </td>
+        <td nzLeft="80px">
+          <a [routerLink]="['../kuaishou',data['project_id']]">{{data['project_name']}}</a>
+        </td>
+        <td nzLeft="200px">
+          <a href="javascript:" [routerLink]="['../kuaishou',data['project_id']]">配置</a>
+          <span class="ml4 mr4">|</span>
+          <a href="javascript:" (click)="editLaunchGroup(data)">编辑</a>
+          <span class="ml4 mr4">|</span>
+          <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteLaunchGroup(data)"
+             nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click" href="javascript:">删除</a>
+        </td>
+        <td>{{data['real_name']}}</td>
+        <td>{{data['pub_cost']}}</td>
+        <td>{{data['pub_cpm']}}</td>
+        <td>{{data['pub_cpc']}}</td>
+        <td>{{data['pub_ctr']}}%</td>
+        <td>{{data['b_convert_rate']}}%</td>
+        <td>{{data['b_convert']}}</td>
+        <td>{{data['b_convert_cost']}}</td>
+        <td>{{data['convert_cost']}}</td>
+        <!--        <td>{{data['advertiser_ids'].length}}</td>-->
+      </tr>
+
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+
+<ng-template #noResultTd>
+  <div class="table-no-result" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+    <div class="table-no-result-content">
+
+      <div class="mt8">无数据</div>
+    </div>
+  </div>
+</ng-template>
+<app-global-template></app-global-template>
+

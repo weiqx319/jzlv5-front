@@ -1,0 +1,76 @@
+<div style="position: relative; width: 200px;">
+  <div class="w100p item-select" #item (click)="appToggleItem()" >
+    <div class="item-desc"><a title="{{item_desc.join()}}">{{item_desc.length ? item_desc.join() : '请选择数据范围'}}</a></div>
+    <span class="item-arrow"><i nz-icon nzType="down" nzTheme="outline"></i></span>
+  </div>
+  <div class="item-content" [ngClass]="{block: is_show}" #item>
+    <div class="item-body">
+      <div class="item-content-left pull-left">
+        <div class="item-content-header">
+          可选项:
+        </div>
+        <div class="item-content-left-condition">
+          <nz-radio-group [(ngModel)]="item_type" (ngModelChange)="itemTypeChange($event)">
+            <ng-container *ngFor="let type of type_lists">
+              <label nz-radio [nzValue]="type.key">
+                <span>{{type.name}}</span>
+              </label>
+            </ng-container>
+          </nz-radio-group>
+          <div class="mt8">
+            <nz-input-group
+              style="width: 272px;"
+              [nzSize]="'small'"
+              nzSearch
+              [nzSuffix]="suffixIconButton">
+              <input (keyup)="mykey($event)" (ngModelChange)="selectNameChange()" [(ngModel)]="select_name" type="text" nz-input placeholder="输入搜索{{type_desc[item_type]}}名称">
+            </nz-input-group>
+            <ng-template #suffixIconButton>
+              <button
+                style="background: transparent; border:none;"
+                [nzSize]="'small'"
+                (click)="doSearch($event)"
+                nz-button nzType="primary"
+                nzSearch><i nz-icon nzType="search" nzTheme="outline" class="search_i" style="color:rgba(0,0,0,.65);font-size: 12px" ></i></button>
+            </ng-template>
+          </div>
+        </div>
+        <div class="item-content-left-body">
+          <ng-container *ngIf="item_type=='publisher' && account_loading">
+            <app-publisher-select [allItems]="items_of_type" [initItems]="item_detail" [itemControl]="selected_item_obj" (itemSelectedChange)="itemsChange()"></app-publisher-select>
+          </ng-container>
+          <ng-container *ngIf="item_type=='account' && account_loading">
+            <app-account-select [publisherId]="publisherId" [allItems]="items_of_type" [initItems]="item_detail" [itemControl]="selected_item_obj" (itemSelectedChange)="itemsChange()"></app-account-select>
+          </ng-container>
+          <ng-container *ngIf="item_type=='campaign' && campaign_loading && account_loading">
+            <app-campaign-select [publisherId]="publisherId" [allItems]="items_of_type" [initItems]="item_detail" [itemControl]="selected_item_obj" (itemSelectedChange)="itemsChange()"></app-campaign-select>
+          </ng-container>
+          <ng-container *ngIf="item_type=='adgroup' && campaign_loading && account_loading">
+            <app-group-select [publisherId]="publisherId" [allItems]="items_of_type" [initItems]="item_detail" [itemControl]="selected_item_obj" (itemSelectedChange)="itemsChange()"></app-group-select>
+          </ng-container>
+        </div>
+      </div>
+      <div class="item-content-center pull-left">
+        <i nz-icon nzType="caret-right" nzTheme="outline"></i>
+      </div>
+      <div class="item-content-right pull-left">
+        <div class="item-content-header">
+          已选项:
+        </div>
+        <div class="item-content-right-body">
+          <app-show-select [selectedItems]="selected_detail" [itemControl]="selected_item_obj" (closeItem)="deleteItem($event)"></app-show-select>
+        </div>
+      </div>
+    </div>
+    <div class="item-footer mr8">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="done()">
+        <span>确认</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+

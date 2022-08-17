@@ -1,0 +1,117 @@
+<div class="new-chart-line-setting">
+  <form class="new-chart-line-form" [formGroup]="validateForm">
+    <nz-form-item>
+      <div class="form-label" nz-col [nzSpan]="3">
+        <label>显示粒度:</label>
+      </div>
+      <nz-form-control class="w150 ml8" [nzSpan]="20">
+        <nz-select class="w100p" [formControlName]="'summaryType'" [nzSize]="'small'" [(ngModel)]="setting.summary_type" (ngModelChange)="summaryTypeChange($event)">
+          <ng-container *ngFor="let option of chart_detail_setting.summary_types">
+            <nz-option
+              [nzLabel]="option.name"
+              [nzValue]="option.key"
+              *ngIf="!(menuService.currentChannelId===2 && (['device'].includes(option.key)))"
+              >
+            </nz-option>
+          </ng-container>
+        </nz-select>
+        <div class='ant-form-item-explain' class="ml8" *ngIf="getFormControl('summaryType').dirty&&getFormControl('summaryType').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择显示粒度</div>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="chart_detail_setting.summary_items.is_x">
+      <ng-container *ngFor="let xAxis of xAxisArray;let i = index;">
+        <div class="form-label" nz-col [nzSpan]="3">
+          <label>{{chart_detail_setting.summary_items.xAxis.name?chart_detail_setting.summary_items.xAxis.name:'X轴'}}:</label>
+        </div>
+        <nz-form-control [nzSpan]="20">
+          <ng-container *ngIf="chart_detail_setting.summary_items.xAxis.all_same">
+            <span class="ml8">{{chart_detail_setting.summary_items.xAxis[chart_detail_setting.summary_items.chart_item_details[setting.summary_type]['xAxis_type']][0].name}}</span>
+          </ng-container>
+          <ng-container *ngIf="!chart_detail_setting.summary_items.xAxis.all_same">
+            <nz-select class="w150 ml8" [formControlName]="xAxis.xAxis_name" [nzSize]="'small'" [(ngModel)]="xAxis.key" (ngModelChange)="xAxisChange(i)">
+              <ng-container *ngFor="let option of chart_detail_setting.summary_items.xAxis[chart_detail_setting.summary_items.chart_item_details[setting.summary_type]['xAxis_type']]">
+                <nz-option
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key"
+                  >
+                </nz-option>
+              </ng-container>
+            </nz-select>
+            <div class='ant-form-item-explain' class="ml8" *ngIf="getFormControl(xAxis.xAxis_name)?.dirty&&getFormControl(xAxis.xAxis_name)?.hasError('required')">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请完善选项
+            </div>
+          </ng-container>
+        </nz-form-control>
+      </ng-container>
+    </nz-form-item>
+    <nz-form-item *ngFor="let yAxis of yAxisArray;let i = index;">
+      <ng-container *ngIf="!yAxis.is_x">
+        <div class="form-label" nz-col [nzSpan]="3">
+          <label *ngIf="this.setting.chart_type !== 'card' && this.setting.chart_type !== 'funnel' && this.setting.chart_type !== 'map'">{{(chart_detail_setting.summary_items.yAxis.name&&chart_detail_setting.summary_items.yAxis.number==1)?chart_detail_setting.summary_items.yAxis.name:'Y'+(i+1)+'轴'}}:</label>
+          <label *ngIf="this.setting.chart_type === 'card'">{{(chart_detail_setting.summary_items.yAxis.name&&chart_detail_setting.summary_items.yAxis.number==1)?chart_detail_setting.summary_items.yAxis.name:'指标'+(i+1)}}:</label>
+          <label *ngIf="this.setting.chart_type === 'funnel'">{{(chart_detail_setting.summary_items.yAxis.name&&chart_detail_setting.summary_items.yAxis.number==1)?chart_detail_setting.summary_items.yAxis.name:'层次'+(i+1)}}:</label>
+        </div>
+        <nz-form-control [nzSpan]="20">
+          <nz-select class="w150 ml8" [formControlName]="yAxis.yAxis_name" [nzSize]="'small'" [(ngModel)]="yAxis.key" (ngModelChange)="yAxisChange(i); axisFilter();" [nzShowSearch]="true">
+            <ng-container *ngFor="let option of chart_detail_setting.summary_items.yAxis[chart_detail_setting.summary_items.chart_item_details[setting.summary_type]['yAxis_type']]">
+              <nz-option
+                *ngIf="!option.is_selected || yAxis.key==option.key"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </ng-container>
+          </nz-select>
+          <ng-container *ngIf="chart_detail_setting.summary_items.yAxis.show_yAxis_type">
+            <nz-select *ngIf="setting.chart_type !== 'bar'" class="w80 ml8" [formControlName]="yAxis.yAxis_name + '_type'" [nzSize]="'small'" [(ngModel)]="yAxis.type">
+              <nz-option
+                *ngFor="let option of chart_detail_setting.summary_items.yAxis[xAxis_key]"
+                [nzLabel]="option.name"
+                [nzValue]="option.key"
+                [nzDisabled]="i==0 && setting.chart_type=='line' && option.key=='bar' ">
+              </nz-option>
+            </nz-select>
+            <nz-select *ngIf="setting.chart_type === 'bar'" class="w80 ml8" [formControlName]="yAxis.yAxis_name + '_type'" [nzSize]="'small'" [(ngModel)]="yAxis.type">
+             <!-- <nz-option
+                *ngFor="let option of chart_detail_setting.summary_items.yAxis[xAxis_key]"
+                [nzLabel]="option.name"
+                [nzValue]="option.key"
+                [nzDisabled]="i==0 && setting.chart_type=='bar' && (option.key=='line' || option.key=='smooth_line')">
+              </nz-option>-->
+              <nz-option
+                *ngFor="let option of chart_detail_setting.summary_items.yAxis[xAxis_key]"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+          </ng-container>
+          <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  *ngIf="i > 0" (click)="removeField(yAxis,'yAxis',$event)"></i>
+          <div class='ant-form-item-explain' class="ml8" *ngIf="getFormControl(yAxis.yAxis_name)?.dirty&&getFormControl(yAxis.yAxis_name)?.hasError('required') || getFormControl(yAxis.yAxis_name + '_type')?.dirty&&getFormControl(yAxis.yAxis_name + '_type')?.hasError('required')">
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请完善选项
+          </div>
+        </nz-form-control>
+      </ng-container>
+    </nz-form-item>
+    <nz-form-item class="mb8" *ngIf="chart_detail_setting.summary_items.yAxis.number > yAxisArray.length">
+      <nz-form-control nz-col [nzSpan]="20" [nzOffset]="3">
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addField('yAxis', $event)">
+         <i nz-icon nzType="plus" nzTheme="outline"></i>
+          <span *ngIf="this.setting.chart_type !== 'card' && this.setting.chart_type !== 'funnel' && this.setting.chart_type !== 'map'"> 添加Y轴</span>
+          <span *ngIf="this.setting.chart_type === 'card'"> 添加指标</span>
+          <span *ngIf="this.setting.chart_type === 'funnel'"> 添加层次</span>
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+  <div class="new-chart-line-setting-footer mt8">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="pre()">
+      <span>上一步</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="next()" [disabled]="!validateForm.valid">
+      <span>下一步</span>
+    </button>
+  </div>
+</div>
+

@@ -1,0 +1,13 @@
+.image-drop-class {
+  .ant-popover-inner-content {
+    padding: 0;
+  }
+  .image-cnt-drop {
+    padding: 10px;
+    min-width: 320px;
+    overflow-y: auto;
+    img{
+      width: 300px;
+    }
+  }
+}

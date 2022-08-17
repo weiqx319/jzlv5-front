@@ -1,0 +1,283 @@
+<div class="channel-add-content">
+  <div class="basic-setting setting-block pl20 mt20">
+    <!--账户-->
+    <div class="lab-row mb20 pl20 w100p">
+      <label><span class="redStart">*</span>账户:</label>
+      <div>
+        <nz-select class="w_full ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="defaultData.chan_pub_id"
+                   [nzPlaceHolder]="'请选择帐户'"
+                   (ngModelChange)="changeAccount($event)"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of accountsList"
+            [nzLabel]="option.pub_account_name"
+            [nzValue]="option.chan_pub_id+''">
+          </nz-option>
+        </nz-select>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.chan_pub_id.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.chan_pub_id.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!--计划类型-->
+    <div class="lab-row mb20 pl20 w100p">
+      <label><span class="redStart">*</span>计划类型:</label>
+      <div>
+        <nz-select class="w_full ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="defaultData.campaign_type "
+                   [nzPlaceHolder]="'请选择计划类型'"
+                   (ngModelChange)="changeTarget('campaign_type')"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of plan_type"
+            [nzLabel]="option.label"
+            [nzValue]="option.value">
+          </nz-option>
+        </nz-select>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.campaign_type .is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.campaign_type .tip_text }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!--渠道号-->
+    <div class="lab-row mb20 pl20 w100p">
+      <label><span class="redStart">*</span>渠道号:</label>
+      <div>
+        <input class="w_full ml8" nz-input [(ngModel)]="defaultData.convert_channel_number" (ngModelChange)="checkBasicData('convert_channel_number')" nzSize="small"
+               placeholder="请输入渠道号"/>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.convert_channel_number.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.convert_channel_number.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!--渠道别名-->
+    <div class="lab-row mb20 pl20 w100p">
+      <label><span class="redStart">*</span>渠道别名:</label>
+      <div>
+        <input class="w_full ml8" nz-input [(ngModel)]="defaultData.convert_channel_name" nzSize="small" (ngModelChange)="checkBasicData('convert_channel_name')"
+               placeholder="请输入渠道别名"/>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.convert_channel_name.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.convert_channel_name.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!--APP类型-->
+    <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.campaign_type ==='2'||defaultData.campaign_type ==='7'">
+      <label>APP类型:</label>
+      <div>
+        <nz-select class="w_full ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="defaultData.app_type"
+                   [nzPlaceHolder]="'请选择APP类型'"
+                   (ngModelChange)="changeTarget('app_type')"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of app_type"
+            [nzLabel]="option.label"
+            [nzValue]="option.value">
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+
+    <!--选择应用-->
+    <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.campaign_type ==='2'">
+      <label>选择应用:</label>
+      <div>
+        <nz-select class="w_full ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="defaultData.app_id"
+                   (ngModelChange)="changeTarget('app_id')"
+                   [nzPlaceHolder]="'请选择应用'"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of appData"
+            [nzLabel]="option.app_name"
+            [nzValue]="option.app_id">
+          </nz-option>
+        </nz-select>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.app_id.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.app_id.tip_text }}</span>
+        </div>
+<!--        <div *ngIf="defaultData.app_type==='android'">-->
+<!--          <div class="mt10"><label nz-checkbox [ngModel]="defaultData.use_app_market>0" (ngModelChange)="changeTarget('use_app_market')">优先从系统应用商店下载</label></div>-->
+<!--          <ng-container *ngIf="defaultData.use_app_market==1">-->
+<!--            <div class="mt10"><label>请勾选投放应用已上架的应用商店</label></div>-->
+<!--            <nz-checkbox-group class="mt10" [(ngModel)]="app_store" (ngModelChange)="changeTarget('app_store')"></nz-checkbox-group>-->
+<!--          </ng-container>-->
+
+<!--        </div>-->
+<!--      </div>-->
+    </div>
+    </div>
+
+    <!--调起链接-->
+    <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.campaign_type ==='7'">
+      <label><span class="redStart">*</span>调起链接:</label>
+      <div>
+        <input class="w_full ml8" nz-input [(ngModel)]="defaultData.schema_uri" nzSize="small"
+               placeholder="请输入链接"/>
+      </div>
+    </div>
+    <!--H5链接-->
+    <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.campaign_type ==='7'">
+      <label><span class="redStart">*</span>H5链接:</label>
+      <div>
+        <input class="w_full ml8" nz-input [(ngModel)]="defaultData.url" nzSize="small"
+               placeholder="请输入链接"/>
+      </div>
+    </div>
+
+    <!--转化类型-->
+    <div class="lab-row mb20 pl20 w100p" *ngIf="defaultData.campaign_type ==='3'">
+      <label><span class="redStart">*</span>转化类型:</label>
+      <div>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="defaultData.url_type " (ngModelChange)="changeTarget('url_type')">
+          <ng-container *ngFor="let option of convert_type">
+            <label nz-radio-button [nzValue]="option.value">{{option.label}}</label>
+          </ng-container>
+        </nz-radio-group>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.url_type.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.url_type.tip_text }}</span>
+        </div>
+        <div class="ml8">
+          <input class="w_full mt20" nz-input [(ngModel)]="defaultData.url" (ngModelChange)="checkBasicData('url')" nzSize="small"
+                 placeholder="请输入链接"/>
+          <div class="error-tip mt5" *ngIf="checkErrorTip.url.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.url.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--转化途径-->
+    <ng-container *ngIf="defaultData.campaign_type ==='4'||defaultData.campaign_type ==='5'">
+      <div class="lab-row mb20 pl20 w100p">
+        <label><span class="redStart">*</span>转化途径:</label>
+        <div class="ml8">
+          <nz-radio-group [nzSize]="'small'" [(ngModel)]="defaultData.web_uri_type " (ngModelChange)="changeTarget('web_uri_type')">
+            <ng-container>
+              <label nz-radio-button [nzValue]="'1'">填写链接</label>
+            </ng-container>
+            <ng-container *ngIf="defaultData.campaign_type ==='5'">
+              <label nz-radio-button [nzValue]="'2'">落地页工具</label>
+            </ng-container>
+          </nz-radio-group>
+          <div class="error-tip mt5" *ngIf="checkErrorTip.web_uri_type.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.web_uri_type.tip_text }}</span>
+          </div>
+          <div>
+            <ng-container *ngIf="defaultData.web_uri_type=='1'">
+              <input class="w_full mt20" nz-input [(ngModel)]="defaultData.url" (ngModelChange)="checkBasicData('url')" nzSize="small"
+                     placeholder="请输入链接"/>
+              <div class="error-tip mt5" *ngIf="checkErrorTip.url.is_show">
+                <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                <span style="color: red;">{{ checkErrorTip.url.tip_text }}</span>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="defaultData.web_uri_type=='2'">
+              <nz-select class="w_full mt20"
+                         [nzSize]="'small'"
+                         [(ngModel)]="defaultData.url"
+                         (ngModelChange)="checkBasicData('url')"
+                         [nzPlaceHolder]="'请选择落地页链接'"
+                         nzShowSearch>
+                <nz-option
+                  *ngFor="let option of pageData"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.id">
+                </nz-option>
+              </nz-select>
+              <div class="error-tip mt5" *ngIf="checkErrorTip.url.is_show">
+                <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                <span style="color: red;">{{ checkErrorTip.url.tip_text }}</span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+
+    <!--转化追踪-->
+    <ng-container *ngIf="defaultData.campaign_type==='2'||defaultData.campaign_type==='4'||defaultData.campaign_type==='5'">
+      <div class="lab-row mb20 pl20 w100p">
+        <label><span class="redStart">*</span>转化追踪:</label>
+        <div>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="is_convert">
+            <label nz-radio-button [nzValue]="'1'">选择转化追踪</label>
+          </nz-radio-group>
+        </div>
+      </div>
+      <ng-container *ngIf="is_convert==='1'">
+        <div class="lab-row mb20 pl20 w100p">
+          <label><span class="redStart">*</span>追踪方式:</label>
+          <div class="ml8">
+            <nz-radio-group [nzSize]="'small'" [(ngModel)]="defaultData.convert_type" (ngModelChange)="getConvertListByKs()">
+              <ng-container *ngIf="defaultData.campaign_type==='4' || defaultData.campaign_type==='5'">
+                <label nz-radio-button [nzValue]="'1'">JS布玛</label>
+                <label nz-radio-button [nzValue]="'2'">Xpath</label>
+              </ng-container>
+              <ng-container *ngIf="defaultData.campaign_type==='2' || defaultData.app_type==='ios'">
+                <label nz-radio-button [nzValue]="'3'">SDK</label>
+              </ng-container>
+              <ng-container *ngIf="defaultData.campaign_type==='2'">
+                <label nz-radio-button [nzValue]="'7'">API回传</label>
+              </ng-container>
+            </nz-radio-group>
+            <div *ngIf="defaultData.convert_type">
+              <nz-select class="w_full mt20"
+                         [nzSize]="'small'"
+                         [(ngModel)]="defaultData.convert_id"
+                         [nzPlaceHolder]="'请选择转化追踪'"
+                         nzShowSearch>
+                <nz-option
+                  *ngFor="let option of convertData"
+                  [nzLabel]="option.convert_name"
+                  [nzValue]="option.convert_id">
+                </nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+
+    <!--第三方点击监测链接-->
+    <div class="lab-row mb20 pl20 w100p">
+      <label>第三方点击监测链接:</label>
+      <div>
+        <input class="w_full ml8" nz-input [(ngModel)]="defaultData.click_track_url " nzSize="small"
+               placeholder="请输入第三方点击监测链接"/>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="channel-add-btn">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>
+
+<app-global-template></app-global-template>

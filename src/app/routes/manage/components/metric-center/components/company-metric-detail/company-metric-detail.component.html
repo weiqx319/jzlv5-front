@@ -1,0 +1,97 @@
+
+<div >
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <a class="mr8 back-button-outline" nz-button [nzType]="'default'" [nzSize]="'default'" [routerLink]="['../../company_metric']">
+        <i nz-icon nzType="left" nzTheme="outline"></i><span>返回集团指标</span>
+      </a>
+      <a class="mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addCompanyMetricDetail()">
+        <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加指标</span>
+      </a>
+      <ng-container *ngIf="filter_result_array.length>0">
+        <div class="inline-block" style="vertical-align: middle;">
+          <div class="filter-trash pull-left" *ngIf="filter_result_array.length>1" (click)="clearFilter()">
+            <i nz-icon nzType="delete" nzTheme="outline"></i>
+          </div>
+          <div class="filter-desc pull-left">
+            <span *ngFor="let filter of filter_result_array;let i = index;">
+              {{filter.name}}{{filter.op}}{{filter.value}}
+              <span class="filter-delete ml8" (click)="deleteFilter(i)"><i nz-icon nzType="close" nzTheme="outline"></i></span>
+              <span *ngIf="i < filter_result_array.length-1">；</span>
+            </span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="manage-table manage-no-result-table pt8">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'default'"
+              [nzData]="apiData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ y: noResultHeight+'px' }">
+      <thead>
+      <tr>
+        <th [nzWidth]="'150px'">
+          <span>广告主</span>
+          <app-filter [filterType]="'operSingleList'" [filterOption]="advertiserList" [filterKey]="{key:'cid',name:'广告主',type:'operSingleList'}" [(filterResult)]="filterResult['cid']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>渠道</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>媒体</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>公式</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作人</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作时间</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td>{{data['advertiser_name']}}</td>
+        <td>{{data.channel}}</td>
+        <td>{{data.publisher}}</td>
+        <td><a (click)="editCompanyMetricDetail(data.define_id)">{{data['define']}}</a></td>
+        <td>{{data['user_name']}}</td>
+        <td>{{data['last_modify_time']}}</td>
+        <td><a (click)="editCompanyMetricDetail(data.define_id)">编辑</a> <span class="ml8 mr8">|</span>
+            <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="delCompanyMetricDetail(data.define_id)" [nzPopconfirmOverlayClassName]="'dashboard-delete-card'" [nzPopconfirmPlacement]="'bottomRight'" [nzPopconfirmTrigger]="'click'">删除</a>
+        </td>
+      </tr>
+      <tr *ngIf="apiData.length===0">
+        <td #noResultTd [attr.colspan]="7"  [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+          <div class="table-no-result">
+            <div class="table-no-result-content">
+              <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addCompanyMetricDetail()">
+                <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加指标</span>
+              </button>
+              <div class="mt8">只有在您定义指标后，工具才可以做各种转化数据分析和优化建议</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>
+

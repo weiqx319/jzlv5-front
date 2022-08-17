@@ -1,0 +1,166 @@
+<div class="creative-attributes-gdt">
+  <div class="lab-row pl20 mb20 w100p">
+    <label><span class="redStart">*</span>分渠道号选择辅助转化:</label>
+    <nz-radio-group
+      class="ml8"
+      [(ngModel)]="materialData.by_channel_set_conversion_assist"
+      (ngModelChange)="changeConversionAssistByChannel()"
+      [nzSize]="'small'"
+    >
+      <label nz-radio-button [nzValue]="true" [nzDisabled]="defaultData.convert_channel_id_lst.length === 0">
+        <span>是</span>
+      </label>
+      <label nz-radio-button [nzValue]="false">
+        <span>否</span>
+      </label>
+    </nz-radio-group>
+  </div>
+
+  <ng-container *ngIf="materialData.by_channel_set_conversion_assist">
+    <nz-tabset class="mt20 conversion-assist-tab" [nzType]="'card'" *ngIf="targetChannelList.length" [nzSelectedIndex]="curConversionAssistIndex">
+      <nz-tab *ngFor="let item of targetChannelList" [nzTitle]="item.convert_channel_name">
+        <ng-container [ngTemplateOutlet]="conversionAssist" [ngTemplateOutletContext]="{data: materialData.conversion_assist[item.convert_channel_id]}"></ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </ng-container>
+
+  <ng-container *ngIf="!materialData.by_channel_set_conversion_assist">
+    <ng-container [ngTemplateOutlet]="conversionAssist" [ngTemplateOutletContext]="{data: materialData.conversion_assist['all']}"></ng-container>
+  </ng-container>
+
+  <div class="lab-row pl20 mb20 w100p">
+    <label></label>
+    <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.conversion_assist_lst.is_show">
+      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+      <span style="color: red;">{{ checkErrorTip.conversion_assist_lst.tip_text }}</span>
+    </div>
+  </div>
+
+  <ng-template #conversionAssist let-data="data">
+    <div class="lab-row pl20 mb20 w100p">
+      <label><span class="redStart">*</span>行动按钮:</label>
+      <div class="ml8">
+        <nz-switch [nzSize]="'small'" [(ngModel)]="data.link_name_switch"></nz-switch>
+      </div>
+    </div>
+
+    <ng-container *ngIf="data.link_name_switch">
+      <div class="lab-row pl20 mb20 w100p">
+        <label><span class="redStart">*</span>按钮文案:</label>
+        <div>
+          <nz-select class="w_full ml8 mr8" [nzSize]="'small'" [(ngModel)]="data.link_name_type" nzPlaceHolder="请输入按钮文案" nzShowSearch (ngModelChange)="changeLinkName(data,$event)">
+            <nz-option *ngFor="let item of linkNameTypeList" [nzValue]="item.key" [nzLabel]="item.value"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+
+      <div class="lab-row pl20 mb20 w100p">
+        <label><span class="redStart">*</span>跳转落地页:</label>
+        <div>
+          <nz-radio-group
+            class="ml8"
+            [nzSize]="'small'"
+            [(ngModel)]="data.link_page_type"
+          >
+            <ng-container *ngFor="let option of structConfig['link_page_type']['sub']">
+              <label nz-radio-button [nzValue]="option.value">{{option.label}}</label>
+            </ng-container>
+          </nz-radio-group>
+        </div>
+      </div>
+
+      <ng-container *ngIf="data.link_page_type === 'LINK_PAGE_TYPE_DEFAULT'">
+        <div class="lab-row pl20 mb20 w100p">
+          <label><span class="redStart">*</span>落地页链接:</label>
+          <div>
+            <input nz-input
+                   class="w_full ml8 mr8"
+                   [nzSize]="'small'"
+                   [placeholder]="'请输入落地页链接'"
+                   [(ngModel)]="data.link_page_spec.page_url">
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="data.link_page_type === 'LINK_PAGE_TYPE_MINI_PROGRAM_WECHAT'">
+        <div class="lab-row pl20 mb20 w100p">
+          <label><span class="redStart">*</span>小程序原始ID:</label>
+          <div>
+            <input nz-input
+                   class="w_full ml8 mr8"
+                   [nzSize]="'small'"
+                   [placeholder]="'请输入小程序原始ID'"
+                   [(ngModel)]="data.link_page_spec.mini_program_id">
+          </div>
+        </div>
+
+        <div class="lab-row pl20 mb20 w100p">
+          <label><span class="redStart">*</span>小程序链接:</label>
+          <div>
+            <input nz-input
+                   class="w_full ml8 mr8"
+                   [nzSize]="'small'"
+                   [placeholder]="'请输入小程序链接'"
+                   [(ngModel)]="data.link_page_spec.mini_program_path">
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <div class="lab-row pl20 mb20 w100p">
+      <label><span class="redStart">*</span>数据展示:</label>
+      <div class="ml8">
+        <nz-switch [nzSize]="'small'" [nzDisabled]="!data.link_name_type || data.link_name_type === 'WATCH_LIVE'" [(ngModel)]="data.conversion_data_switch"></nz-switch>
+      </div>
+    </div>
+
+    <ng-container *ngIf="data.conversion_data_switch">
+      <div class="lab-row pl20 mb20 w100p">
+        <label><span class="redStart">*</span>数据类型:</label>
+        <div>
+          <nz-radio-group
+            class="ml8"
+            [nzSize]="'small'"
+            [(ngModel)]="data.conversion_data_type"
+          >
+            <ng-container *ngFor="let option of structConfig['conversion_data_type']['sub']">
+              <label nz-radio-button [nzValue]="option.value">{{option.label}}</label>
+            </ng-container>
+          </nz-radio-group>
+
+          <!--          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.link_page_type.is_show">-->
+          <!--            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>-->
+          <!--            <span style="color: red;">{{ checkErrorTip.link_page_type.tip_text }}</span>-->
+          <!--          </div>-->
+        </div>
+      </div>
+
+      <div class="lab-row pl20 mb20 w100p">
+        <label><span class="redStart">*</span>转化行为:</label>
+        <div>
+          <nz-radio-group
+            class="ml8"
+            [nzSize]="'small'"
+            [(ngModel)]="data.conversion_target_type"
+          >
+            <ng-container *ngFor="let option of conversionTargetTypeList">
+              <label nz-radio-button [nzValue]="option.key">{{option.value}}</label>
+            </ng-container>
+          </nz-radio-group>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="lab-row pl20 mb20 w100p">
+      <label>数据监测:</label>
+      <div>
+        <input nz-input
+               class="w_full ml8 mr8"
+               [nzSize]="'small'"
+               [placeholder]="'请输入页面级转化跟踪URL'"
+               [(ngModel)]="data.page_track_url">
+      </div>
+    </div>
+  </ng-template>
+
+</div>

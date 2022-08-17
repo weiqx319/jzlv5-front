@@ -1,0 +1,41 @@
+<ng-container *ngIf="lists.length>0">
+  <div class="w100p item-select" appToggleItem>
+    <div class="item-desc"><a title="{{item_desc.join()}}">{{item_desc.length ? item_desc.join() : '选择账号'}}</a></div>
+    <span class="item-arrow"><i nz-icon nzType="down" nzTheme="outline"></i></span>
+  </div>
+</ng-container>
+<ng-container *ngIf="lists.length === 0">
+  <div class="w100p item-select">
+    <div class="item-desc">无列表不可用</div>
+    <span class="item-arrow"><i nz-icon nzType="down" nzTheme="outline"></i></span>
+  </div>
+</ng-container>
+
+<div class="item-content transfer-contain" #item>
+ <!-- <div class="item-body">
+    <div class="body-issue">
+      <i nz-icon nzTheme="outline" [nzType]="_isAllSelected ? 'check-square' : 'minus-square'" [ngClass]="{'active-color':_isAllSelected}" (click)="allSelectedChange()"></i>
+        <span class="ml8">全选</span>
+    </div>
+    <div class="body-issue" *ngFor="let account of lists;let i = index;">
+      <i nz-icon nzTheme="outline" [nzType]="account.is_selected ? 'check-square' : 'minus-square'" [ngClass]="{'active-color':account.is_selected}" (click)="accountChange(i)"></i>
+        <span class="ml8">{{account.name}}</span>
+    </div>
+  </div>-->
+  <nz-transfer
+    [nzDataSource]="list"
+    nzShowSearch
+    [nzOperations]="['选中', '移除']"
+    [nzTitles]="['未选择', '已选择']"
+    [nzListStyle]="{'width.px': 250, 'height.px': 200}"
+    (nzChange)="selectItem($event)">
+  </nz-transfer>
+  <div class="item-footer mt8">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="done()">
+      <span>确认</span>
+    </button>
+  </div>
+</div>

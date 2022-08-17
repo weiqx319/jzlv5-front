@@ -1,0 +1,175 @@
+<div>
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <ng-container *ngIf="(show_type === 'compensateAccount')">
+        <button class="manage-pause mr8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="batchAllotCompensate()">
+          <span>批量导入赔付消耗/媒体返货</span>
+        </button>
+      </ng-container>
+     </div>
+  </div>
+  <div *ngIf="show_type === 'compensateAccount'" class="manage-table manage-no-result-table pt8">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500,5000]"
+              [nzSize]="'default'"
+              [nzData]="apiData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ y: noResultHeight+'px' }">
+      <thead>
+      <tr>
+        <th nzLeft [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll($event)">
+        </th>
+        <th nzLeft [nzWidth]="'200px'">
+          <span>账户名称</span>
+          <!--  <app-filter [filterType]="'singleValue'" [filterKey]="{key:'pub_account_name',name:'账户名称'}" [(filterResult)]="filterResult['pub_account_name']" (submit)="doFilter()"></app-filter>
+  -->
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_account_name',name:'账户名称',type:'multiValue'}" [(filterResult)]="filterResult['pub_account_name']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>设备</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>事业部</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'department',name:'事业部',type:'multiValue'}" [(filterResult)]="filterResult['department']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>广告主</span>
+          <app-filter [filterType]="'operSingleList'" [filterOption]="advertiserList" [filterKey]="{key:'cid',name:'广告主',type:'operSingleList'}" [(filterResult)]="filterResult['cid']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>所属用户</span>
+          <app-filter [filterType]="'operSingleList'" [filterOption]="useUserIdList" [filterKey]="{key:'user_id',name:'所属用户',type:'operSingleList'}" [(filterResult)]="filterResult['user_id']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>日期</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>媒体</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'publisher_id',name:'媒体',type:'singleList'}" [(filterResult)]="filterResult['publisher_id']" [filterOption]="filterPublisherOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>渠道</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'channel_id',name:'渠道'}" [(filterResult)]="filterResult['channel_id']" [filterOption]="filterChannelOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'120px'">
+          <span>赔付消耗</span>
+          <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'小数位两位，赔付消耗>=0'" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+        </th>
+        <th [nzWidth]="'120px'">
+          <span>媒体返货</span>
+          <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'小数位两位，媒体返货>=0'" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>创建日期</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>最后更改日期</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td  nzLeft nzShowCheckbox [nzDisabled]="data.disabled" [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)">
+        </td>
+        <td nzLeft>
+          <a (click)="editHasAccount(data.chan_pub_id,'virtual')">{{data.pub_account_name}}</a>
+        </td>
+        <td>
+          {{data.device}}
+        </td>
+        <td>{{data.department}}</td>
+        <td>{{data.advertiser_name}}</td>
+        <td>{{data.belong_user_name}}</td>
+        <td>{{data.date}}</td>
+        <td>{{publisherTypeRelation['publisher_id_'+data.publisher_id]}}</td>
+        <td>{{channelRelation['channel_id_'+data.channel_id]}}</td>
+        <td>{{data.indemnity}}</td>
+        <td>{{data.media_return_cash}}</td>
+        <td>{{data.create_time}}</td>
+        <td>{{data.last_modify_time}}</td>
+      </tr>
+      <tr *ngIf="apiData.length===0">
+        <td #noResultTd [attr.colspan]="16" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+          <div class="table-no-result">
+            <div class="table-no-result-content">
+              <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="batchAllotCompensate()">
+                <i nz-icon nzType="plus" nzTheme="outline"></i><span>导入赔付</span>
+              </button>
+              <div class="mt8">还未上传赔付，请上传</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+  <div *ngIf="show_type === 'compensateLog'" class="manage-table manage-no-result-table pt8">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500,5000]"
+              [nzSize]="'default'"
+              [nzData]="apiData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ y: noResultHeight+'px' }">
+      <thead>
+      <tr>
+        <th style="padding-left: 30px !important;" [nzWidth]="'140px'">文件上传时间</th>
+        <th [nzWidth]="'200px'" >上传用户</th>
+        <th [nzWidth]="'100px'" >导入类型</th>
+        <th [nzWidth]="'100px'" >状态</th>
+        <th [nzWidth]="'200px'" >处理结果</th>
+        <th [nzWidth]="'80px'" >处理明细</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td>{{data.create_time}}</td>
+        <td>{{data.upload_user_name}}</td>
+        <td>
+          <span *ngIf="data.cash_type==='indemnity'">赔付消耗</span>
+          <span *ngIf="data.cash_type==='media_return_cash'">媒体返货</span>
+        </td>
+        <td>
+          <span *ngIf="data.status == 0">待运行</span>
+          <span *ngIf="data.status == 1">运行中</span>
+          <span *ngIf="data.status == 3">成功</span>
+          <span *ngIf="data.status == 4">失败</span>
+        </td>
+        <td>{{data.message}}</td>
+        <td>
+          <a *ngIf="data.status === 3" class="mr8" (click)="downLoad(data.job_id)"><i nz-icon nzType="download" nzTheme="outline" class="down-ico-color hand mr8"></i></a>
+          <a *ngIf="data.status === 3" (click)="seeUploadFile(data)"><i nz-icon nzType="eye" nzTheme="outline" class="down-ico-color hand mr8"></i></a>
+        </td>
+      </tr>
+      <tr *ngIf="apiData.length===0">
+        <td #noResultTd [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+          <div class="table-no-result">
+            <div class="table-no-result-content">
+              <div class="mt8">无上传记录</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+  <div>
+  </div>
+</div>

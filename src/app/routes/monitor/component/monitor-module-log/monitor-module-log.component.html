@@ -1,0 +1,97 @@
+<div class="app-module-condition pt8 pb8 pl30 pr30">
+  <div class="app-module-operations mr0">
+    <div class="app-module-operations-left">
+      <button class="manage-add mr8 background" nz-button [nzType]="'default'" (click)="download()"  [nzSize]="'small'" >
+       <i nz-icon nzType="download" nzTheme="outline"></i><span>下载</span>
+      </button>
+    </div>
+    <div class="app-module-operations-right fs12">
+      <nz-range-picker
+        [nzFormat]="'yyyy/MM/dd'"
+        [ngModel]="dateValue"
+        (ngModelChange)="onDateChange($event)"
+        (nzOnCalendarChange)="onCalendarChange($event)"
+        [nzDisabledDate]="disabledEndDate"
+        [nzSize]="'small'"
+        [nzAllowClear]="false"
+        (nzOnOpenChange)="openDateChange($event)"
+      ></nz-range-picker>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="report-list-data">
+  <div class="view-table" [ngStyle]="{'height':tableHeight+'px'}">
+    <ngx-datatable
+      #viewTable
+      class="jzl"
+      [rows]="rows"
+      [loadingIndicator]="loadingIndicator"
+      [columnMode]="'force'"
+      [headerHeight]="44"
+      [footerHeight]="40"
+      [rowHeight]="40"
+      [count]="pageInfo.currentPageCount"
+      [scrollbarV]="true"
+      [scrollbarH]="false"
+      [externalPaging]="true"
+      [externalSorting]="true"
+      [virtualization]="false"
+      [sortType]="'single'"
+      (sort)="sortView($event)"
+      [selected]="selected"
+      [selectionType]="'checkbox'"
+      [messages]="dataMessages"
+      (select)='onSelect($event)' >
+
+      <ngx-datatable-column [width]="64" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+        <ng-template #chkHeader ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+          <label
+            class="datatable-checkbox">
+            <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"/>
+          </label>
+        </ng-template>
+        <ng-template #chkCell ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+          <label
+            class="datatable-checkbox">
+            <input type="checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"/>
+          </label>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column *ngFor="let title of titles" [name]="title.name" [prop]="title.key">
+        <ng-template let-row="row"  ngx-datatable-cell-template>
+          <span title="{{(title.key === 'budget' && row[title.key] === '0')? '不限定' : row[title.key]}}" [ngClass]="{red: title.key === 'current_value' && row.alarm_status*1 === 1}">
+            {{(title.key === 'budget' && row[title.key] === '0')? '不限定' : row[title.key]}}
+          </span>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-footer>
+        <ng-template  ngx-datatable-footer-template>
+          <div class="page-count">
+            共{{pageInfo.allCount}}条<span class="ml4">(200条/页)</span>
+          </div>
+          <div class="page-size-select">
+            <!-- <select [(ngModel)]="pageInfo.pageSize" (ngModelChange)="changePageSize($event)">
+               <option *ngFor="let sizeList of pageInfo.pageSizeList" [value]="sizeList.key">{{sizeList.name}}</option>
+             </select>-->
+          </div>
+          <datatable-pager
+            [pagerLeftArrowIcon]="'datatable-icon-left'"
+            [pagerRightArrowIcon]="'datatable-icon-right'"
+            [pagerPreviousIcon]="'datatable-icon-prev'"
+            [pagerNextIcon]="'datatable-icon-skip'"
+            [page]="pageInfo.currentPage"
+            [size]="pageInfo.pageSize"
+            [count]="pageInfo.allCount"
+            [hidden]="!((pageInfo.allCount / pageInfo.pageSize) > 1)"
+            (change)="changePage($event)">
+          </datatable-pager>
+        </ng-template>
+      </ngx-datatable-footer>
+    </ngx-datatable>
+  </div>
+
+</div>

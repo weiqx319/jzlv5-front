@@ -1,0 +1,197 @@
+<div class="video-container">
+  <div class="materials-list-nav">
+    <div class="materials-list-nav-col">
+      <div class="materials-list-nav-btn">
+        <div class="lab-row ml10">
+          <label>排序项:</label>
+          <nz-select class="w100 ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="queryParams.sort_item.key"
+                     [nzPlaceHolder]="'选择排序项'"
+                     (ngModelChange)="search()"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of sortItemList"
+              [nzLabel]="option.name"
+              [nzValue]="option.key">
+            </nz-option>
+          </nz-select>
+          <nz-select class="w70 ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="queryParams.sort_item.dir"
+                     [nzPlaceHolder]="'排序'"
+                     (ngModelChange)="search()"
+                     nzShowSearch>
+            <nz-option  [nzLabel]="'升序'"  [nzValue]="'asc'"></nz-option>
+            <nz-option  [nzLabel]="'降序'"  [nzValue]="'desc'"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <div class="materials-list-nav-btn pull-right">
+        <div class="lab-row ml10">
+          <label>素材制作时间:</label>
+          <nz-range-picker class="w200" [(ngModel)]="queryItem.material_make_time.value" [nzSize]="'small'" (ngModelChange)="search()" nzFormat="yyyy-MM-dd"></nz-range-picker>
+        </div>
+        <div class="lab-row ml10">
+          <label>上传时间:</label>
+          <nz-range-picker class="w200" [(ngModel)]="queryItem.create_time.value" [nzSize]="'small'" (ngModelChange)="search()" nzFormat="yyyy-MM-dd"></nz-range-picker>
+        </div>
+      </div>
+
+    </div>
+    <div class="materials-list-nav-col">
+      <div class="materials-list-nav-btn">
+        <ng-container>
+          <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" routerLink="../launch_create" *ngIf="publisher_id === 7">
+            <span>新建投放</span>
+          </button>
+          <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" routerLink="../bd_create_launch" *ngIf="publisher_id === 1">
+            <span>新建投放</span>
+          </button>
+          <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" routerLink="../uc_create_launch" *ngIf="publisher_id === 17">
+            <span>新建投放</span>
+          </button>
+        </ng-container>
+
+        <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="uploadMaterials()">
+          <i nz-icon nzType="plus" nzTheme="outline"></i><span>上传素材</span>
+        </button>
+      </div>
+      <div class="materials-list-nav-btn pull-right">
+        <div class="lab-row ml10">
+          <label>素材名称:</label>
+          <nz-select class="w70 ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="queryItem.material_name.op"
+                     [nzPlaceHolder]="'请选择素材名称'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of stringFilterOper"
+              [nzLabel]="option.name"
+              [nzValue]="option.key">
+            </nz-option>
+          </nz-select>
+          <input class="w150 ml8" nz-input [nzSize]="'small'" [(ngModel)]="queryItem.material_name.value" placeholder="请输入">
+        </div>
+
+        <div class="lab-row ml10">
+          <label>创意形式:</label>
+          <nz-select class="w100 ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="queryItem.adcreative_css_id.value"
+                     [nzPlaceHolder]="'创意形式'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of imageStyleShowList"
+              [nzLabel]="option.css_name"
+              [nzValue]="option.css_id">
+            </nz-option>
+          </nz-select>
+        </div>
+
+        <div class="lab-row ml10" *ngIf="publisher_id!=7">
+          <label>尺寸大小:</label>
+          <nz-select class="w100 ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="queryItem.material_spec.value"
+                     [nzPlaceHolder]="'请选择尺寸'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of imageSizeShowList"
+              [nzLabel]="option.spec"
+              [nzValue]="option.spec">
+            </nz-option>
+          </nz-select>
+        </div>
+
+        <div class="lab-row ml10">
+          <label>标签:</label>
+          <nz-select class="w80 ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="queryItem.material_tags.op"
+                     [nzPlaceHolder]="'请选择'"
+                     nzShowSearch>
+            <nz-option [nzLabel]="'或包含'"  [nzValue]="'or'"> </nz-option>
+            <nz-option [nzLabel]="'且包含'"  [nzValue]="'and'"> </nz-option>
+          </nz-select>
+          <input nz-input
+                 class="w150 ml8"
+                 [nzSize]="'small'"
+                 type="text"
+                 [(ngModel)]="queryItem.material_tags.value"
+                 placeholder="标签之间以空格分隔">
+        </div>
+        <button class="ml10" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="search();">
+          <span>查询</span>
+        </button>
+        <button class="ml10" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="reset();">
+          <span>重置</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <ng-container>
+    <nz-spin [nzSpinning]="loading">
+      <div class="view-card" [ngStyle]="{'height':tableHeight - 40 - 40 +'px'}">
+        <div class="card-item" *ngFor="let item of cardList;let i = index;">
+          <div class="card-item-box">
+            <div class="card-item-title" nz-popover nzPopoverTrigger="hover" [nzPopoverContent]="cardDetail" [nzPopoverOverlayClassName]="'card-template'" nzPopoverPlacement="bottomLeft">
+              <span class="title ellipsis">{{ item.material_name }}</span>
+            </div>
+            <div class="card-item-img" (click)="materialsDetail(item)">
+              <app-material-image [row]="item"></app-material-image>
+            </div>
+            <div class="card-item-footer">
+              <span>{{ item.create_time }}</span>
+              <!--<label class="pull-right" nz-checkbox [(ngModel)]="item.checked">选择</label>-->
+              <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteMaterial(item)" [nzPopconfirmPlacement]="'bottomLeft'" class="pull-right">删除</a>
+            </div>
+          </div>
+          <ng-template #cardDetail>
+            <div class="card-detail">
+              <div class="card-detail-item">
+                <label class="mr8">标识:</label>
+                <p>{{ item.material_id }}</p>
+              </div>
+              <div class="card-detail-item">
+                <label class="mr8">名称:</label>
+                <p>{{ item.material_name }}</p>
+              </div>
+              <div class="card-detail-item">
+                <label class="mr8">标签:</label>
+                <p>{{ item.material_tags }}</p>
+              </div>
+              <div class="card-detail-item">
+                <label class="mr8">宽高:</label>
+                <p>{{ item.image_width }} px × {{ item.image_height }} px</p>
+              </div>
+              <div class="card-detail-item">
+                <label class="mr8">尺寸:</label>
+                <p>{{ item.image_size }} KB</p>
+              </div>
+              <div class="card-detail-item">
+                <label class="mr8">上传:</label>
+                <p>{{ item.create_time }}</p>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+        <div class="no-data" *ngIf="cardList.length === 0"><span>无数据展示</span></div>
+      </div>
+      <div class="mt10 card-page">
+        <nz-pagination [nzSize]="'small'"
+                       [nzTotal]="cardPage.count"
+                       [(nzPageIndex)]="cardPage.currentPage"
+                       [(nzPageSize)]="cardPage.pageSize"
+                       [nzPageSizeOptions]="cardPage.pageSizeList"
+                       nzShowSizeChanger
+                       (nzPageIndexChange)="changeCardPage()"
+                       (nzPageSizeChange)="changeCardPageSize()"
+                       [nzShowTotal]="totalTemplate"></nz-pagination>
+        <ng-template #totalTemplate let-total>共 {{ cardPage.count }} 条</ng-template>
+      </div>
+    </nz-spin>
+  </ng-container>
+</div>
+
+

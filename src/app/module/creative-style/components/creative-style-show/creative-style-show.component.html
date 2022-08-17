@@ -1,0 +1,33 @@
+<div class="singleImg mt4 mb4" *ngIf="!creativeData['material_style']||(creativeData['material_style']&&creativeData['material_style'].indexOf('单图')===-1&&creativeData['material_style'].indexOf('大图')===-1&&creativeData['material_style'].indexOf('三图')===-1)">
+  <div class="create-title">{{title}}</div>
+  <div class="create-desc">{{brand}}</div>
+</div>
+
+<div class="singleImg mt4 mb4" *ngIf="creativeData['material_style']&&creativeData['material_style'].indexOf('单图')!==-1">
+  <div style="display: inline-block; width: 90px">
+    <img [src]="pictures?pictures[0]['image']:''" alt="">
+  </div>
+  <div class="ml8" style="display: inline-block; width: 170px; overflow: hidden;    white-space: nowrap;text-overflow: ellipsis;">
+    <div class="create-title">{{title}}</div>
+    <div class="create-desc">{{brand}}</div>
+  </div>
+</div>
+
+<div class="bigImg mt4 mb4" *ngIf="creativeData['material_style']&&creativeData['material_style'].indexOf('大图')!==-1">
+  <div class="create-title">{{title}}</div>
+  <div class="mt4">
+    <img [src]="pictures?pictures[0]['image']:''" alt="">
+  </div>
+  <div class="create-desc mt4">{{brand}}</div>
+</div>
+
+<div class="threeImg mt4 mb4" *ngIf="creativeData['material_style']&&creativeData['material_style'].indexOf('三图')!==-1">
+  <div class="create-title">{{title}}</div>
+  <div class="mt8">
+    <img [src]="pictures?pictures[0]['image']:''" alt="">
+    <img class="ml4" [src]="pictures[1]['image']" alt="">
+    <img class="ml4" [src]="pictures[2]['image']" alt="">
+  </div>
+  <div class="create-desc mt4">{{brand}}</div>
+</div>
+

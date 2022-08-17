@@ -1,0 +1,68 @@
+<div class="data-analysis-view-container">
+  <div class="fixed-condition content-section">
+    <div class="condition-box" *ngIf="isJump === ''">
+      <div class="condition-item">
+        <a class="manage-add" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="chartShowOrHide()" [disabled]="group_type == 'ocpc_report'">
+          <i nz-icon nzTheme="outline" [nzType]="onlyTableShow?'eye-invisible':'eye'"></i><span>{{onlyTableShow?'展示图表':'仅看表格'}}</span>
+        </a>
+        <a class="manage-add ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeCondition()" >
+          <i nz-icon nzType="filter" nzTheme="outline"></i><span>高级筛选</span>
+        </a>
+        <div class="inline-block fs12 ml8">
+          <app-table-query-show *ngIf="menuService.currentChannelId === 1" [summary_type]="source_summary"  [dataRange]="viewTableData['data_range']" [conditions]="viewTableData['condition']" (changed)="reloadData()"></app-table-query-show>
+          <app-table-query-show-feed *ngIf="menuService.currentChannelId !== 1" [summary_type]="source_summary"  [dataRange]="viewTableData['data_range']" [conditions]="viewTableData['condition']" (changed)="reloadData()"></app-table-query-show-feed>
+        </div>
+      </div>
+      <div class="condition-item">
+        <div class="module-time inline-block" (click)="changeDate()">
+          <div class="time-content pl8 pr8">
+            <span>{{timeDesc}}</span>
+          </div>
+          <div class="module-icon time-icon">
+            <i nz-icon nzType="calendar" nzTheme="outline"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngIf="!onlyTableShow && group_type !== 'ocpc_report'">
+    <div class="chat content-section">
+      <div class="select-metric">
+        <label>选择指标:</label>
+        <div class="ml10">
+          <nz-select class="select-input" [nzSize]="'small'" [nzMode]="'multiple'" [nzMaxMultipleCount]="8" [(ngModel)]="selectedMetric" (ngModelChange)="changeSelectedMetric()" [nzPlaceHolder]="'请选择指标项'">
+            <nz-option *ngFor="let item of chartItems" [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <ng-container>
+        <nz-spin *ngIf="isCardChange" [nzSpinning]="true" class="analysis-card"></nz-spin>
+        <app-analysis-chat *ngIf="!isCardChange" [dimensions]="dimensions" [dimensionMap]="dimensionMap" [metricAry]="chartItems" chartType="card" [summaryType]="source_summary" [originalChartSetting]="chartSetting" [cardMetricAry]="selectedMetricAry"></app-analysis-chat>
+      </ng-container>
+    </div>
+    <div class="chat content-section"  *ngIf="group_type !== 'target_report'">
+      <div class="section-tab-container">
+        <nz-tabset [(nzSelectedIndex)]="chartTabIndex" [nzSize]="'default'">
+          <nz-tab *ngFor="let chartTab of chartTabList" [nzTitle]="chartTab.title" (nzSelect)="changeChartTab(chartTab)">
+          </nz-tab>
+        </nz-tabset>
+        <ng-container>
+          <nz-spin *ngIf="isChartChange" [nzSpinning]="true" class="analysis-chart"></nz-spin>
+          <app-analysis-chat *ngIf="!isChartChange" [dimensions]="dimensions" [dimensionMap]="dimensionMap" [metricAry]="chartItems" [chartType]="selectedChartType" [chartKey]="selectedChartKey" [summaryType]="source_summary" [originalChartSetting]="chartSetting" (tooltipBtnFun)="showDetail($event)"></app-analysis-chat>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="table content-section">
+    <ng-container *ngIf="group_type==='effect_report'||group_type==='target_report'">
+      <app-data-analytics-table #childTable></app-data-analytics-table>
+    </ng-container>
+    <ng-container *ngIf="group_type==='dimension_report'">
+      <app-biz-table-modal #childTable [source_summary_type]="source_summary"></app-biz-table-modal>
+    </ng-container>
+    <ng-container *ngIf="group_type==='ocpc_report'">
+      <app-ocpc-report-modal #childTable></app-ocpc-report-modal>
+    </ng-container>
+  </div>
+</div>

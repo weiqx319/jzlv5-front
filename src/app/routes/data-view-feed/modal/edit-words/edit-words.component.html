@@ -1,0 +1,40 @@
+<ng-container *ngIf="publisherId == 7">
+  <div *ngIf="selectData['byteDanceCampaignType'].length>1 || selectData['byteDanceCampaignType'].indexOf('信息流')!==-1">
+    <h3>头条编辑否词需要先筛选广告组类型为搜索</h3>
+  </div>
+
+
+
+
+  <ng-container *ngIf="selectData['byteDanceCampaignType'].length == 1 && selectData['byteDanceCampaignType'][0] == '搜索'">
+    <app-edit-words-bytedance
+      [selectData]="selectData"
+      [summaryType]="summaryType"
+      [is_check]="is_check"
+      [stringIdArray]="stringIdArray"
+      (is_saving)="save_state($event)"
+    ></app-edit-words-bytedance>
+  </ng-container>
+
+<!--  <ng-container *ngIf="selectData['bdCampaignBsType'].length == 1 && selectData['bdCampaignBsType'][0] == '闪投计划'">-->
+<!--    <div>-->
+<!--      <h3></h3>-->
+<!--    </div>-->
+<!--    <app-edit-group-target-bd-dsa-->
+<!--    [selectData]="selectData"-->
+<!--    [summaryType]="summaryType"-->
+<!--    [is_check]="is_check"-->
+<!--    [stringIdArray]="stringIdArray"-->
+<!--    ></app-edit-group-target-bd-dsa>-->
+<!--  </ng-container>-->
+
+</ng-container>
+<ng-container *ngIf="publisherId==17">
+  <app-edit-words-uc
+    [selectData]="selectData"
+    [summaryType]="summaryType"
+    [is_check]="is_check"
+    [stringIdArray]="stringIdArray"
+    (is_saving)="save_state($event)"
+  ></app-edit-words-uc>
+</ng-container>

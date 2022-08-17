@@ -1,0 +1,147 @@
+<!--批量添加更新关键词-->
+<div>
+  <h3 *ngIf="summaryType === 'creative'">批量添加/更新创意</h3>
+  <h3 *ngIf="summaryType === 'keyword'">批量添加/更新关键词</h3>
+  <h3 *ngIf="summaryType === 'adgroup'">批量添加/更新单元</h3>
+  <h3 *ngIf="summaryType === 'campaign'">批量添加/更新计划</h3>
+  <div class="mt8">
+    <div class="mt8">
+      <span class="inline-block pull-left text-right">媒体：</span>
+      <div class="inline-block pull-left">
+        <nz-select style="width: 200px;"
+                   [(ngModel)]="batchAddKeywordData.publisher_id"
+                   (ngModelChange)="changePublisher( batchAddKeywordData ,true)"
+                   nzPlaceHolder="请选择媒体"
+                   [nzSize]="'small'"
+        >
+          <nz-option
+            *ngFor="let option of publisherData"
+            [nzLabel]="option.publisher_name"
+            [nzValue]="option.publisher_id">
+          </nz-option>
+        </nz-select>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </div>
+  <div class='ml25'>
+    <div class="mt8">
+      <p  class="titleColor">粘贴关键词：</p>
+      <div class="mt8 pl25 prompt">
+        <p>请把计划信息粘贴到下列编辑框中。</p>
+        <p class="needPosition"><i>*注：</i>1，按照下方表格标识的推广指示顺序，批量粘贴计划信息，未被填写的部分或者填写为"-"会被系统自动填充为默认值。表格支持各种Excel的快捷键操作，邮件复制（Ctrl + C）、剪贴（Ctrl + V）、全选（Ctrl + A）、撤销（Ctrl + Z）</p>
+        <p class="needPosition">2，如果您提交的关键词数量超过1000个，请用Excel上传形式</p>
+        <div class="mt8">
+          <span class="inline-block pull-left text-right">账户：</span>
+          <div class="inline-block pull-left">
+            <nz-select style="width: 200px;"
+                       [(ngModel)]="batchAddKeywordData.pub_account_id"
+                       (ngModelChange)="changeAccount(batchAddKeywordData , true)"
+                       nzPlaceHolder="在导入数据中指定"
+                       [nzSize]="'small'"
+            >
+              <nz-option
+                *ngFor="let account of accountData"
+                [nzLabel]="account.pub_account_name"
+                [nzValue]="account.pub_account_id">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <!--计划-->
+        <div *ngIf="summaryType !== 'campaign'" class="mt8">
+          <span class="inline-block pull-left text-right">计划：</span>
+          <div class="inline-block pull-left">
+            <nz-select style="width: 200px;"
+                       [(ngModel)]="batchAddKeywordData.pub_campaign_id"
+                       (ngModelChange)="changeCampaign( batchAddKeywordData, true)"
+                       nzPlaceHolder="在导入数据中指定"
+                       [nzSize]="'small'"
+            >
+              <nz-option
+                *ngFor="let campItem of campaign"
+                [nzLabel]="campItem.pub_campaign_name"
+                [nzValue]="campItem.pub_campaign_id">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <!--单元-->
+        <div *ngIf="summaryType === 'keyword' || summaryType === 'creative'" class="mt8">
+          <span class="inline-block pull-left text-right">单元：</span>
+          <div class="inline-block pull-left">
+            <nz-select style="width: 200px;"
+                       [(ngModel)]="batchAddKeywordData.pub_adgroup_id"
+                       nzPlaceHolder="在导入数据中指定"
+                       [nzSize]="'small'"
+            >
+              <nz-option
+                *ngFor="let adgroupItem of adgroupData"
+                [nzLabel]="adgroupItem.pub_adgroup_name"
+                [nzValue]="adgroupItem.pub_adgroup_id">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+      <div class="tableHead pl25">
+        <div class="border mt8 whiteClolor mb16">
+          <ul>
+            <li class="pull-left" *ngIf="!batchAddKeywordData.pub_account_id">账户</li>
+            <li class="pull-left" *ngIf="!batchAddKeywordData.pub_campaign_id">计划</li>
+            <li class="pull-left" *ngIf="!batchAddKeywordData.pub_adgroup_id">单元</li>
+            <li class="pull-left">关键词</li>
+            <li class="pull-left">出价</li>
+            <li class="pull-left">匹配方式</li>
+            <li class="pull-left">访问Url</li>
+            <li class="pull-left">移动访问Url</li>
+            <li class="pull-left">开启或暂停</li>
+          </ul>
+          <textarea placeholder="" rows="10"></textarea>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="mt8">
+      <p  class="titleColor">上传关键词文件： 文件格式为Excel</p>
+      <div class="mt8 pl35 uploadFile">
+        <div class="pull-left">
+          <input nz-input
+                 class="mr8" style="width: 150px;"
+                 [(ngModel)]="inputValue"
+                 placeholder="选择上传文件"
+                 [nzSize]="'small'">
+        </div>
+        <a class="inline-block w100 uploadBtn border" href="javascript:;">
+          选择文件
+          <input type="file" />
+        </a>
+      </div>
+      <div class="uploadFile mt8 pl35">
+        <span>文件格式参考：</span>
+        <a href="JavaScript:;" class="download">百度示例文件下载</a>
+        <a href="JavaScript:;" class="download ml16">360示例文件下载</a>
+        <a href="JavaScript:;" class="download ml16">搜狗示例文件下载</a>
+        <a href="JavaScript:;" class="download ml16">神马示例文件下载</a>
+      </div>
+    </div>
+  </div>
+  <div class="mt8" *ngIf="summaryType === 'keyword'">
+    <div class="mt8">
+      <span class="inline-block pull-left text-right">将新增单元价统一设置为：</span>
+      <div class="inline-block pull-left">
+        <nz-input-number class="mr5" style="width: 100px; border-radius: 0px;"
+                         [(ngModel)]="batchAddKeywordData['price']"
+                         [nzMin]="1"
+                         [nzMax]="10"
+                         [nzStep]="0.1"
+                         [nzSize]="'small'">
+        </nz-input-number>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </div>
+</div>

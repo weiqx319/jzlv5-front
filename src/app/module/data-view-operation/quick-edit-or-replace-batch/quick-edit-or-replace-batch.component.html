@@ -1,0 +1,44 @@
+<div class="lab-row-more-publisher">
+  <!--<span class="row-title pull-left">关键词出价：</span>-->
+  <div class="inpRow mt10" >
+    <nz-radio-group [(ngModel)]="param.modify_type">
+      <div>
+        <div>
+          <label nz-radio
+                 [nzValue]="1">
+            <span>直接修改为:</span>
+          </label>
+        </div>
+        <div>
+          <input nz-input style="width: 352px;margin-left: 45px"
+                 [(ngModel)]="batch_edit_data.batch_edit_value"
+                 [nzSize]="'small'">
+        </div>
+      </div>
+      <div>
+        <div>
+          <label nz-radio [nzValue]="2">
+            <span>查找和替换:</span>
+          </label>
+        </div>
+        <div class="searchP pl16 mb10 color">
+          <div class="pull-left mr5">
+            <span>查找:</span>
+          </div>
+          <input nz-input style="width: 352px;"
+                 [(ngModel)]="batch_edit_data.batch_edit_search_value"
+                 [nzSize]="'small'">
+        </div>
+        <div class="searchP pl16 color" style="position: relative;">
+          <div class="pull-left mr5">
+            <span>替换:</span>
+          </div>
+          <input nz-input style="width: 352px;"
+                 [(ngModel)]="batch_edit_data.batch_edit_replace_value"
+                 [nzSize]="'small'">
+        </div>
+      </div>
+    </nz-radio-group>
+  </div>
+
+</div>

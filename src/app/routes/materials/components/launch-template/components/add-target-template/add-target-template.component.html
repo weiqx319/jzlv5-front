@@ -1,0 +1,208 @@
+<div class="add-target-template-container">
+  <div class="title">新建定向模板</div>
+  <div class="lab-row mb20 pl20" *ngIf="publisherId !== 17">
+    <label>投放媒体:</label>
+    <nz-select class="w200 ml8"
+               [nzSize]="'small'"
+               [(ngModel)]="defaultData.publisher_id"
+               [nzPlaceHolder]="'请选择'"
+               [nzDisabled]="true"
+               nzShowSearch>
+      <nz-option
+        *ngFor="let option of publisherList"
+        [nzLabel]="option.name"
+        [nzValue]="option.key">
+      </nz-option>
+    </nz-select>
+  </div>
+
+  <nz-spin [nzSpinning]="getting">
+    <div class="target-setting pl20" [ngStyle]="{'height':tableHeight - 40 +'px'}">
+      <div class="basic_info">
+        <div class="sub_title mb10">基本信息</div>
+        <div class="form-content">
+          <div class="lab-row mb20">
+            <label><span class="redStart">*</span>定向包名称:</label>
+            <input nz-input
+                   class="w200 ml8"
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="defaultData.audience_template_name"
+                   placeholder="请输入定向包名称">
+          </div>
+          <div class="lab-row mb20">
+            <label>定向包描述:</label>
+            <textarea nz-input
+                      class="w200 ml8"
+                      type="'textarea'"
+                      rows="3"
+                      [(ngModel)]="defaultData.audience_template_comment"
+                      placeholder="请输入定向包描述">
+            </textarea>
+          </div>
+          <ng-container *ngIf="publisherId===7">
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>定向包类型:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.landing_type"
+                [nzDisabled]="defaultData.audience_template_id"
+                (ngModelChange)="changeGroup()">
+                <ng-container *ngFor="let item of landingTypeList">
+                  <label nz-radio-button [nzValue]="item.key">
+                    <span>{{item.name}}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>投放范围:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.delivery_range"
+                [nzDisabled]="defaultData.audience_template_id"
+                (ngModelChange)="changeGroup()">
+                <ng-container *ngFor="let item of deliveryRangeList">
+                  <label nz-radio-button [nzValue]="item.key">
+                    <span>{{item.name}}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="publisherId===1">
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>营销目标:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.marketing_target"
+                [nzDisabled]="defaultData.audience_template_id"
+                (ngModelChange)="changeGroup()">
+                <ng-container *ngFor="let item of marketTypeList">
+                  <label nz-radio-button [nzValue]="item.key">
+                    <span>{{item.name}}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>定向包类型:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.landing_type"
+                [nzDisabled]="defaultData.audience_template_id"
+                (ngModelChange)="changeGroup()">
+                <ng-container *ngFor="let item of landingTypeListBd">
+                  <label nz-radio-button [nzValue]="item.key">
+                    <span>{{item.name}}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>投放流量:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.flow_type"
+                [nzDisabled]="defaultData.audience_template_id"
+                (ngModelChange)="changeGroup()">
+                <ng-container *ngFor="let item of flowTypeList">
+                  <label nz-radio-button [nzValue]="item.key">
+                    <span>{{item.name}}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="publisherId===17">
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>推广对象:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.objective_type"
+                [nzDisabled]="defaultData.audience_template_id"
+                (ngModelChange)="changeGroup()">
+                <ng-container *ngFor="let item of objective_type">
+                  <label nz-radio-button [nzValue]="item.value">
+                    <span>{{item.label}}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row mb20">
+              <label><span class="redStart">*</span>优化目标:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="defaultData.opt_target"
+                [nzDisabled]="defaultData.audience_template_id"
+                (ngModelChange)="changeGroup()">
+                <ng-container *ngFor="let item of opt_target">
+                  <label nz-radio-button [nzValue]="item.value">
+                    <span>{{item.label}}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+          </ng-container>
+
+        </div>
+      </div>
+      <div class="basic_info">
+        <div class="sub_title mb10">定向设置</div>
+        <ng-container *ngIf="publisherId == 7">
+          <app-target-setting
+            [isRemoveTargetingAudience]="true"
+            [targetSource]="defaultData"
+            [landingType]="defaultData.landing_type"
+            [chan_pub_id]="0"
+            [curGroupFlag]="curGroupFlag">
+          </app-target-setting>
+        </ng-container>
+        <ng-container *ngIf="publisherId == 1 && !getting">
+          <app-bd-target-setting
+            [isRemoveTargetingAudience]="true"
+            [targetSource]="defaultData"
+            [chan_pub_id]="0"
+            [curGroupFlag]="curGroupFlag"
+            [campaignTypeSetting]="campaignTypeSetting"
+          >
+          </app-bd-target-setting>
+        </ng-container>
+
+        <ng-container *ngIf="publisherId === 17 && !getting && targetConfig">
+          <app-uc-target-setting
+            [isRemoveTargetingAudience]="true"
+            [data]="defaultData"
+            [objectiveType]="defaultData.objective_type"
+            [targetConfig]="targetConfig"
+            [errorTip]="errorTipAry"
+          >
+          </app-uc-target-setting>
+        </ng-container>
+
+      </div>
+    </div>
+  </nz-spin>
+
+
+
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saveing" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

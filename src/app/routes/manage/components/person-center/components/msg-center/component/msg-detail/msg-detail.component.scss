@@ -1,0 +1,15 @@
+.message-container {
+  padding: 0 15px;
+  .msg-title {
+    padding: 20px 0;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    & > h2 {
+      margin-bottom: 10px;
+    }
+  }
+  .msg-content {
+    padding: 10px 0 50px 0;
+  }
+}
+

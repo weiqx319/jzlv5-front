@@ -1,0 +1,74 @@
+<div class="campaign-template-container">
+  <div class="materials-list-nav">
+    <div class="materials-list-nav-col">
+      <div class="materials-list-nav-btn">
+        <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" [routerLink]="'/data_view/feed/materials/launch_template/card_template_create'">
+          <i nz-icon nzType="plus" nzTheme="outline"></i><span>新建卡片模板</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="materials-list-data">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'small'"
+              [nzData]="[{}]"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ x: '800px', y: noResultHeight+'px' }"
+    >
+      <thead>
+      <tr>
+        <th [nzWidth]="'200px'">
+          <span>名称</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>模板类型</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>渠道</span>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td>
+          {{ data.promo_card_template_name }}
+        </td>
+        <td>
+          {{ landingTypeList[data.download_type] === 'DOWNLOAD_URL' ? '下载链接' : '落地页链接' }}
+        </td>
+        <td>
+          {{ publisherList[data.publisher_id] }}
+        </td>
+        <td>
+          <a href="javascript:" [routerLink]="'/data_view/feed/materials/launch_template/card_template_create'" [queryParams]="{promo_card_template_id: data.promo_card_template_id}">编辑</a>
+          <span class="ml4 mr4">|</span>
+<!--          <a href="javascript:" routerLink="/data_view/feed/materials/launch_template/launch_template_create" [queryParams]="{launch_template_id: data.launch_template_id, is_copy: '1'}">复制</a>-->
+<!--          <span class="ml4 mr4">|</span>-->
+          <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteTemplate(data)" [nzPopconfirmOverlayClassName]="'dashboard-delete-card'" [nzPopconfirmPlacement]="'bottomRight'" [nzPopconfirmTrigger]="'click'"  href="javascript:">删除</a>
+        </td>
+      </tr>
+      <tr *ngIf="!apiData.length && !loading">
+        <td [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height':(noResultHeight-10)+'px'}">
+          <div style="text-align: center">
+            无数据展示
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>
+
+

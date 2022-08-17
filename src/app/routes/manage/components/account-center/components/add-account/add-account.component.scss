@@ -1,0 +1,76 @@
+.item-select {
+  // height: 20px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  // line-height: 1.5;
+  padding-left: 10px;
+  padding-right: 10px;
+  // position:relative;
+  border: 1px solid #e4e4e4;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.item-desc {
+  overflow: hidden;
+  white-space: nowrap;
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+  a {
+    color: #404040;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a:hover {
+    color: #404040;
+    text-decoration: none;
+  }
+}
+.item-arrow {
+  // position:absolute;
+  // right: 5px;
+  // top: 2px;
+  color: #a4a4a4;
+  font-size: 12px;
+  transform: scale(0.8);
+  transform-origin: 0% 0%;
+  -ms-transform: scale(0.8); /* IE 9 */
+  -ms-transform-origin: 0% 0%; /* IE 9 */
+  -webkit-transform: scale(0.8); /* Safari 和 Chrome */
+  -webkit-transform-origin: 0% 0%; /* Safari 和 Chrome */
+  -moz-transform: scale(0.8); /* Firefox */
+  -moz-transform-origin: 0% 0%; /* Firefox */
+  -o-transform: scale(0.8); /* Opera */
+  -o-transform-origin: 0% 0%;
+}
+.item-content {
+  width: 592px;
+  padding: 8px 8px 8px 8px;
+  display: none;
+  border: 1px solid #e4e4e4;
+  border-top-right-radius: 2px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  background-color: #fff;
+  z-index: 2;
+}
+.item-body {
+  width: 100%;
+  max-height: 120px;
+  overflow: auto;
+}
+.item-footer {
+  height: 20px;
+  line-height: 20px;
+  text-align: right;
+}
+.body-issue {
+  overflow: hidden;
+  white-space: nowrap;
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+}

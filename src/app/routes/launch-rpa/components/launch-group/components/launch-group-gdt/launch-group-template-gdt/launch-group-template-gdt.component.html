@@ -1,0 +1,967 @@
+<div class="create-launch-container-toutiao" *ngIf="!structConfigLoading">
+  <div class="create-launch-left pl10 pr10 pt20" [ngStyle]="{'height':tableHeight + 'px'}">
+    <nz-anchor [nzContainer]="'#anchorContent'" [nzOffsetTop]="30">
+      <ng-container *ngFor="let anchor of anchorList;">
+        <nz-link nzHref="{{anchor.key}}" nzTitle="{{anchor.name}}">
+          <nz-link *ngFor="let sub of anchor.sub;"
+                   nzHref="{{sub.key}}"
+                   nzTitle="{{sub.name}}"></nz-link>
+        </nz-link>
+      </ng-container>
+    </nz-anchor>
+  </div>
+
+  <div class="create-launch-right" [ngStyle]="{'width':tableWidth +'px'}">
+    <div class="form-content">
+      <div id="anchorContent" class="setting-box" [ngStyle]="{'height':tableHeight - 40 +'px'}">
+        <!--账户-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="select_account" class="sub_title mb10"><span>选择账户</span></div>
+          <div class="basic-card">
+            <div id="change_account" class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>选择账号:</label>
+              <div>
+                <nz-select class="w_full ml8"
+                           [nzSize]="'small'"
+                           [nzMaxTagCount]="1"
+                           [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                           nzMode="multiple"
+                           [nzPlaceHolder]="'请选择帐户'"
+                           [nzAllowClear]="true"
+                           [(ngModel)]="defaultData.chan_pub_id_lst"
+                           (nzOpenChange)="changeAccount($event)"
+                           nzShowSearch>
+                  <nz-option
+                    *ngFor="let option of accountsList"
+                    [nzLabel]="option.pub_account_name"
+                    [nzValue]="option.chan_pub_id">
+                  </nz-option>
+                </nz-select>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.chan_pub_id_lst.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.chan_pub_id_lst.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <div id="template_name" class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>模板名称:</label>
+              <div>
+                <input class="w_full ml8" nz-input nzSize="small" [(ngModel)]="defaultData.project_template_name"
+                       (ngModelChange)="getItemErrorTip('project_template_name', defaultData.project_template_name)"
+                       placeholder="请输入模板名称"/>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.project_template_name.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.project_template_name.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--计划-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="campaign_start" class="sub_title mb10"><span>推广计划</span></div>
+          <div class="basic-card">
+            <!-- 推广目的-->
+            <div id="promotion_objective" class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>推广目的:</label>
+              <nz-select class="w_full ml8"
+                         [nzSize]="'small'"
+                         [(ngModel)]="campaignData.promoted_object_type"
+                         (ngModelChange)="changeObjectType($event)"
+                         [nzPlaceHolder]="'请选择'"
+                         nzShowSearch>
+                <nz-option *ngFor="let option of promotedObjectTypeList"
+                           [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+              </nz-select>
+            </div>
+            <!--计划选择-->
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>推广计划选择:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="campaignData.campaign_select"
+                [nzSize]="'small'">
+                <ng-container>
+                  <ng-container *ngFor="let option of structConfig['campaign']['campaign_select']['sub']">
+                    <label nz-radio-button [nzValue]="option.value"><span>{{option.label}}</span></label>
+                  </ng-container>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <!--计划名称-->
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>推广计划名称:</label>
+              <div>
+                <input #curCampaignTextArea class="w_full ml8" [(ngModel)]="campaignData.pub_campaign_name" nz-input
+                       nzSize="small"  (ngModelChange)="getItemErrorTip('pub_campaign_name', campaignData.pub_campaign_name)"
+                       placeholder="请输入推广计划名称"/>
+                <div class="item-body mt10">
+                  <div class="tag ml8">
+                    <span class="word-name">占位符：</span>
+                    <ng-container *ngFor="let word of campaignWordList;let i = index;">
+                      <span class="tag-word mb8 mr10" (click)="addTags(word,'campaign')"><i nz-icon nzType="plus"
+                                                                                            nzTheme="outline"
+                                                                                            class="mr5"></i>{{ word }}</span>
+                    </ng-container>
+                  </div>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.pub_campaign_name.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.pub_campaign_name.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <!--投放方式-->
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>投放方式:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="campaignData.speed_mode"
+                [nzSize]="'small'">
+                <ng-container>
+                  <ng-container *ngFor="let option of structConfig['campaign']['speed_mode']['sub']">
+                    <label nz-radio-button [nzValue]="option.value"><span>{{option.label}}</span></label>
+                  </ng-container>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <!--预算-->
+            <div id="budget" class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>预算:</label>
+              <div>
+                <nz-radio-group
+                  class="ml8"
+                  [(ngModel)]="campaignData.campaign_budget_mode"
+                  [nzSize]="'small'">
+                  <ng-container *ngFor="let option of structConfig['campaign']['budget']['sub']">
+                    <label nz-radio-button [nzValue]="option.value"><span>{{option.label}}</span></label>
+                  </ng-container>
+                </nz-radio-group>
+                <ng-container *ngIf="campaignData.campaign_budget_mode === ''">
+                  <nz-input-number class="ml20 mr10" [(ngModel)]="campaignData.budget"
+                                   nzSize="small" [nzMin]="50"
+                                   (ngModelChange)="getItemErrorTip('budget', campaignData.budget)"
+                                   [nzMax]="40000000" [nzStep]="1"></nz-input-number>
+                  元
+                  <span class="lab-tip"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)"
+                            class="ml5 mt5 mr5"></i>取值范围: 50-40000000</span>
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.budget.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.budget.tip_text }}</span>
+                  </div>
+                </ng-container>
+              </div>
+
+            </div>
+            <!--设置广告上限-->
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>设置广告上限:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="campaignData.campaign_adgroup_limit"
+                [nzSize]="'small'">
+                <ng-container *ngFor="let option of structConfig['campaign']['campaign_adgroup_limit']['sub']">
+                  <label nz-radio-button [nzValue]="option.value"><span>{{option.label}}</span></label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <!--计划广告上限-->
+            <div class="lab-row mb20 pl20 w100p" *ngIf="campaignData.campaign_adgroup_limit">
+              <label><span class="redStart">*</span>推广计划广告上限:</label>
+              <div>
+                <nz-input-number class="w_full ml8" #curAdgroupTextArea [(ngModel)]="campaignData.adgroup_count_per_campaign"
+                                (ngModelChange)="getItemErrorTip('adgroup_count_per_campaign', campaignData.adgroup_count_per_campaign)"
+                                 nzSize="small" [nzMin]="1" [nzStep]="1"></nz-input-number>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.adgroup_count_per_campaign.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.adgroup_count_per_campaign.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <!--广告名称-->
+            <div id="adgroup_name" class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>广告名称:</label>
+              <div>
+                <input class="w_full ml8" #curAdgroupTextArea [(ngModel)]="adgroupData.pub_adgroup_name" nz-input
+                       nzSize="small" (ngModelChange)="getItemErrorTip('pub_adgroup_name', adgroupData.pub_adgroup_name)"
+                       placeholder="请输入广告名称"/>
+                <div class="item-body mt10">
+                  <div class="tag ml8">
+                    <span class="word-name">占位符：</span>
+                    <ng-container *ngFor="let word of adgroupWordList;let i = index;">
+                      <span class="tag-word mb8 mr10" (click)="addTags(word,'adgroup')"><i nz-icon nzType="plus"
+                                                                                           nzTheme="outline"
+                                                                                           class="mr5"></i>{{ word }}</span>
+                    </ng-container>
+                  </div>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.pub_adgroup_name.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.pub_adgroup_name.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--投放目标-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="launch_objective" class="sub_title mb10"><span>投放目标</span></div>
+          <div class="basic-card">
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>渠道号:</label>
+              <div>
+                <div class="lab-row w_full">
+                  <nz-transfer-tree class="ml8 mr20" *ngIf="isChannelTree" [getParentKey]="false"
+                                    [target]="defaultData.convert_channel_id_lst"
+                                    (nzChange)="transferTreeChange($event)"
+                                    [source]="channelTreeList"></nz-transfer-tree>
+                  <button class="ml8" nz-button nzSize="small" (click)="getChannelList()">刷新</button>
+                  <a class="ml20" target="_blank" href="javascript:" [routerLink]="'/launch_rpa/channel'">渠道管理</a>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.convert_channel_id_lst.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.convert_channel_id_lst.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--用户定向-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="user_target" class="sub_title mb10"><span>用户定向</span></div>
+          <div class="basic-card">
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>基础定向:</label>
+              <div>
+                <div class="lab-row w100p">
+                  <nz-select class="w_full ml8"
+                             [nzSize]="'small'"
+                             [nzPlaceHolder]="'请选择'"
+                             [(ngModel)]="adgroupData.parent_audience_template_id"
+                             (ngModelChange)="changeBasicAudience($event)"
+                             nzShowSearch>
+                    <nz-option *ngFor="let item of curBasicTarget" [nzValue]="item.audience_template_id"
+                               [nzLabel]="item.audience_template_name"></nz-option>
+                  </nz-select>
+                  <button class="ml20" nz-button nzSize="small" (click)="getBasicTargetList()">刷新</button>
+                  <a class="ml20" target="_blank" href="javascript:" [routerLink]="'/launch_rpa/target'">定向管理</a>
+                </div>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.parent_audience_template_id.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.parent_audience_template_id.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <!--是否分渠道号-->
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>是否分渠道号:</label>
+              <div>
+                <nz-radio-group
+                  class="ml8"
+                  [(ngModel)]="adgroupData.audience_by_convert_channel"
+                  (ngModelChange)="changeTargetChannel($event)"
+                  [nzSize]="'small'">
+                  <ng-container>
+                    <label nz-radio-button [nzValue]="true"
+                           [nzDisabled]="defaultData.convert_channel_id_lst.length === 0">
+                      <span>是</span>
+                    </label>
+                    <label nz-radio-button [nzValue]="false">
+                      <span>否</span>
+                    </label>
+                  </ng-container>
+                </nz-radio-group>
+
+                <ng-container *ngIf="adgroupData.audience_by_convert_channel">
+                  <nz-tabset class="ml8 mt20" [nzType]="'card'" *ngIf="targetChannelList.length"
+                             [nzSelectedIndex]="curTargetIndex" (nzSelectedIndexChange)="changeTargetTab($event)">
+                    <nz-tab *ngFor="let item of targetChannelList" [nzTitle]="item.convert_channel_name">
+                      <ng-container [ngTemplateOutlet]="target_template" [ngTemplateOutletContext]="{}"></ng-container>
+                    </nz-tab>
+                  </nz-tabset>
+                </ng-container>
+
+                <ng-container *ngIf="!adgroupData.audience_by_convert_channel">
+                  <ng-container [ngTemplateOutlet]="target_template" [ngTemplateOutletContext]="{}"></ng-container>
+                </ng-container>
+
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.audience_template_id_lst.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.audience_template_id_lst.tip_text }}</span>
+                </div>
+
+              </div>
+            </div>
+            <!--自动扩量-->
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>自动扩量:</label>
+              <nz-radio-group
+                class="ml8"
+                [(ngModel)]="adgroupData.expand_enabled"
+                [nzSize]="'small'">
+                <ng-container *ngFor="let option of structConfig['adgroup']['expand_enabled']['sub']">
+                  <label nz-radio-button [nzValue]="option.value"><span>{{option.label}}</span></label>
+                </ng-container>
+              </nz-radio-group>
+              <span class="redStart ml8">*若已选定向包存在系统优选，则启用该项会导致运行模板报错</span>
+            </div>
+
+            <!--不可突破定向-->
+            <div class="lab-row pl20 mb20 w100p" *ngIf="adgroupData.expand_enabled">
+              <label><span class="redStart">*</span>不可突破定向:</label>
+              <div class="ml8">
+                <label nz-checkbox [(ngModel)]="expandTargetingChecked" (ngModelChange)="updateNotLimit(3)">全部</label>
+                <nz-checkbox-group [(ngModel)]="structConfig['adgroup']['expand_targeting']['sub']"  (ngModelChange)="changeExpandTarget()"
+                                   [nzDisabled]="expandTargetingChecked"></nz-checkbox-group>
+                <div class="error-tip mt5" *ngIf="checkErrorTip.expand_targeting.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.expand_targeting.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!--扩量种子人群-->
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>扩量种子人群:</label>
+              <div>
+                <nz-radio-group
+                  class="ml8"
+                  [(ngModel)]="adgroupData.cold_start_audience_type"
+                  [nzSize]="'small'">
+                  <label nz-radio-button [nzValue]="false"><span>不启用</span></label>
+                  <label nz-radio-button [nzValue]="true"><span>启用</span></label>
+                </nz-radio-group>
+                <ng-container *ngIf="adgroupData.cold_start_audience_type">
+                  <div>
+                    <span class="redStart">*</span>
+                    <nz-select class="w_full ml1 mt10"
+                               [nzSize]="'small'"
+                               [nzMaxTagCount]="1"
+                               [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                               nzMode="multiple"
+                               [nzPlaceHolder]="'请选择扩量种子人群包'"
+                               [nzAllowClear]="true"
+                               [(ngModel)]="adgroupData.cold_start_audience"
+                               (ngModelChange)="getItemErrorTip('cold_start_audience', adgroupData.cold_start_audience)"
+                               nzShowSearch>
+                      <nz-option
+                        *ngFor="let option of startAudienceList"
+                        [nzLabel]="option.audience_name + '-' + option.pub_account_name"
+                        [nzValue]="option.audience_id">
+                      </nz-option>
+                    </nz-select>
+                    <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.cold_start_audience.is_show">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{ checkErrorTip.cold_start_audience.tip_text }}</span>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+            <!--排除已转化用户-->
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>排除已转化用户:</label>
+              <div>
+                <nz-radio-group
+                  class="ml8"
+                  [(ngModel)]="adgroupData.excluded_dimension"
+                  (ngModelChange)="changeExcludeDimension($event)"
+                  [nzSize]="'small'">
+                  <ng-container *ngFor="let option of excludedDimensionList[campaignData.promoted_object_type]">
+                    <ng-container>
+                      <label nz-radio-button [nzValue]="option.value"><span>{{option.label}}</span></label>
+                    </ng-container>
+                  </ng-container>
+                </nz-radio-group>
+                <ng-container *ngIf="adgroupData.excluded_dimension !== ''">
+                  <div class="ml8">
+                    <p class="mt10">系统自动依照当前广告选择的优化目标作为此定向的转化行为</p>
+                    <div class="mt10">
+                      <label nz-checkbox [(ngModel)]="custom_behavior_checked">
+                        自定义转化行为
+                      </label>
+                    </div>
+                    <div class="mt10" *ngIf="custom_behavior_checked">
+                      <nz-select class="w_full"
+                                 [nzSize]="'small'"
+                                 [nzPlaceHolder]="'请选择'"
+                                 [(ngModel)]="adgroupData.conversion_behavior_list"
+                                 nzShowSearch>
+                        <nz-option *ngFor="let item of conversionBehaviorList" [nzValue]="item.value"
+                                   [nzLabel]="item.name"></nz-option>
+                      </nz-select>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!--广告版位-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="launch_range" class="sub_title mb10"><span>广告版位</span></div>
+          <div class="basic-card">
+            <!--版位类型-->
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>版位类型:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="adgroupData.ad_space"
+                (ngModelChange)="changeAdSpace()"
+              >
+                <ng-container *ngFor="let option of structConfig['adgroup']['ad_space']['sub']">
+                  <label nz-radio-button [nzValue]="option.value">
+                    <span>{{ option.label }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <!--投放范围-->
+            <div class="lab-row pl20 mb20 w100p" *ngIf="adgroupData.ad_space === 'site_set'">
+              <label><span class="redStart">*</span>投放范围:</label>
+              <div class="ml8">
+                <div class="checkbox-group">
+                  <label nz-checkbox [(ngModel)]="weChatMomentChecked" (ngModelChange)="changeAllSiteSet(4)">微信朋友圈</label>
+                </div>
+                <div class="checkbox-all-container mt10">
+                  <label nz-checkbox [(ngModel)]="allAdSpaceOneChecked" (ngModelChange)="changeAllSiteSet(1)"
+                         [nzIndeterminate]="adSpaceOneIndeterminate">全部</label>
+                  <nz-checkbox-group [(ngModel)]="adSpaceListOne"
+                                     (ngModelChange)="changeSiteSet(1)"></nz-checkbox-group>
+                </div>
+                <div class="checkbox-all-container mt10">
+                  <label nz-checkbox [(ngModel)]="allAdSpaceTwoChecked" (ngModelChange)="changeAllSiteSet(2)"
+                         [nzIndeterminate]="adSpaceTwoIndeterminate">全部</label>
+                  <nz-checkbox-group [(ngModel)]="adSpaceListTwo"
+                                     (ngModelChange)="changeSiteSet(2)"></nz-checkbox-group>
+                </div>
+                <div class="checkbox-group mt10">
+                  <label nz-checkbox [(ngModel)]="unionChecked" (ngModelChange)="changeSiteSet(3)">优量汇</label>
+                </div>
+
+                <div class="error-tip mt5" *ngIf="checkErrorTip.site_set.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.site_set.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+
+            <ng-container *ngIf="adgroupData.site_set.includes('SITE_SET_MOBILE_UNION')">
+              <!--广告展示场景-->
+              <div class="lab-row pl20 mb20 w100p">
+                <label><span class="redStart">*</span>广告展示场景:</label>
+                <div class="ml8">
+                  <label nz-checkbox [(ngModel)]="display_scene_type" (ngModelChange)="updateNotLimit(1)">
+                    不限
+                  </label>
+                  <nz-checkbox-group class="mr8" [(ngModel)]="structConfig['adgroup']['display_scene_custom']['sub']"
+                                     (ngModelChange)="updateSingleChecked(1)"></nz-checkbox-group>
+                </div>
+              </div>
+              <!--行业精选流量包-->
+              <!-- <div class="lab-row pl20 mb20 w100p">
+                <label><span class="redStart">*</span>行业精选流量包:</label>
+                <div class="ml8">
+                  <label nz-checkbox [(ngModel)]="mobile_union_industry_type" (ngModelChange)="updateNotLimit(2)">
+                    不限
+                  </label>
+                  <nz-checkbox-group class="mr8"
+                                     [(ngModel)]="structConfig['adgroup']['mobile_union_industry_custom']['sub']"
+                                     (ngModelChange)="updateSingleChecked(2)"></nz-checkbox-group>
+                </div>
+              </div> -->
+              <!--流量包定投-->
+              <div class="lab-row pl20 mb20 w100p">
+                <label><span class="redStart">*</span>流量包定投:</label>
+                <div>
+                  <nz-radio-group
+                    class="ml8"
+                    [nzSize]="'small'"
+                    [(ngModel)]="adgroupData.union_position_package_type"
+                    (ngModelChange)="changeIncludeUnionPackage($event)"
+                  >
+                    <label nz-radio-button [nzValue]="'nolimit'"><span>不限</span></label>
+                    <label nz-radio-button [nzValue]="'custom'"
+                           [nzDisabled]="defaultData.convert_channel_id_lst.length === 0"><span>自定义</span></label>
+                  </nz-radio-group>
+
+                  <ng-container *ngIf="adgroupData.union_position_package_type === 'custom'">
+                    <nz-tabset class="ml8 mt20" [nzType]="'card'" *ngIf="targetChannelList.length"
+                               [nzSelectedIndex]="curIncludeUnionIndex"
+                               (nzSelectedIndexChange)="changeIncludeUnionPackageTab($event)">
+                      <nz-tab *ngFor="let item of targetChannelList" [nzTitle]="item.convert_channel_name">
+                        <ng-container [ngTemplateOutlet]="union_package_template"
+                                      [ngTemplateOutletContext]="{curUnionPackageList: curIncludeUnionPackageList,type: 'include'}"></ng-container>
+                      </nz-tab>
+                    </nz-tabset>
+                  </ng-container>
+
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.union_position_package.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.union_position_package.tip_text }}</span>
+                  </div>
+
+                </div>
+              </div>
+
+              <!--流量包屏蔽-->
+              <div class="lab-row pl20 mb20 w100p">
+                <label><span class="redStart">*</span>流量包屏蔽:</label>
+                <div>
+                  <nz-radio-group
+                    class="ml8"
+                    [nzSize]="'small'"
+                    [(ngModel)]="adgroupData.exclude_union_position_package_type"
+                    (ngModelChange)="changeExcludeUnionPackage($event)"
+                  >
+                    <label nz-radio-button [nzValue]="'nolimit'"><span>不限</span></label>
+                    <label nz-radio-button [nzValue]="'custom'"
+                           [nzDisabled]="defaultData.convert_channel_id_lst.length === 0"><span>自定义</span></label>
+                  </nz-radio-group>
+                  <ng-container *ngIf="adgroupData.exclude_union_position_package_type === 'custom'">
+                    <nz-tabset class="ml8 mt20" [nzType]="'card'" *ngIf="targetChannelList.length"
+                               [nzSelectedIndex]="curExcludeUnionIndex"
+                               (nzSelectedIndexChange)="changeExcludeUnionPackageTab($event)">
+                      <nz-tab *ngFor="let item of targetChannelList" [nzTitle]="item.convert_channel_name">
+                        <ng-container [ngTemplateOutlet]="union_package_template"
+                                      [ngTemplateOutletContext]="{curUnionPackageList: curExcludeUnionPackageList,type: 'exclude'}"></ng-container>
+                      </nz-tab>
+                    </nz-tabset>
+                  </ng-container>
+
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.exclude_union_position_package.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.exclude_union_position_package.tip_text }}</span>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+          </div>
+        </div>
+
+        <!--排期与出价-->
+        <div class="basic-setting setting-block pl20 mt20">
+          <div id="budget_and_bid" class="sub_title mb10"><span>排期与出价</span></div>
+          <div class="basic-card">
+            <!--出价方式-->
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>出价方式:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="adgroupData.bid_mode"
+                (ngModelChange)="changeBidMode()"
+              >
+                <ng-container *ngFor="let option of structConfig['adgroup']['bid_mode']['sub']">
+                  <ng-container
+                    *ngIf="!(campaignData.promoted_object_type !== 'PROMOTED_OBJECT_TYPE_APP_ANDROID' && option.value === 'BID_MODE_CPA') && !(adgroupData.site_set.length === 1 && adgroupData.site_set.includes('SITE_SET_MOBILE_UNION') && option.value === 'BID_MODE_CPA')">
+                    <label nz-radio-button [nzValue]="option.value">
+                      <span>{{ option.label }}</span>
+                    </label>
+                  </ng-container>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <!--优化目标-->
+            <div class="lab-row mb20 pl20 w100p"
+                 *ngIf="adgroupData.bid_mode === 'BID_MODE_OCPC' || adgroupData.bid_mode === 'BID_MODE_OCPM'">
+              <label><span class="redStart">*</span>优化目标:</label>
+              <div>
+                <nz-select class="w_full ml8"
+                           [nzSize]="'small'"
+                           [nzPlaceHolder]="'请选择优化目标'"
+                           [(ngModel)]="adgroupData.optimization_goal"
+                           (ngModelChange)="changeOptimizationGoal()"
+                           nzShowSearch>
+                  <nz-option *ngFor="let item of optimizationGoalList" [nzValue]="item.optimization_goal"
+                             [nzLabel]="item.optimization_goal_name"></nz-option>
+                </nz-select>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.optimization_goal.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.optimization_goal.tip_text }}</span>
+                </div>
+              </div>
+            </div>
+            <!--出价策略-->
+            <div class="lab-row pl20 mb20 w100p"
+                 *ngIf="adgroupData.bid_mode === 'BID_MODE_OCPC' || adgroupData.bid_mode === 'BID_MODE_OCPM'">
+              <label><span class="redStart">*</span>出价策略:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="adgroupData.bid_strategy">
+                <ng-container *ngFor="let option of structConfig['adgroup']['bid_strategy']['sub']">
+                  <label nz-radio-button [nzValue]="option.value">
+                    <span>{{ option.label }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+            <!--出价-->
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>出价:</label>
+              <div>
+                <nz-input-number class="w200 ml8" nzSize="small" [(ngModel)]="adgroupData.bid_amount" [nzMin]="bid_scope[adgroupData.bid_mode].min"
+                                 [nzMax]="bid_scope[adgroupData.bid_mode].max"
+                                 (ngModelChange)="getItemErrorTip('bid_amount', adgroupData.bid_amount)"
+                                 [nzStep]="1"></nz-input-number>
+                <span class="ml10">元</span>
+                <span class="lab-tip"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="ml5 mt5 mr5"></i>取值范围: {{bid_scope[adgroupData.bid_mode].min}}-{{bid_scope[adgroupData.bid_mode].max}}</span>
+                <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.bid_amount.is_show">
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                  <span style="color: red;">{{ checkErrorTip.bid_amount.tip_text }}</span>
+                </div>
+
+              </div>
+            </div>
+            <!--一键起量-->
+            <ng-container *ngIf="adgroupData.bid_mode === 'BID_MODE_OCPC' || adgroupData.bid_mode === 'BID_MODE_OCPM'">
+              <div class="lab-row pl20 mb20 w100p">
+                <label><span class="redStart">*</span>一键起量:</label>
+                <nz-radio-group
+                  class="ml8"
+                  [nzSize]="'small'"
+                  [(ngModel)]="adgroupData.auto_acquisition_enabled">
+                  <ng-container *ngFor="let option of structConfig['adgroup']['auto_acquisition_enabled']['enum']">
+                    <label nz-radio-button [nzValue]="option.value">
+                      <span>{{ option.label }}</span>
+                    </label>
+                  </ng-container>
+                </nz-radio-group>
+              </div>
+              <!--起量预算-->
+              <div class="lab-row mb20 pl20 w100p" *ngIf="adgroupData.auto_acquisition_enabled">
+                <label><span class="redStart">*</span>起量预算:</label>
+                <div>
+                  <nz-input-number class="ml8 mr10" [(ngModel)]="adgroupData.auto_acquisition_budget"
+                                 nzSize="small" [nzMin]="200"
+                                 (ngModelChange)="getItemErrorTip('auto_acquisition_budget', adgroupData.auto_acquisition_budget)"
+                                 [nzMax]="100000" [nzStep]="1"></nz-input-number>
+                  元
+                  <span class="lab-tip"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="ml5 mt5 mr5"></i>取值范围: 20000-10000000</span>
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.auto_acquisition_budget.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.auto_acquisition_budget.tip_text }}</span>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!--深度出价-->
+              <div class="lab-row pl20 mb20 w100p"
+                   *ngIf="adgroupData.bid_mode === 'BID_MODE_OCPC' || adgroupData.bid_mode === 'BID_MODE_OCPM'">
+                <label><span class="redStart">*</span>深度出价:</label>
+                <nz-radio-group
+                  class="ml8"
+                  [nzSize]="'small'"
+                  [(ngModel)]="adgroupData.deep_conversion_spec_type">
+                  <ng-container *ngFor="let option of structConfig['adgroup']['deep_conversion_spec']['sub']">
+                    <label nz-radio-button [nzValue]="option.value">
+                      <span>{{ option.label }}</span>
+                    </label>
+                  </ng-container>
+                </nz-radio-group>
+              </div>
+              <ng-container *ngIf="adgroupData.deep_conversion_spec_type">
+                <div class="lab-row pl20 mb20 w100p">
+                  <label>
+                    <span *ngIf="campaignData.promoted_object_type === 'PROMOTED_OBJECT_TYPE_LINK' || this.campaignData.promoted_object_type === 'PROMOTED_OBJECT_TYPE_ECOMMERCE'" class="redStart">*</span>
+                    深度优化目标:</label>
+                  <div>
+                    <nz-select class="w200 ml8"
+                               [nzSize]="'small'"
+                               [(ngModel)]="adgroupData.deep_conversion_spec.deep_conversion_behavior_spec.goal"
+                               (ngModelChange)="getItemErrorTip('goal', adgroupData.deep_conversion_spec.deep_conversion_behavior_spec.goal)"
+                               [nzPlaceHolder]="'请选择'"
+                               nzShowSearch>
+                      <nz-option
+                        *ngFor="let option of deepOptimizationGoalList"
+                        [nzLabel]="option.deep_optimization_goal_name"
+                        [nzValue]="option.deep_optimization_goal">
+                      </nz-option>
+                    </nz-select>
+                    <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.goal.is_show">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{ checkErrorTip.goal.tip_text }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="lab-row pl20 mb20">
+                  <label><span class="redStart">*</span>深度优化出价:</label>
+                  <div>
+                    <nz-input-number class="w200 ml8" nzSize="small"
+                                     [(ngModel)]="adgroupData.deep_conversion_spec.deep_conversion_behavior_spec.bid_amount"
+                                     [nzMin]="1" [nzMax]="500000"
+                                     (ngModelChange)="getItemErrorTip('deep_bid_amount', adgroupData.deep_conversion_spec.deep_conversion_behavior_spec.bid_amount)"
+                                     [nzStep]="1"></nz-input-number>
+                    <span class="ml20">元</span>
+                    <span class="lab-tip"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="ml5 mt5 mr5"></i>取值范围: 1-500000</span>
+                    <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.deep_bid_amount.is_show">
+                      <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                      <span style="color: red;">{{ checkErrorTip.deep_bid_amount.tip_text }}</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+
+            <!--广告日预算-->
+            <div class="lab-row mb20 pl20 w100p">
+              <label><span class="redStart">*</span>广告日预算:</label>
+              <div>
+                <nz-radio-group
+                  class="ml8"
+                  [(ngModel)]="adgroupData.adgroup_budget_mode"
+                  [nzSize]="'small'">
+                  <label nz-radio-button [nzValue]="0"><span>不限</span></label>
+                  <label nz-radio-button [nzValue]="1"><span>日预算</span></label>
+                </nz-radio-group>
+                <ng-container *ngIf="adgroupData.adgroup_budget_mode === 1">
+                  <nz-input-number class="ml20 mr10" [(ngModel)]="adgroupData.budget"
+                                   nzSize="small" [nzMin]="50"
+                                   [nzMax]="40000000" [nzStep]="1"
+                                   (ngModelChange)="getItemErrorTip('adgroup_budget', adgroupData.budget)"
+                                   ></nz-input-number>
+                  元
+                  <span class="lab-tip"><i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="ml5 mt5 mr5"></i>取值范围: 50-40000000</span>
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.adgroup_budget.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.adgroup_budget.tip_text }}</span>
+                  </div>
+                </ng-container>
+              </div>
+
+            </div>
+            <!--投放时间-->
+            <div class="lab-row pl20 mb20 w100p">
+              <label id="schedule_type">投放时间:</label>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="adgroupData.schedule_date"
+              >
+                <label nz-radio-button [nzValue]="'long_term_launch'">
+                  <span>长期投放</span>
+                </label>
+                <label nz-radio-button [nzValue]="'appoint_launch'">
+                  <span>指定开始日期和结束日期</span>
+                </label>
+              </nz-radio-group>
+            </div>
+            <div class="lab-row pl20 mb20 w100p"
+                 *ngIf="adgroupData.schedule_date === 'appoint_launch'">
+              <label><span class="redStart">*</span>起始时间:</label>
+              <nz-range-picker
+                class="w200 ml8"
+                [nzAllowClear]="false"
+                [nzSize]="'small'"
+                [(ngModel)]="adgroupData.time_range"
+                [nzDisabledDate]="getDisableDate"
+                [nzFormat]="'yyyy/MM/dd'">
+              </nz-range-picker>
+            </div>
+            <!--投放时段-->
+            <div class="lab-row pl20 mb20 w100p">
+              <label><span class="redStart">*</span>投放时段:</label>
+              <div>
+                <nz-radio-group class="ml8" [nzSize]="'small'"
+                                [(ngModel)]="adgroupData.schedule_time_slt">
+                  <label nz-radio-button [nzValue]="'nolimt'">
+                    <span>不限</span>
+                  </label>
+                  <label nz-radio-button [nzValue]="'schedule_time'">
+                    <span>指定时间段</span>
+                  </label>
+                </nz-radio-group>
+                <ng-container *ngIf="adgroupData.schedule_time_slt === 'schedule_time'">
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.time_series.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.time_series.tip_text }}</span>
+                  </div>
+                  <app-edit-schedule [outFormat]="'string'" [timeDimension]="0.5"
+                                     [parentTimeDate]="adgroupData['time_series']"
+                                     [showCoefficient]="showCoefficient"
+                                     (dateSelected)="dateDate($event)"></app-edit-schedule>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--创意-->
+        <div class="basic-setting setting-block pl20 mt20 pb20">
+          <div id="creative_start" class="sub_title mb10"><span>创意</span></div>
+          <!--创意类型-->
+          <div class="lab-row pl20 mt20 mb20 w100p">
+            <label><span class="redStart">*</span>创意类型:</label>
+            <div>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="adcreativeData.adcreative_type">
+                <ng-container *ngFor="let option of structConfig['adcreative']['adcreative_type']['sub']">
+                  <label nz-radio-button [nzValue]="option.value">
+                    <span>{{ option.label }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+          </div>
+          <!--创意展现-->
+          <div class="lab-row pl20 mt20 mb20 w100p">
+            <label><span class="redStart">*</span>创意展现:</label>
+            <div>
+              <nz-radio-group
+                class="ml8"
+                [nzSize]="'small'"
+                [(ngModel)]="adgroupData.creative_display_type"
+              >
+                <ng-container *ngFor="let option of structConfig['adgroup']['creative_display_type']['sub']">
+                  <label nz-radio-button [nzValue]="option.value">
+                    <span>{{ option.label }}</span>
+                  </label>
+                </ng-container>
+              </nz-radio-group>
+            </div>
+          </div>
+          <!--创意形式-->
+          <div class="lab-row mb20 pl20 w100p">
+            <label><span class="redStart">*</span>创意形式:</label>
+            <div>
+              <div class="lab-row w200">
+                <div>
+                  <nz-select class="w_full ml8"
+                             [nzSize]="'small'"
+                             [nzPlaceHolder]="'请选择创意形式'"
+                             [(ngModel)]="adcreativeData.adcreative_template_id"
+                             (ngModelChange)="changeAdcreativeTemplate()"
+                             nzShowSearch>
+                    <nz-option *ngFor="let item of adcreativeTemplateList" [nzValue]="item.adcreative_template_id"
+                               [nzLabel]="item.adcreative_template_appellation"></nz-option>
+                  </nz-select>
+
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.adcreative_template_id.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.adcreative_template_id.tip_text }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--品牌简介-->
+          <div class="lab-row mb20 pl20 w100p" *ngIf="adgroupData.site_set.includes('SITE_SET_MOMENTS')">
+            <label><span class="redStart">*</span>品牌简介页:</label>
+            <div>
+              <div class="lab-row w200">
+                <div>
+                  <nz-select class="w_full ml8"
+                             [nzSize]="'small'"
+                             [nzPlaceHolder]="'请选择品牌简介页'"
+                             [(ngModel)]="adcreativeData.profile_id"
+                             nzShowSearch>
+                    <nz-option *ngFor="let item of wechatProfilesList" [nzValue]="item.profile_id"
+                               [nzLabel]="item.profile_name"></nz-option>
+                  </nz-select>
+
+                  <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.profile_id.is_show">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+                    <span style="color: red;">{{ checkErrorTip.profile_id.tip_text }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <app-creative-template-gdt *ngIf="adcreativeData.adcreative_template_id && isGetElement"
+                                     [materialData]="materialData"
+                                     [defaultData]="defaultData"
+                                     [targetChannelList]="targetChannelList"
+                                     [adcreativeData]="adcreativeData"
+                                     [creativeElementsList]="creativeElementsList"
+                                     [creativeLabelList]="creativeLabelList"
+                                     [buttonTextList]="buttonTextList"
+                                     [elementNamesList]="elementNamesList"
+                                     [siteSet]="adgroupData.site_set"
+                                     [checkErrorTip]="checkErrorTip"
+          ></app-creative-template-gdt>
+        </div>
+
+        <!--辅助转化-->
+        <ng-container *ngIf="adgroupData.site_set.includes('SITE_SET_MOMENTS') && isChannelTree">
+          <div class="basic-setting setting-block pl20 mt20 pb20">
+            <div class="sub_title mb10"><span>辅助转化</span></div>
+            <app-creative-attributes-gdt [materialData]="materialData" [defaultData]="defaultData" [targetChannelList]="targetChannelList" [linkNameTypeList]="linkNameTypeList" [structConfig]="structConfig['adcreative']" [checkErrorTip]="checkErrorTip"></app-creative-attributes-gdt>
+          </div>
+        </ng-container>
+
+      </div>
+    </div>
+
+    <div class="form-btns">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+        <span>完成</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-global-template></app-global-template>
+
+<ng-template #target_template>
+  <nz-table class="mt20 ml8" #borderedTable nzBordered [nzShowPagination]="false" [nzData]="curTargetList">
+    <thead>
+    <tr>
+      <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="allTargetChecked" (nzCheckedChange)="checkTargetAll($event)">
+      <th nzWidth="200px">名称</th>
+      <th nzWidth="200px">定向包类型</th>
+      <th nzWidth="200px">创建时间</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of borderedTable.data">
+      <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="checkTarget($event)">
+      <td>{{data.audience_template_name}}</td>
+      <td>{{data.landing_type | objMap: promotedObjectMap:''}}</td>
+      <td>{{data.create_time}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</ng-template>
+
+<ng-template #union_package_template let-curUnionPackageList=curUnionPackageList let-type=type>
+  <nz-table class="mt20 ml8" #borderedTable nzBordered [nzShowPagination]="false" [nzData]="curUnionPackageList">
+    <thead>
+    <tr>
+      <th [nzWidth]="'62px'" nzShowCheckbox
+          [(nzChecked)]="type === 'exclude' ? allExcludeUnionChecked : allIncludeUnionChecked"
+          (nzCheckedChange)="checkUnionPackageAll($event,curUnionPackageList,type)">
+      <th nzWidth="200px">流量包名称</th>
+      <th nzWidth="200px">广告位个数</th>
+      <th nzWidth="200px">剩余广告绑定数</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of borderedTable.data">
+      <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="checkUnionPackage(curUnionPackageList,type)">
+      <td>{{data.union_package_name}}</td>
+      <td></td>
+      <td></td>
+    </tr>
+    </tbody>
+  </nz-table>
+</ng-template>

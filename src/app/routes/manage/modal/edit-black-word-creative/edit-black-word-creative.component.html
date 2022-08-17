@@ -1,0 +1,111 @@
+<div class="sub-company-content">
+  <div class="sub-company-form-content">
+    <div class="sub-company-form-item  mb10">
+      <div class="form-label pull-left">
+        <label>修改范围:</label>
+      </div>
+      <div class="w300 ml8 pull-left" >
+        <span>标题和描述</span>
+      </div>
+    </div>
+    <div class="sub-company-form-item  mb10">
+      <div class="form-label pull-left">
+        <label>修改方式:</label>
+      </div>
+      <div class="w300 ml8 pull-left" >
+        <nz-radio-group
+          [(ngModel)]="defaultData.modify_type"
+          (ngModelChange)="modifyTypeChange();"
+        >
+          <label class="mr20"
+                 nz-radio
+                 [nzValue]="1">
+            <span>查找替换</span>
+          </label>
+          <label class="mr20"
+                 nz-radio
+                 [nzValue]="4">
+            <span>全部替换</span>
+          </label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <ng-container *ngIf="defaultData.modify_type === 1">
+      <div class="sub-company-form-item  mb10">
+        <div class="form-label pull-left">
+          <label>查找:</label>
+        </div>
+        <div class="sub-company-form-textarea w300 ml8 pull-left">
+          <input nz-input
+                 class="w200"
+                 [nzSize]="'small'"
+                 type="text"
+                 placeholder="输入查找"
+                 [(ngModel)]="defaultData.search">
+        </div>
+      </div>
+      <div class="sub-company-form-item  mb10">
+        <div class="form-label pull-left">
+          <label>替换:</label>
+        </div>
+        <div class="sub-company-form-textarea w300 ml8 pull-left">
+          <input nz-input
+                 class="w200"
+                 [nzSize]="'small'"
+                 type="text"
+                 placeholder="输入替换"
+                 [(ngModel)]="defaultData.value">
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="defaultData.modify_type === 4">
+      <div class="sub-company-form-item  mb10">
+        <div class="form-label pull-left">
+          <label>标题:</label>
+        </div>
+        <div class="sub-company-form-textarea w300 ml8 pull-left">
+          <input nz-input
+                 class="w200"
+                 [nzSize]="'small'"
+                 type="text"
+                 placeholder="输入标题"
+                 [(ngModel)]="defaultData.value">
+        </div>
+      </div>
+      <div class="sub-company-form-item  mb10">
+        <div class="form-label pull-left">
+          <label>描述1:</label>
+        </div>
+        <div class="sub-company-form-textarea w300 ml8 pull-left">
+          <input nz-input
+                 class="w200"
+                 [nzSize]="'small'"
+                 type="text"
+                 placeholder="输入描述1"
+                 [(ngModel)]="defaultData.value1">
+        </div>
+      </div>
+      <div class="sub-company-form-item  mb10">
+        <div class="form-label pull-left">
+          <label>描述2:</label>
+        </div>
+        <div class="sub-company-form-textarea w300 ml8 pull-left">
+          <input nz-input
+                 class="w200"
+                 [nzSize]="'small'"
+                 type="text"
+                 placeholder="输入描述1"
+                 [(ngModel)]="defaultData.value2">
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="sub-company-form-footer">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="submitting" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,105 @@
+<div class="sub-company-content">
+  <form class="sub-company-form" [formGroup]="validateAudienceForm">
+    <div class="sub-company-form-content">
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>人群名称:</label>
+        </div>
+        <nz-form-control class="w300 ml8 pull-left">
+          <input nz-input
+            class="w100p"
+            [nzSize]="'default'"
+            [formControlName]="'custom_audience_name'"
+            type="text"
+            placeholder="输入人群名称"
+            [(ngModel)]="uploadParams.custom_audience_name">
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('custom_audience_name').dirty&&getFormControl('custom_audience_name').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入人群名称</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>选择账户:</label>
+        </div>
+        <nz-form-control class="w300 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'chan_pub_id'" [nzSize]="'default'" [(ngModel)]="uploadParams.chan_pub_id" [nzPlaceHolder]="'请选择账户'" nzShowSearch nzAllowClear>
+            <nz-option
+              *ngFor="let option of accountsList"
+              [nzLabel]="option.pub_account_name"
+              [nzValue]="option.chan_pub_id">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('chan_pub_id').dirty&&getFormControl('chan_pub_id').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择账户</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>数据类型:</label>
+        </div>
+        <nz-form-control class="w300 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'data_source_type'" [nzSize]="'default'" [(ngModel)]="uploadParams.data_source_type" [nzPlaceHolder]="'请选择数据类型'" nzShowSearch nzAllowClear>
+            <nz-option
+              *ngFor="let option of dataSourceTypeList"
+              [nzLabel]="option.label"
+              [nzValue]="option.value">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('data_source_type').dirty&&getFormControl('data_source_type').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择数据类型</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label>描述:</label>
+        </div>
+        <nz-form-control class="sub-company-form-textarea w300 ml8 pull-left">
+          <textarea nz-input [nzSize]="'default'"  [formControlName]="'desc'"    class="w100p"  placeholder="请输入描述信息"   [(ngModel)]="uploadParams.desc"  [nzAutosize]></textarea>
+        </nz-form-control>
+      </nz-form-item>
+      <div class="upload-item">
+        <div class="upload-title">人群文件:</div>
+        <div class="uploadDiv">
+          <div class="overHidden">
+            <nz-upload *ngIf="!uploading" class="pull-left"
+                       [nzCustomRequest]="customReq"
+                       [(nzFileList)]="fileList"
+                       [nzAccept]="'.txt'"
+                       [nzBeforeUpload]="beforeUpload"
+                       (click)="changeBtn()"
+                       [nzSize]="'small'"
+                       [nzLimit] = 1
+                       [nzName]="'files'">
+              <button nz-button class="height20">
+               <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+              </button>
+            </nz-upload>
+            <button *ngIf="uploading" nz-button class="mt2 pull-left height20">
+             <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+            </button>
+            <span class="zhushi">*请上传.txt文件</span>
+          </div>
+        </div>
+      </div>
+      <div class="upload-item">
+        <div *ngIf="(uploading || exception === 'exception') && fileList.length" class="m1020 progressDiv">
+          <nz-progress [nzStatus]="exception" [nzPercent]="speed" nzSize="small"></nz-progress>
+        </div>
+      </div>
+      <div class="upload-item" *ngIf="resultMessage">
+        <p style="color: red;">{{resultMessage}}</p>
+      </div>
+    </div>
+    <div class="sub-company-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancelModal()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="!validateAudienceForm.valid" [nzLoading]="uploading" (click)="doUpload()">
+        <span>完成</span>
+      </button>
+    </div>
+  </form>
+</div>

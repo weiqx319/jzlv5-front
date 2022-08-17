@@ -1,0 +1,121 @@
+<div style="display: flex">
+  <div class="tree-transfer">
+    <div class="tree-transfer-panel tree-transfer-left">
+      <div class="tree-transfer-panel-header">
+        <label
+          nz-checkbox
+          [ngModel]="treeCheckedKeys.length > 0 && treeCheckedKeys.length === leafKeys.length"
+          [nzIndeterminate]="treeCheckedKeys.length > 0 && treeCheckedKeys.length < leafKeys.length"
+          [nzDisabled]="limitKeyNum>0 && leafKeys.length>limitKeyNum"
+          (ngModelChange)="treeOnCheckAll($event)"
+        ></label>
+        <span class="tree-transfer-panel-header-select">
+          {{treeCheckedKeys.length > 0 ? treeCheckedKeys.length + '/' : ''}}{{leafKeys.length}} 条数据
+        </span>
+        <span class="tree-transfer-panel-header-title">
+          <ng-container *stringTemplateOutlet="titles[0]">{{titles[0]}}</ng-container>
+        </span>
+      </div>
+      <div class="tree-transfer-panel-body"
+           [class.tree-transfer-panel-body-has-search]="showSearch"
+           [class.tree-transfer-panel-body-has-footer]="footer"
+      >
+        <div class="tree-transfer-panel-body-search" *ngIf="showSearch">
+          <nz-input-group [nzSuffix]="suffixIcon">
+            <input type="text" nz-input [placeholder]="nzSearchPlaceholder" (keyup.enter)="treeSearch($event)"/>
+          </nz-input-group>
+        </div>
+        <div class="tree-transfer-panel-body-content">
+          <nz-tree #tree
+            nzCheckable
+            [nzData]="sourceData"
+             nzBlockNode
+            [nzExpandAll]="treeExpandAll"
+            [nzCheckedKeys]="treeCheckedKeys"
+            [nzSearchValue]="treeSearchValue"
+            (nzCheckBoxChange)="treeOnCheck($event)"
+          ></nz-tree>
+        </div>
+      </div>
+      <div *ngIf="footer" class="tree-transfer-panel-footer">
+        <ng-container *stringTemplateOutlet="footer[0]">{{footer[0]}}</ng-container>
+      </div>
+    </div>
+    <div class="tree-transfer-operation" *ngIf="showRight">
+      <button
+        nz-button
+        nzType="{{!getLeftDisabled ? 'primary' : ''}}"
+        [nzSize]="'small'"
+        [disabled]="getLeftDisabled"
+        (click)="leftToRight()"
+        (nzCheckBoxChange)="treeOnCheck($event)"
+      >
+        确认
+        <i nz-icon nzType="right"></i>
+      </button>
+      <!--<button-->
+        <!--nz-button-->
+        <!--nzType="{{listCheckedKeys.length !== 0 ? 'primary' : ''}}"-->
+        <!--[nzSize]="'small'"-->
+        <!--[disabled]="listCheckedKeys.length === 0"-->
+        <!--(click)="rightToLeft()"-->
+      <!--&gt;-->
+        <!--<i nz-icon nzType="left"></i>-->
+      <!--</button>-->
+    </div>
+    <div class="tree-transfer-panel tree-transfer-right" *ngIf="showRight">
+      <div class="tree-transfer-panel-header">
+        <span class="tree-transfer-panel-header-select">
+          {{listCheckedKeys.length > 0 ? listCheckedKeys.length + '/' : ''}}{{listData.length}} 条数据
+        </span>
+        <span class="tree-transfer-panel-header-title">
+          <ng-container *stringTemplateOutlet="titles[1]">{{titles[1]}}</ng-container>
+        </span>
+      </div>
+      <div class="tree-transfer-panel-body"
+           [class.tree-transfer-panel-body-has-search]="showSearch"
+           [class.tree-transfer-panel-body-has-footer]="footer"
+      >
+        <div class="tree-transfer-panel-body-search" *ngIf="showSearch">
+          <nz-input-group [nzSuffix]="suffixIcon">
+            <input type="text" nz-input [placeholder]="nzSearchPlaceholder" (keyup.enter)="listSearch($event)"/>
+          </nz-input-group>
+        </div>
+        <div class="tree-transfer-panel-body-content">
+          <nz-tree #rightTree
+                   [nzData]="rightTreeData"
+          ></nz-tree>
+        </div>
+
+        <!--<ul class="tree-transfer-panel-body-content">-->
+          <!--<li *ngFor="let item of listData">-->
+            <!--<label-->
+              <!--nz-checkbox-->
+              <!--[ngModel]="listCheckedKeys.indexOf(item.key) > -1"-->
+              <!--(ngModelChange)="listOnCheck($event, [item.key])"-->
+            <!--&gt;-->
+              <!--<ng-container *ngIf="showListSearchValue(item)">-->
+                <!--<span>{{item.title.substr(0, item.title.indexOf(listSearchValue))}}<span style="color: #f50;">{{listSearchValue}}</span>{{item.title.substr(item.title.indexOf(listSearchValue) + listSearchValue.length)}}</span>-->
+              <!--</ng-container>-->
+              <!--<ng-container *ngIf="!showListSearchValue(item)">-->
+                <!--<span>{{item.title}}</span>-->
+              <!--</ng-container>-->
+            <!--</label>-->
+          <!--</li>-->
+        <!--</ul>-->
+      </div>
+      <div *ngIf="footer" class="tree-transfer-panel-footer">
+        <ng-container *stringTemplateOutlet="footer[1]">{{footer[1]}}</ng-container>
+      </div>
+    </div>
+  </div>
+  <ng-template #suffixIcon>
+    <i nz-icon nzType="search"></i>
+  </ng-template>
+  <div *ngIf="canSearch" class="ml20 w300 textarea-box" style="padding: 6px">
+    <textarea style="min-height: 250px" nzAutosize rows="4" nz-input placeholder="请输入搜索名称，同时搜索多个用换行或者/或者空格隔开" [(ngModel)]="searchText"></textarea>
+    <div style="text-align: right"><span *ngIf="noHaveText.length>0" style="float: left;line-height: 30px;font-size: 12px" class="redStart ml8">以上内容未匹配到</span><button class="mt10" nzSize="small" nz-button nzType="primary" (click)="addSearchOption(sourceData,target)">添加</button></div>
+  </div>
+</div>
+
+

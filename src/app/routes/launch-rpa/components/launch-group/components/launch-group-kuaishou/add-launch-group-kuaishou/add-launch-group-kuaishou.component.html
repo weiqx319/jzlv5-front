@@ -1,0 +1,89 @@
+<div class="launch-group-add-content">
+  <div class="launch-group-add-text">
+    <form nz-form [formGroup]="launchGroupForm">
+
+      <nz-form-item class="lab-row mt20">
+        <label class="form-label"><span class="required">*</span>关联账户:</label>
+        <nz-form-control [ngClass]="{'has-error':getFormControl('chan_pub_id_lst').dirty && getFormControl('chan_pub_id_lst').errors}">
+          <nz-select class="w400 ml8"
+                     [formControlName]="'chan_pub_id_lst'"
+                     [nzMaxTagCount]="1"
+                     [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                     nzMode="multiple"
+                     [nzPlaceHolder]="'请选择操作账户'"
+                     [nzAllowClear]="true"
+                     [(ngModel)]="defaultData.chan_pub_id_lst"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of accountsList"
+              [nzLabel]="option.pub_account_name"
+              [nzValue]="option.chan_pub_id + ''">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8">
+          <div class='ant-form-item-explain' class="ml8 form-explain" *ngIf="getFormControl('chan_pub_id_lst').dirty && getFormControl('chan_pub_id_lst').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关联账户必填</div>
+        </div>
+      </nz-form-item>
+
+      <nz-form-item class="lab-row mt20">
+        <label class="form-label"><span class="required">*</span>项目名称:</label>
+        <nz-form-control [ngClass]="{'has-error':getFormControl('project_name').dirty && getFormControl('project_name').errors}">
+          <input class="w400 ml8" nz-input
+                 type="text"
+                 placeHolder="输入项目名称"
+                 [formControlName]="'project_name'"
+                 [(ngModel)]="defaultData.project_name">
+        </nz-form-control>
+        <div class="ml8">
+          <div class='ant-form-item-explain' class="ml8 form-explain" *ngIf="getFormControl('project_name').dirty && getFormControl('project_name').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>项目名称必填</div>
+        </div>
+      </nz-form-item>
+
+      <!--      <nz-form-item class="lab-row mt20">-->
+      <!--        <label class="form-label"><span class="required">*</span>受众类型:</label>-->
+      <!--        <nz-form-control  [ngClass]="{'has-error':getFormControl('group_name').dirty && getFormControl('group_name').errors}">-->
+      <!--          <nz-radio-group class="mt8 ml8">-->
+      <!--            <label nz-radio nzValue="A">拉新</label>-->
+      <!--            <label nz-radio nzValue="B">获客</label>-->
+      <!--            <label nz-radio nzValue="C">重定向</label>-->
+      <!--            <label nz-radio nzValue="D">留存</label>-->
+      <!--          </nz-radio-group>-->
+      <!--        </nz-form-control>-->
+      <!--        <div class="ml8">-->
+      <!--          <div class='ant-form-item-explain' class="ml8 form-explain" *ngIf="getFormControl('group_name').dirty && getFormControl('group_name').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>投放项目名称必填</div>-->
+      <!--        </div>-->
+      <!--      </nz-form-item>-->
+
+      <nz-form-item class="lab-row mt20">
+        <label class="form-label"><span class="required">*</span>预期成本:</label>
+        <nz-form-control [ngClass]="{'has-error':getFormControl('convert_cost').dirty && getFormControl('convert_cost').errors}">
+          <nz-input-number class="w400 ml8"
+                           [formControlName]="'convert_cost'"
+                           [(ngModel)]="defaultData.convert_cost" [nzMin]="0.1" [nzStep]="1"></nz-input-number>
+        </nz-form-control>
+        <div class="ml8">
+          <div class='ant-form-item-explain' class="ml8 form-explain" *ngIf="getFormControl('convert_cost').dirty && getFormControl('convert_cost').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>预期成本必填</div>
+        </div>
+      </nz-form-item>
+
+      <nz-form-item class="lab-row mt20">
+        <label class="form-label">备注信息:</label>
+        <nz-form-control>
+          <textarea class="w400 ml8" nz-input placeholder="请输入备注" [(ngModel)]="defaultData.comment" [nzAutosize]="{ minRows: 4 }" [formControlName]="'comment'" ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </div>
+
+  <div class="launch-group-add-btn">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'"  (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [disabled]="!launchGroupForm.valid" [nzSize]="'small'" [nzLoading]="submit" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>
+
+<app-global-template></app-global-template>

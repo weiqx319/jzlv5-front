@@ -1,0 +1,48 @@
+.help-list{
+  .help-table{
+    tr{
+      td{
+        padding-left: 12px !important;
+        a{
+          color: #5d5d5d;
+          font-size: 14px;
+          position: relative;
+        }
+        a:hover{
+          color: #56acef;
+        }
+        a:hover::before{
+          background: #56acef;
+        }
+        a::before{
+          position: absolute;
+          left: -10px;
+          top: 8px;
+          content: "";
+          width: 4px;
+          height: 4px;
+          border-radius: 2px;
+          background: #5d5d5d;
+        }
+      }/*
+      td:hover{
+        a{
+          color: #56acef;
+        }
+      }
+      td:hover::before{
+        background: #56acef;
+      }
+      td::before{
+        position: absolute;
+        left: 0;
+        top: 0;
+        content: "";
+        width: 4px;
+        height: 4px;
+        border-radius: 2px;
+        background: #5d5d5d;
+      }*/
+    }
+  }
+}

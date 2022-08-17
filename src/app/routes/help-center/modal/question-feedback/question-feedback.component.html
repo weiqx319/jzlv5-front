@@ -1,0 +1,14 @@
+<div class="question">
+  <div class="question-top">
+    <p>如果还不能解决您的问题，请在这里向我们反馈：</p>
+    <textarea [(ngModel)]="feedback_content"></textarea>
+  </div>
+  <div class="question-footer">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

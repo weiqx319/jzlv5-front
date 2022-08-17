@@ -1,0 +1,240 @@
+<div class="conversion-container mt20 mb20">
+  <nz-steps [(nzCurrent)]="current" [nzSize]="'small'">
+    <nz-step *ngFor="let item of stepData['hierarchy_' + defaultData.trade_class]" [nzTitle]="item.name" ></nz-step>
+  </nz-steps>
+  <div class="steps-content mt8">
+    <div *ngIf="current ===0">
+      <form [formGroup]="validateTradeClassForm">
+        <div class="trade-mark-content">
+          <nz-form-item>
+            <div class="lab-row">
+              <label>广告主:</label>
+              <nz-form-control>
+                <nz-select class="w200 ml8"
+                           [nzShowSearch]="true"
+                           [nzSize]="'default'"
+                           [(ngModel)]="defaultData.cid"
+                           [formControlName]="'cid'"
+                           (ngModelChange)="changeAdver()"
+                           [nzPlaceHolder]="'请选择广告主'">
+                  <ng-container *ngFor="let item of advertiserList">
+                    <nz-option [nzLabel]="item.advertiser_name" [nzValue]="item.cid"></nz-option>
+                  </ng-container>
+                </nz-select>
+              </nz-form-control>
+
+            </div>
+          </nz-form-item>
+          <nz-form-item>
+            <div class="lab-row">
+              <label>标识层级:</label>
+              <nz-form-control>
+                <nz-select class="w200 ml8"
+                           [nzSize]="'default'"
+                           [(ngModel)]="defaultData.trade_class"
+                           [formControlName]="'trade_class'"
+                           (ngModelChange)="changeTrade()">
+                  <ng-container *ngFor="let item of tradeHierarchy ">
+                    <nz-option [nzLabel]="item.name" [nzDisabled]="item['disabled']" [nzValue]="item.key"></nz-option>
+                  </ng-container>
+                </nz-select>
+              </nz-form-control>
+
+            </div>
+          </nz-form-item>
+          <nz-form-item>
+            <div class="lab-row">
+              <label>行业标识名称<span *ngIf="defaultData.trade_class === 2">(一级)</span>:</label>
+              <div class="ml8">
+                <nz-form-control>
+                  <input nz-input
+                         class="w200"
+                         [nzSize]="'default'"
+                         type="text"
+                         [(ngModel)]="defaultData.trade_name_first"
+                         (ngModelChange)="inputChange(defaultData.trade_name_first)"
+                         [formControlName]="'trade_name'"
+                         placeholder="请输入名称">
+                </nz-form-control>
+              </div>
+              <div class="pull-left ml8">
+                <div class='ant-form-item-explain' *ngIf="getTradeClassFormControl('trade_name')?.dirty&&getTradeClassFormControl('trade_name')?.hasError('required')">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请填写行业标识名称
+                </div>
+              </div>
+              <div *ngIf="defaultData['has_error_one']" class="pull-left ml4 worning"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{defaultData['error_message_one']}}</div>
+
+
+            </div>
+          </nz-form-item>
+          <nz-form-item *ngIf="defaultData.trade_class === 2">
+            <div class="lab-row">
+              <label>行业标识名称(二级):</label>
+              <div class="ml8">
+                <nz-form-control>
+                  <input nz-input
+                         class="w200"
+                         [nzSize]="'default'"
+                         type="text"
+                         [(ngModel)]="defaultData.trade_name_second"
+                         (ngModelChange)="inputChange(defaultData.trade_name_second)"
+                         [formControlName]="'trade_two_name'"
+                         placeholder="请输入名称">
+                </nz-form-control>
+              </div>
+              <div class="pull-left ml8">
+                <div class='ant-form-item-explain' *ngIf="getTradeClassFormControl('trade_two_name')?.dirty&&getTradeClassFormControl('trade_two_name')?.hasError('required')">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请填写行业标识名称
+                </div>
+              </div>
+              <div *ngIf="defaultData['has_error_two']" class="pull-left ml4 worning"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{defaultData['error_message_two']}}</div>
+
+            </div>
+          </nz-form-item>
+        </div>
+      </form>
+      <div class="trade-mark-btns">
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+          <span>取消</span>
+        </button>
+        <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="next()" [disabled]="!validateTradeClassForm.valid || defaultData['is_warning_one']">
+          <span>下一步</span>
+        </button>
+      </div>
+    </div>
+    <div *ngIf="current ===1">
+      <div class="trade-mark-content">
+        <div class="lab-row mb10" *ngFor="let itemFile of defaultData.biz_list, let index=index">
+          <label class=""><span>{{defaultData.trade_name_first}}</span>名称<span>{{index+1}}</span>:</label>
+          <div class="ml8">
+            <input nz-input
+                   class="w200"
+                   [nzSize]="'default'"
+                   type="text"
+                   [(ngModel)]="itemFile['biz_unit_name']"
+                   (ngModelChange)="inputChange(itemFile['biz_unit_name'])"
+                   placeholder="请输入名称">
+            <i nz-icon nzType="close" nzTheme="outline" class="deleteBtn ml10"  *ngIf="index!==0" (click)="deleteName('one', index)"></i>
+          </div>
+          <div *ngIf="itemFile['has_error']" class="pull-left ml4 worning" [ngClass]="{'ml24': index===0&&defaultData.biz_list.length>1}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{itemFile['error_message']}}</div>
+        </div>
+
+        <button *ngIf="!defaultData['is_warning_content_one']" class="addBtn" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="addName('one')">
+         <i nz-icon nzType="plus" nzTheme="outline"></i>
+          <span>继续添加</span>
+        </button>
+        <button *ngIf="defaultData['is_warning_content_one']" class="addBtn disabled-status" nz-button [nzType]="'default'" [nzSize]="'default'">
+         <i nz-icon nzType="plus" nzTheme="outline"></i>
+          <span>继续添加</span>
+        </button>
+      </div>
+      <div class="trade-mark-btns">
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+          <span>取消</span>
+        </button>
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="prev()">
+          <span>上一步</span>
+        </button>
+        <button *ngIf="defaultData.trade_class === 2"  [disabled]="defaultData['is_warning_content_one']" class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="next()">
+          <span>下一步</span>
+        </button>
+        <button *ngIf="defaultData.trade_class === 1"  [disabled]="defaultData['is_warning_content_one'] || checkSuccess" class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="doSave()">
+          <span>完成</span>
+        </button>
+      </div>
+    </div>
+    <div *ngIf="current ===2">
+      <div class="trade-mark-content">
+        <div class="two-item" *ngFor="let itemFile of defaultData.biz_list_child, let index=index">
+          <span class="order_number">{{index+1}}.</span>
+          <div class="lab-row mb10" >
+            <label class="">所属上级标识:</label>
+            <div class="ml8">
+              <nz-select class="w200" [nzSize]="'default'"
+                         [(ngModel)]="itemFile.biz_parent_unit_name"
+                         (ngModelChange)="inputChange(itemFile.biz_parent_unit_name, 'parent_name', index)"
+                         [nzPlaceHolder]="'请选择所属上级标识'">
+                <nz-option
+                  *ngFor="let option of defaultData.biz_list"
+                  [nzLabel]="option.biz_unit_name"
+                  [nzValue]="option.biz_unit_name">
+                </nz-option>
+              </nz-select>
+              <a class="ml8" (click)="createOne(itemFile)">新建</a>
+              <a nz-popover [(nzPopoverVisible)]="itemFile['show']" nzPopoverPlacement="bottom" nzPopoverTrigger="click" [nzPopoverContent]="createone" (click)="createOne(itemFile)">新建</a>
+
+
+            </div>
+            <div *ngIf="itemFile['has_error_parent_unit']" class=" ml4 worning pl120"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{itemFile['error_message_parent_unit']}}</div>
+
+          </div>
+          <div class="lab-row mb10" >
+            <label class="">{{defaultData.trade_name_second}}:</label>
+            <div class="ml8">
+              <input nz-input
+                     class="w200"
+                     [nzSize]="'default'"
+                     type="text"
+                     [(ngModel)]="itemFile['biz_unit_name']"
+                     (ngModelChange)="inputChange(itemFile['biz_unit_name'])"
+                     placeholder="请输入名称">
+
+            </div>
+            <div *ngIf="itemFile['has_error']" class=" ml4 worning pl120"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>{{itemFile['error_message']}}</div>
+          </div>
+
+          <i nz-icon nzType="close" nzTheme="outline" class="deleteBtn ml8 two-delete"  *ngIf="index!==0" (click)="deleteName('two', index)"></i>
+          <ng-template #createone>
+            <div class="create-one-content">
+              <h3 class="mb16">新建一级标识</h3>
+              <div class="lab-row mb10"  *ngFor="let one of createOneData, let oneIndex=index">
+                <label class=""><span>{{defaultData.trade_name_first}}</span>大类:</label>
+                <div class="ml8">
+                  <input nz-input
+                         class="w200"
+                         [nzSize]="'default'"
+                         type="text"
+                         (click)="nameClick('createOne')"
+                         [(ngModel)]="one['biz_unit_name']"
+                         placeholder="请输入名称">
+                  <div *ngIf="createOneWarning" class="pull-left ml4 worning"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>大类不能为空</div>
+                </div>
+              </div>
+              <div class="btn">
+                <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="clickCreateOneCancel(itemFile)">
+                  <span>取消</span>
+                </button>
+                <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="checkAddOneSuccess" (click)="clickCreateOneOk(itemFile)">
+                  <span>完成</span>
+                </button>
+              </div>
+
+            </div>
+          </ng-template>
+        </div>
+
+        <button *ngIf="!defaultData['is_warning_content_two']" class="addBtn" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="addName('two')">
+         <i nz-icon nzType="plus" nzTheme="outline"></i>
+          <span>继续添加</span>
+        </button>
+        <button *ngIf="defaultData['is_warning_content_two']" class="addBtn disabled-status" nz-button [nzType]="'default'" [nzSize]="'default'">
+         <i nz-icon nzType="plus" nzTheme="outline"></i>
+          <span>继续添加</span>
+        </button>
+
+      </div>
+      <div class="trade-mark-btns">
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+          <span>取消</span>
+        </button>
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="prev()">
+          <span>上一步</span>
+        </button>
+        <button class="ml8" nz-button [nzType]="'primary'" [disabled]="defaultData['is_warning_content_two'] || checkSuccess" [nzSize]="'default'" (click)="doSave()">
+          <span>完成</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

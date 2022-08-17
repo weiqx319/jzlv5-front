@@ -1,0 +1,67 @@
+<button #quickEditButton *ngIf="!selected.length" class="manage-add mr8" nz-button [nzType]="'default'"
+         (click)="backupEdit()" [nzSize]="'small'">
+ <i nz-icon nzType="edit" nzTheme="outline"></i><span>帐户备份</span>
+</button>
+<button #quickEditButton *ngIf="selected.length"
+        class="manage-add mr8"
+        nz-button
+        [nzType]="'default'"
+        nz-popover
+        nzPopoverTitle="备份{{selectData.selected_length}}个{{summaryTypeName[summary_type]}}"
+        [(nzPopoverVisible)]="showBackupProp"
+        nzPopoverTrigger="click"
+        [nzPopoverContent]="backupTpl"
+        nzPopoverPlacement="bottomLeft"
+        (click)="backupEdit()"
+        [nzSize]="'small'"
+>
+ <i nz-icon nzType="edit" nzTheme="outline"></i><span>帐户备份</span>
+</button>
+
+
+<ng-template #backupTpl>
+  <div class="backup-setting">
+    <div class="lab-row">
+      <span>选择备份层级：</span>
+      <nz-checkbox-group [(ngModel)]="defaultPackUpSetting.levelOption"></nz-checkbox-group>
+
+    </div>
+    <div class="lab-row">
+      <span>是否分帐户备份<i nz-popover [nzPopoverContent]="backupToolTip" nzPopoverPlacement="left" nz-icon nzType="question-circle" nzTheme="outline"></i>：</span>
+
+      <ng-template #backupToolTip>
+        <p>a、不分账户备份：</p>
+        <p>①全账户、计划、单元.excel（一个文件分sheet）</p>
+        <p>②账户关键词文件（单账户一个excel）</p>
+        <p>③全账户创意.excel（一个excel放不下，分多个excel）</p>
+        <p>b、分账户备份：一个账户一个文件夹：</p>
+        <p>①单账户、计划、单元.excel（一个文件分sheet）</p>
+        <p>②单账户关键词.excel（一个excel放不下，分多个excel）</p>
+        <p>③单账户创意.excel（一个excel放不下，分多个excel</p>
+      </ng-template>
+      <nz-radio-group style="width: 160px;" [(ngModel)]="defaultPackUpSetting.is_split_account" [nzSize]="'small'">
+        <label class="" nz-radio [nzValue]="'0'">
+          否
+        </label>
+        <label nz-radio [nzValue]="'1'">
+          是
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row">
+      <span>备份名称：</span>
+      <input nz-input type="text" placeholder="备份名称" [nzSize]="'small'" style="width: 160px;"
+             [(ngModel)]="defaultPackUpSetting.backup_name">
+    </div>
+
+    <div class="quick-edit-footer mt30" style="text-align: right">
+      <button class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelBackup()">
+        取消
+      </button>
+      <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'"
+              (click)="handBackup()">确认
+      </button>
+    </div>
+
+  </div>
+</ng-template>

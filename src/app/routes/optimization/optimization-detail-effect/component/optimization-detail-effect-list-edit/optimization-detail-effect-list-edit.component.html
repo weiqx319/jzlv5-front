@@ -1,0 +1,84 @@
+<div class="conDiv">
+  <!--左边菜单start-->
+  <div class="flexLeft w200 pull-left pt16 pl30 pr20">
+    <ng-container>
+      <ul *ngIf="newMenuList.length>1">
+        <li *ngFor="let item of newMenuList" [ngClass]="{menuSle:item.key===currentSelectedMenu}" (click)="changeSelectedMenu(item)">{{item.name}}</li>
+      </ul>
+    </ng-container>
+  </div>
+  <!--左边菜单end-->
+  <div class="conSon ml200">
+    <div class="mb400">
+      <!--批量编辑关键词-->
+      <ng-container *ngIf="currentSelectedMenu === 'batch_editing_keyword'">
+        <h3>批量编辑关键词</h3>
+      </ng-container>
+      <!--编辑关键词2-->
+      <ng-container *ngIf="currentSelectedMenu === 'editing_keyword2'">
+        <h3>编辑:<span>{{parentData.selected_data[0].pub_keyword}}</span>（属于:{{parentData.selected_data[0].publisher}}/{{parentData.selected_data[0].pub_account_name}}、{{parentData.selected_data[0].pub_campaign_name}}、{{parentData.selected_data[0].pub_adgroup_name}}）</h3>
+      </ng-container>
+      <!--优化设置-->
+      <div *ngIf="currentSelectedMenu === 'editing_optimization'">
+        <h3 *ngIf="parentData.selected_data.length ===1">编辑:<span>{{parentData.selected_data[0].pub_keyword}}</span>（属于:{{parentData.selected_data[0].publisher}}/{{parentData.selected_data[0].pub_account_name}}、{{parentData.selected_data[0].pub_campaign_name}}、{{parentData.selected_data[0].pub_adgroup_name}}）</h3>
+        <h3 *ngIf="parentData.selected_data.length > 1">批量编辑</h3>
+        <div>
+          <div class="inpRow mt8">
+            <div class="inpRow_left pull-left">
+              <label class="titleLa w73 mr8 inline-block">
+                <span>最高出价:</span>
+              </label>
+            </div>
+            <div class="inpRow_right pull-left hasInputs hasInput">
+              <nz-input-number style="width: 130px;"
+                               [(ngModel)]="optimizationData['max_price']"
+                               [nzSize]="'small'">
+              </nz-input-number> <span class="ml5">元</span>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <div class="inpRow mt8">
+            <div class="inpRow_left pull-left">
+              <label class="titleLa w73 mr8 inline-block">
+                <span>最低出价:</span>
+              </label>
+            </div>
+            <div class="inpRow_right pull-left hasInputs hasInput">
+              <nz-input-number style="width: 130px;"
+                               [(ngModel)]="optimizationData['min_price']"
+                               [nzSize]="'small'">
+              </nz-input-number> <span class="ml5">元</span>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <div class="inpRow mt8">
+            <div class="inpRow_left pull-left">
+              <label class="titleLa w73 mr8 inline-block">
+                <span>调价步长:</span>
+              </label>
+            </div>
+            <div class="inpRow_right pull-left hasInputs hasInput">
+              <span class="mr8">原价的 +/-</span>
+              <nz-input-number style="width: 65px;"
+                               [(ngModel)]="optimizationData['price_step_rate']"
+                               [nzSize]="'small'">
+              </nz-input-number> <span class="ml5">%</span>
+            </div>
+            <div class="clear"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!--footer start-->
+<div class="flexFooter border">
+  <button nz-button [nzType]="'default'" (click)="_cancel()" class="mr10">
+    <span>取消</span>
+  </button>
+  <button nz-button [nzLoading]="saveing" [nzType]="'primary'" (click)="_save()">
+    <span>保存</span>
+  </button>
+</div>
+<!--footer end-->

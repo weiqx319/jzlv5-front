@@ -1,0 +1,117 @@
+<div class="upload-image-materials-container">
+  <div class="form-content">
+    <!--<div class="lab-row mb10">-->
+      <!--<label>所属广告主:</label>-->
+      <!--<nz-select class="w200 ml8"-->
+                 <!--[nzSize]="'small'"-->
+                 <!--[nzMode]="'multiple'"-->
+                 <!--[(ngModel)]="defaultData.cid"-->
+                 <!--[nzPlaceHolder]="'请选择广告主'"-->
+                 <!--nzShowSearch>-->
+        <!--<nz-option-->
+          <!--*ngFor="let option of advertiserList"-->
+          <!--[nzLabel]="option.advertiser_name"-->
+          <!--[nzValue]="option.cid">-->
+        <!--</nz-option>-->
+      <!--</nz-select>-->
+    <!--</div>-->
+
+    <div class="lab-row mb10">
+      <label>自定义标签:</label>
+      <input nz-input
+             class="w200 ml8"
+             [nzSize]="'small'"
+             type="text"
+             [(ngModel)]="defaultData.material_tags"
+             (input)="onInput($event)"
+             placeholder="请输入标签，标签之间以空格分隔">
+    </div>
+    <div class="lab-row mb10" style="position:relative;">
+      <label>素材文件:</label>
+      <nz-upload *ngIf="!saving"
+            class="ml8"
+            [nzCustomRequest]="customReq"
+            [nzAccept]="'.img,.png,.jpg,.jpeg'"
+            [nzBeforeUpload]="beforeUpload"
+            (click)="changeBtn()"
+            [nzMultiple]="true"
+            [nzName]="'files'">
+        <button nz-button class="mt2 pull-left height20">
+         <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+        </button>
+      </nz-upload>
+      <button *ngIf="saving" nz-button class="mt2 pull-left height20">
+       <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+      </button>
+      <span class="ml8 zhushi">*请上传.img,.png,.jpg,.jpeg文件</span>
+    </div>
+    <div class="lab-row mb10" *ngIf="fileList.length>0">
+      <span>本次共选择{{fileList.length}}张图片,{{fileUploadSuccess}}张可用</span>
+    </div>
+    <div class="lab-row mb10" *ngIf="fileList.length>0">
+
+      <nz-table #basicTable [nzData]="fileList" [nzSize]="'small'" [nzShowPagination]="true" [nzPageSize]="10" [nzFrontPagination]="true" style="width: 100%">
+        <thead>
+        <tr>
+          <th [nzWidth]="'200px'">图片</th>
+          <th [nzWidth]="'100px'">名称</th>
+          <th>大小</th>
+          <th>尺寸</th>
+          <th>-</th>
+          <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let i = index;">
+          <td><img width="150" src="{{data.imageData}}"/></td>
+          <td> <input nz-input type="text" placeholder="文件名称" [nzSize]="'small'" style="width: 160px;" [disabled]="data.checkStatus>0 || !data.uploadStatus "
+                       [(ngModel)]="data.title" />
+          <td style="width: 95px" [ngClass]="{errorRed:data.checkStatus==2}">{{ data.size }}
+          <i nz-icon nzType="question-circle" nzTheme="outline"
+                                                                         nz-popover
+                                                                         [nzPopoverContent]="cardDetail" nzPopoverPlacement="bottom"
+                                                                         class="ml8"
+                                                                         style="color: #f09200"></i></td>
+          <td style="width: 95px" [ngClass]="{errorRed:data.checkStatus==1}">{{ data.width }}x{{data.height}}
+            <i nz-icon nzType="question-circle" nzTheme="outline"
+                                                                                          nz-popover
+                                                                                          [nzPopoverContent]="cardDetail" nzPopoverPlacement="bottom"
+                                                                                          class="ml8"
+                                                                                          style="color: #f09200"></i></td>
+          <td [ngClass]="{errorRed:data.checkStatus>0}">{{ data.message }}</td>
+          <td> <i nz-icon nzType="close" nzTheme="outline" (click)="deleteFile(data,i)"></i> </td>
+
+        </tr>
+        </tbody>
+      </nz-table>
+
+      <ng-template #cardDetail>
+          <div *ngFor="let imageShowFormat of imageSizeShowList" style="display: flex">
+             <span style="margin-right:10px; display:inline-block;width: 60px;text-align: right">{{ imageShowFormat.width_specific ? imageShowFormat.width_specific + ' : ' + imageShowFormat.height_specific :  imageShowFormat.width + 'x' + imageShowFormat.height }}</span>
+             <span>限制 {{imageShowFormat.size}}KB</span>
+             <span class="ml10 w90">{{ imageShowFormat.width_specific ? '上限' + imageShowFormat.max_size[0] + 'x' + imageShowFormat.max_size[1] : ''}}</span>
+             <span class="ml10 w90">{{ imageShowFormat.width_specific ? '下限' + imageShowFormat.min_size[0] + 'x' + imageShowFormat.min_size[1] : ''}}</span>
+          </div>
+      </ng-template>
+
+
+
+
+
+    </div>
+    <div class="lab-row mb10" *ngIf="resultMessage">
+      <p style="color: red;">{{resultMessage}}</p>
+    </div>
+  </div>
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" *ngIf="!saving" nz-button [disabled]="fileUploadSuccess<1" [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+    <button class="ml8" *ngIf="saving" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saving">
+      <span>上传中...</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,112 @@
+<div class="message-container">
+  <div class="fixed-condition-manage page-condition-header">
+    <a class="back-button" routerLink="/manage/tools/black_word/list/black_group_list"><i nz-icon nzType="left" nzTheme="outline"></i>返回黑名单词库列表页</a>
+  </div>
+  <div class="content-section-manage">
+    <div class="manage-operation">
+      <div class="manage-header-left">
+        <button class="mr8" nz-popconfirm nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="createBlackWord()">
+          <i nz-icon nzType="plus" nzTheme="outline"></i>添加黑词
+        </button>
+        <button class="mr8" nz-popconfirm nz-button [nzType]="'default'" [nzSize]="'default'" (click)="downloadBlackWord()">
+          <i nz-icon nzType="download" nzTheme="outline"></i>下载黑词
+        </button>
+
+        <div style="position: relative">
+          <button class="mr8" nz-popconfirm nz-button [nzType]="'default'" [nzSize]="'default'"
+                  [ngClass]="{'disabled-status': !isIndeterminate}"
+                  [disabled]="!isIndeterminate"
+                  (click)="batchScreenAll()">
+            <i nz-icon nzType="hourglass" nzTheme="outline"></i>批量筛查
+          </button>
+          <div style="position: absolute; left: 0" *ngIf="isShow.black_words_all">
+            <app-negative-item-select [publisherAry]="publisherAry" [summaryType]="'black'" [itemDetail]="dataRange" (itemSelected)="dataRangeChange($event)" (doCancel)="resetIsShow()"></app-negative-item-select>
+          </div>
+        </div>
+
+        <ng-container *ngIf="isShow.black_words">
+          <div style="position: relative">
+            <div style="position: absolute; left: 0" >
+              <app-negative-item-select [publisherAry]="publisherAry" [summaryType]="'black'" [itemDetail]="dataRange" (itemSelected)="dataRangeChange($event)" (doCancel)="resetIsShow()"></app-negative-item-select>
+            </div>
+          </div>
+        </ng-container>
+
+        <button class="mr8" nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="delBlackWord(true)" [nzPopconfirmPlacement]="'bottomLeft'" nz-button [nzType]="'default'" [nzSize]="'default'"
+                [ngClass]="{'disabled-status': !isIndeterminate || (role_id !== 1 && role_id!==3)}"
+                [disabled]="!isIndeterminate || (role_id !== 1 && role_id!==3)">
+          <i nz-icon nzType="close" nzTheme="outline"></i>删除
+        </button>
+      </div>
+    </div>
+    <div class="table pt8">
+      <nz-table
+        #nzTable
+        nzShowSizeChanger
+        [nzPageSizeOptions]="[30,50,100,500]"
+        [nzSize]="'default'"
+        [nzData]="blackWordList"
+        [nzFrontPagination]="true"
+        [(nzPageSize)]="pageSize"
+        [(nzPageIndex)]="currentPage"
+        [nzTotal]="total"
+        [nzLoading]="loading"
+        [nzShowTotal]="totalItemTemplate"
+        [nzScroll]="{ x: '900px', y: noResultHeight+'px' }"
+      >
+        <thead>
+        <tr>
+          <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="isAllChecked" (nzCheckedChange)="updateAllChecked($event)">
+          </th>
+          <th [nzWidth]="'150px'">
+            <span>黑名单词</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'word_name',name:'黑名单词',type:'multiValue'}" [(filterResult)]="filterResult['word_name']" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>适用层级</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'apply_level',name:'适用层级',type:'singleList'}" [(filterResult)]="filterResult['apply_level']" [filterOption]="filterApplyLevelOption" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>录入时间</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>上传用户</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'user_id',name:'上传用户',type:'singleList'}" [(filterResult)]="filterResult['user_id']" [filterOption]="filterUserOption" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>操作</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of nzTable.data">
+          <td
+            nzShowCheckbox
+            [(nzChecked)]="data.checked"
+            (nzCheckedChange)="checkedChange()"
+          ></td>
+          <td>
+            {{data.word_name}}
+          </td>
+          <td>{{ applyLevelList[data.apply_level] }}</td>
+          <td>{{data.create_time}}</td>
+          <td>{{data.user_name}}</td>
+          <td>
+            <ng-container>
+              <a (click)="batchScreen(1, data['index'], data)">筛查</a>
+            </ng-container>
+            <span class="ml8 mr8">|</span>
+            <ng-container *ngIf="role_id === 1 || role_id === 3">
+                <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="delBlackWord(false, data)" nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click">删除</a>
+            </ng-container>
+            <ng-container *ngIf="(role_id !== 1 && role_id!==3)">
+              <span>删除</span>
+            </ng-container>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+    </div>
+  </div>
+</div>

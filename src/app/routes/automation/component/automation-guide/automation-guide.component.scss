@@ -1,0 +1,207 @@
+// 标题、操作
+.operate-wrapper {
+  position: relative;
+  height: 48px;
+  line-height: 48px;
+  text-align: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-bottom: 1px solid #f0f0f3;
+
+  .title {
+    font-size: 20px;
+    font-weight: 200;
+  }
+  .arrow-left {
+    position: absolute;
+    left: 20px;
+    top: 0px;
+    height: 48px;
+    line-height: 48px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+}
+// 特性描述
+.features {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 0;
+  box-shadow: 0 6px 6px rgb(0 0 0 / 5%);
+  // box-shadow: 0 0px 16px rgb(0 0 0 / 10%);
+  background-color: #faf9fc;
+  text-align: center;
+
+  .features-wrapper {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 10px 0;
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-left: 12px;
+        max-width: 300px;
+        text-align: left;
+
+        .feature-title {
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+// 策略主体
+.tactic-container {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+.strategy-title {
+  height: 48px;
+  line-height: 48px;
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 15px;
+  border-top: 1px solid #f0f0f3;
+  border-bottom: 1px solid #f0f0f3;
+}
+.tactics-wrapper {
+  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(318px, auto));
+  grid-template-rows: auto auto auto;
+  grid-row-gap: 20px;
+  grid-column-gap: 30px;
+
+  .tactic-item {
+    position: relative;
+    margin: auto;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 16%);
+    background-color: #fff;
+    box-sizing: border-box;
+    height: 170px;
+    width: 320px;
+    padding: 15px 20px;
+    cursor: pointer;
+
+    .tactic {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      .tactic-title-wrapper {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        height: 44px;
+        .content {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          // margin-left: 12px;
+          text-align: left;
+          line-height: 22px;
+          .tactic-title {
+            font-weight: 600;
+            font-size: 18px;
+            display: -webkit-box;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
+          }
+          .tactic-level {
+            font-size: 14px;
+          }
+        }
+      }
+      .tactic-description {
+        display: -webkit-box;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+      }
+      .action-icon {
+        position: absolute;
+        bottom: 15px;
+        .action-icon-item {
+          color: #fff;
+          font-size: 14px;
+          font-weight: 600;
+          width: 20px;
+          height: 20px;
+          line-height: 23px;
+          border-radius: 20px;
+          text-align: center;
+        }
+      }
+    }
+    .right-color {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 10px;
+      height: 100%;
+    }
+
+    &:hover {
+      background-color: #e7e5ef;
+    }
+    .create-tactic {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+    }
+  }
+}
+
+// 创建自定义策略对话框
+.custom-modal {
+  .title {
+    font-size: 20px;
+    font-weight: 300;
+    text-align: center;
+  }
+  .description {
+    margin: 10px 0 30px;
+    padding: 10px;
+    font-size: 14px;
+    border-top: 1px solid #f0f0f3;
+    border-bottom: 1px solid #f0f0f3;
+    font-weight: 300;
+  }
+  .level-wrapper {
+  }
+}
+
+.features-icon {
+  font-size: 28px;
+  color: #c5d2ee;
+}
+
+.tactic-icon {
+  color: #fff;
+  font-size: 24px;
+  border-radius: 20px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+}
+
+.create-plus {
+  margin-right: 13px;
+  font-size: 36px;
+  font-weight: 600;
+  box-shadow: 0 3px 6px rgb(0 0 0 / 16%);
+  color: #7654c8;
+  background-color: #fff;
+}

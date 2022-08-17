@@ -1,0 +1,280 @@
+<div class="add-role">
+  <div class="role-info">
+    <div class="role-header" (click)="collapseChange('basic')">
+      <i nz-icon nzType="info-circle" nzTheme="outline"></i><span class="ml8">基本信息</span>
+    </div>
+
+    <ng-container *ngIf="open.basic">
+      <div class="role-content role-basic-content">
+        <form class="new-role-form" nz-form [formGroup]="addRoleForm" role="form">
+          <nz-form-item class="role-form-item">
+            <div class="form-label pull-left">
+              <label><span class="redStart">*</span>角色:</label>
+            </div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <nz-select class="w100p" [nzSize]="'default'"  [formControlName]="'role_id'" [(ngModel)]="defaultSetting.role_id" (ngModelChange)="roleChange($event)">
+                <nz-option
+                  *ngFor="let option of rolesList"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+            <div class="ml8 pull-left">
+              <div class='ant-form-item-explain' *ngIf="getFormControl('role_id').dirty&&getFormControl('role_id').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择角色</div>
+            </div>
+          </nz-form-item>
+          <nz-form-item class="role-form-item">
+            <div class="form-label pull-left">
+              <label><span class="redStart">*</span>用户名:</label>
+            </div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <input nz-input
+                class="w100p"
+                [nzSize]="'default'"
+                [formControlName]="'user_name'"
+                type="text"
+                placeholder="输入用户名"
+                [(ngModel)]="defaultSetting.user_name">
+
+            </nz-form-control>
+            <div class="ml8 pull-left">
+              <div class='ant-form-item-explain' *ngIf="getFormControl('user_name').dirty&&getFormControl('user_name').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入用户名</div>
+            </div>
+          </nz-form-item>
+          <nz-form-item class="role-form-item" [ngClass]="{accountName: userId > 0}">
+            <div class="form-label pull-left">
+              <label><span class="redStart">*</span>邮箱:</label>
+            </div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <input nz-input
+                class="w100p"
+                [nzSize]="'default'"
+                [formControlName]="'email'"
+                type="email"
+                placeholder="输入邮箱"
+                [(ngModel)]="defaultSetting.email">
+
+            </nz-form-control>
+            <div class="ml8 pull-left">
+              <ng-container *ngIf="getFormControl('email').dirty&&getFormControl('email').errors">
+                <div class='ant-form-item-explain' *ngIf="getFormControl('email').errors?.required"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入邮箱</div>
+                <div class='ant-form-item-explain' *ngIf="getFormControl('email').errors?.pattern||getFormControl('email').errors['email']"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入正确的邮箱</div>
+              </ng-container>
+            </div>
+          </nz-form-item>
+
+          <nz-form-item *ngIf="!userId" class="role-form-item">
+            <div class="form-label pull-left">
+              <label><span class="redStart">*</span>密码:</label>
+            </div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <input nz-input
+                class="w100p"
+                [nzSize]="'default'"
+                [formControlName]="'user_password'"
+                type="password"
+                placeholder="{{placeHolderPassword}}"
+                [(ngModel)]="defaultSetting.user_password">
+
+            </nz-form-control>
+            <div class="ml8 pull-left">
+              <div class='ant-form-item-explain' *ngIf="getFormControl('user_password').dirty&&getFormControl('user_password').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入密码</div>
+            </div>
+          </nz-form-item>
+          <nz-form-item *ngIf="!userId" class="role-form-item">
+            <div class="form-label pull-left">
+              <label><span class="redStart">*</span>确认密码:</label>
+            </div>
+            <nz-form-control class="w200 ml8 pull-left">
+              <input nz-input
+                class="w100p"
+                [nzSize]="'default'"
+                [formControlName]="'check_password'"
+                type="password"
+                placeholder="{{placeHolderPasswordConfirm}}"
+                [(ngModel)]="defaultSetting.retry_password">
+
+            </nz-form-control>
+            <div class="ml8 pull-left">
+              <div class='ant-form-item-explain' *ngIf="getFormControl('check_password').dirty&&getFormControl('check_password').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请再次输入密码</div>
+              <div class='ant-form-item-explain' *ngIf="getFormControl('check_password').dirty&&getFormControl('check_password').hasError('error')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>两次输入的密码不同</div>
+            </div>
+          </nz-form-item>
+        </form>
+      </div>
+    </ng-container>
+  </div>
+  <ng-container *ngIf="defaultSetting.role_id !== 2">
+    <div class="role-advert">
+      <div class="role-header" (click)="collapseChange('advert')">
+        <i nz-icon nzType="info-circle" nzTheme="outline"></i><span class="ml8">分配广告主</span>
+      </div>
+      <ng-container *ngIf="open.advert">
+        <div class="role-content role-sub-company-content">
+          <div>
+            <div class="inline-block">
+              <span>分配广告主:</span>
+            </div>
+            <div class="inline-block w260 ml8" style="vertical-align: middle;">
+              <nz-transfer-tree [getParentKey]="false" [target]="advertSelectedValue"
+                                (nzChange)="transferTreeChange(advertSelectedValue,$event)"
+                                [source]="advertList"></nz-transfer-tree>
+<!--              <app-add-account [displayList]="advertList"  [(results)]="advertSelectedValue"></app-add-account>-->
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+  <div class="role-account" *ngIf="defaultSetting.role_id !== 2 && defaultSetting.role_id !== 7">
+    <div class="role-header" (click)="collapseChange('account')">
+      <i nz-icon nzType="info-circle" nzTheme="outline"></i><span class="ml8">分配管理账号</span>
+    </div>
+    <ng-container *ngIf="open.account">
+      <div class="role-content role-account-content pl20 pr20">
+        <div class="role-account-item mb8" *ngFor="let item of selectedAccountList;let i = index;">
+          <div class="v-align-m inline-block w165">
+            <nz-select class="w100p"
+                       [nzSize]="'default'"
+                       [(ngModel)]="item.cid"
+                       (ngModelChange)="advertChange($event,item)" nzShowSearch>
+              <nz-option
+                *ngFor="let option of accountList"
+                [nzLabel]="option.advertiser_name"
+                [nzValue]="option.cid">
+              </nz-option>
+            </nz-select>
+          </div>
+            <div class="v-align-m inline-block w100 ml8">
+              <nz-select class="w100p"
+                         [nzSize]="'default'"
+                         [(ngModel)]="item.media_type"
+                         (ngModelChange)="publisherTypeChange($event,item)"
+                         [nzPlaceHolder]="'选择媒体'">
+                <nz-option
+                  *ngFor="let option of publisherList"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+              </nz-select>
+            </div>
+          <div class="v-align-m inline-block w100 ml8">
+            <nz-select class="w100p"
+                       [nzSize]="'default'"
+                       [(ngModel)]="item.channel_id"
+                       [nzPlaceHolder]="'选择渠道'">
+              <nz-option
+                *ngFor="let option of item.channelAll['publisher_'+item.media_type]?item.channelAll['publisher_'+item.media_type]:[]"
+                [nzLabel]="option.label"
+                [nzValue]="option.value">
+              </nz-option>
+            </nz-select>
+          </div>
+            <div class="v-align-m inline-block w260 ml8" style="vertical-align: middle;">
+              <app-add-account [displayList]="item.channel_id?item.advertAccountList['publisher_'+item.media_type]['channel_'+item.channel_id]:[]" [(results)]='item.selectedValues'></app-add-account>
+            </div>
+            <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  (click)="removeAccount(i)"></i>
+        </div>
+        <div nz-row>
+          <nz-form-control nz-col [nzSpan]="20">
+            <button nz-button [nzType]="'default'" [nzSize]="'default'" (click)="addAccount()">
+             <i nz-icon nzType="plus" nzTheme="outline"></i>
+              <span> 添加账号</span>
+            </button>
+          </nz-form-control>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <ng-container *ngIf="defaultSetting.role_id === 3">
+    <div class="role-optimizer">
+      <div class="role-header" (click)="collapseChange('optimizer')">
+        <i nz-icon nzType="info-circle" nzTheme="outline"></i><span class="ml8">分配{{productInfo['name'] === '大搜家' ? '营销经理/服务商优化师' : '优化师'}}</span>
+      </div>
+      <ng-container *ngIf="open.optimizer">
+        <div class="role-content role-optimizer-content">
+          <div>
+            <div class="inline-block">
+              <span>分配{{productInfo['name'] === '大搜家' ? '营销经理/服务商优化师' : '优化师'}}:</span>
+            </div>
+            <div class="inline-block w260 ml8" style="vertical-align: middle;">
+              <app-add-account [displayList]="optimizerList" [(results)]='optimizerSelectedValue'></app-add-account>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="defaultSetting.role_id === 2">
+    <div class="role-advert">
+      <div class="role-header" (click)="collapseChange('advert')">
+        <i nz-icon nzType="info-circle" nzTheme="outline"></i><span class="ml8">分配广告主</span>
+      </div>
+      <ng-container *ngIf="open.advert">
+        <div class="role-content role-sub-company-content">
+          <div>
+            <div class="inline-block">
+              <span>分配广告主:</span>
+            </div>
+            <div class="inline-block w260 ml8" style="vertical-align: middle;">
+              <nz-transfer-tree [getParentKey]="false" [target]="advertSelectedValue"
+                                (nzChange)="transferTreeChange(advertSelectedValue,$event)"
+                                [source]="advertList"></nz-transfer-tree>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+  <div class="role-advert">
+    <div class="role-header" (click)="collapseChange('data_role')">
+      <i nz-icon nzType="info-circle" nzTheme="outline"></i><span class="ml8">分配数据角色</span>
+    </div>
+    <ng-container *ngIf="open.data_role">
+      <div class="role-content role-sub-company-content">
+        <div>
+          <div class="inline-block">
+            <span>数据角色:</span>
+          </div>
+          <div class="inline-block w260 ml8" style="vertical-align: middle;">
+            <nz-select class="w260 ml10" [nzSize]="'default'" [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagPlaceHolder" nzMode="multiple" nzPlaceHolder="请选择" [(ngModel)]="defaultSetting.data_role_ids">
+              <nz-option *ngFor="let option of dataRoleList" [nzLabel]="option.role_name" [nzValue]="option.role_id"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <ng-container *ngIf="defaultSetting.role_id === 3">
+    <div class="role-advert">
+      <div class="role-header" (click)="collapseChange('super_account')">
+        <i nz-icon nzType="info-circle" nzTheme="outline"></i><span class="ml8">分配管家账户</span>
+      </div>
+      <ng-container *ngIf="open.super_account">
+        <div class="role-content role-sub-company-content">
+          <div>
+            <div class="inline-block">
+              <span>管家账户:</span>
+            </div>
+            <div class="inline-block w260 ml8" style="vertical-align: middle;">
+              <nz-select class="w260 ml10" [nzSize]="'default'" [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagPlaceHolder" nzMode="multiple" nzPlaceHolder="请选择" [(ngModel)]="superAccountSelectedValue">
+                <nz-option *ngFor="let option of keeperList" [nzLabel]="option.name" [nzValue]="option.key"></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+  <div class="role-footer">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="!addRoleForm.valid" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>
+
+<ng-template #tagPlaceHolder let-selectedList> 已选 {{ selectedList.length + 3 }}</ng-template>

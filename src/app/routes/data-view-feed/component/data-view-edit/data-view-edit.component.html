@@ -1,0 +1,81 @@
+<div class="conDiv">
+  <!--左边菜单start-->
+  <div class="flexLeft w200 pull-left pt16 pl30 pr20">
+    <ul>
+      <li *ngFor="let item of newMenuList" [ngClass]="{menuSle:item.key===currentSelectedMenu , disable: !item.is_show && parentData['editParameter'] !== 'all'}" (click)="changeSelectedMenu(item)">
+        {{item.name}}
+      </li>
+    </ul>
+  </div>
+  <!--左边菜单end-->
+  <div class="conSon ml200">
+    <div class="mb400">
+      <!--单个编辑单元-->
+      <app-edit-group-target *ngIf="currentSelectedMenu === 'edit_target_1'"
+                             [selectData]="selectData"
+                             [summaryType]="summaryType"
+                             [is_check]="is_check"
+                             [publisherId]="publisherId"
+                             (is_saving)="save_state($event)"></app-edit-group-target>
+ <!--单个编辑单元-->
+      <app-edit-words *ngIf="currentSelectedMenu === 'edit_words'"
+                             [selectData]="selectData"
+                             [summaryType]="summaryType"
+                             [is_check]="is_check"
+                             [publisherId]="publisherId"
+                             (is_saving)="save_state($event)"></app-edit-words>
+
+
+      <app-edit-extension *ngIf="currentSelectedMenu === 'extension_setting'"
+                          [selectData]="selectData"
+                          [parentData]="parentData"
+                          [summaryType]="summaryType"
+                          [is_check]="is_check"
+                          [publisherId]="publisherId"
+                          (is_saving)="save_state($event)"></app-edit-extension>
+
+
+      <!--批量编辑单元-->
+
+
+      <!--编辑分组-->
+      <app-edit-folder *ngIf="currentSelectedMenu === 'editing_folder'"
+                       [parentData]="parentData"
+                       [summaryType]="summaryType"
+                       [is_check]="is_check"
+                       [idsArray]="selectData.selected_data"
+                       (is_saving)="save_state($event)"></app-edit-folder>
+
+
+      <!--编辑自动监控-->
+      <app-edit-automatic-monitoring *ngIf="currentSelectedMenu === 'automatic_monitoring_setting'"
+                                     [parentData]="parentData"
+                                     [summaryType]="summaryType"
+                                     [is_check]="is_check"
+                                     [idsArray]="idsArray"
+                                     [publisher_model]="publisher_model"
+                                     [monitor_status] = 'monitor_status'
+                                     (is_saving)="save_state($event)"></app-edit-automatic-monitoring>
+
+
+    </div>
+  </div>
+</div>
+<!--footer start-->
+<div class="flexFooter border" *ngIf="currentSelectedMenu !== 'history_setting'">
+  <button nz-button [nzType]="'default'" (click)="_cancel()" class="mr10">
+    <span>取消</span>
+  </button>
+  <ng-container>
+    <button nz-button [nzLoading]="saveing" [nzType]="'primary'" (click)="_save()">
+      <span>保存</span>
+    </button>
+  </ng-container>
+
+</div>
+<div class="flexFooter border" *ngIf="currentSelectedMenu === 'history_setting'">
+  <button nz-button [nzType]="'default'" (click)="_cancel()" class="mr10">
+    <span>返回</span>
+  </button>
+</div>
+<!--footer end-->

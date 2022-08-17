@@ -1,0 +1,238 @@
+<div>
+  <h3>编辑: <span>{{showSingleKeywordData['pub_keyword']}}</span>（属于:{{publisherOption[showSingleKeywordData['publisher_id']]}}/{{showSingleKeywordData['pub_account_name']}}、{{showSingleKeywordData['pub_campaign_name']}}、{{showSingleKeywordData['pub_adgroup_name']}}）</h3>
+  <p class="slow_360" *ngIf="publishId === 3">360媒体的编辑操作同步到媒体端有一定时间的延迟，请耐心等待，请勿重复修改!</p>
+  <div class="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 mr8 inline-block">
+        <span>定时设置:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left noCheckbox ">
+      <nz-radio-group
+        [(ngModel)]="cronSetting">
+        <label class="mr20"
+               nz-radio
+               [nzValue]="'now'">
+          <span>立即执行</span>
+        </label>
+        <label nz-radio
+               [nzValue]="'current'">
+          <span>自定义</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="inpRow_right pull-left" *ngIf="cronSetting == 'current'">
+      <nz-date-picker
+        [nzShowTime]="{ nzFormat: 'HH:mm' }"
+        [nzDisabledDate]="disabledDate"
+        nzFormat="yyyy-MM-dd HH:mm"
+        nzPlaceHolder="请选择时间"
+        [nzSize]="'small'"
+        [(ngModel)] = "cronSettingTime"
+      ></nz-date-picker>
+    </div>
+
+
+    <div class="clear"></div>
+  </div>
+
+  <div class="inpRow mt10" [ngClass]="{disabled:editing_keyword2Data['pause']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox
+             [(ngModel)]="editing_keyword2Data['pause']['is_edit']">
+        <span>投放状态:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left" >
+      <nz-radio-group [nzSize]="'small'"
+                      [(ngModel)]="editing_keyword2Data.pause.value"
+                      [nzDisabled]="!editing_keyword2Data['pause']['is_edit']">
+        <label class="mr20" nz-radio [nzValue]="false">
+          <span>开启</span>
+        </label>
+        <label nz-radio [nzValue]="true">
+          <span>暂停</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block">
+        <span class="mr8">关键词名称:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <p>{{showSingleKeywordData['pub_keyword']}}</p>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" [ngClass]="{disabled:editing_keyword2Data['price']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox
+             [(ngModel)]="editing_keyword2Data['price']['is_edit']">
+        <span>关键词出价:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs hasInput">
+      <nz-input-number style="width: 180px;"
+                       [nzDisabled]="!editing_keyword2Data['price']['is_edit']"
+                       [(ngModel)]="editing_keyword2Data.price['value']"
+                       (click) ="changeInput('price')"
+                       [nzSize]="'small'">
+      </nz-input-number>
+      <span class="ml5">元</span>
+      <ng-container *ngIf="editing_keyword2Data['price']['is_edit']">
+        <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.price && (publishId === 1 || publishId === 2)">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词出价不能为空并且 范围 为 0.01~999.99</span>
+        <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.price && publishId === 3">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词出价不能为空并且 范围 为 0.3~999.99</span>
+        <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.price && publishId === 4">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词出价不能为空并且 范围 为 0.45~999.99</span>
+      </ng-container>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" *ngIf="publishId!=10" [ngClass]="{disabled:editing_keyword2Data['match_type']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox
+             [(ngModel)]="editing_keyword2Data['match_type']['is_edit']">
+        <span>匹配模式:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left ed_sele">
+      <nz-select class="w120"
+                 [nzSize]="'small'"
+                 [nzDisabled]="!editing_keyword2Data['match_type']['is_edit']"
+                 [(ngModel)]="editing_keyword2Data.match_type.value"
+                 nzPlaceHolder="请选择匹配模式">
+        <nz-option
+          *ngFor="let option of matchTypeData"
+          [nzLabel]="option.name"
+          [nzValue]="option.value">
+        </nz-option>
+      </nz-select>
+      <ng-container *ngIf="editing_keyword2Data['match_type']['is_edit']">
+        <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!editing_keyword2Data.match_type.value">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择匹配模式</span>
+      </ng-container>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" *ngIf="publishId == 3 || publishId ==1" [ngClass]="{disabled:editing_keyword2Data['deeplink_url']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox
+             [(ngModel)]="editing_keyword2Data['deeplink_url']['is_edit']">
+        <span>应用调起网址:</span>
+      </label>
+    </div>
+
+    <div class="inpRow_right pull-left">
+      <div>
+        <div class="color mb5">
+          <label>
+            <span>将调起网址修改为:</span>
+          </label>
+        </div>
+        <div>
+          <textarea placeholder="输入应用调起网址" *ngIf="editing_keyword2Data['deeplink_url']['is_edit']"  [(ngModel)]="editing_keyword2Data.deeplink_url.value"   class="titleColor w400 border"  rows="5"></textarea>
+          <textarea placeholder="输入应用调起网址" *ngIf="!editing_keyword2Data['deeplink_url']['is_edit']" [(ngModel)]="editing_keyword2Data.deeplink_url.value" disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="clear"></div>
+  </div>
+
+
+  <div class="inpRow mt10" *ngIf="publishId !== 4 && publishId!=10" [ngClass]="{disabled:editing_keyword2Data['pc_destination_url']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox
+             [(ngModel)]="editing_keyword2Data['pc_destination_url']['is_edit']">
+        <span>访问URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+        <div class="color mb5">
+          <label>
+            <span>将URL修改为:</span>
+          </label>
+        </div>
+        <div>
+          <textarea placeholder="输入Url" *ngIf="editing_keyword2Data['pc_destination_url']['is_edit']" (click) ="changeInput('pc_destination_url')" [(ngModel)]="editing_keyword2Data.pc_destination_url.value" (ngModelChange)="contentChange('pc_destination_url')" class="titleColor w400 border"  rows="5"></textarea>
+          <textarea placeholder="输入Url" *ngIf="!editing_keyword2Data['pc_destination_url']['is_edit']" [(ngModel)]="editing_keyword2Data.pc_destination_url.value" disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+          <i class="tip">({{tips.length['pc_destination_url']}}/1024)</i>
+          <ng-container *ngIf="editing_keyword2Data['pc_destination_url']['is_edit']">
+                  <span style=" position: absolute;display: inline-block;right: -160px;top: 25px;"
+                        [ngClass]="{clSave:iswraing}"
+                        class="wroning ml20"
+                        *ngIf="tips.pc_destination_url">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>
+                  访问Url长度不能超过1024
+                </span>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div *ngIf="publishId!=10" class="inpRow mt10" [ngClass]="{disabled:editing_keyword2Data['wap_destination_url']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox
+             [(ngModel)]="editing_keyword2Data['wap_destination_url']['is_edit']">
+        <span>移动访问URL:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <div>
+        <div class="mb5">
+          <label>
+            <span>将URL修改为:</span>
+          </label>
+        </div>
+        <div>
+          <textarea placeholder="输入Url" *ngIf="editing_keyword2Data['wap_destination_url']['is_edit']" (click) ="changeInput('wap_destination_url')" [(ngModel)]="editing_keyword2Data.wap_destination_url.value" (ngModelChange)="contentChange('wap_destination_url')" class="titleColor w400 border"  rows="5"></textarea>
+          <textarea placeholder="输入Url" *ngIf="!editing_keyword2Data['wap_destination_url']['is_edit']" [(ngModel)]="editing_keyword2Data.wap_destination_url.value" disabled="" readonly=""  class="w400 border background not-allowed"  rows="5"></textarea>
+          <i class="tip">({{tips.length['wap_destination_url']}}/1024)</i>
+          <ng-container *ngIf="editing_keyword2Data['wap_destination_url']['is_edit']">
+                  <span style=" position: absolute;display: inline-block;right: -182px;top: 25px;"
+                        [ngClass]="{clSave:iswraing}"
+                        class="wroning ml20"
+                        *ngIf="tips.wap_destination_url">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>
+                  移动访问Url长度不能超过1024
+                </span>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--只有百度有标记-->
+  <!-- <div class="inpRow mt10" *ngIf="publishId === 1"  [ngClass]="{disabled:editing_keyword2Data['tabs']['is_edit']}">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w110 inline-block" nz-checkbox
+             [(ngModel)]="editing_keyword2Data['tabs']['is_edit']">
+        <span>标记:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <nz-select style="width: 200px;"
+                 [(ngModel)]="tabItem"
+                 nzPlaceHolder="请选择标记"
+                 [nzSize]="'small'"
+                 [nzDisabled]="!editing_keyword2Data['tabs']['is_edit']">
+        <nz-option
+          *ngFor="let item of tabs"
+          [nzLabel]="item.name"
+          [nzValue]="item.value">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="clear"></div>
+  </div> -->
+</div>

@@ -1,0 +1,101 @@
+<div class="sub-company-content">
+  <form nz-form class="sub-company-form" [formGroup]="validateForm">
+    <div class="sub-company-form-content">
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label>数据来源:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <nz-select
+            class="w200"
+            [nzSize]="'default'"
+            [(ngModel)]="formData.conver_source_type"
+            formControlName="conver_source_type"
+          >
+            <ng-container *ngFor="let item of conversionSourceType">
+              <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+        <!--第三方聊天工具显示推送方式-->
+        <nz-form-control class="w200 ml8 pull-left">
+          <nz-select
+            *ngIf="formData.conver_source_type === 2"
+            class="w150"
+            [(ngModel)]="formData.im_push_type"
+            [nzSize]="'default'"
+            formControlName="im_push_type"
+          >
+            <ng-container *ngFor="let item of conversionImType">
+              <nz-option
+                [nzLabel]="item.name"
+                [nzValue]="item.key"
+                [nzDisabled]="item.disable"
+                >></nz-option
+              >
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label>广告主:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <nz-select
+            class="w200"
+            [nzSize]="'default'"
+            [nzPlaceHolder]="'请选择广告主'"
+            [(ngModel)]="formData.cid"
+            formControlName="cid"
+            [nzDisabled]="conversionDescId > 0"
+          >
+            <ng-container *ngFor="let item of advertiserList">
+              <nz-option
+                [nzLabel]="item.advertiser_name"
+                [nzValue]="item.cid"
+              ></nz-option>
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label>转化描述名称:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <input
+            nz-input
+            class="w100p"
+            [nzSize]="'default'"
+            formControlName="desc_name"
+            type="text"
+            placeholder="请输入转化描述"
+            [(ngModel)]="formData.desc_name"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="sub-company-form-footer">
+      <button
+        class="ml8"
+        nz-button
+        [nzType]="'default'"
+        [nzSize]="'default'"
+        (click)="doCancel()"
+      >
+        <span>取消</span>
+      </button>
+      <button
+        class="ml8"
+        nz-button
+        [nzType]="'primary'"
+        [nzSize]="'default'"
+        [nzLoading]="submitting"
+        (click)="doSave()"
+      >
+        <span>完成</span>
+      </button>
+    </div>
+  </form>
+</div>

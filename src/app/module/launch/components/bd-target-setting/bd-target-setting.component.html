@@ -1,0 +1,250 @@
+<div class="target-setting-container" *ngIf="isInitFinshed">
+  <div class="form-content">
+    <ng-container *ngFor="let slot of launchTemplateGroupData[curGroupFlag]">
+
+      <!-- radio -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'radio'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].resultValue">
+            <ng-container *ngFor="let radio of editDefaultDataOption[slot].sub">
+              <ng-container>
+                <label nz-radio-button [nzValue]="radio['value']" [nzDisabled]="checkDisabled(radio['disabled'])">
+                  {{radio['label']}}
+                </label>
+              </ng-container>
+            </ng-container>
+
+          </nz-radio-group>
+        </div>
+      </ng-container>
+
+      <!-- one_extra_radio -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'one_extra_radio'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].radioValue">
+            <label *ngFor="let radio of editDefaultDataOption[slot].sub" nz-radio-button [nzValue]="radio['value']" [nzDisabled]="checkDisabled(radio['disabled'])">
+              {{radio['label']}}
+            </label>
+          </nz-radio-group>
+        </div>
+
+        <div class="mt10 ml148 relative mb20" *ngIf="['region','interests'].indexOf(editDefaultDataOption[slot].radioValue)>-1">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.one_extra.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.one_extra,$event)" [source]="editDefaultDataOption[slot].combine_data.one_extra.sub"></nz-transfer-tree>
+        </div>
+      </ng-container>
+
+      <!-- media_package_radio -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'media_package_radio' && editDefaultDataOption['media_package_type'].resultValue === 1">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].resultValue">
+            <ng-container *ngFor="let radio of editDefaultDataOption[slot].sub">
+              <ng-container>
+                <label nz-radio-button [nzValue]="radio['value']">
+                  {{radio['label']}}
+                </label>
+              </ng-container>
+            </ng-container>
+
+          </nz-radio-group>
+        </div>
+
+        <div class="mt10 ml148 relative mb20" *ngIf="editDefaultDataOption[slot].resultValue === 0">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.one_extra.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.one_extra,$event)" [source]="editDefaultDataOption[slot].combine_data.one_extra.sub0"></nz-transfer-tree>
+        </div>
+
+        <div class="mt10 ml148 relative mb20" *ngIf="editDefaultDataOption[slot].resultValue === 3">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.one_extra.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.one_extra,$event)" [source]="editDefaultDataOption[slot].combine_data.one_extra.sub3"></nz-transfer-tree>
+        </div>
+      </ng-container>
+
+      <!-- checkbox -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'checkbox'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <div class="ml8">
+            <ng-container *ngFor="let item of editDefaultDataOption[slot].sub">
+              <ng-container>
+                <label
+                  class="ml8"
+                  nz-checkbox
+                  [nzDisabled]="slot === 'device' && campaignTypeSetting.launch_target === 'app'"
+                  [(ngModel)]="item.checked"
+                  (ngModelChange)="updateSingleChecked(slot, item.value)"
+                >
+                  {{ item.label }}
+                </label>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- show_words_checkbox -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'show_words_checkbox' && editDefaultDataOption['pa_keywords'].resultValue !== 0">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <div class="ml8">
+            <ng-container *ngFor="let item of editDefaultDataOption[slot].sub">
+              <ng-container>
+                <label
+                  class="ml8"
+                  nz-checkbox
+                  [(ngModel)]="item.checked"
+                  (ngModelChange)="showWordsCheckedChange(item, editDefaultDataOption[slot].sub, slot)"
+                >
+                  {{ item.label }}
+                </label>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+        <nz-tabset class="ml148 mb20" [nzSize]="'small'" *ngIf="editDefaultDataOption[slot].resultValue.length">
+          <nz-tab [nzTitle]="'直接填写意图词(' + editDefaultDataOption[slot].combine_data['1']['resultList'].length + '/1900)'" *ngIf="editDefaultDataOption[slot].resultValue.indexOf(1) !== -1">
+            <div class="mt10">
+              <div class="mb20" style="display: flex;">
+                <label style="width: 60px; text-align: right; display: inline-block;">意图词包:</label>
+                <nz-select class="w200 ml8"
+                           [(ngModel)]="editDefaultDataOption[slot].combine_data['1']['group_id']"
+                           (ngModelChange)="intentionWordGroupChange($event, editDefaultDataOption[slot].combine_data['1'])"
+                           [nzPlaceHolder]="'请选择'"
+                           [nzSize]="'small'"
+                           nzShowSearch>
+                  <nz-option
+                    *ngFor="let option of editDefaultDataOption[slot].combine_data['1'].sub"
+                    [nzLabel]="option['group_name']"
+                    [nzValue]="option['group_id']"
+                  >
+                  </nz-option>
+                </nz-select>
+              </div>
+              <div style="display: flex;">
+                <label style="width: 60px; text-align: right; display: inline-block;">意图词:</label>
+                <div>
+                  <textarea nz-input
+                            [nzSize]="'small'"
+                            style="width: 500px; height: 100px;"
+                            class="ml8"
+                            placeholder="请输入意图词, 以回车分隔"
+                            [(ngModel)]="editDefaultDataOption[slot].combine_data['1']['result']"
+                            (ngModelChange)="intentionWordChanged();"
+                            (blur)="intentionWordBlur(editDefaultDataOption[slot].combine_data['1'], 1);"
+                            [nzAutosize]>
+                  </textarea>
+                  <div class="mt10 ml8" style="color: red;">
+                    <span>每行一个, 每个最多40个字符</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nz-tab>
+          <nz-tab [nzTitle]="'商品意图词模板(' + editDefaultDataOption[slot].combine_data['2']['resultList'].length + '/50)'" *ngIf="editDefaultDataOption[slot].resultValue.indexOf(2) !== -1">
+            <div class="product-body mt10">
+              <div class="product-content">
+                <div class="product-body-left">
+                  <div class="product-main">
+                    <div class="product-head">选择商品通配符</div>
+                    <ul class="product-list">
+                      <li *ngFor="let word of editDefaultDataOption[slot].combine_data['2'].sub">
+                        <span>{{word.name}}</span>
+                        <i nz-icon nzType="plus" nzTheme="outline" (click)="addProuduct(editDefaultDataOption[slot].combine_data['2'], word.value)"></i>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="product-icon">
+                  <i nz-icon nzType="caret-right" nzTheme="outline"></i>
+                </div>
+                <div class="product-body-right">
+                  <div class="product-main">
+                    <div class="product-head">已选意图词</div>
+                    <div>
+                      <textarea nz-input
+                                #curTextArea
+                                [nzSize]="'small'"
+                                class="product-area"
+                                [(ngModel)]="editDefaultDataOption[slot].combine_data['2']['result']"
+                                (ngModelChange)="intentionWordChanged();"
+                                (blur)="intentionWordBlur(editDefaultDataOption[slot].combine_data['2'], 2);">
+                      </textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="product-footer mt8">
+                <div class="product-footer-left">
+                  <span>注：你可以选择一个或多个对象</span>
+                  <a class="pull-right" (click)="addAllProuduct(editDefaultDataOption[slot].combine_data['2'])">全部添加</a>
+                </div>
+                <div class="product-footer-right">
+                  <a class="pull-right" (click)="delAllProuduct(editDefaultDataOption[slot].combine_data['2'])">全部删除</a>
+                </div>
+              </div>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </ng-container>
+
+      <!-- pa_crowd_checkbox -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'pa_crowd_checkbox'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <div class="ml8">
+            <ng-container *ngFor="let item of editDefaultDataOption[slot].sub">
+              <ng-container>
+                <label
+                  class="ml8"
+                  nz-checkbox
+                  [nzDisabled]="item.value === 'common' && editDefaultDataOption[slot].resultValue.indexOf('basic') === -1"
+                  [(ngModel)]="item.checked"
+                  (ngModelChange)="paCrowdCheckedChange(item, editDefaultDataOption[slot].sub, slot)"
+                >
+                  {{ item.label }}
+                </label>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+
+        <nz-tabset class="ml148" [nzSize]="'small'" *ngIf="editDefaultDataOption[slot].resultValue.length >= 1 && editDefaultDataOption[slot].resultValue.indexOf(0) === -1">
+          <nz-tab [nzTitle]="'基础人群'" *ngIf="editDefaultDataOption[slot].resultValue.indexOf('basic') !== -1">
+            <div class="crowd-body-content mt10 mb20">
+              <nz-tree #tree
+                       nzCheckable
+                       [nzData]="editDefaultDataOption.pa_crowd.combine_data['basic'].sub"
+                       (nzCheckBoxChange)="paCrowdTreeOnCheck($event, 'basic')"
+                       [nzCheckedKeys]="editDefaultDataOption.pa_crowd.combine_data['basic'].resultList"
+                       nzBlockNode
+              ></nz-tree>
+            </div>
+          </nz-tab>
+          <nz-tab [nzTitle]="'交叉人群'" *ngIf="editDefaultDataOption[slot].resultValue.indexOf('common') !== -1">
+            <div class="crowd-body-content mt10 mb20">
+              <nz-tree #tree
+                       nzCheckable
+                       [nzData]="editDefaultDataOption.pa_crowd.combine_data['common'].sub"
+                       (nzCheckBoxChange)="paCrowdTreeOnCheck($event, 'common')"
+                       [nzCheckedKeys]="editDefaultDataOption.pa_crowd.combine_data['common'].resultList"
+                       nzBlockNode
+              ></nz-tree>
+            </div>
+          </nz-tab>
+          <nz-tab [nzTitle]="'排除人群'" *ngIf="editDefaultDataOption[slot].resultValue.indexOf('exclude') !== -1">
+            <div class="crowd-body-content mt10 mb20">
+              <nz-tree #tree
+                       nzCheckable
+                       [nzData]="editDefaultDataOption.pa_crowd.combine_data['exclude'].sub"
+                       (nzCheckBoxChange)="paCrowdTreeOnCheck($event, 'exclude')"
+                       [nzCheckedKeys]="editDefaultDataOption.pa_crowd.combine_data['exclude'].resultList"
+                       nzBlockNode
+              ></nz-tree>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </ng-container>
+
+    </ng-container>
+  </div>
+</div>

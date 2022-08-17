@@ -1,0 +1,38 @@
+
+.launch-group-add-content {
+  //width: 390px;
+  .launch-group-add-text {
+    .lab-row {
+      display: flex;
+      margin-bottom: 10px;
+
+      > label {
+        width: 100px;
+        text-align: right;
+      }
+
+      .roles-div {
+        width: 500px;
+      }
+    }
+
+    .form-label{
+      height:32px;
+      line-height: 32px;
+    }
+
+    .form-explain{
+      height:32px;
+      line-height: 32px;
+      color: red;
+    }
+
+
+  }
+
+  .launch-group-add-btn {
+    text-align: right;
+    padding-top: 16px;
+  }
+
+}

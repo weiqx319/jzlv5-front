@@ -1,0 +1,233 @@
+<div>
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <app-table-query-show
+        [filterConditions]="filterData"
+        (changed)="refreshData()"
+      ></app-table-query-show>
+    </div>
+    <div class="manage-header-right">
+      <button class="mr8" nz-button nzType="default" [nzLoading]="loading" (click)="refreshData()">
+        <i nz-icon nzType="redo" nzTheme="outline"></i>刷新
+      </button>
+      <button
+        (click)="download()"
+        nz-button
+        [nzType]="'default'"
+        [nzSize]="'default'"
+        class="mr8"
+        [nzLoading]="downloadLoading"
+      >
+        <i nz-icon nzType="download" nzTheme="outline"></i>
+      </button>
+      <nz-range-picker
+        [nzFormat]="'yyyy/MM/dd'"
+        [ngModel]="dateValue"
+        (ngModelChange)="onDateChange($event)"
+        (nzOnCalendarChange)="onCalendarChange($event)"
+        [nzDisabledDate]="disabledEndDate"
+        [nzSize]="'default'"
+        [nzAllowClear]="false"
+        (nzOnOpenChange)="openDateChange($event)"
+      ></nz-range-picker>
+    </div>
+  </div>
+  <div class="manage-table manage-no-result-table pt8">
+    <nz-table
+      #nzTable
+      nzShowSizeChanger
+      [nzPageSizeOptions]="[30, 50, 100, 500]"
+      [nzSize]="'default'"
+      [nzData]="taskDetailData"
+      [nzFrontPagination]="false"
+      [(nzPageSize)]="pageSize"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="refreshData()"
+      (nzPageSizeChange)="refreshData(true)"
+      [nzTotal]="total"
+      [nzLoading]="loading"
+      [nzShowTotal]="totalItemTemplate"
+      [nzScroll]="{ x: '1900px', y: noResultHeight + 'px' }"
+      class="task-table"
+    >
+      <!-- <thead (nzSortChange)="sort($event)"> -->
+      <thead>
+        <tr>
+          <th [nzWidth]="'230px'">
+            <!-- <th [nzWidth]="'150px'" nzShowSort nzSortKey="create_time"> -->
+            <span>任务创建时间</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>广告主</span>
+            <app-filter
+              [filterType]="filterData['advertiser_name']['filterType']"
+              [filterKey]="filterData['advertiser_name']['filterKey']"
+              [(filterResult)]="filterData['advertiser_name']['filterResult']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作人</span>
+            <app-filter
+              [filterType]="filterData['user_name']['filterType']"
+              [filterKey]="filterData['user_name']['filterKey']"
+              [(filterResult)]="filterData['user_name']['filterResult']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'250px'">
+            <span>任务ID</span>
+            <app-filter
+              [filterType]="filterData['task_id']['filterType']"
+              [filterKey]="filterData['task_id']['filterKey']"
+              [(filterResult)]="filterData['task_id']['filterResult']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>媒体</span>
+            <app-filter
+              [filterType]="filterData['publisher_id']['filterType']"
+              [filterKey]="filterData['publisher_id']['filterKey']"
+              [(filterResult)]="filterData['publisher_id']['filterResult']"
+              [filterOption]="filterData['publisher_id']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>账户</span>
+            <app-filter
+              [filterType]="filterData['pub_account_name']['filterType']"
+              [filterKey]="filterData['pub_account_name']['filterKey']"
+              [(filterResult)]="filterData['pub_account_name']['filterResult']"
+              [filterOption]="filterData['pub_account_name']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'150px'">
+            <span>计划</span>
+             <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="campaignTemplate" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+            <app-filter
+              [filterType]="filterData['pub_campaign_name']['filterType']"
+              [filterKey]="filterData['pub_campaign_name']['filterKey']"
+              [(filterResult)]="filterData['pub_campaign_name']['filterResult']"
+              [filterOption]="filterData['pub_campaign_name']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+            <ng-template #campaignTemplate let-thing>
+              <p>头条-广告组</p>
+              <p>腾讯广告-推广计划</p>
+            </ng-template>
+          </th>
+          <th [nzWidth]="'150px'">
+            <span>单元</span>
+             <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="adgroupTemplate" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+            <app-filter
+              [filterType]="filterData['pub_adgroup_name']['filterType']"
+              [filterKey]="filterData['pub_adgroup_name']['filterKey']"
+              [(filterResult)]="filterData['pub_adgroup_name']['filterResult']"
+              [filterOption]="filterData['pub_adgroup_name']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+            <ng-template #adgroupTemplate let-thing>
+              <p>头条-计划</p>
+              <p>腾讯广告-广告</p>
+            </ng-template>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作层级</span>
+            <app-filter
+              [filterType]="filterData['operation_level']['filterType']"
+              [filterKey]="filterData['operation_level']['filterKey']"
+              [(filterResult)]="filterData['operation_level']['filterResult']"
+              [extraOption]="filterData['operation_level']['extraOption']"
+              [filterOption]="filterData['operation_level']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'150px'">
+            <span>层级名称</span>
+            <app-filter
+              [filterType]="filterData['object_name']['filterType']"
+              [filterKey]="filterData['object_name']['filterKey']"
+              [(filterResult)]="filterData['object_name']['filterResult']"
+              [extraOption]="filterData['object_name']['extraOption']"
+              [filterOption]="filterData['object_name']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作类型</span>
+            <app-filter
+              [filterType]="filterData['operation_type']['filterType']"
+              [filterKey]="filterData['operation_type']['filterKey']"
+              [(filterResult)]="filterData['operation_type']['filterResult']"
+              [filterOption]="filterData['operation_type']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>操作内容</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作前值</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作后值</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作状态</span>
+            <app-filter
+              [filterType]="filterData['operation_status']['filterType']"
+              [filterKey]="filterData['operation_status']['filterKey']"
+              [(filterResult)]="filterData['operation_status']['filterResult']"
+              [filterOption]="filterData['operation_status']['filterOption']"
+              (submit)="doFilter()"
+            ></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作结果</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of taskDetailData">
+          <td>{{ data.create_time }}</td>
+          <td>{{ data.advertiser_name }}</td>
+          <td>{{ data.user_name }}</td>
+          <td>{{ data.task_id }}</td>
+          <td>{{ publisher_value_map[data.publisher_id] }}</td>
+          <td>{{ data.pub_account_name }}</td>
+          <td>{{ data.pub_campaign_name }}</td>
+          <td>{{ data.pub_adgroup_name }}</td>
+          <td>{{ operation_level_map[data.operation_level] }}</td>
+          <td>{{ data.object_name }}</td>
+          <td>{{ operation_type_map[data.operation_type] }}</td>
+
+          <td>
+            <div class="text-ellis" title="{{data.operation_content}}">
+              {{ data.operation_content }}
+            </div>
+          </td>
+          <td>
+            <div class="text-ellis" title="{{data.operation_before}}">
+              {{ data.operation_before }}
+            </div>
+          </td>
+          <td>
+            <div class="text-ellis" title="{{data.operation_after}}">
+              {{ data.operation_after }}
+            </div>
+          </td>
+          <td>{{ status_value_map[data.operation_status] }}</td>
+          <td>
+            <div class="text-ellis" title="{{data.operation_message}}">
+              {{ data.operation_message }}
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>

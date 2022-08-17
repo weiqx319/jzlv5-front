@@ -1,0 +1,12 @@
+.wrapper{
+
+  display: flex;
+  flex-direction:column;
+}
+.header{
+  //flex:0 0 100%;
+}
+.app-body-height{
+  height: 100vh !important;
+  margin-bottom: 0 !important;
+}

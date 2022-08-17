@@ -1,0 +1,399 @@
+//$nav-color:#4f5255;
+$nav-color: #0a223a;
+$fs12: 12px;
+$fs14: 14px;
+$main-color: #fff;
+//$menu-btn-bg:#393e42;
+$menu-btn-bg: #3a5c70;
+
+$main-active-btn: #fff;
+$main-active-color: #3a5c70;
+.nav {
+  height: 60px;
+  padding-left: 30px;
+  padding-right: 30px;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  //background-color: $nav-color;
+  font-size: $fs12;
+  //color: $main-color;
+}
+.flex-column {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-bar {
+  height: 60px;
+}
+.header-nav-left {
+  display: flex;
+  align-items: center;
+}
+.nav-logo {
+  display: flex;
+  justify-content: flex-start;
+  font-size: $fs14;
+  img {
+    margin-left: -32px;
+    max-height: 43px;
+    max-width: 200px;
+  }
+  .junboLogo {
+    margin-left: 0 !important;
+    height: 30px !important;
+  }
+}
+.product-type {
+  display: flex;
+  flex: 1;
+  font-size: 16px;
+  margin-left: 20px;
+}
+.nav-user {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: $fs12;
+  color: #aec4d3;
+  a {
+    color: #aec4d3;
+    text-decoration: none;
+  }
+  .active-link a {
+    color: #fff;
+
+    //color:#56acef;
+    font-weight: bold;
+  }
+}
+.nav-user .ant-badge-count {
+  top: -10px;
+  height: 16px;
+  min-width: 16px;
+  line-height: 16px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  padding: 0;
+}
+
+// 消息提示框
+.nav-user .message > button {
+  padding: 0;
+  color: #aec4d3;
+
+  .ant-badge,
+  .ant-badge-status-text {
+    color: #aec4d3;
+  }
+  .active {
+    color: #fff;
+  }
+}
+.nav-user .message > button:hover {
+  color: #aec4d3;
+}
+.theme2 .ant-popover-inner {
+  /*-webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;*/
+}
+.theme2 .ant-popover-inner-content {
+  //width: 300px;
+  padding: 8px 10px;
+}
+.nav-user .message .ant-tabs-bar {
+  margin: 0;
+}
+.ant-tabs-bar {
+  margin: 0;
+}
+.theme2 .ant-popover-inner-content li:not(.no-message-data) {
+  height: 30px;
+  padding: 0 10px;
+  line-height: 30px;
+  font-size: 12px;
+  border-bottom: 1px solid #e8e8e8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.theme2 .ant-popover-inner-content .no-message-data {
+  height: 50px;
+  padding: 0 10px;
+  line-height: 50px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.theme2 .ant-popover-inner-content li:not(.no-message-data):hover {
+  background: #1890ff;
+  cursor: pointer !important;
+  color: #fff;
+}
+.theme2 .ant-popover-inner-content .msg_more {
+  padding: 8px 10px;
+}
+.theme2 .ant-popover-inner-content .msg_more a {
+  font-size: 12px;
+  color: #1890ff;
+}
+
+.nav-menu {
+  height: 24px;
+  align-items: flex-end;
+}
+.nav-menu-ul {
+  height: 100%;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+.nav-menu-li {
+  width: 80px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  //background-color:$menu-btn-bg;
+  margin-right: 8px;
+}
+.nav-menu-li > a {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  //color:$main-color;
+  text-decoration: none;
+}
+
+.nav-menu {
+  .ant-menu {
+    background: transparent !important;
+    line-height: normal;
+    position: absolute;
+    left: -30px;
+    top: 0 !important;
+    border: none !important;
+    width: 30px;
+    height: 24px;
+  }
+  .ant-menu-item,
+  .ant-menu-submenu-title {
+    padding: 0 !important;
+  }
+  .ant-menu-horizontal > .ant-menu-submenu {
+    color: #fff !important;
+  }
+
+  .ant-menu-horizontal > .ant-menu-submenu-open,
+  .ant-menu-submenu-title:hover,
+  .ant-menu-horizontal > .ant-menu-submenu-open:hover,
+  .ant-menu-horizontal > .ant-menu-submenu:hover {
+    border-bottom: none !important;
+    color: #eef2f7 !important;
+    /*  background: #f5dfb1;*/
+  }
+}
+
+.ant-menu-dark .ant-menu-sub {
+  background: #eef2f7 !important;
+  color: #404040 !important;
+}
+.ant-menu-dark .ant-menu-item,
+.ant-menu-dark .ant-menu-item-group-title,
+.ant-menu-dark .ant-menu-item > a {
+  color: #404040 !important;
+  font-size: 12px !important;
+}
+.ant-menu-dark .ant-menu-item:hover {
+  color: #56acef !important;
+}
+.ant-menu-dark .ant-menu-item-group-title {
+  padding: 0 !important;
+  font-size: 12px !important;
+}
+.ant-menu-dark .ant-menu-item-group-title span {
+  display: block;
+  //line-height: 0 !important;
+  /*  padding-top: 0  !important;
+  padding-bottom: 0  !important;*/
+  padding: 8px 16px !important;
+}
+.ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected,
+ant-menu.ant-menu-dark .ant-menu-item-selected {
+  background: #fff;
+  color: #56acef !important;
+  font-size: 12px !important;
+}
+.ant-menu-submenu > .ant-menu {
+  border-radius: 0 !important;
+  // -webkit-box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.15) !important;
+  // -moz-box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.15) !important;
+  // box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.15) !important;
+  font-size: 12px !important;
+}
+
+.ant-menu-vertical .ant-menu-item:not(:last-child) {
+  margin-bottom: 0 !important;
+}
+
+.ant-menu-item-group-list .ant-menu-item,
+.ant-menu-item-group-list .ant-menu-submenu-title {
+  padding: 0 16px 0 30px !important;
+  font-size: 12px !important;
+}
+
+.ant-dropdown-link {
+  color: #fff;
+}
+.ant-dropdown-link:hover {
+  color: #fff;
+}
+.ant-dropdown-menu-item,
+.ant-dropdown-menu-submenu .ant-dropdown-menu-submenu-title {
+  font-size: 12px;
+}
+.ant-dropdown-menu.ant-dropdown-menu-vertical {
+  width: 120px;
+}
+.icon_new {
+  position: absolute;
+  top: -13px;
+  left: -11px;
+  font-size: 12px;
+  color: #f00;
+  transform: rotate(-25deg);
+}
+.new {
+  position: relative;
+}
+
+// 新导航样式
+.nav-menu-new {
+  .nav-menu-ul {
+    height: 100%;
+    font-size: 14px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+  }
+  .nav-menu-li {
+    padding: 0 12px;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0;
+    width: auto;
+    //background-color:$menu-btn-bg;
+  }
+  .nav-menu-li > a {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    //color:$main-color;
+    text-decoration: none;
+  }
+
+  .ant-menu-submenu > .ant-menu {
+    border-radius: 0 !important;
+    font-size: 13px !important;
+  }
+}
+
+
+// 导航弹窗
+.menu-square-container {
+  width: 360px;
+  background: #fff;
+  .menu-content-footer {
+    background: #fff;
+    width: 360px;
+    height: 32px;
+    line-height: 32px;
+    position: absolute;
+    bottom: 0;
+    border-top: 1px solid #f5f5f5;
+    color: #999;
+    padding-left: 20px;
+  }
+  .menu-content {
+    padding: 10px 20px;
+    overflow: auto;
+    color: #333;
+    .menu-content-header {
+      font-size: 12px;
+      line-height: 30px;
+      margin-left: -10px;
+      span {
+        font-weight: bold;
+        font-size: 14px;
+      }
+    }
+
+    .menu-content-list {
+      display: flex;
+      flex-wrap: wrap;
+
+      .menu-content-item {
+        cursor: pointer;
+        width: 80px;
+        height: 90px;
+        padding: 10px 15px;
+        text-align: center;
+        border-radius: 10px;
+        display: block;
+        color: #404040;
+        &:hover {
+          background: #f5f5f5;
+        }
+
+        .menu-content-item-icon {
+          width: 45px;
+          height: 45px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          // color: #8db9f5;
+          border-radius: 12px;
+          border: 1px solid #f0f0f0;
+          font-size: 30px;
+          margin: 0 auto;
+          background: #fff;
+        }
+      }
+      .menu-item-selected {
+        // background: #f5f5f5;
+        color: #338aff;
+      }
+    }
+  }
+}
+// 切换菜单版本按钮
+.toggleMenuVersion {
+  cursor: pointer;
+  font-size: 14px;
+  background-color: #338aff;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  border-radius: 12px;
+  margin-bottom: 3px;
+}

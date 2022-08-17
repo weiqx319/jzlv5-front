@@ -1,0 +1,37 @@
+<div class="monitor-detail">
+  <div class="monitor-detail-nav">
+    <div class="monitor-detail-back">
+      <a (click)="goBack()"><i nz-icon nzType="left" nzTheme="outline"></i>返回上一页</a>
+    </div>
+    <div class="monitor-detail-title">
+      {{monitorInfo ?  publisherOption[monitorInfo['publisher_id']*1] : ''}}:{{monitorInfo['monitor_name']}}
+    </div>
+  </div>
+  <div class="monitor-detail-container">
+    <div class="monitor-detail-item">
+      <div class="monitor-detail-item_titleBox">
+        <p class="monitor-detail-item_title">实体详情</p>
+        <p style="width: auto;height: 40px;font-size: 13px;line-height: 40px; float: left;">
+          <span class="monitor-detail-content-title">{{moduleInfo[moduleTableTitle['name_key']]}}（属于:</span>
+          <span class="monitor-detail-content-text" *ngFor="let item of moduleTableTitle['dataArray'], let i= index">{{(item.key === 'publisher_id')? publisherOption[moduleInfo[item.key]*1] : moduleInfo[item.key]}}<i *ngIf="i !== moduleTableTitle['dataArray'].length-1">/</i></span>
+          <span>）</span>
+        </p>
+      </div>
+      <div class="monitor-detail-content">
+
+
+      </div>
+    </div>
+    <div class="monitor-detail-item" *ngFor="let option of chartOptions; let i = index">
+      <div class="monitor-detail-item_titleBox">
+        <p class="monitor-detail-item_title">监控详情</p>
+        <p style="width: auto;height: 40px;font-size: 13px;line-height: 40px; float: left;">{{monitorDetailArray[i]}}</p>
+      </div>
+      <div class="monitor-detail-content pt30">
+        <div class="mb25">
+          <app-monitor-chart [options]="option"></app-monitor-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

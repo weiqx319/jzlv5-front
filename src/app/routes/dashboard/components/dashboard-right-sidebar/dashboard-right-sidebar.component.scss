@@ -1,0 +1,126 @@
+$color-56acef:#56acef !default;
+$color-404040:#404040 !default;
+$color-e4e4e4:#e4e4e4 !default;
+$color-fff:#fff !default;
+.lh12{
+  line-height: 12px;
+}
+.dashboard-list{
+  position: fixed;
+  top: 88px;
+  right: 0px;
+  z-index:3;
+}
+.dashboard-tab-btn{
+  transition: none;
+  width:110px;
+  line-height: 18px;
+  text-align: left;
+  color: $color-fff;
+  //background-color: $color-56acef;
+  border-radius: 2px 0 0 2px !important;
+}
+.sidebar-show .dashboard-tab-btn{
+  width: 200px;
+  text-align:left;
+}
+.dashboard-right-sidebar{
+  width: 200px;
+  z-index: 2;
+  display: none;
+}
+.sidebar-show .dashboard-right-sidebar{
+  display: block;
+}
+.dashboard-add-tab{
+  height: 36px;
+
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  background-color: $color-fff;
+  border-bottom:1px solid $color-e4e4e4;
+}
+.dashboard-tab-lists{
+  list-style:none;
+  height: calc(100% - 36px);
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  .dashboard-selected{
+    background-color:#f6f6f6;
+    .dashboard-tab-li-desc a{
+      color: $color-56acef;
+      text-decoration: none;
+    }
+  }
+}
+.hover-show{
+  display: none;
+}
+.dashboard-tab-li{
+  position: relative;
+  height: 30px;
+
+  display: flex;
+  justify-content:space-between;
+  align-items:center;
+  background-color:$color-fff;
+  color:$color-404040;
+  cursor: pointer;
+
+
+  .dashboard-action{
+    position: absolute;
+    right: 0;
+  }
+
+
+}
+.dashboard-tab-li:hover{
+  background-color: #ecf6fe;
+  .hover-show{
+    display: inline-block;
+    color:$color-56acef;
+  }
+  .dashboard-tab-li-desc{
+    width: 124px;
+    padding-right: 8px;
+  }
+  .dashboard-tab-li-desc a{
+    width:100%;
+    display: inline-block;
+    color: $color-404040;
+    overflow: hidden;
+    white-space:nowrap;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+  }
+}
+.dashboard-tab-li-desc{
+  width: 100%;
+  height:100%;
+
+  display: flex;
+  justify-content:flex-start;
+  align-items:center;
+  padding-left: 8px;
+  padding-right: 16px;
+  a{
+    width: 100%;
+    color: $color-404040;
+    overflow: hidden;
+    white-space:nowrap;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+  }
+}
+.dashboard-delete-card{
+  .ant-popover-inner-content{
+    padding:12px 20px 8px 20px;
+  }
+}
+.dashboard-delete-icon{
+  display: inline-block;
+}
+

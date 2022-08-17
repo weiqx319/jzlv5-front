@@ -1,0 +1,218 @@
+<div>
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="header-left">
+      <button class="btn-jzl mr8" nz-button [nzType]="'primary'" nzSize="default"  (click)="addMaterials()">
+        <i nz-icon nzType="cloud-upload" nzTheme="outline"></i><span>上传图片</span>
+      </button>
+      <ng-container *ngIf="!_indeterminate">
+        <button class="btn-jzl disabled-status mr8" nz-button [nzType]="'default'" nzSize="default"  disabled>
+          <span>删除</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="_indeterminate">
+        <button class="btn-jzl mr8" nz-button [nzType]="'default'" nzSize="default" nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" [nzPopconfirmPlacement]="'bottomLeft'"
+                (submit)="deleteMaterials()">
+          <span>删除</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="!_indeterminate">
+        <button class="btn-jzl disabled-status mr8" nz-button [nzType]="'default'"  nzSize="default" disabled>
+          <span>素材推送</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="_indeterminate">
+        <button class="btn-jzl mr8" nz-button [nzType]="'default'"  nzSize="default" (click)="handleOpen('push')">
+          <span>素材推送</span>
+        </button>
+      </ng-container>
+    </div>
+    <div class="header-right">
+      <nz-radio-group [(ngModel)]="showType" (ngModelChange)="refreshChecked()" nzSize="default" >
+        <label nz-radio-button nzValue="list"><i nz-icon nzType="bars" nzTheme="outline"></i>列表模式</label>
+        <label nz-radio-button nzValue="grid"><i nz-icon nzType="gateway" nzTheme="outline"></i>网格模式</label>
+      </nz-radio-group>
+    </div>
+  </div>
+  <div class="top-condition-manage">
+    <div class="materials-manage-content-top">
+      <form [formGroup]="validateVideoForm">
+        <div nz-row [nzGutter]="24">
+          <ng-container  *ngFor="let item of configList;let i =index">
+            <div class="materials-manage-item" nz-col [nzSpan]="8" *ngIf="i<9 || _isAllShow">
+              <nz-form-item>
+                <nz-form-label>{{item.name}}</nz-form-label>
+                <nz-form-control>
+                  <ng-container *ngIf="item.type==='select'">
+                    <nz-select class="w240" [formControlName]="item.key" [(ngModel)]="defaultData[item.key]" [nzPlaceHolder]="'请选择'+item.name">
+                      <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+                    </nz-select>
+                  </ng-container>
+                  <ng-container *ngIf="item.type==='input'">
+                    <input class="w240" [formControlName]="item.key" nz-input [placeholder]="'请输入'+item.name" [(ngModel)]="defaultData[item.key]" />
+                  </ng-container>
+                  <ng-container *ngIf="item.type==='date'">
+                    <div class="w240" style="line-height: 30px;border: 1px solid #d9d9d9;" (click)="changeDate()">
+                      <span class="ml8" [style]="timeDesc.length>0?'':'color:#bdbdbd'">{{timeDesc.length>0?timeDesc:'请选择时间'}}</span>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="item.type==='text'">
+                    <textarea class="w240" rows="2" nz-input [formControlName]="item.key" [(ngModel)]="defaultData[item.key]"></textarea>
+                  </ng-container>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </ng-container>
+          <div class="materials-manage-item" nz-col [nzSpan]="8">
+            <button class="mr10" nz-button nzType="primary" nzSize="default">查询</button>
+            <button class="mr10" nz-button nzSize="default">重置</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="materials-manage-content-bottom">
+      <div class="materials-manage-contents">
+        <div *ngIf="showType==='list'">
+          <nz-table #basicTable
+                    nzShowSizeChanger
+                    [nzPageSizeOptions]="[10,20,30,50,100]"
+                    [nzShowTotal]="totalItemTemplate"
+                    [nzSize]="'small'"
+                    [nzData]="apiData"
+                    [(nzPageSize)]="pageSize"
+                    [(nzPageIndex)]="currentPage"
+                    (nzPageIndexChange)="refreshData()"
+                    (nzPageSizeChange)="refreshData(true)"
+                    [nzTotal]="total"
+                    [nzLoading]="loading"
+                    [nzScroll]="{ x: '1000px', y: noResultHeight + 'px' }">
+            <thead>
+            <tr>
+              <th nzWidth="62px" nzLeft class="jzlCheckboxHeader">
+                <a nz-dropdown [nzDropdownMenu]="menu">
+                  <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)"
+                         [nzIndeterminate]="indeterminate"></label>
+                </a>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                  <ul nz-menu nzSelectable>
+                    <li nz-menu-item (click)="_checkAll(true)" [nzSelected]="currentSelectedPage=='current'">
+                      <a>选择当前页</a>
+                    </li>
+                    <li nz-menu-item (click)="_checkAllPage(true)" [nzSelected]="currentSelectedPage=='all'">
+                      <a>选择全部</a>
+                    </li>
+                  </ul>
+                </nz-dropdown-menu>
+              </th>
+              <th nzWidth="300px" nzLeft>图片</th>
+              <th nzWidth="150px" nzLeft>操作</th>
+              <th nzWidth="100px">ID</th>
+              <th nzWidth="200px">文件名</th>
+              <th nzWidth="80px">确认状态</th>
+              <th nzWidth="80px">确认人</th>
+              <th nzWidth="80px">大小</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let data of apiData">
+              <td nzLeft nzShowCheckbox [(nzChecked)]="data['checked']"
+                  (nzCheckedChange)="_refreshSingleChangeStatus($event)">
+              <td nzLeft>
+                <div class="materials-cell" (click)="materialsDetail(data,'logo')">
+                  <div class="materials-info">
+                    <div class="materials-poster">
+                      <img [src]="data['preview_img']" alt="">
+                    </div>
+                    <div class="materials-title"> {{data['material_name']}}</div>
+                  </div>
+                </div>
+              </td>
+              <td nzLeft>
+                <a href="javascript:" (click)="materialsDetail(data,'logo')">编辑</a>
+                <span class="ml4 mr4">|</span>
+                <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" [nzPopconfirmPlacement]="'bottomLeft'"
+                   (submit)="deleteMaterials()">删除</a>
+              </td>
+              <td>{{data['material_id']}}</td>
+              <td>{{data['material_name']}}</td>
+              <td></td>
+              <td></td>
+              <td>{{data['size']}}</td>
+            </tr>
+
+            </tbody>
+          </nz-table>
+          <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+        </div>
+        <div *ngIf="showType==='grid'">
+          <div class="mb20">
+            <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)"
+                   [nzIndeterminate]="indeterminate">
+              全选
+            </label>
+          </div>
+          <nz-checkbox-wrapper style="font-size: 12px;width: 100%">
+            <div nz-row [nzGutter]="16">
+              <div class="mb20" nz-col nzSpan="6" *ngFor="let data of apiData">
+                <div class="video-img" [style]="'background-image: url('+data['preview_img']+')'"
+                     (click)="materialsDetail(data,'logo')">
+                  <span class="video-time">00:42</span>
+                  <label class="float-right" nz-checkbox [nzChecked]="data['checked']"
+                         (nzCheckedChange)="_refreshSingleChangeStatus($event,data)"></label>
+                </div>
+                <div style="padding:8px 10px;border: 1px solid #e4e9ed;">
+                  <span class="video-title">{{data['material_name']}}</span>
+                  <a class="float-right" style="color: #1890ff;" nz-dropdown [nzDropdownMenu]="moreMenu">更多操作<i class="ml8"
+                                                                                                                nz-icon
+                                                                                                                nzType="down"
+                                                                                                                nzTheme="outline"></i></a>
+                  <nz-dropdown-menu #moreMenu="nzDropdownMenu">
+                    <ul style="width: 80px;text-align: center" nz-menu nzSelectable>
+                      <li nz-menu-item>删除</li>
+                      <li nz-menu-item (click)="materialsDetail(data,'logo')">编辑</li>
+                    </ul>
+                  </nz-dropdown-menu>
+                </div>
+                <div style="padding:8px 10px;border: 1px solid #e4e9ed;">
+                  <span>暂无标签</span>
+                </div>
+              </div>
+            </div>
+          </nz-checkbox-wrapper>
+          <div class="mt10 card-page">
+            <nz-pagination [nzSize]="'small'"
+                           [nzTotal]="total"
+                           [(nzPageIndex)]="currentPage"
+                           [(nzPageSize)]="pageSize"
+                           [nzPageSizeOptions]="[10,20,30,50,100]"
+                           nzShowSizeChanger
+                           (nzPageIndexChange)="refreshData()"
+                           (nzPageSizeChange)="refreshData(true)"
+                           [nzShowTotal]="totalTemplate"></nz-pagination>
+            <ng-template #totalTemplate let-total>共 {{total}} 条</ng-template>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="visible">
+        <app-create-materials-detail [show_type]="materials_type"
+                                     [materialsData]="detailData" (visible)="close()"></app-create-materials-detail>
+      </ng-container>
+    <!--  <nz-drawer-->
+    <!--    [nzBodyStyle]="{ overflow: 'auto' }"-->
+    <!--    [nzMaskClosable]="false"-->
+    <!--    [nzWidth]="920"-->
+    <!--    [nzVisible]="visible"-->
+    <!--    [nzTitle]="material_name"-->
+    <!--    (nzOnClose)="close()"-->
+    <!--  >-->
+    <!--    <app-create-materials-detail [show_type]="materials_type"-->
+    <!--                                 [materialsData]="detailData"></app-create-materials-detail>-->
+    <!--  </nz-drawer>-->
+
+
+    </div>
+  </div>
+</div>
+
+

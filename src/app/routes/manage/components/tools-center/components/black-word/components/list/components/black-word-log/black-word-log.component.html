@@ -1,0 +1,65 @@
+<div class="message-container">
+  <div class="table">
+    <nz-table
+      #nzTable
+      nzShowSizeChanger
+      [nzPageSizeOptions]="[30,50,100,500]"
+      [nzSize]="'default'"
+      [nzData]="blackWordLogList"
+      [nzFrontPagination]="false"
+      [(nzPageSize)]="pageSize"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="refreshData()"
+      (nzPageSizeChange)="refreshData(true)"
+      [nzTotal]="total"
+      [nzLoading]="loading"
+      [nzShowTotal]="totalItemTemplate"
+      [nzScroll]="{ x: '900px', y: noResultHeight+'px' }"
+    >
+      <thead>
+      <tr>
+        <!--        <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="isAllChecked" (nzCheckedChange)="updateAllChecked($event)">-->
+        <!--        </th>-->
+        <th [nzWidth]="'200px'">
+          <span>筛查任务ID</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>筛查媒体</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'publisher_id',name:'筛查媒体',type:'singleList'}" [(filterResult)]="filterResult['publisher_id']" [filterOption]="filterPublisherOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>筛查账户数</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>筛查时间</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>筛查结果</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'task_result',name:'筛查结果',type:'multiValue'}" [(filterResult)]="filterResult['task_result']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>筛查状态</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of blackWordLogList">
+        <!--        <td-->
+        <!--          nzShowCheckbox-->
+        <!--          [(nzChecked)]="data.checked"-->
+        <!--          (nzCheckedChange)="checkedChange()"-->
+        <!--        ></td>-->
+        <td>
+          <a href="javascript:" routerLink="/manage/tools/black_word/detail/black_word_log" [queryParams]="{task_id:data.task_id,publisher_id:data.publisher_id}">{{data.task_id}}</a>
+        </td>
+        <td>{{data.publisher_name}}</td>
+        <td>{{data.account_count}}</td>
+        <td>{{data.create_time}}</td>
+        <td>{{data.task_result}}</td>
+        <td>{{ taskStatusList[data.task_status] }}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>

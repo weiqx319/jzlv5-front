@@ -1,0 +1,51 @@
+<div class="message-container">
+  <div class="table">
+    <nz-table
+      #nzTable
+      nzShowSizeChanger
+      [nzPageSizeOptions]="[30,50,100,500]"
+      [nzSize]="'default'"
+      [nzData]="blackWordGroupList"
+      [nzFrontPagination]="false"
+      [(nzPageSize)]="pageSize"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="refreshData()"
+      (nzPageSizeChange)="refreshData(true)"
+      [nzTotal]="total"
+      [nzLoading]="loading"
+      [nzShowTotal]="totalItemTemplate"
+      [nzScroll]="{ x: '500px', y: noResultHeight+'px' }"
+    >
+      <thead>
+      <tr>
+        <!--        <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="isAllChecked" (nzCheckedChange)="updateAllChecked($event)">-->
+        <!--        </th>-->
+        <th [nzWidth]="'200px'">
+          <span>黑名词库</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>黑名单词数</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>最近一次词库更新时间</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of blackWordGroupList">
+        <!--        <td-->
+        <!--          nzShowCheckbox-->
+        <!--          [(nzChecked)]="data.checked"-->
+        <!--          (nzCheckedChange)="checkedChange()"-->
+        <!--        ></td>-->
+        <td>
+          <a href="javascript:" routerLink="/manage/tools/black_word/detail/black_word_list" [queryParams]="{publisher_id:data.publisher_id}">{{data.group_name}}</a>
+        </td>
+        <td>{{data.word_count}}</td>
+        <td>{{data.last_modify_time}}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>

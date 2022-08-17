@@ -1,0 +1,30 @@
+<div class="dashboard-list" [ngStyle]="{'top':is_fullscreen?'8px':'68px'}">
+  <button appToggleSidebar nz-button [nzType]="'primary'" [nzSize]="'small'" class="dashboard-tab-btn">
+    <i nz-icon nzType="left" nzTheme="outline"></i>
+    <span>概览页书签</span>
+  </button>
+  <div class="dashboard-right-sidebar">
+    <div class="dashboard-add-tab">
+      <a nz-button [nzType]="'default'" [nzSize]="'small'" (click)="editDashboard()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加概览页书签</span>
+      </a>
+    </div>
+    <ul class="dashboard-tab-lists">
+      <li class="dashboard-tab-li" [routerLinkActive]="['dashboard-selected']"  *ngFor="let item of dataList;let i = index;">
+        <div class="dashboard-tab-li-desc" nz-tooltip [nzTooltipTitle]="item.dashboard_name" nzTooltipPlacement="left">
+          <a [routerLink]="item.dashboard_id" (click)="switchDashboard(item)">{{item.dashboard_name}}</a>
+        </div>
+
+        <div class="lh12 dashboard-action">
+          <i nz-icon nzType="edit" nzTheme="outline" class="hover-show" *ngIf="item['is_default']===0" (click)="editDashboard(item)"></i>
+          <i nz-icon nzType="copy" nzTheme="outline" class="hover-show mr16" (click)="copyDashboard(item)" *ngIf="item['is_default']!==1"></i>
+          <i nz-icon nzType="copy" nzTheme="outline" class="hover-show ml8" (click)="copyDashboard(item,true)" *ngIf="item['is_default']===1"></i>
+          <ng-container *ngIf="item['is_default']===0">
+            <i nz-icon nzType="close" nzTheme="outline" nz-popconfirm [nzPopconfirmTitle]="'确定要删除这个概览页吗？'" (nzOnConfirm)="deleteDashboard(item, i)" nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click" class="hover-show pl8 pr16" ></i>
+          </ng-container>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+

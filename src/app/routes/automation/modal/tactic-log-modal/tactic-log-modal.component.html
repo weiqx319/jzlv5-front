@@ -1,0 +1,97 @@
+<div class="fixed-condition-manage page-condition-header">
+  <div></div>
+  <div>
+    <nz-range-picker
+      [nzFormat]="'yyyy/MM/dd'"
+      [ngModel]="dateValue"
+      (ngModelChange)="onDateChange($event)"
+      (nzOnCalendarChange)="onCalendarChange($event)"
+      [nzDisabledDate]="disabledEndDate"
+      [nzSize]="'default'"
+      [nzAllowClear]="false"
+      (nzOnOpenChange)="openDateChange($event)"
+    ></nz-range-picker>
+  </div>
+</div>
+<div class="content-section-manage">
+  <nz-table #nzTable
+      nzShowSizeChanger
+      [nzPageSizeOptions]="[30,50,100,500]"
+      [nzSize]="'small'"
+      [nzData]="[{}]"
+      [nzFrontPagination]="false"
+      [(nzPageSize)]="pageSize"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="refreshData()"
+      (nzPageSizeChange)="refreshData(true)"
+      [nzTotal]="total"
+      [nzLoading]="loading"
+      [nzShowTotal]="totalItemTemplate"
+      [nzScroll]="{ x: '1000px', y: noResultHeight+'px' }"
+  >
+    <thead>
+    <tr>
+    <!-- <th nzWidth="62px" nzLeft class="jzlCheckboxHeader">
+    <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)" [nzIndeterminate]="indeterminate"></label>
+    </th> -->
+    <th [nzWidth]="'150px'">
+    <span>执行时间</span>
+    </th>
+    <th [nzWidth]="'200px'">
+    <span>策略名称</span>
+    <app-filter [filterType]="'multiValue'" [filterKey]="{key:'tactic_name',name:'策略名称',type:'multiValue'}" [(filterResult)]="filterResult['tactic_name']" (submit)="doFilter()"></app-filter>
+    </th>
+    <th [nzWidth]="'150px'">
+    <span>账户</span>
+    <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_account_name',name:'账户',type:'multiValue'}" [(filterResult)]="filterResult['pub_account_name']" (submit)="doFilter()"></app-filter>
+    </th>
+    <th [nzWidth]="'150px'" *ngIf="!tacticId||tacticLevel==='campaign'||tacticLevel==='adgroup'">
+    <span>{{tacticLevelObj['campaign']}}</span>
+    <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_campaign_name',name:tacticLevelObj['campaign'],type:'multiValue'}" [(filterResult)]="filterResult['pub_campaign_name']" (submit)="doFilter()"></app-filter>
+    </th>
+    <th [nzWidth]="'150px'" *ngIf="!tacticId||tacticLevel==='adgroup'">
+    <span>{{tacticLevelObj['adgroup']}}</span>
+    <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_adgroup_name',name:tacticLevelObj['adgroup'],type:'multiValue'}" [(filterResult)]="filterResult['pub_adgroup_name']" (submit)="doFilter()"></app-filter>
+    </th>
+    <th [nzWidth]="'100px'">
+    <span>执行状态</span>
+    <app-filter [filterType]="'singleList'" [filterKey]="{key:'action_result_status',name:'执行状态',type:'singleList'}" [(filterResult)]="filterResult['action_result_status']" [filterOption]="actionResultStatusList" (submit)="doFilter()"></app-filter>
+    </th>
+    <th [nzWidth]="'150px'">
+    <span>执行结果</span>
+    <app-filter [filterType]="'multiValue'" [filterKey]="{key:'action_result_message',name:'执行结果',type:'multiValue'}" [(filterResult)]="filterResult['action_result_message']" (submit)="doFilter()"></app-filter>
+    </th>
+    <th [nzWidth]="'100px'">
+    <span>执行动作</span>
+    <app-filter [filterType]="'multiValue'" [filterKey]="{key:'action_name',name:'执行动作',type:'multiValue'}" [(filterResult)]="filterResult['action_name']" (submit)="doFilter()"></app-filter>
+    </th>
+    <th [nzWidth]="'250px'">
+    <span>触发条件</span>
+    <app-filter [filterType]="'multiValue'" [filterKey]="{key:'trigger_condition_log',name:'规则',type:'multiValue'}" [(filterResult)]="filterResult['trigger_condition_log']" (submit)="doFilter()"></app-filter>
+    </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of apiData" [class]="'tr-'+data['action_result_status']">
+    <!-- <tr *ngFor="let data of apiData"> -->
+    <!-- <td nzLeft nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)"></td> -->
+    <td>{{data["create_time"]}}</td>
+    <td>{{data["tactic_name"]}}</td>
+    <td>{{data["pub_account_name"]}}</td>
+    <td *ngIf="!tacticId||tacticLevel==='campaign'||tacticLevel==='adgroup'">{{data["pub_campaign_name"]}}</td>
+    <td *ngIf="!tacticId||tacticLevel==='adgroup'">{{data["pub_adgroup_name"]}}</td>
+    <td>{{actionResultStatusObj[data["action_result_status"]]}}</td>
+    <td>{{data["action_result_message"]}}</td>
+    <td>{{data["action_name"]}}</td>
+    <td>{{data["trigger_condition_log"]}}</td>
+    </tr>
+    <tr *ngIf="!apiData.length && !loading">
+    <td [attr.colspan]="12" [ngStyle]="{'background-color':'#f6f6f6','height':(noResultHeight-10)+'px'}">
+    <div style="text-align: center">{{resultStatus==='success'?'暂无数据':'数据获取失败'}}</div>
+    </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <!-- 表格显示总条数 -->
+  <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+</div>

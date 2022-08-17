@@ -1,0 +1,14 @@
+.app-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  background: #0a223a;
+  width: 100%;
+  .footerLeft {
+    width: 50%;
+  }
+  .footerRight {
+    width: 50%;
+    text-align: right;
+  }
+}

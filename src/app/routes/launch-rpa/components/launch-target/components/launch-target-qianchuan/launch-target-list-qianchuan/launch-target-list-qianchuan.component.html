@@ -1,0 +1,117 @@
+<div class="launch-rpa-contents">
+  <div class="launch-rpa-operation">
+    <div class="header-left">
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="openTargetVisible('basic')">
+        <i nz-icon nzType="plus"></i><span>创建定向基础包</span>
+      </a>
+    </div>
+  </div>
+  <div class="pt20 collapse-box">
+    <nz-collapse [nzBordered]="false" [nzAccordion]="true">
+      <nz-collapse-panel
+        *ngFor="let item of apiData; let index = index"
+        [nzActive]="item.active"
+        [nzHeader]="expanded"
+        [nzShowArrow]="false"
+        (nzActiveChange)="getChildTargetList($event,item)"
+        [ngStyle]="{'background': '#f7f7f7','border-radius': '4px','margin-bottom': '24px', 'border': '0px'}"
+      >
+        <button class="mb20" nz-button (click)="openTargetVisible('package',item)">新增投放包</button>
+        <nz-table #basicTable
+                  [nzSize]="'small'"
+                  [nzData]="apiChildData"
+                  [(nzPageSize)]="pageSize"
+                  [(nzPageIndex)]="currentPage"
+                  [nzTotal]="total"
+                  [nzLoading]="loading"
+                  [nzScroll]="{ x: '900px', y: noResultHeight + 'px' }">
+          <thead>
+          <tr>
+            <!--            <th [nzWidth]="'62px'" nzShowCheckbox></th>-->
+            <th [nzWidth]="'200px'">
+              <span>名称</span>
+            </th>
+            <th [nzWidth]="'150px'">
+              <span>定向包类型</span>
+            </th>
+            <th [nzWidth]="'150px'">
+              <span>创建时间</span>
+            </th>
+            <th [nzWidth]="'200px'">
+              <span>操作</span>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of basicTable.data">
+            <!--            <td nzShowCheckbox></td>-->
+            <td>{{data.audience_template_name}}</td>
+            <td>{{data.promotion_way === "STANDARD" ? '专业推广':'极速推广'}}</td>
+            <td>{{data.create_time}}</td>
+            <td>
+              <a href="javascript:" (click)="openTargetVisible('packageEdit',item,data)">修改</a>
+              <span class="ml4 mr4">|</span>
+              <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteLaunchAudienceBasicTemplate(data.audience_template_id)"
+                 nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzTrigger="click" href="javascript:">删除</a>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+        <ng-template #expanded>
+          <div style="display: flex; justify-content: space-between">
+            <span>{{ item.audience_template_name }}</span>
+            <div>
+              <a href="javascript:" (click)="openTargetVisible('basicEdit',item)">修改</a>
+              <span class="ml4 mr4">|</span>
+              <!--              <a href="javascript:" routerLink="/data_view/feed/materials/launch_template/target_template_create"-->
+              <!--                 [queryParams]="{audience_template_id: item.audience_template_id,publisher_id:publisherId, is_copy: '1'}">复制</a>-->
+              <!--              <span class="ml4 mr4">|</span>-->
+              <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteLaunchAudienceBasicTemplate(item.audience_template_id)"
+                 nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzTrigger="click" href="javascript:">删除</a>
+              <i *ngIf="!item.active" class="ml20" nz-icon nzType="right" nzTheme="outline"></i>
+              <i *ngIf="item.active" class="ml20" nz-icon nzType="down" nzTheme="outline"></i>
+            </div>
+          </div>
+
+        </ng-template>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </div>
+  <div style="text-align: right">
+    <nz-pagination [(nzPageIndex)]="parentPageInfo.currentPage" [nzTotal]="parentPageInfo.total" [nzPageSize]="parentPageInfo.pageSize" (nzPageIndexChange)="refreshData()"></nz-pagination>
+  </div>
+</div>
+
+
+
+<ng-template #noResultTd>
+  <div class="table-no-result" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+    <div class="table-no-result-content">
+
+      <div class="mt8">无数据</div>
+    </div>
+  </div>
+</ng-template>
+
+<div class="target-drawer">
+  <nz-drawer
+    *ngIf="targetDrawerVisible"
+    [nzVisible]="targetDrawerVisible"
+    [nzBodyStyle]="{ 'background-color': '#f4f7fc' }"
+    [nzWidth]="'100%'"
+    nzPlacement="right"
+    [nzTitle]="drawerTitle"
+    (nzOnClose)="closeTargetDrawer()"
+  >
+    <app-launch-target-basic-qianchuan [audienceTemplateId]="audienceTemplateId" [childAudienceTemplateId]="childAudienceTemplateId" [targetType]="targetType" (resultsChange)="closeTargetDrawer($event)"></app-launch-target-basic-qianchuan>
+  </nz-drawer>
+
+  <ng-template #drawerTitle>
+    <span *ngIf="targetType === 'basic'">新增基础定向包</span>
+    <span *ngIf="targetType === 'basicEdit'">编辑基础定向包</span>
+    <span *ngIf="targetType === 'package'">新增投放包</span>
+    <span *ngIf="targetType === 'packageEdit'">编辑投放包</span>
+    <span class="target-word">基础包不能直接用于新建投放，需再新增投放包用于新建投放</span>
+  </ng-template>
+</div>
+

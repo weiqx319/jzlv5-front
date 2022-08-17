@@ -1,0 +1,6 @@
+<div class="wrapper">
+  <!--<div class="router-progress-bar" *ngIf="isFetching"></div>-->
+  <app-header class="header" [ngStyle]="{'display':is_fullscreen?'none':'block'}"></app-header>
+  <section class="app-body" [ngClass]="is_fullscreen?'app-body-height':''" #modelContent (scroll)="onScroll($event)"><router-outlet></router-outlet></section>
+  <app-footer class="footer" [ngStyle]="{'display':is_fullscreen?'none':'block'}"></app-footer>
+</div>

@@ -1,0 +1,126 @@
+<div class="jinniu-code">
+  <div class="code-tooltip" *ngIf="currentStep!==-1">
+    <nz-steps nzSize="small" [(nzCurrent)]="currentStep">
+      <nz-step nzTitle="安装授权插件"></nz-step>
+      <nz-step nzTitle="登录磁力金牛授权"></nz-step>
+      <nz-step nzTitle="选择媒体账户，授权"></nz-step>
+    </nz-steps>
+  </div>
+  <div class="step-content">
+    <div *ngIf="currentStep===-1">
+      <ul class="mt20">
+        <li>Q：同一个快手ID的账户需要分别授权吗？</li>
+        <li class="mt8 answer">A：使用广告主账户登录不需要分别授权，同快手ID下只需同个账户授权一次，不同快手ID需要再次授权，使用代理商系统登录需要单个账户独立授权。</li>
+        <li class="mt8">Q：账户显示”授权失败“是什么意思？</li>
+        <li class="mt8 answer">A：在磁力金牛后台退出登录、变更账户密码、绑定手机号都有可能导致授权失效，重新授权即可正常使用。</li>
+      </ul>
+      <div style="margin-top:20px;text-align:center;">
+        <button class="ml8"  nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="next()">下一步</button>
+      </div>
+    </div>
+    <div *ngIf="currentStep===0">
+      <div class="mt20">
+        <h3 style="font-weight: bold">.下载插件</h3>
+        <p class="mt8 answer">1.<a [href]="'/../../../../../assets/file/jzl_cili_jinniu.zip'">点击下载</a>，如未看到下载弹窗请检查浏览器是否设置了阻止通知</p>
+        <h3 class="mt8" style="font-weight: bold">.安装插件</h3>
+        <ul>
+          <li class="mt8 answer">1.使用浏览器地址栏输入地址：chrome://extensions/</li>
+          <li class="mt8 answer">2.浏览器设置->更多工具->扩展程序，开启开发者模式并刷新页面</li>
+          <li class="mt8 answer">3.加载插件，或者将插件拖拽至空白处，并开启插件</li>
+        </ul>
+        <div class="mt10">
+          <img class="w100p" src="../../../../../assets/jinniu1.png" alt="">
+        </div>
+      </div>
+      <div style="margin-top:20px;text-align:center;">
+        <button class="ml8"  nz-button [nzType]="'default'" [nzSize]="'default'" (click)="prev()">上一步</button>
+        <button class="ml8"  nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="next()">下一步</button>
+      </div>
+    </div>
+    <div *ngIf="currentStep===1">
+      <div class="mt20">
+        <h3 style="font-weight: bold">.登录磁力金牛投放端</h3>
+        <p class="mt8 answer">1.地址：https://niu.e.kuaishou.com/welcome</p>
+        <h3 class="mt8" style="font-weight: bold">.授权账户</h3>
+        <ul>
+          <li class="mt8 answer">1.打开扩展程序，点击授权插件</li>
+          <li class="mt8 answer">2.点击同意授权，提示“授权成功”，复制授权码，即可返回创量选择账户进行授权</li>
+        </ul>
+        <div class="mt10">
+          <img class="w100p" src="../../../../../assets/jinniu2.png" alt="">
+        </div>
+      </div>
+      <div style="margin-top:20px;text-align:center;">
+        <button class="ml8"  nz-button [nzType]="'default'" [nzSize]="'default'" (click)="prev()">上一步</button>
+        <a class="ml8" target="_blank" href="https://niu.e.kuaishou.com/home" nz-button [nzType]="'primary'" [nzSize]="'default'">前往授权</a>
+        <button class="ml8"  nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="next()">已完成授权，下一步</button>
+      </div>
+    </div>
+    <div *ngIf="currentStep===2">
+      <div class="mt20">
+        <h3 style="font-weight: bold">.填写授权码，选择媒体账户完成授权</h3>
+        <p class="mt8 answer">1.授权码有效期10分钟，请尽快完成授权</p>
+      </div>
+      <div class="mt20">
+        <div class="form-label pull-left mr8">
+          <label>授权码</label>
+        </div>
+        <nz-form-control class="w260 inline-block">
+          <input nz-input  placeholder="粘贴代码"
+                 [nzSize]="'small'"
+                 [(ngModel)]="jinniuCode"
+                 type="text"/>
+        </nz-form-control>
+        <button nz-button [nzType]="'primary'" [nzSize]="'small'" [disabled]="jinniuCode.length<1" (click)="getJinniuAccountTree()"><i nz-icon nzType="search" nzTheme="outline"></i></button>
+      </div>
+      <div class="mt10">
+        <div class="form-label pull-left mr8">
+          <label>账户名称</label>
+        </div>
+        <nz-form-control class="w260 inline-block">
+          <input nz-input  placeholder="请输入账户ID或账户名"
+                 [nzSize]="'small'"
+                 [(ngModel)]="jinniuSearchName"
+                 type="text"/>
+        </nz-form-control>
+        <button nz-button [nzType]="'primary'" [nzSize]="'small'" [disabled]="jinniuSearchName.length<1" (click)="getJinniuAccountTree()"><i nz-icon nzType="search" nzTheme="outline"></i></button>
+      </div>
+      <div class="mt10">
+        <nz-table nzSize="default"
+                  #rowSelectionTable
+                  [nzFrontPagination]="false"
+                  nzPageSize="10000"
+                  [nzData]="selectAccountData"
+                  [nzScroll]="{ x:'600px',y:'300px' }"
+        >
+          <thead>
+          <tr>
+            <th nzWidth="50px" [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="_checkAll(allChecked)"></th>
+            <th nzWidth="300px">账户名称</th>
+            <th nzWidth="120px">账户ID</th>
+            <th nzWidth="120px">快手ID</th>
+            <!--<th nzWidth="120px">所属人员</th>-->
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of selectAccountData">
+            <td nzShowCheckbox
+                [(nzChecked)]="data.checked"
+                [nzDisabled]="data.disabled"
+                (nzCheckedChange)="_refreshSingleChangeStatus()"
+            ></td>
+            <td>{{ data.pub_account_name }}</td>
+            <td>{{ data.pub_account_id }}</td>
+            <td>{{ data.main_account_id }}</td>
+            <!--          <td>{{ data.advertiser_name }}</td>-->
+          </tr>
+          </tbody>
+        </nz-table>
+      </div>
+      <div style="margin-top:20px;text-align:center;">
+        <button class="ml8"  nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancel()">取消</button>
+        <button class="ml8"  nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="saveing" (click)="bindAccountTree()">确定</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+.query-ranking-form{
+  width: 416px;
+  margin-top: 20px;
+  align-items: flex-end;
+}
+
+.query-ranking-content-row{
+  .form-label{
+    width: 92px;
+    text-align: right
+  }
+}
+.query-ranking-footer{
+  text-align: right;
+}
+
+.query-ranking-content{
+  display: flex;
+  display: -webkit-flex;
+  justify-content: flex-end;
+}
+.clear{
+  clear: both;
+}

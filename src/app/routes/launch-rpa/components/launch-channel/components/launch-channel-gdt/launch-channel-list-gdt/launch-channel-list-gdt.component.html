@@ -1,0 +1,90 @@
+<div class="launch-rpa-contents">
+  <div class="launch-rpa-operation">
+    <div class="header-left">
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="createChannel()">
+        <i nz-icon nzType="plus"></i><span> 新建渠道</span>
+      </a>
+    </div>
+    <div class="header-right">
+      <nz-input-group class="w200" [nzSuffix]="suffixIconSearch">
+        <input type="text" nz-input placeholder="渠道名称" [(ngModel)]="searchName" (blur)="refreshData(true)"/>
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div>
+  </div>
+  <div class="pt20">
+    <nz-table #basicTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzShowTotal]="totalItemTemplate"
+              [nzSize]="'small'"
+              [nzData]="apiSearchData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzNoResult]="noResultTd"
+              [nzScroll]="{ x: '1760px', y: noResultHeight + 'px' }">
+      <thead>
+      <tr>
+        <th nzShowSort nzWidth="120px" nzLeft="0px">渠道号</th>
+        <th nzShowSort nzWidth="200px" nzLeft="120px">渠道别名</th>
+        <th nzWidth="120px" nzLeft="320px">操作</th>
+        <th nzWidth="200px">账号ID</th>
+        <th nzWidth="200px">账号</th>
+        <th nzWidth="200px">推广目的</th>
+        <th nzWidth="120px">推广目的ID</th>
+        <th nzWidth="200px">落地页类型</th>
+        <th nzWidth="200px">落地页链接</th>
+        <th nzShowSort nzWidth="200px">创建时间</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngFor="let data of basicTable.data">
+        <tr>
+          <td nzLeft="0px">{{data.convert_channel_number}}</td>
+          <td nzLeft="120px">{{data.convert_channel_name}}</td>
+          <td nzLeft="320px">
+            <a href="javascript:" (click)="editLaunchChannel(data)">编辑</a>
+            <span class="ml4 mr4">|</span>
+            <a href="javascript:" (click)="editLaunchChannel(data,true)">复制</a>
+            <span class="ml4 mr4">|</span>
+              <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteLaunchChannel(data)"
+                 nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click" href="javascript:">删除</a>
+          </td>
+          <td >{{data.pub_account_id}}</td>
+          <td>{{data.pub_account_name}}</td>
+          <td >{{data.object_type_name}}</td>
+          <td>{{data.promoted_object_id}}</td>
+          <td>{{data.page_type === 'PAGE_TYPE_DEFAULT' ? '默认' : '蹊径'}}</td>
+          <td>
+            <span class="tooltip-box" [nzTooltipTitle]="data.page_url" nz-tooltip>
+              {{data.page_type === 'PAGE_TYPE_DEFAULT' ? data.page_url : data.page_name}}
+            </span>
+          </td>
+          <td>{{data.create_time}}</td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+
+
+  <ng-template #noResultTd >
+    <div class="table-no-result" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+      <div class="table-no-result-content">
+        <div class="mt8">无数据</div>
+      </div>
+    </div>
+  </ng-template>
+
+</div>
+<app-global-template></app-global-template>
+
+

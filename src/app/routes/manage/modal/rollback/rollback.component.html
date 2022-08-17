@@ -1,0 +1,36 @@
+<i *ngIf="!disable" nz-icon nzType="undo" nzTheme="outline" style="color: #1890ff;cursor: pointer" title="还原任务"  nz-popover [(nzPopoverVisible)]="showPop" nzPopoverTitle="一键还原操作"
+      [nzPopoverContent]="rollbackTemplate"
+      nzPopoverTrigger="click"
+      nzPopoverPlacement="left">
+</i>
+
+ <ng-template #rollbackTemplate>
+   <div class="pop-rollback">
+     <div class="lab-row">
+       <span>还原层级：</span>
+       <span>{{operName}}</span>
+     </div>
+
+     <div class="lab-row mt10" >
+       <span>还原操作：</span>
+       <nz-select  class="w150" [nzSize]="'small'" [nzPlaceHolder]="'请选择操作'" nzMode="multiple" [(ngModel)]="selectColumns">
+         <nz-option
+           *ngFor="let column of rollColumnList"
+           [nzDisabled]="column.disabled"
+           [nzLabel]="column.name"
+           [nzValue]="column.value">
+         </nz-option>
+       </nz-select>
+     </div>
+     <div class="text-right mt14">
+       <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">
+         <span>取消</span>
+       </button>
+       <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="ok()">
+         <span>确定</span>
+       </button>
+     </div>
+   </div>
+
+ </ng-template>
+

@@ -1,0 +1,47 @@
+.adgroup-section-container {
+  .form-content {
+    display: flex;
+    flex-wrap: wrap;
+
+    .lab-row {
+      width: 50%;
+      display: flex;
+
+      & > label:first-child{
+        width: 140px;
+        text-align: right;
+        display: inline-block;
+      }
+    }
+
+    .w100p {
+      width: 100%;
+    }
+
+    .ml50p {
+      margin-left: 50%;
+    }
+
+    .w_full {
+      width: 568px;
+    }
+  }
+
+  .ant-input-group-addon {
+    padding: 0;
+    border: 0;
+  }
+
+  .input-group-btn {
+    border-right: 0;
+  }
+
+  .extensionPeriod {
+    padding: 10px 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
+.ant-dropdown-menu.ant-dropdown-menu-vertical{
+  width: 200px;
+}

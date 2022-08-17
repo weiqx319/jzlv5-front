@@ -1,0 +1,44 @@
+<div class="batch-edit-label-container">
+  <div class="batch-edit-label-content">
+    <div class="item-data mt10">
+      <div class="lab-row mt30">
+        <span>增加标签：</span>
+        <nz-select class="w400 ml8"
+                   [nzSize]="'small'"
+                   [nzMode]="'tags'"
+                   [(ngModel)]="include_material_tags"
+                   [nzPlaceHolder]="'请选择标签或手动输入'"
+                   nzShowSearch>
+          <ng-container *ngFor="let data of tagsList">
+            <nz-option [nzLabel]="data['tags_content']"  [nzValue]="data['tags_content']"> </nz-option>
+          </ng-container>
+        </nz-select>
+      </div>
+
+      <div class="lab-row mt30">
+        <span>删除标签：</span>
+        <nz-select class="w400 ml8"
+                   [nzSize]="'small'"
+                   [nzMode]="'tags'"
+                   [(ngModel)]="exclude_material_tags"
+                   [nzPlaceHolder]="'请选择标签或手动输入'"
+                   nzShowSearch>
+          <ng-container *ngFor="let data of tagsList">
+            <nz-option [nzLabel]="data['tags_content']"  [nzValue]="data['tags_content']"> </nz-option>
+          </ng-container>
+        </nz-select>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saving" (click)="doSave()">
+      <span>确定</span>
+    </button>
+  </div>
+</div>

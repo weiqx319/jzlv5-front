@@ -1,0 +1,47 @@
+<div class="sub-company-content">
+  <form class="sub-company-form" [formGroup]="validateAudienceForm">
+    <div class="sub-company-form-content">
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>选择账户:</label>
+        </div>
+        <nz-form-control class="w300 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'push_chan_pub_ids'" [nzSize]="'default'"
+              [(ngModel)]="reqParams.push_chan_pub_ids"
+              [nzMaxTagPlaceholder]="tagPlaceHolder"
+              [nzPlaceHolder]="'请选择账户'"
+              [nzMaxTagCount]="3"
+              nzMode="multiple"
+              [nzDropdownRender]="renderTemplate"
+              nzShowSearch nzAllowClear>
+            <nz-option
+              *ngFor="let option of accountsList"
+              [nzLabel]="option.pub_account_name"
+              [nzValue]="option.chan_pub_id">
+            </nz-option>
+          </nz-select>
+          <ng-template #renderTemplate>
+            <div *ngIf="!allAccountCheck" style="padding: 5px;text-align: center;">
+              <a style="font-size: 15px" (click)="checkAllAccount()">选择全部</a>
+            </div>
+            <div *ngIf="allAccountCheck" style="padding: 5px;text-align: center;background-color: #e6f7ff;">
+              <a style="font-size: 15px" (click)="checkAllAccount()">取消全选</a>
+            </div>
+          </ng-template>
+          <ng-template #tagPlaceHolder let-selectedList>共 {{ reqParams.push_chan_pub_ids.length }}项</ng-template>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('push_chan_pub_ids').dirty&&getFormControl('push_chan_pub_ids').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择账户</div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="sub-company-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancelModal()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="!validateAudienceForm.valid" [nzLoading]="isSaving" (click)="doSave()">
+        <span>完成</span>
+      </button>
+    </div>
+  </form>
+</div>

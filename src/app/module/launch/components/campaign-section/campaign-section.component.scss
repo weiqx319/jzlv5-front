@@ -1,0 +1,54 @@
+.campaign-section-container {
+  .form-content {
+    display: flex;
+    flex-wrap: wrap;
+
+    .lab-row {
+      width: 50%;
+      display: flex;
+
+      & > label:first-child{
+        width: 140px;
+        text-align: right;
+        display: inline-block;
+      }
+    }
+
+    .flexColumn {
+      flex-direction: column;
+
+      .lab-row {
+        width: 100%;
+      }
+    }
+
+    .w100p {
+      width: 100%;
+    }
+
+    .w170 {
+      width: 170px !important;
+    }
+
+    .ml50p {
+      margin-left: 50%;
+    }
+
+    .w_full {
+      width: 568px;
+    }
+  }
+
+  .ant-input-group-addon {
+    padding: 0;
+    border: 0;
+  }
+
+  .input-group-btn {
+    border-right: 0;
+  }
+}
+
+.ant-dropdown-menu.ant-dropdown-menu-vertical{
+  width: 200px;
+}

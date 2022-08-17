@@ -1,0 +1,160 @@
+<div class="account-binding-content">
+  <form class="account-binding-form" [formGroup]="validateAccountBindingForm">
+    <div class="account-binding-form-content">
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>广告主:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'cid'" [nzSize]="'default'" [nzDisabled]="chanPubId>0" [(ngModel)]="accountSetting.cid" [nzPlaceHolder]="'请选择广告主'" nzShowSearch>
+            <nz-option
+              *ngFor="let option of advertiserList"
+              [nzLabel]="option.advertiser_name"
+              [nzValue]="option.cid">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' class="ml8" *ngIf="getFormControl('cid').dirty&&getFormControl('cid').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择广告主</div>
+        </div>
+      </nz-form-item>
+
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>渠道:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'publisher_id'" [nzDisabled]="chanPubId>0" [nzSize]="'default'" [(ngModel)]="accountSetting.channel_id" nzShowSearch>
+            <nz-option
+              *ngFor="let option of filterChannelOption"
+              [nzLabel]="option.name"
+              [nzValue]="option.key">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' class="ml8" *ngIf="getFormControl('channel_id').dirty&&getFormControl('channel_id').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择渠道</div>
+        </div>
+      </nz-form-item>
+
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>媒体:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'publisher_id'" [nzDisabled]="chanPubId>0" [nzSize]="'default'" [(ngModel)]="accountSetting.publisher_id" nzShowSearch>
+            <nz-option
+              *ngFor="let option of publishers"
+              [nzLabel]="option.name"
+              [nzValue]="option.key">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' class="ml8" *ngIf="getFormControl('publisher_id').dirty&&getFormControl('publisher_id').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择媒体</div>
+        </div>
+      </nz-form-item>
+
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>推广账户用户名:</label>
+        </div>
+        <!--{{chanPubId>0}}-->
+        <!--添加-->
+        <nz-form-control class="w200 ml8 pull-left" *ngIf="chanPubId === 0">
+          <input nz-input
+                 class="w100p"
+                 [nzSize]="'default'"
+                 [formControlName]="'pub_account_name'"
+                 type="text"
+                 placeholder="输入用户名"
+                 [(ngModel)]="accountSetting.pub_account_name">
+        </nz-form-control>
+        <!--编辑-->
+        <nz-form-control class="w200 ml8 pull-left accountName" *ngIf="chanPubId > 0">
+          <input nz-input
+                 class="w100p"
+                 [nzSize]="'default'"
+                 [formControlName]="'pub_account_name'"
+                 type="text"
+                 disabled= "disabled"
+                 [(ngModel)]="accountSetting.pub_account_name">
+
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('pub_account_name').dirty&&getFormControl('pub_account_name').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入用户名</div>
+        </div>
+      </nz-form-item>
+
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label>账户标签:</label>
+        </div>
+        <!--{{chanPubId>0}}-->
+        <!--添加-->
+        <nz-form-control class="w200 ml8 pull-left" *ngIf="chanPubId === 0">
+          <input nz-input class="w100p" [nzSize]="'default'" [formControlName]="'account_label'" type="text" placeholder="输入账户标签"
+                 [(ngModel)]="accountSetting.account_label">
+        </nz-form-control>
+        <!--编辑-->
+        <nz-form-control class="w260 ml8 pull-left accountName" *ngIf="chanPubId > 0">
+          <input nz-input class="w100p" [nzSize]="'default'" [formControlName]="'account_label'" placeholder="输入账户标签" type="text"
+                 [(ngModel)]="accountSetting.account_label">
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- 账户标签列表 -->
+      <nz-form-item class="account-form-item" *ngFor="let item of accountLabelList">
+        <div class="form-label pull-left">
+          <label>标签-{{item.name}}:</label>
+        </div>
+        <!--添加-->
+        <nz-form-control class="w200 ml8 pull-left" *ngIf="chanPubId === 0">
+          <input nz-input class="w100p" [nzSize]="'default'" [formControlName]="item.key" type="text" placeholder="输入标签"
+                 [(ngModel)]="accountSetting['account_custom_label'][item.key]">
+        </nz-form-control>
+        <!--编辑-->
+        <nz-form-control class="w260 ml8 pull-left accountName" *ngIf="chanPubId > 0">
+          <input nz-input class="w100p" [nzSize]="'default'" [formControlName]="item.key" placeholder="输入标签" type="text"
+                 [(ngModel)]="accountSetting['account_custom_label'][item.key]">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <label>账户备注:</label>
+        </div>
+        <!--添加-->
+        <nz-form-control class="w200 ml8 pull-left" *ngIf="chanPubId === 0">
+          <input nz-input class="w100p" [nzSize]="'default'" [formControlName]="'account_comment'" type="text" placeholder="输入账户备注"
+                 [(ngModel)]="accountSetting.account_comment">
+        </nz-form-control>
+        <!--编辑-->
+        <nz-form-control class="w260 ml8 pull-left accountName" *ngIf="chanPubId > 0">
+          <input nz-input class="w100p" [nzSize]="'default'" [formControlName]="'account_comment'" placeholder="输入账户备注" type="text"
+                 [(ngModel)]="accountSetting.account_comment">
+        </nz-form-control>
+      </nz-form-item>
+
+
+
+      <nz-form-item class="account-form-item">
+        <div class="form-label pull-left">
+          <span style="color:red">提示:</span>
+        </div>
+        <nz-form-control class="w260 ml8 pull-left">
+          <span style="color:red;">数据对接账户授权完成后需在“URL生成器”页面添加{{productInfo['name']}}追踪码，否则无法追踪转化。</span>
+        </nz-form-control>
+      </nz-form-item>
+
+    </div>
+    <div class="account-binding-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" [nzLoading]="saveing" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="!validateAccountBindingForm.valid" (click)="doSave()">
+        <span>完成</span>
+      </button>
+    </div>
+  </form>
+</div>

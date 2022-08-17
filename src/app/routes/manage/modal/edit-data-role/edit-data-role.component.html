@@ -1,0 +1,19 @@
+<div class="edit-data-role">
+  <div class="lab-row">
+    <label>数据角色：</label>
+    <nz-select class="w260 ml10" [nzSize]="'default'" [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagPlaceHolder" nzMode="multiple" nzPlaceHolder="请选择" [(ngModel)]="defaultData.data_role_ids">
+      <nz-option *ngFor="let option of dataRoleList" [nzLabel]="option.role_name" [nzValue]="option.role_id"></nz-option>
+    </nz-select>
+  </div>
+
+  <div class="role-footer">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>
+
+<ng-template #tagPlaceHolder let-selectedList> 已选 {{ selectedList.length + 3 }}</ng-template>

@@ -1,0 +1,92 @@
+<div class="materials-manage-modal mb20">
+  <div class="pl30 pr30" nz-row [nzGutter]="16">
+    <div nz-col class="lab-row mb20" [nzSpan]="12" *ngFor="let item of configList">
+      <label style="width: 80px"><span class="redStart" *ngIf="item['isMust']">*</span>{{item['name']}}:</label>
+      <div>
+        <ng-container *ngIf="item.type==='select'">
+          <nz-select class="w240" [(ngModel)]="defaultData[item.key]" [nzPlaceHolder]="'请选择'+item.name">
+            <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+          </nz-select>
+        </ng-container>
+        <ng-container *ngIf="item.type==='input'">
+          <input class="w240" nz-input [placeholder]="'请输入'+item.name" [(ngModel)]="defaultData[item.key]" />
+        </ng-container>
+        <ng-container *ngIf="item.type==='date'">
+          <div class="w240" style="line-height: 30px;border: 1px solid #d9d9d9;" (click)="changeDate()">
+            <span class="ml8" [style]="timeDesc.length>0?'':'color:#bdbdbd'">{{timeDesc.length>0?timeDesc:'请选择时间'}}</span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <div class="button-controller mb10 mr50">
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSearch()">
+      <span>查询</span>
+    </button>
+  </div>
+  <div class="pt20">
+    <nz-table #basicTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[10,20,30,50,100]"
+              [nzShowTotal]="totalItemTemplate"
+              [nzSize]="'small'"
+              [nzData]="apiData"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzScroll]="{ y: '600px' }">
+      <thead>
+      <tr>
+        <th nzWidth="40px" class="jzlCheckboxHeader">
+          <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)" [nzIndeterminate]="indeterminate"></label>
+        </th>
+        <th nzWidth="200px">视频</th>
+        <th nzWidth="100px">素材ID</th>
+        <th nzWidth="150px">标签</th>
+        <th nzWidth="80px">素材来源</th>
+        <th nzWidth="100px">创建时间</th>
+        <th nzWidth="80px">大小/尺寸</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td nzShowCheckbox [(nzChecked)]="data['checked']" (nzCheckedChange)="_refreshSingleChangeStatus($event)">
+        <td>
+          <div class="materials-cell">
+            <div  class="materials-info">
+              <div  class="materials-poster">
+                <img [src]="data['url']" alt="">
+                <i class="play-icon" *ngIf="show_type==='video'" nz-icon nzType="play-circle" nzTheme="outline"></i>
+              </div>
+              <div  class="materials-title"> {{data['material_name']}}</div>
+            </div>
+          </div>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>
+<div class="button-controller mb10">
+  <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+    <span>取消</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+    <span>同步选中素材</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+    <span>同步所选标签素材</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+    <span>同步全部素材</span>
+  </button>
+</div>

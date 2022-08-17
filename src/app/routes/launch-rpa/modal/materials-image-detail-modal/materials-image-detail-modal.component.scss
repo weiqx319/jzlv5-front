@@ -1,0 +1,67 @@
+.materials-detail-container {
+  .form-content {
+    overflow: auto;
+    display: flex;
+
+    .image-content-preview{
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      background-size: contain;
+      height: 300px;
+      width: 90%
+    }
+
+    //align-items: center;
+
+    .form-content-left {
+      flex: 1;
+      border-right: 1px dashed #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .vertical_video {
+        width: 160px;
+      }
+
+      .horizontal_video {
+        height: 160px;
+      }
+    }
+
+    .form-content-right {
+      width: 330px;
+      padding: 20px 0;
+    }
+
+    .lab-row{
+      display: flex;
+      margin-bottom: 2px;
+
+      &>span {
+        display: inline-block;
+        width: 200px;
+      }
+
+      i {
+        cursor: pointer;
+      }
+    }
+
+    .lab-row > label:first-child{
+      width: 88px;
+      text-align: right;
+      display: inline-block;
+    }
+  }
+
+  .form-btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  .datePicker .ant-calendar-picker-input {
+    width: 200px;
+  }
+}

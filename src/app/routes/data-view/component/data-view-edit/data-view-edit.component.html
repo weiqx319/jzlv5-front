@@ -1,0 +1,198 @@
+<div class="conDiv">
+  <!--左边菜单start-->
+  <div class="flexLeft w200 pull-left pt16 pl30 pr20">
+    <ng-container *ngIf="newMenuList.length >  1">
+      <ul>
+        <li *ngFor="let item of newMenuList" [ngClass]="{menuSle:item.key===currentSelectedMenu , disable: !item.is_show && parentData['editParameter'] !== 'all'}" (click)="changeSelectedMenu(item)">
+          {{item.name}}
+        </li>
+      </ul>
+    </ng-container>
+  </div>
+  <!--左边菜单end-->
+  <div class="conSon ml200">
+    <div class="mb400">
+      <!--编辑维度-->
+      <app-edit-dimension *ngIf="currentSelectedMenu === 'editing_dimension'"
+                          [parentData]="parentData"
+                          [publisher_model]="publisher_model"
+                          [summaryType]="summaryType"
+                          [is_check]="is_check"
+                          [stringIdArray]="stringIdArray"
+                          (is_saving)="save_state($event)"></app-edit-dimension>
+
+      <!--出价编辑-->
+      <app-editing-price-modal *ngIf="currentSelectedMenu === 'editing_price'"
+                          [parentData]="parentData"
+                          [summaryType]="summaryType"
+                          [is_check]="is_check"
+                          [stringIdArray]="stringIdArray"
+                          [publisher_model]="publisher_model"
+                          (is_saving)="save_state($event)"></app-editing-price-modal>
+
+      <!--编辑优化-->
+      <app-edit-optimization *ngIf="currentSelectedMenu === 'editing_optimization'"
+                             [parentData]="parentData"
+                             [summaryType]="summaryType"
+                             [is_check]="is_check"
+                             [idsArray]="idsArray"
+                             [publisher_model]="publisher_model"
+                             (is_adjustment_words)="getAdjustmentWordsState($event)"
+                             (is_saving)="save_state($event)"></app-edit-optimization>
+      <!--编辑优化-->
+      <app-edit-folder *ngIf="currentSelectedMenu === 'editing_folder'"
+                             [parentData]="parentData"
+                             [summaryType]="summaryType"
+                             [is_check]="is_check"
+                             [idsArray]="idsArray"
+                             [publisher_model]="publisher_model"
+                             (is_adjustment_words)="getAdjustmentWordsState($event)"
+                             (is_saving)="save_state($event)"></app-edit-folder>
+
+      <!--推广设置-->
+      <app-edit-extension *ngIf="currentSelectedMenu === 'extension_setting'"
+                          [parentData]="parentData"
+                          [summaryType]="summaryType"
+                          [is_check]="is_check"
+                          [stringIdArray]="stringIdArray"
+                          [publisher_model]="publisher_model"
+                          (is_saving)="save_state($event)"></app-edit-extension>
+
+      <!--单个编辑关键词-->
+      <app-edit-keyword-single-modal *ngIf="currentSelectedMenu === 'editing_keyword2'"
+                               [parentData]="parentData"
+                               [summaryType]="summaryType"
+                               [is_check]="is_check"
+                               [stringIdArray]="stringIdArray"
+                               [publisher_model]="publisher_model"
+                               (is_saving)="save_state($event)"></app-edit-keyword-single-modal>
+
+      <!--批量编辑关键词-->
+      <app-edit-keyword-batch-modal *ngIf="currentSelectedMenu === 'batch_editing_keyword'"
+                              [parentData]="parentData"
+                              [summaryType]="summaryType"
+                              [is_check]="is_check"
+                              [stringIdArray]="stringIdArray"
+                              [publisher_model]="publisher_model"
+                              (is_saving)="save_state($event)"></app-edit-keyword-batch-modal>
+
+      <!--单个编辑单元-->
+      <app-edit-group-single *ngIf="currentSelectedMenu === 'editing_unit'"
+                            [parentData]="parentData"
+                            [summaryType]="summaryType"
+                            [is_check]="is_check"
+                            [stringIdArray]="stringIdArray"
+                            [publisher_model]="publisher_model"
+                            (is_saving)="save_state($event)"></app-edit-group-single>
+
+      <!--批量编辑单元-->
+      <app-edit-group-batch *ngIf="currentSelectedMenu === 'batch_editing_unit'"
+                             [parentData]="parentData"
+                             [summaryType]="summaryType"
+                             [is_check]="is_check"
+                             [stringIdArray]="stringIdArray"
+                             [publisher_model]="publisher_model"
+                             (is_saving)="save_state($event)"></app-edit-group-batch>
+
+      <!--单个编辑计划-->
+      <app-edit-campaign-single *ngIf="currentSelectedMenu === 'campaign_edit_setting'"
+                            [parentData]="parentData"
+                            [summaryType]="summaryType"
+                            [is_check]="is_check"
+                            [stringIdArray]="stringIdArray"
+                            [publisher_model]="publisher_model"
+                            (is_saving)="save_state($event)"></app-edit-campaign-single>
+
+      <!--批量编辑计划-->
+      <app-edit-campaign-batch *ngIf="currentSelectedMenu === 'batch_campaign_basics_setting'"
+                                [parentData]="parentData"
+                                [summaryType]="summaryType"
+                                [is_check]="is_check"
+                                [stringIdArray]="stringIdArray"
+                                [publisher_model]="publisher_model"
+                                (is_saving)="save_state($event)"></app-edit-campaign-batch>
+
+      <!--单个编辑账户-->
+      <app-edit-account-single *ngIf="currentSelectedMenu === 'account_editing'"
+                               [parentData]="parentData"
+                               [summaryType]="summaryType"
+                               [is_check]="is_check"
+                               [stringIdArray]="stringIdArray"
+                               [publisher_model]="publisher_model"
+                               (is_saving)="save_state($event)"></app-edit-account-single>
+
+
+      <!--批量编辑账户-->
+      <app-edit-account-batch *ngIf="currentSelectedMenu === 'batch_account_setting'"
+                               [parentData]="parentData"
+                               [summaryType]="summaryType"
+                               [is_check]="is_check"
+                               [stringIdArray]="stringIdArray"
+                               [publisher_model]="publisher_model"
+                               (is_saving)="save_state($event)"></app-edit-account-batch>
+
+      <!--单个编辑创意-->
+      <app-edit-creative-single *ngIf="currentSelectedMenu === 'editing_Originality'"
+                              [parentData]="parentData"
+                              [summaryType]="summaryType"
+                              [is_check]="is_check"
+                              [stringIdArray]="stringIdArray"
+                              [publisher_model]="publisher_model"
+                              (is_saving)="save_state($event)"></app-edit-creative-single>
+
+      <!--批量编辑创意-->
+      <app-edit-creative-batch *ngIf="currentSelectedMenu === 'batch_editing_Originality'"
+                                [parentData]="parentData"
+                                [summaryType]="summaryType"
+                                [is_check]="is_check"
+                                [stringIdArray]="stringIdArray"
+                                [publisher_model]="publisher_model"
+                                (is_saving)="save_state($event)"></app-edit-creative-batch>
+
+      <!--编辑自动监控-->
+      <app-edit-automatic-monitoring *ngIf="currentSelectedMenu === 'automatic_monitoring_setting'"
+                               [parentData]="parentData"
+                               [summaryType]="summaryType"
+                               [is_check]="is_check"
+                               [idsArray]="idsArray"
+                               [publisher_model]="publisher_model"
+                               [monitor_status] = 'monitor_status'
+                               (is_saving)="save_state($event)"></app-edit-automatic-monitoring>
+      <app-history-setting *ngIf="currentSelectedMenu === 'history_setting'" [parentData]="parentData" [summaryType]="summaryType"></app-history-setting>
+    </div>
+  </div>
+</div>
+<!--footer start-->
+<div class="flexFooter border" *ngIf="currentSelectedMenu !== 'history_setting'">
+  <button nz-button [nzType]="'default'" (click)="_cancel()" class="mr10">
+    <span>取消</span>
+  </button>
+  <ng-container *ngIf="(currentSelectedMenu !=='editing_optimization' || !is_adjustment_words) && currentSelectedMenu !== 'automatic_monitoring_setting'">
+    <button nz-button [nzLoading]="saveing" [nzType]="'primary'" (click)="_save()">
+      <span>保存</span>
+    </button>
+  </ng-container>
+  <ng-container *ngIf="currentSelectedMenu ==='editing_optimization' && is_adjustment_words">
+    <button nz-button [nzLoading]="saveing" [nzType]="'primary'" (click)="_save()">
+      <span>执行</span>
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="currentSelectedMenu ==='automatic_monitoring_setting'">
+    <button nz-button [nzLoading]="saveing" [nzType]="'primary'" (click)="_save('100')" class="mr10">
+      <span>保存设置</span>
+    </button>
+  </ng-container>
+  <ng-container *ngIf="currentSelectedMenu ==='automatic_monitoring_setting'">
+    <button nz-button [nzLoading]="saveing" [nzType]="'primary'" (click)="_save('200')">
+      <span>立即监控</span>
+    </button>
+  </ng-container>
+
+</div>
+<div class="flexFooter border" *ngIf="currentSelectedMenu === 'history_setting'">
+  <button nz-button [nzType]="'default'" (click)="_cancel()" class="mr10">
+    <span>返回</span>
+  </button>
+</div>
+<!--footer end-->

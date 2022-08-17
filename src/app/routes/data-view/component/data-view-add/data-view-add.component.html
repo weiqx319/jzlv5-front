@@ -1,0 +1,54 @@
+<div class="conDiv">
+  <!--左边菜单start-->
+  <div class="flexLeft w200 pull-left pt16 pl30 pr20">
+    <ng-container *ngIf="newMenuList.length >  1">
+      <ul>
+        <li *ngFor="let item of newMenuList" [ngClass]="{menuSle:item.key===currentSelectedMenu, disable: !item.is_show}" (click)="changeSelectedMenu(item)">{{item.name}}</li>
+      </ul>
+    </ng-container>
+  </div>
+  <!--左边菜单end-->
+  <div class="conSon ml200">
+    <div class="mb400">
+      <!--添加单个关键词-->
+      <app-add-keyword *ngIf="currentSelectedMenu === 'add_single_keyword'"
+                       [summaryType]="summaryType"
+                       [is_check]="is_check"
+                       (is_saving)="save_state($event)"></app-add-keyword>
+      <!--添加单个单元-->
+      <app-add-group *ngIf="currentSelectedMenu === 'add_single_unit'"
+                     [summaryType]="summaryType"
+                     [is_check]="is_check"
+                     (is_saving)="save_state($event)"></app-add-group>
+
+      <!--添加单个计划-->
+      <app-add-campaign *ngIf="currentSelectedMenu === 'add_single_plan'"
+                        [summaryType]="summaryType"
+                        [is_check]="is_check"
+                        (is_saving)="save_state($event)"></app-add-campaign>
+
+      <!--添加单个创意-->
+      <app-add-creative *ngIf="currentSelectedMenu === 'add_Originality'"
+                        [summaryType]="summaryType"
+                        [is_check]="is_check"
+                        (is_saving)="save_state($event)"></app-add-creative>
+
+      <!--批量添加视图-->
+      <app-batch-add-view *ngIf="currentSelectedMenu === 'batch_add_updates_keyword' || currentSelectedMenu === 'batch_add_Originality' || currentSelectedMenu === 'batch_add_updates_unit'  || currentSelectedMenu === 'batch_addition_Keyword'"
+                        [summaryType]="summaryType"
+                        [is_check]="is_check"
+                        (is_saving)="save_state($event)"></app-batch-add-view>
+    </div>
+
+  </div>
+</div>
+<!--footer start-->
+<div class="flexFooter border">
+  <button nz-button [nzType]="'default'" (click)="_cancel()" class="mr10">
+    <span>取消</span>
+  </button>
+  <button nz-button [nzLoading]="saveing" [nzType]="'primary'" (click)="_save()">
+    <span>保存</span>
+  </button>
+</div>
+<!--footer end-->

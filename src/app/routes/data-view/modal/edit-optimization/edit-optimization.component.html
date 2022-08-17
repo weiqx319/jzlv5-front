@@ -1,0 +1,777 @@
+<!--优化设置-->
+<div>
+  <div *ngIf="parentData.selected_data.length === 1">
+    <h3 *ngIf="summaryType==='keyword'">编辑: <span>{{showSingleKeywordData['pub_keyword']}}</span>（属于:{{publisherOption[showSingleKeywordData['publisher_id']]}}/{{showSingleKeywordData['pub_account_name']}}、{{showSingleKeywordData['pub_campaign_name']}}、{{showSingleKeywordData['pub_adgroup_name']}}）</h3>
+    <h3 *ngIf="summaryType==='campaign'">编辑: <span>{{campaignInfo['pub_campaign_name']}}</span>（属于:{{publisherOption[campaignInfo['publisher_id']]}}/{{campaignInfo['pub_account_name']}}）</h3>
+    <h3 *ngIf="summaryType==='adgroup'">编辑: <span>{{groupData['pub_adgroup_name']}}</span>（属于:{{publisherOption[groupData['publisher_id']]}}/{{groupData['pub_account_name']}}、{{groupData['pub_campaign_name']}}）</h3>
+    <h3 *ngIf="summaryType==='account'">编辑: <span>{{accountInfo['pub_account_name']}}</span>（属于:{{publisherOption[accountInfo['publisher_id']]}}）</h3>
+  </div>
+  <h3 *ngIf="parentData.selected_data.length > 1">批量编辑</h3>
+  <!--媒体-->
+  <div class="inpRow mt10" *ngIf="parentData.selected_data.length >1">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w106 mr8 inline-block">
+        <span>选择媒体:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left noCheckbox">
+      <div *ngIf="publisher_model['publisherCount'] > 1 ">
+        <nz-select style="width: 150px;"
+                   [(ngModel)]="optimizationData['publisher_id']"
+                   (ngModelChange)="change_optimization_publisher(optimizationData['publisher_id'])"
+                   nzPlaceHolder="请选择媒体"
+                   [nzSize]="'small'">
+          <nz-option
+            *ngFor="let option of publisher_model['publisher_array']"
+            [nzLabel]="option.name"
+            [nzValue]="option.value">
+          </nz-option>
+        </nz-select>
+        <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!optimizationData['publisher_id']"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择媒体</span>
+        <p class="mt10" *ngIf="summaryType==='campaign'">注:批量编辑的计划包含了多个媒体，请选择对每个媒体进行优化设置</p>
+        <p class="mt10" *ngIf="summaryType==='account'">注:批量编辑的账户包含了多个媒体，请选择对每个媒体进行优化设置</p>
+      </div>
+      <div *ngIf="publisher_model['publisherCount'] === 1 ">
+        <span>{{publisher_model['publisher_array'][0]['name']}}</span>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--单元/关键词 独有的优化类型-->
+  <div class="inpRow mt10" *ngIf="summaryType === 'adgroup' || summaryType === 'keyword'">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w106 mr8 inline-block">
+        <span>优化类型:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left noCheckbox ">
+      <div>
+        <p>排名优化</p>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--计划/账户 独有的优化类型-->
+  <div class="inpRow mt10" *ngIf="summaryType === 'campaign' || summaryType === 'account'">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w106 mr8 inline-block">
+        <span>优化类型:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left noCheckbox ">
+      <div>
+        <nz-radio-group [(ngModel)]="optimizationData.optimization_method" (ngModelChange)="chengeMethod()">
+          <label class="mr20"
+                 nz-radio
+                 [nzValue]="1">
+            <span>排名优化</span>
+          </label>
+<!--          <label nz-radio-->
+<!--                 [nzValue]="2">-->
+<!--            <span>效果优化</span>-->
+<!--          </label>-->
+        </nz-radio-group>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--选择优化组-->
+  <div class="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w106 mr8 inline-block">
+        <span>选择优化组:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs noCheckbox">
+      <nz-radio-group [(ngModel)]="optimizationData.optimization_group.action">
+        <div>
+          <div class="h20 pull-left">
+            <label class="mr0" nz-radio
+                   [nzValue]="2">
+              <span>新建优化组:</span>
+            </label>
+          </div>
+          <input nz-input style="width: 200px;"
+                 [(ngModel)]="optimizationData.optimization_group.optimization_group_name"
+                 disabled="{{optimizationData.optimization_group.action !== 2}}"
+                 placeholder="输入优化组名称"
+                 [nzSize]="'small'">
+          <i nz-icon nzType="question-circle" nzTheme="outline"
+             nz-popover
+             [nzPopoverContent]="optimizationGroupTemplate"
+             nzPopoverPlacement="right"
+             class="ml8"
+             style="color: #f09200"></i>
+          <ng-container *ngIf="optimizationData.optimization_group.action === 2">
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!optimizationData.optimization_group.optimization_group_name"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请输入优化组名称</span>
+          </ng-container>
+        </div>
+        <ng-template #optimizationGroupTemplate>
+          <div style="max-width:304px;">
+            <p>每个优化组可加入10000个关键词，如您选择的关键词超过10000，将会按照关键词id提取前10000个关键词加入优化组</p>
+          </div>
+        </ng-template>
+
+        <div class="mt10">
+          <div class="h20 pull-left">
+            <label class="mr0"
+                   nz-radio
+                   [nzValue]="1">
+              <span>加入优化组:</span>
+            </label>
+          </div>
+          <nz-select style="width: 200px;"
+                     [nzSize]="'small'"
+                     nzPlaceHolder="请选择优化组"
+                     [nzDisabled]="optimizationData.optimization_group.action !== 1"
+                     [(ngModel)]="optimizationData.optimization_group['optimization_group_id']">
+            <nz-option *ngFor="let option of optimization_group_model"
+                       nzCustomContent
+                       [nzDisabled]="option.detail_count*1 === 10000"
+                       [nzLabel]="option.optimization_name"
+                       [nzValue]="option.optimization_id">
+              <i class="pull-right" style="line-height: 1.5">{{option.detail_count}}</i>{{option.optimization_name}} </nz-option>
+          </nz-select>
+          <i nz-icon nzType="question-circle" nzTheme="outline"
+             nz-popover
+             [nzPopoverContent]="optimizationGroupTemplate"
+             nzPopoverPlacement="right"
+             class="ml8"
+             style="color: #f09200"></i>
+          <ng-container *ngIf="optimizationData.optimization_group.action === 1">
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!optimizationData.optimization_group['optimization_group_id']"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择优化组</span>
+          </ng-container>
+        </div>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class ="inpRow mt10">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w106 mr8 inline-block">
+        <span></span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs noCheckbox">
+      <div class="mt10" style="position: relative;">
+        <div class="pull-left">
+          <span >注:1，若所选关键词已经存在其他排名优化组中，是否迁移到本优化组:</span>
+        </div>
+        <nz-radio-group class="pull-left ml14" [(ngModel)]="optimizationData.optimization_group.is_skip">
+          <label class="mr20"
+                 nz-radio
+                 [nzValue]="0">
+            <span>迁移</span>
+          </label>
+          <label nz-radio
+                 [nzValue]="1">
+            <span>跳过</span>
+          </label>
+        </nz-radio-group>
+        <div class="clear"></div>
+      </div>
+<!--      <p class="mt5 tishi">2，若所选关键词已经存在效果优化组中，关键词不能被迁移</p>-->
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="inpRow mt10" *ngIf="optimizationData.optimization_method === 1">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w106 mr8 inline-block">
+        <span>使用优化设置模版:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <nz-select style="width: 142px;"
+                 [(ngModel)]="optimizationData.template"
+                 (ngModelChange)= 'changeTpl(optimizationData.template)'
+                 nzPlaceHolder="选择模版"
+                 [nzSize]="'small'">
+        <nz-option
+          *ngFor="let option of templateList"
+          [nzLabel]="option.tpl_name"
+          [nzValue]="option">
+        </nz-option>
+      </nz-select>
+
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--调词模式-->
+  <div class="cantClick" *ngIf="optimizationData.optimization_method === 1" [ngClass]="{cantClick:!optimizationData.adjustment_words_type.is_edit}">
+    <!--调词模式-->
+    <div class="inpRow mt20">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w112 inline-block" nz-checkbox [(ngModel)]="optimizationData.adjustment_words_type.is_edit" (ngModelChange)="chengeAdjustmentWords($event)">
+          <span>调词模式:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left">
+        <nz-radio-group [(ngModel)]="optimizationData.adjustment_words_type.action" [nzDisabled]="!optimizationData.adjustment_words_type.is_edit">
+          <label class="mr20" nz-radio [nzValue]="1">
+            <span>单次</span>
+          </label>
+          <label nz-radio [nzValue]="2">
+            <span>循环</span>
+          </label>
+        </nz-radio-group>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div *ngIf="optimizationData.adjustment_words_type.action === 2 " class="inpRow mt10">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w106 mr8 inline-block">
+          <span>执行日期:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left noCheckbox">
+        <div>
+          <nz-date-picker style="width: 147px;" [nzAllowClear]="false" [(ngModel)]="optimizationData.start_time"  (ngModelChange)="onChangeStart($event)" [nzDisabledDate]="disabledDate" [nzDisabled]="!optimizationData.adjustment_words_type.is_edit" [nzSize]="'small'" nzPlaceHolder="开始时间"></nz-date-picker>
+          <span class="mr5">-</span>
+          <nz-date-picker style="width: 147px;" [nzAllowClear]="false" [(ngModel)]="optimizationData.end_time" (ngModelChange)="onChangeEnd($event)" [nzDisabledDate]="disabledDate" [nzDisabled]="!optimizationData.adjustment_words_type.is_edit" [nzSize]="'small'" nzPlaceHolder="结束时间"></nz-date-picker>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div *ngIf="optimizationData.adjustment_words_type.action === 2 " class="inpRow mt10">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w106 mr8 inline-block">
+          <span>调词间隔:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left noCheckbox">
+        <nz-select style="width: 100px;"
+                   [nzDisabled]="!optimizationData.adjustment_words_type.is_edit"
+                   [(ngModel)]="optimizationData['interval_word']"
+                   [nzSize]="'small'">
+          <nz-option [nzValue]="5" [nzLabel]="5"></nz-option>
+          <nz-option [nzValue]="10" [nzLabel]="10"></nz-option>
+          <nz-option [nzValue]="20" [nzLabel]="20"></nz-option>
+          <nz-option [nzValue]="30" [nzLabel]="30"></nz-option>
+          <nz-option [nzValue]="60" [nzLabel]="60"></nz-option>
+          <nz-option [nzValue]="120" [nzLabel]="120"></nz-option>
+        </nz-select>
+        <span class="ml5">min（*固定竞价资源，请合理使用）</span>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="inpRow mt10">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w106 mr8 inline-block">
+          <span>
+            <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'如果您在媒体端设置了地域系数，最终在该地域参与竞价的价格为出价*地域系数。'" [nzTooltipPlacement]="'topLeft'" class="ml5" style="color: #f09200"></i>
+          竞价地域:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left noCheckbox">
+        <div>
+          <nz-select style="width: 100px;"
+                     [(ngModel)]="optimizationData['province']"
+                     [nzDisabled]="!optimizationData.adjustment_words_type.is_edit || optimizationData.ranking_region_default"
+                     (ngModelChange)= "changeProvince(optimizationData['province'])"
+                     nzPlaceHolder="请选择省"
+                     [nzSize]="'small'">
+            <nz-option
+              *ngFor="let option of provinceList"
+              [nzLabel]="option.name"
+              [nzValue]="option.code">
+            </nz-option>
+          </nz-select>
+          <nz-select class="ml5" *ngIf="cityList.length > 1" style="width: 100px;"
+                     [(ngModel)]="optimizationData['city']"
+                     [nzDisabled]="!optimizationData.adjustment_words_type.is_edit || optimizationData.ranking_region_default"
+                     nzPlaceHolder="请选择市"
+                     [nzSize]="'small'">
+            <nz-option
+              *ngFor="let option of cityList"
+              [nzLabel]="option.name"
+              [nzValue]="option.code">
+            </nz-option>
+          </nz-select>
+          <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'以竞价主地域的实时排名作为该计划下的所有地域的排名基准。'" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+          <label class="titleLa ml12 inline-block" nz-checkbox  [nzDisabled]="!optimizationData.adjustment_words_type.is_edit" [(ngModel)]="optimizationData.ranking_region_default">
+            <span [ngClass]="{c8c8c8:!optimizationData.adjustment_words_type.is_edit}">使用默认地域</span>
+          </label>
+          <ng-container *ngIf="optimizationData.adjustment_words_type.is_edit  && !optimizationData.ranking_region_default">
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!optimizationData['province']"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择省</span>
+          </ng-container>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="inpRow mt10">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w106 mr8 inline-block">
+          <span>运行等级:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left noCheckbox">
+        <nz-radio-group
+          [(ngModel)]="optimizationData.running_grade"
+          [nzDisabled]="!optimizationData.adjustment_words_type.is_edit">
+          <div class="gradeDiv" [ngClass]="{grade_no_click:!optimizationData.adjustment_words_type.is_edit}">
+            <div>
+              <label class="mr20"
+                     nz-radio
+                     [nzValue]="1">
+                <span class="spanText">低</span>
+              </label>
+            </div>
+            <div class="modelDiv">
+              <label nz-radio
+                     [nzValue]="2">
+                <span class="spanText">中</span>
+              </label>
+            </div>
+            <div class="lastDiv">
+              <label nz-radio
+                     [nzValue]="3">
+                <span class="spanText">高</span>
+              </label>
+            </div>
+          </div>
+        </nz-radio-group>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <!--调词模式为单次时的 约束条件-->
+    <div *ngIf="optimizationData.adjustment_words_type.action === 1 " class="inpRow mt5">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w106 mr8 inline-block">
+          <span>约束条件:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left noCheckbox">
+        <div class="optimization">
+          <div class="pull-left h20">
+            <label class="titleLa mr5 inline-block">
+              <span>目标排名:</span>
+            </label>
+          </div>
+          <div class="pull-left">
+            <nz-select class="mr5" style="width:100px;"
+                       [nzDisabled]="!optimizationData.adjustment_words_type.is_edit"
+                       [(ngModel)]="optimizationData.constraint_condition_sigle['device']"
+                       (ngModelChange)="deviceChange(optimizationData.constraint_condition_sigle['device'])"
+                       [nzPlaceHolder]="'请选择'"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of deviceArray"
+                [nzLabel]="option"
+                [nzValue]="option">
+              </nz-option>
+            </nz-select>
+            <nz-select class="mr5" style="width: 70px;" *ngIf="(optimizationData['publisher_id'] && optimizationData['publisher_id'] * 1 === 4) && optimizationData.constraint_condition_sigle.device === 'wap'"
+                       [(ngModel)]="optimizationData.constraint_condition_sigle['device_os']"
+                       [nzSize]="'small'">
+              <nz-option [nzValue]="1" [nzLabel]="'安卓'"></nz-option>
+              <nz-option [nzValue]="2" [nzLabel]="'ios'"></nz-option>
+            </nz-select>
+            <nz-select class="mr5" style="width:70px;"
+                       [nzDisabled]="!optimizationData.adjustment_words_type.is_edit"
+                       [(ngModel)]="optimizationData.constraint_condition_sigle['ranking_left']"
+                       nzPlaceHolder="请选择"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of ranking"
+                [nzLabel]="option.name"
+                [nzValue]="option.id">
+              </nz-option>
+            </nz-select>
+            <nz-select class="mr5" style="width:70px;"
+                       [nzDisabled]="!optimizationData.adjustment_words_type.is_edit"
+                       [(ngModel)]="optimizationData.constraint_condition_sigle['ranking_right']"
+                       nzPlaceHolder="请选择"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of ranking"
+                [nzLabel]="option.name"
+                [nzValue]="option.id">
+              </nz-option>
+            </nz-select>
+             <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'如果您在媒体段设置了pc优先，但选择竞wap端的排名，您在wap端参与竞价的价格为当前出价*移动出价比例，此价格未在此显示。如果您在媒体段设置了wap优先，但选择竞pc端的排名，您在pc端参与竞价的价格为当前出价*计算机出价比例，此价格未在此显示。'" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="optimization mt10">
+          <label class="titleLa mr5 inline-block pull-left">
+            <span>出价范围:</span>
+          </label>
+          <div class="pull-left">
+            <nz-radio-group [(ngModel)]="optimizationData.constraint_condition_sigle.price_type"  [nzDisabled]="!optimizationData.adjustment_words_type.is_edit">
+              <div>
+                <div class="pull-left">
+                  <label class="w20 mr0" nz-radio [nzValue]="1"></label>
+                </div>
+                <div class="pull-left">
+                  <span class="mr5">当前出价</span>
+                  <nz-input-number
+                    style="width: 70px;"
+                    class="mr5"
+                    [(ngModel)]="optimizationData.constraint_condition_sigle['price_rate_min']"
+                    [nzDisabled]="!optimizationData.adjustment_words_type.is_edit"
+                    [nzStep]="0.1"
+                    [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">倍（小）到</span>
+                  <nz-input-number
+                    style="width: 70px;"
+                    class="mr5"
+                    [(ngModel)]="optimizationData.constraint_condition_sigle['price_rate_max']"
+                    [nzDisabled]="!optimizationData.adjustment_words_type.is_edit"
+                    [nzStep]="0.1"
+                    [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">倍（大），且不超过</span>
+                  <nz-input-number  style="width: 70px;" class="mr5"
+                                    [(ngModel)]="optimizationData.constraint_condition_sigle['price_rate_max_abs']"
+                                    [nzDisabled]="!optimizationData.adjustment_words_type.is_edit"
+                                    [nzStep]="0.1"
+                                    [nzSize]="'small'">
+                  </nz-input-number>
+                  <span>元</span>
+                </div>
+                <div class="clear"></div>
+              </div>
+              <div class="mt10">
+                <div class="pull-left">
+                  <label class="w20 mr0" nz-radio [nzValue]="2"></label>
+                </div>
+                <div class="pull-left">
+                  <nz-input-number
+                    style="width: 70px;"
+                    class="mr5"
+                    [(ngModel)]="optimizationData.constraint_condition_sigle['price_left']"
+                    [nzDisabled]="!optimizationData.adjustment_words_type.is_edit"
+                    [nzStep]="0.1"
+                    [nzSize]="'small'">
+                  </nz-input-number>
+                  <span class="mr5">元（小）到</span>
+                  <nz-input-number class="mr5"
+                                   style="width: 70px;"
+                                   [(ngModel)]="optimizationData.constraint_condition_sigle['price_right']"
+                                   [nzDisabled]="!optimizationData.adjustment_words_type.is_edit"
+                                   [nzStep]="0.1"
+                                   [nzSize]="'small'">
+                  </nz-input-number>
+                  <span>元（大）</span>
+                </div>
+                <div class="clear"></div>
+              </div>
+            </nz-radio-group>
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <!--调词模式为循环时的 约束条件-->
+    <ng-container *ngIf="optimizationData['publisher_id']">
+      <div *ngIf="optimizationData.adjustment_words_type.action === 2" style="padding-left: 34px;">
+        <app-constraint-condition-view
+          [publisher_id]="optimizationData['publisher_id'] * 1"
+          [parentSelect]="[1]"
+          (constraintArray)="getConstraintArray($event)"
+          [showParentConstraintData]="optimizationData.constraint_condition_loop"
+          [is_edit] = "optimizationData.adjustment_words_type.is_edit">
+        </app-constraint-condition-view>
+      </div>
+    </ng-container>
+
+  </div>
+  <p class="mt14" *ngIf="iswraing" style="color: red;">{{tishi}}</p>
+  <!--计划/账户 优化独有的 字段-->
+  <ng-container *ngIf="optimizationData.optimization_method === 2">
+    <div class="mt20">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa inline-block" nz-checkbox [(ngModel)]="optimizationData.price_step_setting.is_edit">
+          <span [ngClass]="{c8c8c8:!optimizationData.price_step_setting.is_edit}">出价和步长设置:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left">
+        <div class="inpRow">
+          <div class="inpRow_left pull-left">
+            <label class="titleLa mr8 inline-block">
+              <span [ngClass]="{c8c8c8:!optimizationData.price_step_setting.is_edit}">最高出价:</span>
+            </label>
+          </div>
+          <div class="inpRow_right pull-left hasInputs hasInput">
+            <nz-input-number style="width: 130px;"
+                             [nzDisabled]="!optimizationData.price_step_setting.is_edit"
+                             [(ngModel)]="optimizationData.price_step_setting['max_price']"
+                             [nzStep]="0.1"
+                             [nzSize]="'small'">
+            </nz-input-number>
+            <span style="color: #404040" [ngClass]="{c8c8c8:!optimizationData.price_step_setting.is_edit}" class="ml5">元</span>
+            <ng-container *ngIf="optimizationData.price_step_setting.is_edit">
+                  <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!optimizationData.price_step_setting['max_price']">
+                    <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>最高出价不能为空</span>
+            </ng-container>
+
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="inpRow mt10">
+          <div class="inpRow_left pull-left">
+            <label class="titleLa mr8 inline-block">
+              <span [ngClass]="{c8c8c8:!optimizationData.price_step_setting.is_edit}">最低出价:</span>
+            </label>
+          </div>
+          <div class="inpRow_right pull-left hasInputs hasInput">
+            <nz-input-number style="width: 130px;"
+                             [nzDisabled]="!optimizationData.price_step_setting.is_edit"
+                             [(ngModel)]="optimizationData.price_step_setting['min_price']"
+                             [nzStep]="0.1"
+                             [nzSize]="'small'">
+            </nz-input-number>
+            <span style="color: #404040" [ngClass]="{c8c8c8:!optimizationData.price_step_setting.is_edit}" class="ml5">元</span>
+            <ng-container *ngIf="optimizationData.price_step_setting.is_edit">
+                  <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!optimizationData.price_step_setting['min_price']">
+                    <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>最低出价不能为空</span>
+            </ng-container>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="inpRow mt10">
+          <div class="inpRow_left pull-left">
+            <label class="titleLa mr8 inline-block">
+              <span [ngClass]="{c8c8c8:!optimizationData.price_step_setting.is_edit}">调价步长:</span>
+            </label>
+          </div>
+          <div class="inpRow_right pull-left hasInputs hasInput">
+            <span class="mr8" style="color: #404040" [ngClass]="{c8c8c8:!optimizationData.price_step_setting.is_edit}">原价的 +/-</span>
+            <nz-input-number style="width: 65px;"
+                             [nzDisabled]="!optimizationData.price_step_setting.is_edit"
+                             [(ngModel)]="optimizationData.price_step_setting['price_step_rate']"
+                             [nzStep]="0.1"
+                             [nzSize]="'small'">
+            </nz-input-number> <span style="color: #404040" [ngClass]="{c8c8c8:!optimizationData.price_step_setting.is_edit}" class="ml5">%</span>
+            <ng-container *ngIf="optimizationData.price_step_setting.is_edit">
+                  <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!optimizationData.price_step_setting['price_step_rate']">
+                    <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>调价步长不能为空</span>
+            </ng-container>
+          </div>
+          <div class="clear"></div>
+        </div>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div class="mt20"  *ngIf="optimizationData.optimization_group.action === 2">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa inline-block" nz-checkbox [(ngModel)]="optimizationData.target_condition_setting.is_edit">
+          <span [ngClass]="{c8c8c8:!optimizationData.target_condition_setting.is_edit}">目标及条件设置:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left">
+        <div class="inpRow">
+          <div class="inpRow_left pull-left">
+            <label class="titleLa inline-block mr8">
+              <span [ngClass]="{c8c8c8:!optimizationData.target_condition_setting.is_edit}">优化目标:</span>
+            </label>
+          </div>
+          <div class="inpRow_right pull-left" >
+            <nz-select style="width: 130px;"
+                       [nzDisabled]="!optimizationData.target_condition_setting.is_edit"
+                       [(ngModel)]="optimizationData.target_condition_setting.optimization_target"
+                       (ngModelChange)="changeOptimizationGoal()"
+                       nzPlaceHolder="不设置"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of optimizationGoal"
+                [nzLabel]="option.name"
+                [nzValue]="option.value">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="inpRow mt10">
+          <div class="inpRow_left pull-left">
+            <label class="titleLa inline-block mr8">
+              <span [ngClass]="{c8c8c8:!optimizationData.target_condition_setting.is_edit}">约束条件:</span>
+            </label>
+          </div>
+          <div class="inpRow_right pull-left" >
+            <nz-select style="width: 130px;"
+                       [(ngModel)]="optimizationData.target_condition_setting.constraint_condition['condition_key']"
+                       [nzDisabled]="!optimizationData.target_condition_setting.is_edit"
+                       nzPlaceHolder="不设置"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of condition[optimizationData.target_condition_setting.optimization_target]"
+                [nzLabel]="option.name"
+                [nzValue]="option.value">
+              </nz-option>
+            </nz-select>
+            <nz-input-number
+              *ngIf="optimizationData.target_condition_setting.constraint_condition['condition_key'] !== 1"
+              class="ml5"
+              [(ngModel)]="optimizationData.target_condition_setting['constraint_condition']['condition_value']"
+              [nzDisabled]="!optimizationData.target_condition_setting.is_edit"
+              [nzStep]="0.1"
+              [nzSize]="'small'">
+            </nz-input-number>
+            <span class="ml5" style="color: #404040"
+                  *ngIf="optimizationData.target_condition_setting.constraint_condition['condition_key'] !== 1"
+                  [ngClass]="{c8c8c8:!optimizationData.target_condition_setting.is_edit}">元</span>
+            <ng-container *ngIf="optimizationData.target_condition_setting.is_edit && optimizationData.target_condition_setting.constraint_condition['condition_key'] !== 1">
+                  <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!optimizationData.target_condition_setting['constraint_condition']['condition_value']">
+                    <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>价格不能为空</span>
+            </ng-container>
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </ng-container>
+  <!--高级设置（排名优化）-->
+  <ng-container *ngIf="optimizationData.optimization_method === 1">
+    <div class="inpRow mt10" *ngIf="optimizationData.optimization_group.action === 2 ">
+      <div class="inpRow_left pull-left">
+        <label class="titleLa w112 inline-block" nz-checkbox [(ngModel)]="optimizationData.optimization_setting_is_edit">
+          <span [ngClass]="{c8c8c8:!optimizationData.optimization_setting_is_edit}">高级设置:</span>
+        </label>
+      </div>
+      <div class="inpRow_right pull-left">
+        <div *ngIf="optimizationData.optimization_setting_is_edit " class="advancedStting">
+
+          <ng-template #priorTypeTemplate>
+            <div>
+              <p>价格优先：以目标排名下限为目标，开始竞价</p>
+              <p>排名优先：以目标排名上限为目标，开始竞价</p>
+            </div>
+          </ng-template>
+          <div class="mt10">
+            <div class="pull-left mr5">
+              <span class="inline-block w136 text-right">未到达过目标排名:</span>
+            </div>
+            <div class="pull-left">
+              <nz-radio-group [(ngModel)]="optimizationData.optimization_setting.high_price_no_rank['value']">
+                <label class="mr20"
+                       [nzDisabled]=""
+                       nz-radio
+                       [nzValue]="1">
+                  <span>恢复原价</span>
+                  <i nz-icon nzType="question-circle" nzTheme="outline"
+                     nz-popover
+                     [nzPopoverContent]="highPrice1Template"
+                     nzPopoverPlacement="right"
+                     class="ml8"
+                     style="color: #f09200"></i>
+                </label>
+
+                <label class="mr20" nz-radio
+                       [nzDisabled]=""
+                       [nzValue]="2">
+                  <span>保留最优排名</span>
+                  <i nz-icon nzType="question-circle" nzTheme="outline"
+                     nz-popover
+                     [nzPopoverContent]="'到达出价上限未到达目标排名时保留最优排名'"
+                     nzPopoverPlacement="right"
+                     class="ml8"
+                     style="color: #f09200"></i>
+                </label>
+                <label class="mr20"
+                       [nzDisabled]=""
+                       nz-radio
+                       [nzValue]="3">
+                  <span>不恢复原价</span>
+                  <i nz-icon nzType="question-circle" nzTheme="outline"
+                     nz-popover
+                     [nzPopoverContent]="'保留最后一次系统竞价的价格'"
+                     nzPopoverPlacement="right"
+                     class="ml8"
+                     style="color: #f09200"></i>
+                </label>
+
+              </nz-radio-group>
+            </div>
+            <div class="clear"></div>
+          </div>
+
+          <ng-template #highPrice1Template>
+            <div class="w300">
+              <p>1.循环竞价模式：恢复到上一轮调价结束时的价格</p>
+              <p>2.单次竞价模式：恢复到上一次单次调价结束时的价格</p>
+            </div>
+          </ng-template>
+          <ng-template #stableTemplate>
+            <div class="w220">
+              <span>媒体会将两个出价差不多的关键词进行轮流展示，如果要避免这种情况可以考虑在最低出价上增加一定金额稳定排名</span>
+            </div>
+          </ng-template>
+       <!--   <div class="inpRow mt10 ml16">
+            <div class="inpRow_left pull-left">
+              <label class="titleLa inline-block" nz-checkbox
+                     [(ngModel)]="optimizationData.optimization_setting.restore_init_price_low_ratio.is_avaliable">
+                <span>当价格低于原价的</span>
+              </label>
+            </div>
+            <div class="inpRow_right pull-left" >
+              <nz-input-number
+                style="width: 55px;"
+                class="mr5"
+                [(ngModel)]="optimizationData.optimization_setting.restore_init_price_low_ratio['value']"
+                [nzDisabled]="!optimizationData.optimization_setting.restore_init_price_low_ratio.is_avaliable"
+                [nzStep]="0.1"
+                [nzSize]="'small'">
+              </nz-input-number>
+              <span>%，而排名不变时，恢复原价。</span>
+              <ng-container *ngIf="optimizationData.optimization_setting.restore_init_price_low_ratio.is_avaliable">
+                <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!optimizationData.optimization_setting.restore_init_price_low_ratio['value'] || optimizationData.optimization_setting.restore_init_price_low_ratio['value'] <= 0"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>价格不能为空且不能小于0</span>
+              </ng-container>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <div class="inpRow mt10 ml16">
+            <div class="inpRow_left pull-left">
+              <label class="titleLa inline-block" nz-checkbox
+                     [(ngModel)]="optimizationData.optimization_setting.restore_init_price_high_ratio.is_avaliable">
+                <span>当价格高于原价的</span>
+              </label>
+            </div>
+            <div class="inpRow_right pull-left" >
+              <nz-input-number
+                style="width: 55px;"
+                class="mr5"
+                [(ngModel)]="optimizationData.optimization_setting.restore_init_price_high_ratio['value']"
+                [nzDisabled]="!optimizationData.optimization_setting.restore_init_price_high_ratio.is_avaliable"
+                [nzStep]="0.1"
+                [nzSize]="'small'">
+              </nz-input-number>
+              <span>%，而排名不变时，恢复原价。</span>
+              <ng-container *ngIf="optimizationData.optimization_setting.restore_init_price_high_ratio.is_avaliable">
+                <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!optimizationData.optimization_setting.restore_init_price_high_ratio['value'] || optimizationData.optimization_setting.restore_init_price_high_ratio['value'] <= 0"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>价格不能为空且不能小于0</span>
+              </ng-container>
+            </div>
+            <div class="clear"></div>
+          </div>-->
+          <!-- <div class="mt10">
+             <div class="pull-left mr5">
+               <span class="inline-block w136 text-right">循环时段结束时:</span>
+             </div>
+             <div class="pull-left">
+               <nz-radio-group [(ngModel)]="optimizationData.optimization_setting.end['value']">
+                 <label class="mr20"
+                        [nzDisabled]=""
+                        nz-radio
+                        [nzValue]="1">
+                   <span>恢复原价</span>
+                 </label>
+                 <label nz-radio
+                        [nzDisabled]=""
+                        [nzValue]="2">
+                   <span>不恢复原价</span>
+                 </label>
+               </nz-radio-group>
+             </div>
+             <div class="clear"></div>
+           </div>-->
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </ng-container>
+
+</div>

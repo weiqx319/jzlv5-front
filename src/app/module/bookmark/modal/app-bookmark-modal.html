@@ -1,0 +1,27 @@
+<div class="new-dashboard-content">
+  <form class="new-dashboard-content-form" nz-form [formGroup]="validateForm">
+    <nz-form-item class="new-dashboard-content-row">
+      <div class="pull-left">
+        <label [attr.for]="'dashboard_name'">标题:</label>
+      </div>
+      <nz-form-control class="w270 ml8 pull-left">
+        <input nz-input
+          type="text"
+          [nzSize]="'small'"
+          placeholder="请填写标题"
+          [formControlName]="'dashboard_name'"
+          [(ngModel)]="_name">
+
+        <div class='ant-form-item-explain' *ngIf="getFormControl('dashboard_name')?.dirty&&getFormControl('dashboard_name')?.hasError('required')">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请填写标题
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="new-dashboard-footer">
+      <nz-form-control [nzSpan]="24">
+        <button class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelForm()">取消</button>
+        <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="submitting" [disabled]="!_name" (click)="submitForm()">确认</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>

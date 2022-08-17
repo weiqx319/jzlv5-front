@@ -1,0 +1,26 @@
+<div class="lab-row pl20 mb20 w100p">
+  <label><span class="redStart">*</span>推广地域:</label>
+  <div>
+    <nz-radio-group class="ml8 mb10" [nzSize]="'small'"
+                    [(ngModel)]="region_type"
+                    (ngModelChange)="emitData()">
+      <ng-container *ngFor="let option of region_type_sub">
+        <label nz-radio-button [nzValue]="option.value">
+          <span>{{option.label}}</span>
+        </label>
+      </ng-container>
+    </nz-radio-group>
+    <ng-container *ngIf="region_type=== 2">
+      <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.region.is_show">
+        <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+        <span style="color: red;">{{ checkErrorTip.region.tip_text }}</span>
+      </div>
+      <nz-transfer-tree [getParentKey]="true" [target]="region.resultData"
+          (nzChange)="transferTreeChange(region,$event)"
+          [source]="region.sourceData"
+          [canSearch]="true">
+      </nz-transfer-tree>
+    </ng-container>
+  </div>
+</div>
+

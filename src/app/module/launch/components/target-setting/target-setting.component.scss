@@ -1,0 +1,47 @@
+.target-setting-container {
+  .form-content {
+    .lab-row{
+      display: flex;
+      width: 100% !important;
+      margin-bottom: 2px;
+    }
+
+    .lab-row > label:first-child{
+      width: 140px;
+      text-align: right;
+      display: inline-block;
+    }
+  }
+
+  .extensionPeriod {
+    padding: 10px 0 !important;
+    margin-left: 0 !important;
+  }
+
+  .ml148 {
+    margin-left: 148px;
+  }
+
+  .crowd-body-content{
+    height: 300px;
+    overflow: auto;
+    width: 500px;
+    border: 1px solid #eeee;
+    display: inline-block;
+  }
+
+  .target-slider{
+
+    .ant-slider-with-marks {
+      margin-bottom: 48px;
+    }
+
+    ::ng-deep .ant-slider-rail{
+      background-color: #e4e4e4 !important;
+    }
+  }
+}
+
+.ant-dropdown-menu.ant-dropdown-menu-vertical{
+  width: 200px;
+}

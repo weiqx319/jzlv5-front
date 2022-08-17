@@ -1,0 +1,20 @@
+<div class="module-time inline-block ml8" *ngIf="globalTimeFlag">
+  <div class="module-icon brn " [ngClass]="{normal:styleTheme=='normal'}" (click)="changeDate()" title="统一时间范围">
+    <i nz-icon nzType="calendar" nzTheme="outline"></i>
+  </div>
+  <div class="time-content pl8 pr8 bln" [ngClass]="{normal:styleTheme=='normal'}" (click)="changeDate()" title="统一时间范围" >
+    <span>{{timeDesc}}</span>
+  </div>
+
+  <div class="bdn ml5" (click)="clearGlobalTime()" style="color:#0a223a"  title="'取消统一时间'" *ngIf="canClearFlag">
+    <i nz-icon nzType="close" nzTheme="outline"></i>
+  </div>
+</div>
+
+<div class="module-time inline-block" *ngIf="!globalTimeFlag">
+  <div class="module-icon" (click)="changeDate()" title="统一时间范围">
+    <i nz-icon nzType="calendar" nzTheme="outline"></i>
+  </div>
+</div>
+
+

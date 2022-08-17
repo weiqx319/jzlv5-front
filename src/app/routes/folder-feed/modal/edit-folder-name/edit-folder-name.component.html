@@ -1,0 +1,72 @@
+<div class="batch-delay mt8">
+  <div class="delay-contain">
+    <div class="delay-content">
+      <ng-container *ngIf="parentData['selected_data'].length === 1">
+        <div class="delay-item">
+          <div class="pull-left delay-title">分组名称:</div>
+          <div class="pull-left ml8">
+            <div>
+              <input style="width: 226px;" nz-input
+                     [(ngModel)]="folder_name.value"
+                     [nzSize]="'small'">
+              <span class="ml8 wraning" *ngIf="iswraing && !folder_name.value">分组名称不能为空</span>
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="parentData['selected_data'].length > 1">
+        <div class="delay-item">
+          <div class="pull-left delay-title">分组名称:</div>
+          <div class="pull-left ml8">
+            <div>
+              <nz-select class="w100 mr5"
+                         style="width: 100px"
+                         [nzSize]="'small'"
+                         [(ngModel)]="folder_name.action"
+                         [nzPlaceHolder]="'请选择'">
+                <nz-option
+                  *ngFor="let item of action"
+                  [nzLabel]="item.name"
+                  [nzValue]="item.value">
+                </nz-option>
+              </nz-select>
+
+              <ng-container>
+                <input *ngIf="folder_name.action !== 3" style="width: 150px" nz-input
+                       [(ngModel)]="folder_name.value"
+                       [nzSize]="'small'">
+                <span class="ml8 wraning" *ngIf="iswraing && !folder_name.value">内容不能为空</span>
+              </ng-container>
+
+            </div>
+            <ng-container *ngIf="folder_name.action === 3">
+              <div class="mt8">
+                <span>查找：</span>
+                <input style="width: 200px" nz-input
+                       [(ngModel)]="folder_name.search"
+                       [nzSize]="'small'">
+                <span class="ml8 wraning" *ngIf="iswraing && !folder_name.search">内容不能为空</span>
+              </div>
+              <div class="mt8">
+                <span>替换：</span>
+                <input style="width: 200px" nz-input
+                       [(ngModel)]="folder_name.value"
+                       [nzSize]="'small'">
+                <span class="ml8 wraning" *ngIf="iswraing && !folder_name.value">内容不能为空</span>
+
+              </div>
+            </ng-container>
+
+
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div class="delay-footer mt30 mb10">
+      <button class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">取消</button>
+      <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saving"  (click)="sure()">确认</button>
+    </div>
+
+  </div>
+</div>

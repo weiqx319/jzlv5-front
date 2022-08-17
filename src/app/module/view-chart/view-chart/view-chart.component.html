@@ -1,0 +1,113 @@
+<div class="font12 mb8">
+  <div class="lab-row ml30">
+    <label>时间范围:</label>
+    <nz-select
+      class="w100 ml8"
+      [nzSize]="'small'"
+      [(ngModel)]="viewTableData.summary_date"
+      (ngModelChange)="changeSelectedDate($event)"
+    >
+      <ng-container *ngFor="let item of dateLists">
+        <nz-option
+          [nzLabel]="item.name"
+          [nzValue]="item.key"
+          [nzDisabled]="
+            item['disable'] && item['disable'].indexOf(viewTableData.summaryType) !== -1
+          "
+        ></nz-option>
+      </ng-container>
+    </nz-select>
+    <nz-range-picker
+      [(ngModel)]="viewTableData.summary_date_range"
+      [nzDisabledDate]="getDisableDate"
+      [nzFormat]="'yyyy/MM/dd'"
+      [nzDisabled]="viewTableData.summary_date !== 'custom'"
+      [nzAllowClear]="false"
+      [nzSize]="'small'"
+      class="ml8"
+      (ngModelChange)="changeDate()"
+    ></nz-range-picker>
+    <label
+      nz-checkbox
+      class="ml8"
+      [(ngModel)]="viewTableData.is_compare"
+      (ngModelChange)="changeCompare($event)"
+    >对比</label
+    >
+  </div>
+  <div class="lab-row mt10 ml30" *ngIf="viewTableData.is_compare">
+    <label>对比时间:</label>
+    <nz-select
+      class="w100 ml8"
+      [nzSize]="'small'"
+      [(ngModel)]="viewTableData.summary_date_compare"
+    >
+      <ng-container *ngFor="let item of compareDateLists">
+        <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+      </ng-container>
+    </nz-select>
+    <nz-range-picker
+      [(ngModel)]="viewTableData.summary_date_compare_range"
+      [nzDisabledDate]="getDisableDate"
+      [nzFormat]="'yyyy/MM/dd'"
+      [nzAllowClear]="false"
+      [nzDisabled]="viewTableData.summary_date_compare !== 'custom'"
+      [nzSize]="'small'"
+      class="ml8"
+      (ngModelChange)="changeDate()"
+    ></nz-range-picker>
+  </div>
+</div>
+<div class="view-chart white">
+  <div class="view-chart-title mt8 mb8">
+    <label>分日数据:</label>
+  </div>
+  <div class="view-chart-body">
+    <div class="view-chart-selection">
+      <nz-select
+        class="w240"
+        [nzSize]="'small'"
+        [nzMode]="'multiple'"
+        [nzMaxMultipleCount]="3"
+        [(ngModel)]="chartItem.lineChartData"
+        (ngModelChange)="changeChartItem($event,'day')"
+        [nzPlaceHolder]="'请选择指标项'">
+        <nz-option
+          *ngFor="let item of chartItems"
+          [nzLabel]="item.name"
+          [nzValue]="item.key"
+        >
+        </nz-option>
+      </nz-select>
+    </div>
+    <div echarts [options]="lineChartOptions" [initOpts]="chartInitOpts" style="height:272px;" ></div>
+    <p class="tips tipStyle" *ngIf="chartLoading"><nz-spin nzSimple nzTip="Loading..."></nz-spin></p>
+  </div>
+</div>
+<div class="view-chart white">
+  <div class="view-chart-title mt8 mb8">
+    <label>分时数据:</label>
+  </div>
+  <div class="view-chart-body">
+    <div class="view-chart-selection">
+      <nz-select
+        class="w240"
+        [nzSize]="'small'"
+        [nzMode]="'multiple'"
+        [nzMaxMultipleCount]="3"
+        [(ngModel)]="chartItem.barChartData"
+        (ngModelChange)="changeChartItem($event,'hour')"
+        [nzPlaceHolder]="'请选择指标项'">
+        <nz-option
+          *ngFor="let item of chartItems"
+          [nzLabel]="item.name"
+          [nzValue]="item.key"
+        >
+        </nz-option>
+      </nz-select>
+    </div>
+    <div echarts [options]="barChartOptions" [initOpts]="chartInitOpts" style="height:272px;" ></div>
+    <p class="tips tipStyle" *ngIf="chartLoading"><nz-spin nzSimple nzTip="Loading..."></nz-spin></p>
+  </div>
+</div>
+

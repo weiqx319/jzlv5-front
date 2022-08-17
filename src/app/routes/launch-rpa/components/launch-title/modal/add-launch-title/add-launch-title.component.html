@@ -1,0 +1,98 @@
+<div class="add-launch-title-container">
+  <div class="add-launch-title-content">
+    <div class="item-data mt10">
+      <div class="item-head mr5">
+        <span class="required">*</span><span>标题</span>:
+      </div>
+      <div class="item-body">
+          <div [ngClass]="{'has-error':titleErrorStatus}">
+             <textarea #curTextArea nz-input nz-popover [(nzPopoverVisible)]="titleErrorStatus"  [ngClass]="{'has-error':titleErrorStatus}" [nzPopoverContent]="scheduleTemplate" [nzPopoverTrigger]="null"    [nzPopoverPlacement]="'right'"
+                       style="width: 100%"
+                       type ="'textarea'"
+                       rows="8"
+                       (focusout)="checkTitle()"
+                       [(ngModel)]="titles"
+                       placeholder="请输入文案, 以回车分割">
+                    </textarea>
+          </div>
+
+        <div class="mt5 mb5"  *ngIf="publisherId!=1&&publisherId!=17&&publisherId!=23">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+          <span>每条文案长度限制{{wordTypeData.min_length}}-{{wordTypeData.max_length}}个字, 且只能包含 {{wordTypeData.word_num}}公共词包</span>
+        </div>
+        <div class="mt5 mb5"  *ngIf="publisherId==17">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+          <span>每条文案长度限制{{wordTypeData.min_length}}-{{wordTypeData.max_length}}个字符, 且只能包含 {{wordTypeData.word_num}}公共词包,不可包含特殊字符</span>
+        </div>
+        <div class="mt5 mb5"  *ngIf="publisherId==1">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+          <span>每条文案长度限制1-60个字</span>
+        </div>
+        <div class="mt5 mb5"  *ngIf="publisherId==23">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+          <span>每条文案长度限制1-30个字</span>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #scheduleTemplate>
+      <div style="width: 400px;color: red" class="mb8">
+        <div *ngFor="let data of checkTitleErrorList">{{data}}</div>
+      </div>
+    </ng-template>
+
+
+    <div class="item-data mt8 mb8">
+      <div class="item-head mr5"><span>动态词包:</span></div>
+      <div class="item-body">
+        <div class="tag" *ngIf="publisherId!=1">
+          <ng-container *ngFor="let word of wordList;let i = index;">
+            <nz-tag class="mb8" (click)="addTags(word)">{{ word }}</nz-tag>
+          </ng-container>
+        </div>
+        <div class="tag" *ngIf="publisherId==1">
+          <ng-container *ngFor="let word of wordList;let i = index;">
+            <nz-tag class="mb8" (click)="addTags(word)">{{ word['name'] }}</nz-tag>
+          </ng-container>
+        </div>
+<!--        <div class="tag" *ngIf="publisherId==16">-->
+<!--          <ng-container *ngFor="let word of wordList;let i = index;">-->
+<!--            <nz-tag class="mb8" (click)="addTags(word['name'])">{{ word['name'] }}</nz-tag>-->
+<!--          </ng-container>-->
+<!--        </div>-->
+      </div>
+
+    </div>
+
+    <div class="item-data mt8 mb8">
+      <div class="item-head mr5"><span>标签:</span></div>
+      <div class="item-body">
+        <nz-select
+                   class="wp100"
+                   [nzSize]="'small'"
+                   [nzMode]="'tags'"
+                   [(ngModel)]="defaultData.title_tags"
+                   [nzPlaceHolder]="'请选择标签或输入回车添加'"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of tagList"
+            [nzLabel]="option"
+            [nzValue]="option">
+          </nz-option>
+        </nz-select>
+      </div>
+
+    </div>
+
+
+  </div>
+
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saveing" (click)="doSave()">
+      <span>确定</span>
+    </button>
+  </div>
+</div>

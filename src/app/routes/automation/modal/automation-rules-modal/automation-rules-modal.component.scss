@@ -1,0 +1,109 @@
+.custom-rules {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 5px!important;
+
+  .line-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .logic-operator-wrapper {
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+    align-items: center;
+    justify-content: center;
+    background-color: #beebe5;
+    width: 26px;
+    border-radius: 13px;
+
+    .logic-operator {
+      flex: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      border-radius: 13px;
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+    .add-icon {
+      width: 26px;
+      height: 26px;
+      line-height: 26px;
+      text-align: center;
+      border-radius: 13px;
+      font-size: 16px;
+      cursor: pointer;
+      .plus:hover {
+        border-radius: 13px;
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+
+  .line {
+    color: #bac8e4;
+    opacity: 0.6;
+    font-size: 20px;
+    margin-left: -2px;
+    margin-right: -7px;
+  }
+  .rule-box {
+    flex: auto;
+    z-index: 1;
+    .rule-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 40px;
+      padding: 8px 1%;
+      background-color: #fff;
+      border: 1px solid #eaecf1;
+      border-radius: 12px;
+      &:hover {
+        box-shadow: 0 3px 6px rgb(0 0 0 / 16%);
+        transition: box-shadow 0.3s ease-in-out;
+      }
+      .start-rules-wrapper {
+        flex: auto;
+        display: flex;
+        align-items: center;
+
+        .auto-compute-wrapper {
+          display: flex;
+          align-items: center;
+          height: 33px;
+          margin-right: 0.2%;
+          margin-left: 0.2%;
+          padding-right: 10px;
+          padding-left: 10px;
+          background-color: #e0e3e9;
+          border-radius: 12px;
+        }
+      }
+      .end-icons-wrapper {
+        font-size: 16px;
+        color: #a0aabe;
+        i {
+          margin-left: 10px;
+          cursor: pointer;
+          &:hover {
+            color: #6e7585;
+          }
+        }
+      }
+    }
+  }
+}
+.disabled {
+  cursor: not-allowed !important;
+  &:hover {
+    cursor: not-allowed !important;
+    color: #a0aabe !important;
+  }
+}

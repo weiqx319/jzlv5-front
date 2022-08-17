@@ -1,0 +1,55 @@
+@import "../../../../../../styles/util/mixin";
+
+.hidden{
+  display: none !important;
+}
+.pop-report{
+  background-color: white;
+  padding: 16px 8px;
+
+  .lab-row{
+    //@include title-height(24);
+    line-height: 24px;
+
+    span:first-child{
+      width: 60px;
+      text-align: right;
+      display: block;
+      float: left;
+      line-height: 22px;
+    }
+
+  }
+
+
+}
+.view-chart{
+  background-color:#F7F7F7;
+  height:300px;
+  padding-left: 30px;
+  padding-right: 30px;
+  overflow: hidden;
+
+}
+
+.star-conatainer{
+  display: inline-block;
+  width: 70px;
+  height: 14px;
+  background-image: url('../../../../../../assets/icon_star.png');
+  background-repeat: no-repeat;
+  background-size: 70px 14px;
+  background-position: center;
+  position: relative;
+  top: 2px;
+  .star-active{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../../../../../assets/icon_star_yellow.png');
+    background-repeat: no-repeat;
+    background-size: 70px 14px;
+  }
+}

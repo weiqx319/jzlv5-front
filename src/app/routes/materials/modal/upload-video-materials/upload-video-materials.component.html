@@ -1,0 +1,200 @@
+<div class="upload-video-materials-container">
+  <div class="form-content">
+    <!--<div class="lab-row mb10">-->
+      <!--<label>所属广告主:</label>-->
+      <!--<nz-select class="w200 ml8"-->
+                 <!--[nzSize]="'small'"-->
+                 <!--[nzMode]="'multiple'"-->
+                 <!--[(ngModel)]="defaultData.cid"-->
+                 <!--[nzPlaceHolder]="'请选择广告主'"-->
+                 <!--nzShowSearch>-->
+        <!--<nz-option-->
+          <!--*ngFor="let option of advertiserList"-->
+          <!--[nzLabel]="option.advertiser_name"-->
+          <!--[nzValue]="option.cid">-->
+        <!--</nz-option>-->
+      <!--</nz-select>-->
+    <!--</div>-->
+    <div class="lab-row mb10">
+      <label>素材名称:</label>
+      <input nz-input
+             class="w200 ml8"
+             [nzSize]="'small'"
+             type="text"
+             [(ngModel)]="defaultData.material_name"
+             placeholder="请输入素材名称">
+    </div>
+    <div class="lab-row mb10">
+      <label>素材制作时间:</label>
+      <nz-date-picker
+        class="w200 ml8 datePicker"
+        [nzSize]="'small'"
+        nzFormat="yyyy-MM-dd"
+        [nzAllowClear]="false"
+        nzPlaceHolder="请选择素材制作时间"
+        [(ngModel)]="defaultData.material_make_time">
+      </nz-date-picker>
+    </div>
+    <div class="lab-row mb10">
+      <label>编导:</label>
+      <nz-select class="w200 ml8"
+                 [nzSize]="'small'"
+                 [(ngModel)]="defaultData.director_id"
+                 [nzPlaceHolder]="'请选择编导'"
+                 nzShowSearch>
+        <nz-option
+          *ngFor="let option of choreographerList"
+          [nzLabel]="option.name"
+          [nzValue]="option.key">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="lab-row mb10">
+      <label>摄影:</label>
+      <nz-select class="w200 ml8"
+                 [nzSize]="'small'"
+                 [(ngModel)]="defaultData.camerist_id"
+                 [nzPlaceHolder]="'请选择摄影'"
+                 nzShowSearch>
+        <nz-option
+          *ngFor="let option of photographList"
+          [nzLabel]="option.name"
+          [nzValue]="option.key">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="lab-row mb10">
+      <label>剪辑:</label>
+      <nz-select class="w200 ml8"
+                 [nzSize]="'small'"
+                 [(ngModel)]="defaultData.movie_editor_id"
+                 [nzPlaceHolder]="'请选择剪辑'"
+                 nzShowSearch>
+        <nz-option
+          *ngFor="let option of clipList"
+          [nzLabel]="option.name"
+          [nzValue]="option.key">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="lab-row mb10">
+      <label>性别:</label>
+      <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="defaultData.gender">
+        <label nz-radio [nzValue]="'通用'">
+          <span>通用</span>
+        </label>
+        <label nz-radio [nzValue]="'男性'">
+          <span>男性</span>
+        </label>
+        <label nz-radio [nzValue]="'女性'">
+          <span>女性</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb10">
+      <label>年龄段:</label>
+      <nz-checkbox-group
+        class="ml8"
+        [(ngModel)]="generationValue"
+        (ngModelChange)="changeGeneration()"></nz-checkbox-group>
+    </div>
+    <div class="lab-row mb10">
+      <label>场景:</label>
+      <nz-checkbox-group
+        class="ml8"
+        [(ngModel)]="scenesValue"
+        (ngModelChange)="changeScenes()"></nz-checkbox-group>
+      <input nz-input
+             class="w150 ml8"
+             [nzSize]="'small'"
+             type="text"
+             [(ngModel)]="otherValue.scenes"
+             placeholder="其他场景">
+    </div>
+    <div class="lab-row mb10">
+      <label>素材类型:</label>
+      <nz-checkbox-group
+        class="ml8"
+        [(ngModel)]="materialTypeValue"
+        (ngModelChange)="changeMaterialType()"></nz-checkbox-group>
+      <input nz-input
+             class="w150 ml8"
+             [nzSize]="'small'"
+             type="text"
+             [(ngModel)]="otherValue.material_type"
+             placeholder="其他素材类型">
+    </div>
+    <div class="lab-row mb10">
+      <label>风格类型:</label>
+      <nz-checkbox-group
+        class="ml8"
+        [(ngModel)]="styleTypeValue"
+        (ngModelChange)="changeStyleType()"></nz-checkbox-group>
+      <input nz-input
+             class="w150 ml8"
+             [nzSize]="'small'"
+             type="text"
+             [(ngModel)]="otherValue.style_type"
+             placeholder="其他风格类型">
+    </div>
+    <div class="lab-row mb10">
+      <label>模特名称:</label>
+      <input nz-input
+        class="w200 ml8"
+        [nzSize]="'small'"
+        type="text"
+        [(ngModel)]="defaultData.model_name"
+        placeholder="模特名称或标记">
+    </div>
+    <div class="lab-row mb10">
+      <label>其他标签:</label>
+      <input nz-input
+             class="w200 ml8"
+             [nzSize]="'small'"
+             type="text"
+             [(ngModel)]="defaultData.material_tags"
+             (input)="onInput($event)"
+             placeholder="请输入标签，标签之间以空格分隔">
+    </div>
+    <div class="lab-row mb10" style="position:relative;">
+      <label>素材文件:</label>
+      <nz-upload *ngIf="!uploading"
+            class="ml8"
+            [nzCustomRequest]="customReq"
+            [(nzFileList)]="fileList"
+            [nzAccept]="'.mp4,.mpeg,.3gp,.avi'"
+            [nzBeforeUpload]="beforeUpload"
+            (click)="changeBtn()"
+            [nzSize]="'small'"
+            [nzLimit]=1
+            [nzName]="'files'">
+        <button nz-button class="mt2 pull-left height20">
+         <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+        </button>
+      </nz-upload>
+      <button *ngIf="uploading" nz-button class="mt2 pull-left height20">
+       <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+      </button>
+      <span class="ml8 zhushi">*请上传.mp4,.mpeg,.3gp,.avi文件</span>
+    </div>
+    <div class="lab-row mb10">
+      <div *ngIf="(uploading || exception === 'exception') && fileList.length" class="m1020 progressDiv">
+        <nz-progress [nzStatus]="exception" [nzPercent]="speed" nzSize="small"></nz-progress>
+      </div>
+    </div>
+    <div class="lab-row mb10" *ngIf="resultMessage">
+      <p style="color: red;">{{resultMessage}}</p>
+    </div>
+  </div>
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" *ngIf="!uploading" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+    <button class="ml8" *ngIf="uploading" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="uploading">
+      <span>上传中...</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,225 @@
+<div class="material-library-container">
+  <div class="view-card-box">
+    <div class="materials-list-nav">
+      <div class="materials-list-nav-col mb10">
+        <div class="materials-list-nav-btn">
+          <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="checkAll();">
+            <span>全选</span>
+          </button>
+          <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancleCheck();">
+            <span>取消选择</span>
+          </button>
+          <p>已选择<span class="ml5" style="color: red;">{{materialSltAry.length}}</span></p>
+        </div>
+        <div class="materials-list-nav-btn mt10">
+          <div class="lab-row ml10">
+            <label>排序项:</label>
+            <nz-select class="w100 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="queryParams.sort_item.key"
+                       [nzPlaceHolder]="'选择排序项'"
+                       (ngModelChange)="search()"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of sortItemList"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+            <nz-select class="w70 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="queryParams.sort_item.dir"
+                       [nzPlaceHolder]="'排序'"
+                       (ngModelChange)="search()"
+                       nzShowSearch>
+              <nz-option  [nzLabel]="'升序'"  [nzValue]="'asc'"></nz-option>
+              <nz-option  [nzLabel]="'降序'"  [nzValue]="'desc'"></nz-option>
+            </nz-select>
+          </div>
+          <div class="lab-row ml10">
+            <label>视频制作时间:</label>
+            <nz-range-picker class="w200" [(ngModel)]="queryItem.material_make_time.value" [nzSize]="'small'" (ngModelChange)="search()" nzFormat="yyyy-MM-dd"></nz-range-picker>
+          </div>
+          <div class="lab-row ml10">
+            <label>上传时间:</label>
+            <nz-range-picker class="w200" [(ngModel)]="queryItem.create_time.value" [nzSize]="'small'" (ngModelChange)="search()" nzFormat="yyyy-MM-dd"></nz-range-picker>
+          </div>
+
+        </div>
+        <div class="materials-list-nav-btn mt10">
+          <div class="lab-row ml10">
+            <label>素材名称:</label>
+            <nz-select class="w70 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="queryItem.material_name.op"
+                       [nzPlaceHolder]="'请选择编导'"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of stringFilterOper"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+            <input class="w150 ml8" nz-input [nzSize]="'small'" [(ngModel)]="queryItem.material_name.value" placeholder="请输入">
+          </div>
+          <div class="lab-row ml10">
+            <label>编导:</label>
+            <nz-select class="w100 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="queryItem.director_id.value"
+                       [nzPlaceHolder]="'请选择编导'"
+                       nzShowSearch
+                       nzAllowClear
+                       (ngModelChange)="search()">
+              <nz-option
+                *ngFor="let option of choreographerList"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="lab-row ml10">
+            <label>摄影:</label>
+            <nz-select class="w100 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="queryItem.camerist_id.value"
+                       [nzPlaceHolder]="'请选择摄影'"
+                       nzShowSearch
+                       nzAllowClear
+                       (ngModelChange)="search()">
+              <nz-option
+                *ngFor="let option of photographList"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="lab-row ml10">
+            <label>剪辑:</label>
+            <nz-select class="w100 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="queryItem.movie_editor_id.value"
+                       [nzPlaceHolder]="'请选择剪辑'"
+                       nzShowSearch
+                       nzAllowClear
+                       (ngModelChange)="search()">
+              <nz-option
+                *ngFor="let option of clipList"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="lab-row ml10">
+            <label>标签:</label>
+            <nz-select class="w80 ml8"
+                       [nzSize]="'small'"
+                       [(ngModel)]="queryItem.material_tags.op"
+                       [nzPlaceHolder]="'请选择'"
+                       nzShowSearch>
+              <nz-option [nzLabel]="'或包含'"  [nzValue]="'or'"> </nz-option>
+              <nz-option [nzLabel]="'且包含'"  [nzValue]="'and'"> </nz-option>
+            </nz-select>
+            <input nz-input
+                   class="w150 ml8"
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="queryItem.material_tags.value"
+                   placeholder="标签之间以空格分隔">
+          </div>
+          <button class="ml10" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="search();">
+            <span>查询</span>
+          </button>
+          <button class="ml10" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="reset();">
+            <span>重置</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ng-container>
+      <nz-spin [nzSpinning]="loading">
+        <div class="view-card" [ngStyle]="{'height':tableHeight - 40 - 40 +'px'}">
+          <div class="card-item" *ngFor="let item of cardList;let i = index;">
+            <div class="card-item-box">
+              <div class="card-item-title" nz-popover nzPopoverTrigger="hover" [nzPopoverContent]="cardDetail" [nzPopoverOverlayClassName]="'card-template'" nzPopoverPlacement="bottomLeft">
+                <span class="title ellipsis">{{ item.material_name }}</span>
+              </div>
+              <div class="card-item-img" (click)="materialsDetail(item)">
+                <app-material-video [row]="item"></app-material-video>
+              </div>
+              <div class="card-item-footer">
+                <span>{{ item.create_time }}</span>
+                <label class="pull-right" nz-checkbox [(ngModel)]="materialCheckedMap[item.material_id]" (ngModelChange)="selectMaterial(item)">选择</label>
+              </div>
+            </div>
+            <ng-template #cardDetail>
+              <div class="card-detail">
+                <div class="card-detail-item">
+                  <label class="mr8">标识:</label>
+                  <p>{{ item.material_id }}</p>
+                </div>
+                <div class="card-detail-item">
+                  <label class="mr8">名称:</label>
+                  <p>{{ item.material_name }}</p>
+                </div>
+                <div class="card-detail-item">
+                  <label class="mr8">编导:</label>
+                  <p>{{ item.director_name }}</p>
+                </div>
+                <div class="card-detail-item">
+                  <label class="mr8">摄影:</label>
+                  <p>{{ item.camerist_name }}</p>
+                </div>
+                <div class="card-detail-item">
+                  <label class="mr8">剪辑:</label>
+                  <p>{{ item.movie_editor_name }}</p>
+                </div>
+                <div class="card-detail-item">
+                  <label class="mr8">标签:</label>
+                  <p>{{ item.tags }}</p>
+                </div>
+                <div class="card-detail-item">
+                  <label class="mr8">宽高:</label>
+                  <p>{{ item.upload_video_width }} px × {{ item.upload_video_height }} px</p>
+                </div>
+                <div class="card-detail-item">
+                  <label class="mr8">尺寸:</label>
+                  <p>{{ item.upload_video_size }} MB</p>
+                </div>
+                <div class="card-detail-item">
+                  <label class="mr8">上传:</label>
+                  <p>{{ item.create_time }}</p>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="no-data" *ngIf="cardList.length === 0"><span>无数据展示</span></div>
+        </div>
+        <div class="mt10 card-page">
+          <nz-pagination [nzSize]="'small'"
+                         [nzTotal]="cardPage.count"
+                         [(nzPageIndex)]="cardPage.currentPage"
+                         [(nzPageSize)]="cardPage.pageSize"
+                         [nzPageSizeOptions]="cardPage.pageSizeList"
+                         nzShowSizeChanger
+                         (nzPageIndexChange)="changeCardPage()"
+                         (nzPageSizeChange)="changeCardPageSize()"
+                         [nzShowTotal]="totalTemplate"></nz-pagination>
+          <ng-template #totalTemplate let-total>共 {{ cardPage.count }} 条</ng-template>
+        </div>
+      </nz-spin>
+    </ng-container>
+  </div>
+
+
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+      <span>确定</span>
+    </button>
+  </div>
+</div>

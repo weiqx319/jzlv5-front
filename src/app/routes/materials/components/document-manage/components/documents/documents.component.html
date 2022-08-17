@@ -1,0 +1,105 @@
+<div class="documents-container">
+  <div class="materials-list-nav">
+    <div class="materials-list-nav-col">
+      <div class="materials-list-nav-btn">
+        <ng-container>
+          <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" routerLink="../launch_create" *ngIf="publisher_id === 7">
+            <span>新建投放</span>
+          </button>
+          <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" routerLink="../bd_create_launch" *ngIf="publisher_id === 1">
+            <span>新建投放</span>
+          </button>
+          <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" routerLink="../uc_create_launch" *ngIf="publisher_id === 17">
+            <span>新建投放</span>
+          </button>
+        </ng-container>
+        <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addDocument()">
+          <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加文案</span>
+        </button>
+        <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="addDocuments()">
+          <i nz-icon nzType="plus" nzTheme="outline"></i><span>批量添加</span>
+        </button>
+          <button class="mr8" nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteDocuments()" [nzPopconfirmPlacement]="'bottomLeft'" nz-button [nzType]="'default'" [nzSize]="'small'"
+                  [ngClass]="{'disabled-status': !_indeterminate}"
+                  [disabled]="!_indeterminate">
+            <i nz-icon nzType="close" nzTheme="outline"></i><span>删除文案</span>
+          </button>
+<!--        <button class="mr8 ml5" nz-button [nzType]="'default'" [nzSize]="'small'"-->
+<!--                [ngClass]="{'disabled-status': !_indeterminate}"-->
+<!--                [disabled]="!_indeterminate"-->
+<!--                (click)="addDocumentGroups()">-->
+<!--          <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加到分组</span>-->
+<!--        </button>-->
+      </div>
+    </div>
+  </div>
+  <div class="materials-list-data">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'small'"
+              [nzData]="[{}]"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ y: noResultHeight+'px' }"
+    >
+      <thead>
+      <tr>
+        <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll($event)">
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>渠道</span>
+        </th>
+        <th [nzWidth]="'300px'">
+          <span>文案</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'title',name:'文案'}" [(filterResult)]="filterResult['title']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>字数</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>创建时间</span>
+        </th>
+<!--        <th [nzWidth]="'100px'">-->
+<!--          <span>操作</span>-->
+<!--        </th>-->
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)">
+        </td>
+        <td>
+          {{ publisherList[data.publisher_id] }}
+        </td>
+        <td>
+          {{ data.title }}
+        </td>
+        <td>
+          {{ data.title.length }}
+        </td>
+        <td>
+          {{ data.create_time }}
+        </td>
+<!--        <td>-->
+<!--          <a href="javascript:" (click)="addDocumentGroups(data)">添加到分组</a>-->
+<!--        </td>-->
+      </tr>
+      <tr *ngIf="!apiData.length && !loading">
+        <td [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height':(noResultHeight-10)+'px'}">
+          <div style="text-align: center">
+            无数据展示
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+.tr-success > td,
+.tr-success:nth-child(even) > td {
+  background-color: #e3f1e3;
+}
+
+.tr-failure > td,
+.tr-failure:nth-child(even) > td {
+  background-color: #fff2f0;
+}
+
+.tr-mismatch > td,
+.tr-mismatch:nth-child(even) > td,
+.tr-skip > td,
+.tr-skip:nth-child(even) > td {
+  background-color: #f7f7e0;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background-color: #f9fafc;
+}
+

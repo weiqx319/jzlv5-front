@@ -1,0 +1,48 @@
+<div class="sub-company-content">
+  <form class="sub-company-form" [formGroup]="validateAudienceForm">
+    <div class="sub-company-form-content pt20">
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>选择账户:</label>
+        </div>
+        <nz-form-control class="w300 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'chan_pub_id'" [nzSize]="'default'" [(ngModel)]="defaultData.chan_pub_id" (ngModelChange)="changeAccount($event)" [nzPlaceHolder]="'请选择账户'" nzShowSearch nzAllowClear>
+            <nz-option
+              *ngFor="let option of accountsList"
+              [nzLabel]="option.pub_account_name"
+              [nzValue]="option.chan_pub_id">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('chan_pub_id').dirty&&getFormControl('chan_pub_id').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择账户</div>
+        </div>
+      </nz-form-item>
+      <nz-form-item class="sub-company-form-item">
+        <div class="form-label pull-left">
+          <label><span class="redStart">*</span>应用:</label>
+        </div>
+        <nz-form-control class="w300 ml8 pull-left">
+          <nz-select class="w100p" [formControlName]="'app_url'" [nzSize]="'default'" [(ngModel)]="defaultData.app_url" (ngModelChange)="changeApp($event)" [nzPlaceHolder]="'请选择应用'" nzShowSearch nzAllowClear>
+            <nz-option
+              *ngFor="let option of appList"
+              [nzLabel]="option.app_name"
+              [nzValue]="option.app_url">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+        <div class="ml8 pull-left">
+          <div class='ant-form-item-explain' *ngIf="getFormControl('app_url').dirty&&getFormControl('app_url').hasError('required')"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择应用</div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="sub-company-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [disabled]="!validateAudienceForm.valid" (click)="doSave()">
+        <span>完成</span>
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,236 @@
+<!--添加单个关键词-->
+<div>
+  <h3>添加单个关键词</h3>
+  <p class="slow_360" *ngIf="singleKeywordData['publisher_id'] * 1 === 3">360媒体的编辑操作同步到媒体端有一定时间的延迟，请耐心等待，请勿重复修改!</p>
+  <!--投放状态-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>投放状态:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <nz-radio-group [(ngModel)]="singleKeywordData.pause">
+        <label class="mr20" nz-radio [nzValue]="false">
+          <span>开启</span>
+        </label>
+        <label nz-radio [nzValue]="true">
+          <span>暂停</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--媒体-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>媒体:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <nz-select style="width: 200px;"
+                 [(ngModel)]="singleKeywordData['publisher_id']"
+                 (ngModelChange)="changePublisher(singleKeywordData,false)"
+                 nzPlaceHolder="请选择媒体"
+                 [nzSize]="'small'"
+      >
+        <nz-option
+          *ngFor="let option of publisherData"
+          [nzLabel]="option.publisher_name"
+          [nzValue]="option.publisher_id">
+        </nz-option>
+      </nz-select>
+    </div>
+    <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!singleKeywordData['publisher_id']"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择媒体</span>
+    <div class="clear"></div>
+  </div>
+  <!--账户-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>账户:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <nz-select style="width: 200px;"
+                 [(ngModel)]="singleKeywordData['pub_account_id']"
+                 (ngModelChange)="changeAccount(singleKeywordData,false)"
+                 nzPlaceHolder="请选择账户"
+                 [nzSize]="'small'"
+      >
+        <nz-option
+          *ngFor="let account of accountData"
+          [nzLabel]="account.pub_account_name"
+          [nzValue]="account.pub_account_id">
+        </nz-option>
+      </nz-select>
+    </div>
+    <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!singleKeywordData['pub_account_id']"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择账户</span>
+    <div class="clear"></div>
+  </div>
+  <!--计划-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>计划:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <nz-select style="width: 200px;"
+                 [(ngModel)]="singleKeywordData['pub_campaign_id']"
+                 (ngModelChange)="changeCampaign(singleKeywordData,false)"
+                 nzPlaceHolder="请选择计划"
+                 [nzSize]="'small'"
+      >
+        <nz-option
+          *ngFor="let campItem of campaign"
+          [nzLabel]="campItem.pub_campaign_name"
+          [nzValue]="campItem.pub_campaign_id">
+        </nz-option>
+      </nz-select>
+    </div>
+    <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!singleKeywordData['pub_campaign_id']"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择计划</span>
+    <div class="clear"></div>
+  </div>
+  <!--单元-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>单元:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <nz-select style="width: 200px;"
+                 [(ngModel)]="singleKeywordData['pub_adgroup_id']"
+                 nzPlaceHolder="请选择单元"
+                 [nzSize]="'small'"
+      >
+        <nz-option
+          *ngFor="let adgroupItem of adgroupData"
+          [nzLabel]="adgroupItem.pub_adgroup_name"
+          [nzValue]="adgroupItem.pub_adgroup_id">
+        </nz-option>
+      </nz-select>
+    </div>
+    <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!singleKeywordData['pub_adgroup_id']"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择单元</span>
+    <div class="clear"></div>
+  </div>
+  <!--关键词名称-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>关键词名称:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <input nz-input style="width: 200px;"
+             [(ngModel)]="singleKeywordData.pub_keyword"
+             placeholder="输入关键词名称"
+             [nzSize]="'small'">
+      <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!singleKeywordData.pub_keyword"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词名称不能为空</span>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--关键词出价-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>关键词出价:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs ">
+      <nz-input-number class="mr5" style="width: 180px;"
+                       nzPlaceHolder="输入关键词出价"
+                       [(ngModel)]="singleKeywordData.price"
+                       (click) ="changeInput('price')"
+                       [nzSize]="'small'">
+      </nz-input-number>
+      <span class="ml5">元</span>
+      <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.price && (this.singleKeywordData.publisher_id * 1 === 1 || this.singleKeywordData.publisher_id * 1 === 2)">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词出价不能为空并且 范围 为 0.01~999.99</span>
+      <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.price && this.singleKeywordData.publisher_id * 1 === 3">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词出价不能为空并且 范围 为 0.3~999.99</span>
+      <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="tips.price && this.singleKeywordData.publisher_id * 1 === 4">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>关键词出价不能为空并且 范围 为 0.45~999.99</span>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--匹配模式-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>匹配模式:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left hasInputs">
+      <nz-select style="width: 200px;"
+                 [(ngModel)]="singleKeywordData.match_type"
+                 nzPlaceHolder="请选择匹配模式"
+                 [nzSize]="'small'"
+      >
+        <nz-option
+          *ngFor="let option of matchTypeData"
+          [nzLabel]="option.name"
+          [nzValue]="option.value">
+        </nz-option>
+      </nz-select>
+      <span class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="!singleKeywordData.match_type"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>匹配模式不能为空</span>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--应用调起网址 360,百度-->
+  <div class="inpRow mt8" *ngIf="singleKeywordData.publisher_id * 1 === 3 || singleKeywordData.publisher_id * 1 === 1 ">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>应用调起网址:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left">
+      <textarea placeholder="输入应用调起网址" [(ngModel)]="singleKeywordData.deeplink_url" class="titleColor w400 border"  rows="5"></textarea>
+
+    </div>
+    <div class="clear"></div>
+  </div>
+
+  <!--访问Url-->
+  <div class="inpRow mt8" *ngIf="singleKeywordData.publisher_id * 1 !== 4">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span>访问Url:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left position_relative">
+      <textarea placeholder="输入Url" [(ngModel)]="singleKeywordData.pc_destination_url" (click) ="changeInput('pc_destination_url')" (ngModelChange)="contentChange('pc_destination_url')" class="titleColor w400 border"  rows="5"></textarea>
+      <i class="tip">({{tips.length['pc_destination_url']}}/1024)</i>
+      <span style=" position: absolute;display: inline-block;right: -160px;top: 25px;"
+            [ngClass]="{clSave:iswraing}"
+            class="wroning ml20"
+            *ngIf="tips.pc_destination_url">
+                  <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>
+                  访问Url长度不能超过1024
+                </span>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <!--移动访问Url-->
+  <div class="inpRow mt8">
+    <div class="inpRow_left pull-left">
+      <label class="titleLa w90 mr8 inline-block">
+        <span class="mr8">移动访问Url:</span>
+      </label>
+    </div>
+    <div class="inpRow_right pull-left position_relative">
+      <textarea placeholder="输入Url" [(ngModel)]="singleKeywordData.wap_destination_url"  (click) ="changeInput('wap_destination_url')" (ngModelChange)="contentChange('wap_destination_url')" class="mt5 titleColor w400 border"  rows="5"></textarea>
+      <i class="tip">({{tips.length['wap_destination_url']}}/1024)</i>
+      <span style=" position: absolute;display: inline-block;right: -182px;top: 25px;"
+            [ngClass]="{clSave:iswraing}"
+            class="wroning ml20"
+            *ngIf="tips.wap_destination_url">
+        <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>
+        移动访问Url长度不能超过1024
+      </span>
+    </div>
+    <div class="clear"></div>
+  </div>
+</div>

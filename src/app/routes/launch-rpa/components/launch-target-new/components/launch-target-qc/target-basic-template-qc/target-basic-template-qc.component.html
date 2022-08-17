@@ -1,0 +1,451 @@
+<div class="toutiao-target-setting-container" *ngIf="byteDanceConfigList">
+  <div class="form-content">
+    <!--人群-->
+    <div class="lab-row mb20">
+      <label>{{editDefaultDataOption['audience_mode'].name}}:</label>
+      <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption['audience_mode'].resultValue">
+        <ng-container *ngFor="let radio of editDefaultDataOption['audience_mode'].sub">
+          <label nz-radio-button nzValue="{{radio['value']}}" *ngIf="!radio.disabled" [nzDisabled]="radio.disabled">
+            {{radio['label']}}
+          </label>
+        </ng-container>
+
+      </nz-radio-group>
+    </div>
+
+    <ng-container *ngIf="editDefaultDataOption['audience_mode'].resultValue==='CUSTOM'">
+      <!--人群定向-->
+      <div class="lab-row mt20" *ngIf="promotion_way!=='SIMPLE'">
+        <label><span class="redStart">*</span>账户:</label>
+        <div>
+          <nz-select class="w400 ml8"
+                     [nzSize]="'small'"
+                     [nzMaxTagCount]="1"
+                     [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                     nzMode="multiple"
+                     [nzPlaceHolder]="'请选择帐户'"
+                     [nzAllowClear]="true"
+                     [(ngModel)]="accounts"
+                     (ngModelChange)="changeAccount($event)"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of accountsList"
+              [nzLabel]="option.pub_account_name"
+              [nzValue]="option.chan_pub_id">
+            </nz-option>
+          </nz-select>
+          <nz-tabset class="ml8">
+            <nz-tab [nzTitle]="item.name" *ngFor="let item of curAccountsList">
+              <div style="display:flex;">
+                <div>
+                  <div class="lab-row mt20 mb20">
+                    <label style="width: 80px">定向人群:</label>
+                    <div class="select-audience-moduler mb20 ml8">
+                      <div class="select-audience-moduler-header">
+                        <nz-tabset>
+                          <nz-tab nzTitle="平台精选">
+                            <ul class="select-audience-moduler-container">
+                              <ng-container *ngFor="let crowd of item.platformList;let idx=index;">
+                                <li class="select-audience-item">
+                                  <label style="display: flex" nz-checkbox [(ngModel)]="crowd.checked" (ngModelChange)="checkCrowd($event,crowd,item.retargeting_tags)">
+                                    <div class="audience-item">
+                                      <div class="audience-item-top">
+                                        <label class="w200">{{crowd.name}}</label>
+                                        <span class="ml8" nz-tooltip [nzTooltipTitle]="crowd.retargeting_tags_tip" class="audience-tip-icon"><i nz-icon nzType="question-circle" nzTheme="outline"></i></span>
+                                        <div class="item-type-tag ml8">
+                                          <span *ngIf="crowd.retargeting_tags_op!=='EXCLUDE'">定向</span>
+                                          <span *ngIf="crowd.retargeting_tags_op!=='INCLUDE'">排除</span>
+                                        </div>
+                                      </div>
+                                      <div *ngIf="crowd.cover_num" class="audience-item-bottom">预估覆盖人群 {{crowd.cover_num}}</div>
+                                      <div *ngIf="!crowd.cover_num" class="audience-item-bottom">暂不支持人群覆盖数预估</div>
+                                    </div>
+                                  </label>
+                                </li>
+                              </ng-container>
+                            </ul>
+                          </nz-tab>
+                          <nz-tab nzTitle="自定义人群">
+                            <nz-input-group [nzSuffix]="suffixIcon">
+                              <input type="text" nz-input placeholder="搜索" [(ngModel)]="searchCrowdValue" />
+                            </nz-input-group>
+                            <ng-template #suffixIcon>
+                              <i nz-icon nzType="search"></i>
+                            </ng-template>
+                            <ul class="select-audience-moduler-container">
+                              <ng-container *ngFor="let crowd of item.customList;let idx=index;">
+                                <li class="select-audience-item" *ngIf="crowd.name.indexOf(searchCrowdValue)!==-1">
+                                  <div class="audience-item">
+                                    <div class="audience-item-top">
+                                      <label class="w200">{{crowd.name}}</label>
+                                      <span class="ml8" nz-tooltip [nzTooltipTitle]="crowd.retargeting_tags_tip" class="audience-tip-icon"><i nz-icon nzType="question-circle" nzTheme="outline"></i></span>
+                                      <div>
+                                        <a class="ml8" *ngIf="crowd.retargeting_tags_op!=='EXCLUDE'" (click)="addCrowd(item.retargeting_tags,crowd,'include')">定向</a>
+                                        <a class="ml8" *ngIf="crowd.retargeting_tags_op!=='INCLUDE'" (click)="addCrowd(item.retargeting_tags,crowd,'exclude')">排除</a>
+                                      </div>
+                                    </div>
+                                    <div *ngIf="crowd.cover_num" class="audience-item-bottom">预估覆盖人群 {{crowd.cover_num}}</div>
+                                    <div *ngIf="!crowd.cover_num" class="audience-item-bottom">暂不支持人群覆盖数预估</div>
+                                  </div>
+                                </li>
+                              </ng-container>
+                            </ul>
+                          </nz-tab>
+                        </nz-tabset>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="ml20">
+                  <div class="mt20 mb40 select-panel-moduler w300">
+                    <div class="select-panel-moduler-header">已选 {{item.retargeting_tags.length}} 项 <a style="float: right;" (click)="deleteCrowd(item,item.retargeting_tags)">清空</a></div>
+                    <ul class="select-panel-moduler-container">
+                      <ng-container *ngFor="let key of item.retargeting_tags;let idx=index;">
+                        <li class="select-panel-item">{{audienceMap.get(key.id)}}
+                          <span style="color: #999" class="pull-right mr30" *ngIf="key.type==='include'">定向</span>
+                          <span style="color: #999" class="pull-right mr30" *ngIf="key.type==='exclude'">排除</span>
+                          <span class="select-panel-close" (click)="deleteCrowd(item,item.retargeting_tags,idx)"><i nz-icon nzType="close" nzTheme="outline"></i></span></li>
+                      </ng-container>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </nz-tab>
+          </nz-tabset>
+          <div class="mt5" *ngIf="errorTipAry['audience_mode'].is_show">
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red">{{errorTipAry['audience_mode'].tip_text}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!--地域-->
+      <div class="lab-row mt20 mb20">
+        <label>地域: </label>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.district.resultValue">
+          <label *ngFor="let radio of editDefaultDataOption.district.sub" nz-radio-button nzValue="{{radio['value']}}" [nzDisabled]="isLaunchPackage && radio.disabled">
+            {{radio['label']}}
+          </label>
+        </nz-radio-group>
+      </div>
+      <div class="ml148 relative">
+        <ng-container *ngIf="editDefaultDataOption.district.resultValue == 'COUNTY'">
+          <nz-transfer-tree [getParentKey]="false" [target]="editDefaultDataOption.district.combine_data.COUNTY.resultList"
+                            (nzChange)="transferTreeChange(editDefaultDataOption.district.combine_data.COUNTY,$event)"
+                            [source]="editDefaultDataOption.district.combine_data.COUNTY.sub" [canSearch]="true"></nz-transfer-tree>
+        </ng-container>
+        <ng-container *ngIf="editDefaultDataOption.district.resultValue == 'CITY'">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption.district.combine_data.CITY.resultList"
+                            (nzChange)="transferTreeChange(editDefaultDataOption.district.combine_data.CITY,$event)"
+                            [source]="editDefaultDataOption.district.combine_data.CITY.sub" [canSearch]="true"></nz-transfer-tree>
+        </ng-container>
+        <div class="mt5" *ngIf="errorTipAry['district'].is_show">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red">{{errorTipAry['district'].tip_text}}</span>
+        </div>
+      </div>
+      <ng-container *ngIf="editDefaultDataOption.district.resultValue !== 'NONE'">
+        <nz-radio-group style="display: inline-flex" class="mt10 ml148 mb20" [nzSize]="'small'"
+                        [(ngModel)]="editDefaultDataOption.district.location_type.resultValue">
+          <label *ngFor="let radio of editDefaultDataOption.district.location_type.sub" nz-radio-button
+                 nzValue="{{radio['value']}}">
+            {{radio['label']}}
+          </label>
+        </nz-radio-group>
+      </ng-container>
+
+      <!--性别-->
+      <div class="lab-row mb20">
+        <label>{{byteDanceConfigList['gender']['name']}}:</label>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.gender">
+          <ng-container *ngFor="let option of byteDanceConfigList['gender']['sub']">
+            <label nz-radio-button [nzValue]="option.value" [nzDisabled]="isLaunchPackage && option.disabled">{{option.label}}</label>
+          </ng-container>
+        </nz-radio-group>
+      </div>
+
+      <!--年龄-->
+      <div class="lab-row mb20">
+        <label>{{byteDanceConfigList['age']['name']}}:</label>
+        <div class="ml8">
+          <label nz-checkbox [(ngModel)]="editDefaultDataOption.age.NOLIMIT"
+                 (ngModelChange)="updateNotLimit(byteDanceConfigList['age'],'age')" [nzDisabled]="isLaunchPackage && editDefaultDataOption.age.disabled">
+            不限
+          </label>
+          <nz-checkbox-group class="mr8" [(ngModel)]="byteDanceConfigList['age']['sub']"
+                             (ngModelChange)="updateSingleChecked('age','age')"></nz-checkbox-group>
+        </div>
+      </div>
+
+      <!--抖音达人-->
+      <div class="lab-row mb20">
+        <label>{{editDefaultDataOption['aweme_fan_categories'].name}}:</label>
+        <nz-radio-group class="ml8" [nzSize]="'small'"
+                        [(ngModel)]="editDefaultDataOption['aweme_fan_categories'].resultValue">
+          <label *ngFor="let radio of editDefaultDataOption['aweme_fan_categories'].sub" nz-radio-button [nzDisabled]="isLaunchPackage && radio.disabled"
+                 nzValue="{{radio['value']}}">
+            {{radio['label']}}
+          </label>
+        </nz-radio-group>
+      </div>
+      <ng-container *ngIf="['aweme_fan'].indexOf(editDefaultDataOption['aweme_fan_categories'].resultValue)>-1">
+        <div class="lab-row mb20">
+          <label></label>
+          <div class="ml10">
+            <span>定向与以下达人产生</span>
+            <nz-tree-select #selectTree class="w150 mr5 ml5" nzSize="small"
+              [(ngModel)]="editDefaultDataOption['aweme_fan_categories']['aweme_fan_behaviors'].resultList"
+              [nzNodes]="awemeBehaviorList"
+              nzShowSearch
+              nzCheckable
+              nzPlaceHolder="请选择"
+            ></nz-tree-select>
+            <span>互动的用户，时间范围取</span>
+            <nz-select class="w80 mr5 ml5"
+                       [(ngModel)]="editDefaultDataOption['aweme_fan_categories']['aweme_fan_behaviors_days'].resultValue"
+                       [nzPlaceHolder]="'天数'"
+                       [nzSize]="'small'"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of editDefaultDataOption['aweme_fan_categories']['aweme_fan_behaviors_days'].sub"
+                [nzLabel]="option['label']"
+                [nzValue]="option['value']"
+              >
+              </nz-option>
+            </nz-select>
+            <span>内发生的行为:</span>
+          </div>
+        </div>
+        <div class="mt10 ml148 relative mb10">
+          <nz-transfer-tree [getParentKey]="true"
+                            [target]="editDefaultDataOption['aweme_fan_categories'].combine_data.resultList"
+                            (nzChange)="transferTreeChange(editDefaultDataOption['aweme_fan_categories'].combine_data,$event)"
+                            [source]="editDefaultDataOption['aweme_fan_categories'].combine_data.sub"></nz-transfer-tree>
+          <div class="mt5" *ngIf="errorTipAry['aweme_fan_categories'].is_show">
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red">{{errorTipAry['aweme_fan_categories'].tip_text}}</span>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="promotion_way==='STANDARD'">
+      <!--行为兴趣-->
+      <div class="lab-row mb20">
+        <label>{{editDefaultDataOption['interest_action'].name}}:</label>
+        <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption['interest_action'].resultValue">
+          <label *ngFor="let radio of editDefaultDataOption['interest_action'].sub" nz-radio-button [nzDisabled]="isLaunchPackage && radio.disabled"
+                 nzValue="{{radio['value']}}">
+            {{radio['label']}}
+          </label>
+        </nz-radio-group>
+      </div>
+      <div class="lab-row mb20" *ngIf="editDefaultDataOption.interest_action.resultValue == 'CUSTOM'">
+        <label>行为:</label>
+        <div class="ml10">
+          <span>在</span>
+          <nz-select class="w150 mr5 ml5"
+                     [(ngModel)]="editDefaultDataOption['interest_action']['action_scene'].resultList"
+                     [nzPlaceHolder]="'所有行为场景'"
+                     [nzMode]="'multiple'"
+                     [nzSize]="'small'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of editDefaultDataOption['interest_action']['action_scene'].sub"
+              [nzLabel]="option['label']"
+              [nzValue]="option['value']"
+            >
+            </nz-option>
+          </nz-select>
+          <span>中, 选择用户</span>
+          <nz-select class="w80 mr5 ml5"
+                     [(ngModel)]="editDefaultDataOption['interest_action']['action_days'].resultValue"
+                     [nzPlaceHolder]="'天数'"
+                     [nzSize]="'small'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of editDefaultDataOption['interest_action']['action_days'].sub"
+              [nzLabel]="option['label']"
+              [nzValue]="option['value']"
+            >
+            </nz-option>
+          </nz-select>
+          <span>内发生的行为:</span>
+        </div>
+      </div>
+      <div class="lab-row mb20" *ngIf="editDefaultDataOption.interest_action.resultValue == 'CUSTOM'">
+        <label></label>
+        <div class="ml10 relative">
+          <nz-transfer-tree [getParentKey]="true"
+                            [target]="editDefaultDataOption['interest_action'].combine_data.action.resultList"
+                            (nzChange)="transferTreeChange(editDefaultDataOption['interest_action'].combine_data.action,$event)"
+                            [source]="editDefaultDataOption['interest_action'].combine_data.action.sub"></nz-transfer-tree>
+          <div class="mt5" *ngIf="errorTipAry['action'].is_show">
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red">{{errorTipAry['action'].tip_text}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="lab-row mb20" *ngIf="editDefaultDataOption.interest_action.resultValue == 'CUSTOM'">
+        <label>兴趣:</label>
+        <div class="ml10 relative">
+          <nz-transfer-tree [getParentKey]="true"
+                            [target]="editDefaultDataOption['interest_action'].combine_data.interest.resultList"
+                            (nzChange)="transferTreeChange(editDefaultDataOption['interest_action'].combine_data.interest,$event)"
+                            [source]="editDefaultDataOption['interest_action'].combine_data.interest.sub"></nz-transfer-tree>
+          <div class="mt5" *ngIf="errorTipAry['interest'].is_show">
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red">{{errorTipAry['interest'].tip_text}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!--兴趣关键词 -->
+<!--      <div class="lab-row mb20" *ngIf="editDefaultDataOption.interest_action.resultValue == 'CUSTOM'">-->
+<!--        <label>-->
+<!--          <i style="color: #f09200" nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip nzTooltipTitle="请填写定向关键词，-->
+<!--每个单元中最多填写1000个关键词，每个关键词长度不超过15个汉字或30个英文字符；填写时请注意，每个关键词占一行。"></i>-->
+<!--          <span class="ml4">兴趣关键词:</span>-->
+<!--        </label>-->
+<!--        <div>-->
+<!--          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.interest_action.interest_words.value">-->
+<!--            <ng-container>-->
+<!--              <ng-container>-->
+<!--                <label nz-radio-button *ngFor="let option of editDefaultDataOption['interest_kwd_action'].sub" [nzValue]="option.value" [nzDisabled]="isLaunchPackage && option.disabled">{{option['label']}}</label>-->
+<!--              </ng-container>-->
+<!--            </ng-container>-->
+
+<!--          </nz-radio-group>-->
+<!--          <div class="ml8 mt20" style="display: flex" *ngIf="editDefaultDataOption.interest_action.interest_words.value === 'custom'">-->
+<!--            <div class="w300 textarea-box" style="padding: 6px">-->
+<!--              <textarea style="min-height: 300px" nzAutosize rows="4" nz-input placeholder="请输入兴趣关键词，多个兴趣关键词用换行或者/或者空格隔开" [(ngModel)]="kwdText.interest"></textarea>-->
+<!--              <div style="text-align: right"><button class="mt10" nzSize="small" nz-button nzType="primary" (click)="addText('interest')">添加</button></div>-->
+<!--            </div>-->
+<!--            <div class="w300 ml20 textarea-box" style="border:1px solid #dcdfe6">-->
+<!--              <div class="text_header pd10">-->
+<!--                已添加词-->
+<!--                <span class="num">{{editDefaultDataOption.interest_action.interest_words.resultList.length}}/1000</span>-->
+<!--                <a style="float: right;" (click)="clearInput('interest')">清空</a>-->
+<!--              </div>-->
+<!--              <div>-->
+<!--                <p style="padding: 0 10px" *ngFor="let item of editDefaultDataOption.interest_action.interest_words.resultList">{{item}}</p>-->
+<!--              </div>-->
+
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+      <!--行为关键词 -->
+<!--      <div class="lab-row mb20" *ngIf="editDefaultDataOption.interest_action.resultValue == 'CUSTOM'">-->
+<!--        <label>-->
+<!--          <i style="color: #f09200" nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip nzTooltipTitle="请填写定向关键词，-->
+<!--每个单元中最多填写1000个关键词，每个关键词长度不超过15个汉字或30个英文字符；填写时请注意，每个关键词占一行。"></i>-->
+<!--          <span class="ml4">行为关键词:</span>-->
+<!--        </label>-->
+<!--        <div>-->
+<!--          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.interest_action.action_words.value">-->
+<!--            <ng-container>-->
+<!--              <ng-container>-->
+<!--                <label nz-radio-button *ngFor="let option of editDefaultDataOption['action_kwd_action'].sub" [nzValue]="option.value" [nzDisabled]="isLaunchPackage && option.disabled">{{option['label']}}</label>-->
+<!--              </ng-container>-->
+<!--            </ng-container>-->
+
+<!--          </nz-radio-group>-->
+<!--          <div class="ml8 mt20" style="display: flex" *ngIf="editDefaultDataOption.interest_action.action_words.value === 'custom'">-->
+<!--            <div class="w300 textarea-box" style="padding: 6px">-->
+<!--              <textarea style="min-height: 300px" nzAutosize rows="4" nz-input placeholder="请输入兴趣关键词，多个兴趣关键词用换行或者/或者空格隔开" [(ngModel)]="kwdText.action"></textarea>-->
+<!--              <div style="text-align: right"><button class="mt10" nzSize="small" nz-button nzType="primary" (click)="addText('action')">添加</button></div>-->
+<!--            </div>-->
+<!--            <div class="w300 ml20 textarea-box" style="border:1px solid #dcdfe6">-->
+<!--              <div class="text_header pd10">-->
+<!--                已添加词-->
+<!--                <span class="num">{{editDefaultDataOption.interest_action.action_words.resultList.length}}/1000</span>-->
+<!--                <a style="float: right;" (click)="clearInput('word')">清空</a>-->
+<!--              </div>-->
+<!--              <div>-->
+<!--                <p style="padding: 0 10px" *ngFor="let item of editDefaultDataOption.interest_action.action_words.resultList">{{item}}</p>-->
+<!--              </div>-->
+
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+
+      <!--平台-->
+      <div class="lab-row mb20">
+        <label>{{byteDanceConfigList['platform']['name']}}:</label>
+        <div class="ml8">
+          <label nz-checkbox [(ngModel)]="editDefaultDataOption.platform.NOLIMIT"
+                 (ngModelChange)="updateNotLimit(byteDanceConfigList['platform'],'platform')">
+            不限
+          </label>
+          <ng-container *ngFor="let item of byteDanceConfigList['platform']['sub']">
+            <ng-container>
+              <label
+                class="ml8"
+                nz-checkbox
+                [(ngModel)]="item.checked"
+                (ngModelChange)="updateSingleChecked('platform', item.value)"
+              >
+                {{ item.label }}
+              </label>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+
+      <!--网络类型-->
+      <div class="lab-row mb20">
+        <label>{{byteDanceConfigList['ac']['name']}}:</label>
+        <div class="ml8">
+          <label nz-checkbox [(ngModel)]="editDefaultDataOption.ac.NOLIMIT"
+                 [nzDisabled]="isLaunchPackage && editDefaultDataOption.ac.disabled"
+                 (ngModelChange)="updateNotLimit(byteDanceConfigList['ac'],'ac')">
+            不限
+          </label>
+          <nz-checkbox-group class="mr8" [(ngModel)]="byteDanceConfigList['ac']['sub']"
+                             (ngModelChange)="updateSingleChecked('ac','ac')"></nz-checkbox-group>
+        </div>
+      </div>
+
+      <!-- 智能放量 -->
+      <div class="lab-row mb20">
+        <label>{{editDefaultDataOption['auto_extend_enabled'].name}}:</label>
+        <nz-radio-group class="ml8" [nzSize]="'small'"
+                        [(ngModel)]="editDefaultDataOption['auto_extend_enabled'].resultValue">
+          <label *ngFor="let radio of editDefaultDataOption['auto_extend_enabled'].sub" nz-radio-button
+                 [nzDisabled]="isLaunchPackage && radio.disabled"
+                 nzValue="{{radio['value']}}">
+            {{radio['label']}}
+          </label>
+        </nz-radio-group>
+      </div>
+
+      <div class="mt10 ml148 relative mb20"
+           *ngIf="['auto_extend_targets'].indexOf(editDefaultDataOption['auto_extend_enabled'].resultValue)>-1">
+        <nz-transfer-tree [getParentKey]="true"
+                          [target]="editDefaultDataOption['auto_extend_enabled'].combine_data.resultList"
+                          (nzChange)="transferTreeChange(editDefaultDataOption['auto_extend_enabled'].combine_data,$event)"
+                          [source]="editDefaultDataOption['auto_extend_enabled'].combine_data.sub"></nz-transfer-tree>
+      </div>
+
+      <!--平台精选人群包-->
+      <div class="lab-row mb20">
+        <label>{{byteDanceConfigList['live_platform_tags']['name']}}:</label>
+        <div class="ml8">
+          <label nz-checkbox [(ngModel)]="editDefaultDataOption.live_platform_tags.NOLIMIT"
+                 [nzDisabled]="isLaunchPackage && editDefaultDataOption.live_platform_tags.disabled"
+                 (ngModelChange)="updateNotLimit(byteDanceConfigList['live_platform_tags'],'live_platform_tags')">
+            不限
+          </label>
+          <nz-checkbox-group class="mr8" [(ngModel)]="byteDanceConfigList['live_platform_tags']['sub']"
+                             (ngModelChange)="updateSingleChecked('live_platform_tags','live_platform_tags')"></nz-checkbox-group>
+        </div>
+      </div>
+
+    </ng-container>
+
+  </div>
+</div>
+
+<app-global-template></app-global-template>

@@ -1,0 +1,36 @@
+<div class="add-document-group-container">
+  <div class="form-content">
+    <div class="lab-row mb20">
+      <label>投放渠道:</label>
+      <nz-select class="w200 ml8"
+                 [nzSize]="'small'"
+                 [(ngModel)]="defaultData.publisher_id"
+                 [nzDisabled]="isEdit"
+                 [nzPlaceHolder]="'请选择投放媒体'"
+                 nzShowSearch>
+        <nz-option
+          *ngFor="let option of publisherList"
+          [nzLabel]="option.name"
+          [nzValue]="option.key">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="lab-row mb20">
+      <label>文案组名: </label>
+      <input nz-input
+             class="w_full ml8"
+             [nzSize]="'small'"
+             type="text"
+             [(ngModel)]="defaultData.title_group_name"
+             placeholder="请输入文案组名">
+    </div>
+  </div>
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submit" [nzSize]="'small'" (click)="doSave()">
+      <span>保存</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<div>
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addCustomPublisher()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加</span>
+      </a>
+      <span style="color:orange;">*注：默认媒体满足不了需求情况下，可自定义媒体名称，用于创建虚拟账户。</span>
+    </div>
+    <div class="manage-header-right">
+      <a class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="downloadCustomPublisher()">
+       <i nz-icon nzType="download" nzTheme="outline"></i><span>下载列表</span>
+      </a>
+    </div>
+  </div>
+  <div class="manage-table manage-no-result-table pt8">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzSize]="'default'"
+              [nzData]="apiData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ x: '1150px',y: noResultHeight+'px' }">
+      <thead>
+      <tr>
+        <th [nzWidth]="'100px'">
+          <span>自定义媒体id</span>
+        </th>
+        <th [nzWidth]="'200px'" >
+          <span>自定义媒体名称</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>操作</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td nzLeft>{{data['publisher_id']}}</td>
+        <td>{{data['publisher_name']}}</td>
+        <!-- 操作 -->
+        <td><a (click)="editCustomPublisher(data)">编辑</a></td>
+      </tr>
+      <tr *ngIf="apiData.length===0">
+        <td #noResultTd [attr.colspan]="10"  [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+          <div class="table-no-result">
+            <div class="table-no-result-content">
+              <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addCustomPublisher()">
+               <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加</span>
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>
+
+<nz-modal [(nzVisible)]="isModalVisible" [nzTitle]="(modalType==='add'?'添加':'编辑')+'自定义媒体'" [nzFooter]='null'  (nzOnCancel)="doCancel()">
+  <ng-container *nzModalContent>
+    <div class="modal-content">
+      <div class="form-content">
+        <div class="form-row">
+          <div class="label-name">自定义媒体名称：</div>
+          <div class="form-item"><input nz-input placeholder="请输入自定义媒体名称" [(ngModel)]="customPublisherName" /></div>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button class="ml8" nz-button [nzType]="'default'" (click)="doCancel()">
+          <span>取消</span>
+        </button>
+        <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submitting" (click)="doSave()">
+          <span>完成</span>
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+</nz-modal>
+

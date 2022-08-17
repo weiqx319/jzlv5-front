@@ -1,0 +1,41 @@
+.manage-top {
+  // height: 20px;
+  // margin-top: 8px;
+  height: 18px;
+}
+.message-title-right {
+  display: flex;
+  align-items: center;
+}
+
+.message-title-right span {
+  cursor: pointer;
+}
+
+.manage-active-icon {
+  background-color: #338aff;
+  color: #fff;
+}
+.message-table {
+  position: relative;
+}
+.message-table tbody tr {
+  cursor: pointer;
+}
+.message-table .operate {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+}
+
+.message-table .msg_title {
+  position: relative;
+}
+.message-table .show-status {
+  position: absolute;
+  top: 50%;
+  margin-top: -11px;
+  left: -8px;
+}
+
+

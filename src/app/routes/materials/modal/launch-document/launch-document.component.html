@@ -1,0 +1,174 @@
+<div class="launch-document-container">
+  <div class="launch-document-content">
+    <div class="launch-document-left">
+      <nz-tabset [nzSize]="'small'" [nzAnimated]="false">
+        <nz-tab nzTitle="全部文案">
+          <div class="search-content mt10 mb10">
+            <input nz-input
+                   class="w200"
+                   [nzSize]="'small'"
+                   type="text"
+                   [(ngModel)]="queryItem.title.value"
+                   placeholder="请输入关键词搜索">
+            <button class="ml10" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="search();">
+              <span>查询</span>
+            </button>
+            <button class="ml10" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="reset();">
+              <span>重置</span>
+            </button>
+          </div>
+          <div>
+            <nz-table #nzTable
+                      nzShowSizeChanger
+                      [nzPageSizeOptions]="[30,50,100,500]"
+                      [nzSize]="'small'"
+                      [nzData]="[{}]"
+                      [nzFrontPagination]="false"
+                      [(nzPageSize)]="documentPage.pageSize"
+                      [(nzPageIndex)]="documentPage.currentPage"
+                      (nzPageIndexChange)="refreshData()"
+                      (nzPageSizeChange)="refreshData(true)"
+                      [nzTotal]="documentPage.total"
+                      [nzLoading]="documentPage.loading"
+                      [nzShowTotal]="totalItemTemplate1"
+                      [nzScroll]="{ y: '300px' }"
+            >
+              <thead>
+              <tr>
+                <th>
+                  <span>文案</span>
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let data of documentList">
+                <td (click)="selectDocument(data)" [ngClass]="{'document-selected':documentSltMap[data.title]}">
+                  {{ data.title }}
+                </td>
+              </tr>
+              <tr *ngIf="!documentList.length && !documentPage.loading">
+                <td [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height': '300px'}">
+                  <div style="text-align: center">
+                    无数据展示
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </nz-table>
+            <ng-template #totalItemTemplate1 let-total>共{{ documentPage.total }}条</ng-template>
+          </div>
+        </nz-tab>
+<!--        <nz-tab nzTitle="文案分组">-->
+<!--          <div class="mt10">-->
+<!--            <nz-table #nzTable-->
+<!--                      nzShowSizeChanger-->
+<!--                      [nzPageSizeOptions]="[30,50,100,500]"-->
+<!--                      [nzSize]="'small'"-->
+<!--                      [nzData]="[{}]"-->
+<!--                      [nzFrontPagination]="false"-->
+<!--                      [(nzPageSize)]="groupPage.pageSize"-->
+<!--                      [(nzPageIndex)]="groupPage.currentPage"-->
+<!--                      (nzPageIndexChange)="refreshGroupData()"-->
+<!--                      (nzPageSizeChange)="refreshGroupData(true)"-->
+<!--                      [nzTotal]="groupPage.total"-->
+<!--                      [nzLoading]="groupPage.loading"-->
+<!--                      [nzShowTotal]="totalItemTemplate2"-->
+<!--                      [nzScroll]="{ y: '300px' }"-->
+<!--            >-->
+<!--              <thead>-->
+<!--              <tr>-->
+<!--                <th>-->
+<!--                  <span>分组名称</span>-->
+<!--                </th>-->
+<!--                <th>-->
+<!--                  <span>关联文案</span>-->
+<!--                </th>-->
+<!--              </tr>-->
+<!--              </thead>-->
+<!--              <tbody>-->
+<!--              <tr *ngFor="let data of documentGroupList">-->
+<!--                <td>-->
+<!--                  <span style="color: #1890ff">{{ data.title_group_name }}</span>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                  <ng-container *ngIf="data.document.length">-->
+<!--                    {{ data.document[0]['document'] }}-->
+<!--                    <span>......</span>-->
+<!--                  </ng-container>-->
+<!--                </td>-->
+<!--              </tr>-->
+<!--              <tr *ngIf="!documentGroupList.length && !groupPage.loading">-->
+<!--                <td [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height': '300px'}">-->
+<!--                  <div style="text-align: center">-->
+<!--                    无数据展示-->
+<!--                  </div>-->
+<!--                </td>-->
+<!--              </tr>-->
+<!--              </tbody>-->
+<!--            </nz-table>-->
+<!--            <ng-template #totalItemTemplate2 let-total>共{{ groupPage.total }}条</ng-template>-->
+<!--          </div>-->
+<!--        </nz-tab>-->
+        <nz-tab nzTitle="批量添加">
+          <div style="font-size: 12px;">
+            <div class="form-content mt10">
+            <textarea #curTextArea nz-input
+                      class="w_full"
+                      type ="'textarea'"
+                      rows="4"
+                      [(ngModel)]="titles"
+                      placeholder="请输入文案, 以回车分割">
+            </textarea>
+              <div class="mt5"  *ngIf="publisherId!=1">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+                <span>每条文案长度限制5-30个字, 且只能包含 {{publisherId === 17 ? '一个' : '两个'}}公共词包</span>
+              </div>
+              <div class="mt5"  *ngIf="publisherId==1">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+                <span>每条文案长度限制1-60个字</span>
+              </div>
+            </div>
+            <div class="tag-content mt8 mb8">
+              <div class="tag" *ngIf="publisherId!=1">
+                <ng-container *ngFor="let word of wordList;let i = index;">
+                  <nz-tag class="mb8" (click)="addTags(word)">{{ word }}</nz-tag>
+                </ng-container>
+              </div>
+              <div class="tag" *ngIf="publisherId==1">
+                <ng-container *ngFor="let word of wordList;let i = index;">
+                  <nz-tag class="mb8" (click)="addTags(word)">{{ word['name'] }}</nz-tag>
+                </ng-container>
+              </div>
+            </div>
+            <button class="mt10" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saveing" (click)="submit()">
+              <span>添加</span>
+            </button>
+          </div>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+    <div class="launch-document-right pl20">
+      <div class="title mb10">已选择 {{ documentSltList.length }}/200</div>
+      <div class="document-list">
+        <div class="document-list-item mb10" *ngFor="let item of documentSltList;let i = index;">
+          <input nz-input
+                 class="w_full"
+                 [nzSize]="'small'"
+                 type="text"
+                 (ngModelChange)="checkSingle($event)"
+                 [(ngModel)]="item.title">
+          <i nz-icon nzType="close" nzTheme="outline" class="deleteBtn ml10" (click)="removeSltItem(i)"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saveing" (click)="doSave()">
+      <span>确定</span>
+    </button>
+  </div>
+</div>

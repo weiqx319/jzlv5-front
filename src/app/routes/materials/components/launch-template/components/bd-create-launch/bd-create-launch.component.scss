@@ -1,0 +1,154 @@
+.common-setting {
+  padding: 0 20px;
+
+  .common-setting-content {
+    overflow-y: auto;
+  }
+
+  .sub_title {
+    height: 36px;
+    line-height: 36px;
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .form-content {
+    .lab-row {
+      display: flex;
+
+      & > label:first-child{
+        width: 140px;
+        text-align: right;
+        display: inline-block;
+      }
+    }
+  }
+
+}
+
+.create-launch-container-bd {
+  display: flex;
+  padding: 0 20px;
+
+  background-color: #EEEEEE;
+
+  .anchorContent {
+    overflow-y: auto;
+  }
+
+  .ant-tabs-nav{
+    margin-left: 20px;
+  }
+
+  .create-launch-left {
+    width: 110px;
+    overflow: auto;
+    background-color: white;
+
+    .ant-anchor {
+      font-size: 12px;
+    }
+
+    .ant-anchor-wrapper {
+      overflow: inherit;
+    }
+  }
+
+
+  .sub_title_desc{
+    color: #AEAEAE !important;
+    font-weight: 500;
+  }
+
+  .create-launch-right {
+    padding-left: 20px;
+    flex: 1;
+
+    .title {
+      height: 50px;
+      line-height: 50px;
+      color: #333;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .sub_title {
+      height: 46px;
+      padding-top:10px;
+      line-height: 36px;
+      color: #FF9900;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .form-content {
+
+      .setting-block{
+        background-color: white;
+      }
+
+      .place-holder-div{
+        display: block;
+        width: 100%;
+        height: 20px;
+        background-color: #EEEEEE;
+      }
+
+
+      .setting-box {
+        overflow: auto;
+      }
+
+      .basic-card {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .lab-row{
+        display: flex;
+        width: 50%;
+        margin-bottom: 2px;
+      }
+
+      .lab-row > label:first-child{
+        width: 140px;
+        text-align: right;
+        display: inline-block;
+      }
+
+      .video {
+        .lab-row {
+          width: 100%;
+        }
+      }
+
+      .w100p {
+        width: 100%;
+      }
+
+      .w170 {
+        width: 170px !important;
+      }
+
+      .w_full {
+        width: 568px;
+      }
+    }
+
+    .ant-tabs, .ant-tabs-nav-container {
+      font-size: 12px;
+    }
+  }
+
+  .ant-tabs.ant-tabs-card>.ant-tabs-bar .ant-tabs-tab-active {
+    padding-bottom: 2px;
+  }
+}
+
+.form-btns {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}

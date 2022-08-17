@@ -1,0 +1,219 @@
+<div class="launch-rpa-contents">
+  <div class="launch-rpa-operation">
+    <div class="header-left">
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="createChannel()">
+        <i nz-icon nzType="plus"></i><span> 新建渠道</span>
+      </a>
+
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="syncChannelModal()">
+        <i nz-icon nzType="sync" nzTheme="outline"></i><span> 同步渠道</span>
+      </a>
+
+      <a class="btn-jzl mr8" nz-button [nzType]="'primary'" (click)="batchCreateChannelModal()">
+        <i nz-icon nzType="plus" nzTheme="outline"></i><span> 批量新建</span>
+      </a>
+      <a class="btn-jzl mr8" nz-button [disabled]="!_canEditAll" [nzType]="'primary'" (click)="editChannels()">
+        <i nz-icon nzType="plus" nzTheme="outline"></i><span> 批量编辑安卓</span>
+      </a>
+    </div>
+    <!-- <div class="header-right">
+      <nz-input-group class="w200" [nzSuffix]="suffixIconSearch">
+        <input type="text" nz-input placeholder="渠道名称" [(ngModel)]="searchName" (blur)="refreshData(true)"/>
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div> -->
+  </div>
+  <div class="launch-channel-filter">
+    <form [formGroup]="validateChannelForm">
+      <div nz-row [nzGutter]="24">
+        <ng-container *ngFor="let item of configList;let i =index">
+          <div class="channel-filter-item" nz-col [nzSpan]="6" *ngIf="i<7 || _isAllShow">
+            <nz-form-item>
+              <nz-form-label>{{item.name}}</nz-form-label>
+              <nz-form-control>
+                <ng-container *ngIf="item.type==='select'">
+                  <nz-select class="w240" [nzShowSearch]="true" [nzMode]="item['mode']?item['mode']:'default'" [formControlName]="item.key" [(ngModel)]="defaultData[item.key]"
+                             [nzPlaceHolder]="'请选择'+item.name" (ngModelChange)="selectChange($event,item.key)">
+                    <nz-option *ngFor="let option of item['optionList']" [nzValue]="option['key']" [nzLabel]="option['name']"></nz-option>
+
+                  </nz-select>
+                </ng-container>
+                <ng-container *ngIf="item.type==='input'">
+                  <input class="w240" [formControlName]="item.key" nz-input [placeholder]="'请输入'+item.name"
+                         [(ngModel)]="defaultData[item.key]"/>
+                </ng-container>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </ng-container>
+        <div class="launch-channel-search" nz-col [nzSpan]="24">
+          <button class="ml10" nz-button nzType="primary" nzSize="small" (click)="reloadData()">查询</button>
+          <button class="ml10" nz-button nzSize="small" (click)="resetData()">重置</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <nz-alert
+    class="alert-content"
+    nzType="error"
+    nzCloseable
+    nzDescription="如果渠道号背景色为红色，说明配置不全（缺少落地页或下载类型等），需补齐信息后才能用于投放"
+  >
+  </nz-alert>
+  <div class="pt20">
+    <nz-table #basicTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500]"
+              [nzShowTotal]="totalItemTemplate"
+              [nzSize]="'small'"
+              [nzData]="apiSearchData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzNoResult]="noResultTd"
+              [nzScroll]="{ x: '2430px', y: noResultHeight + 'px' }">
+      <thead>
+      <tr>
+        <th nzWidth="62px"  nzLeft="0px" class="jzlCheckboxHeader">
+          <a>
+            <label nz-checkbox [(ngModel)]="_allChecked" (ngModelChange)="_checkAll(_allChecked)"></label>
+          </a>
+        </th>
+        <th nzShowSort nzWidth="200px" nzLeft="0px">渠道名称</th>
+        <th nzWidth="120px" nzLeft="200px">操作</th>
+        <th nzWidth="120px">账号ID</th>
+        <th nzWidth="120px">账号</th>
+        <th nzWidth="120px">渠道类别</th>
+        <th nzWidth="120px">转化ID</th>
+        <th nzWidth="120px">推广对象</th>
+        <th nzWidth="120px">是否为全链路</th>
+        <th nzWidth="120px">下载方式</th>
+        <th nzWidth="200px">落地页链接</th>
+        <th nzWidth="200px">下载链接</th>
+        <th nzWidth="150px">应用包名</th>
+        <th nzWidth="150px">App名</th>
+        <th nzWidth="120px">转化类型</th>
+        <th nzWidth="120px">深度转化类型</th>
+<!--        <th nzWidth="200px">点击监测链接</th>-->
+        <th nzShowSort nzWidth="200px">创建时间</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngFor="let data of basicTable.data">
+        <tr [ngClass]="{'tr-background': data.convert_channel_status == '0'}">
+          <td nzLeft="0px" nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshSingleChangeStatus($event)">
+          <td nzLeft="0px">{{data.convert_channel_name}}</td>
+          <td nzLeft="200px">
+            <a href="javascript:" (click)="editLaunchChannel(data)">编辑</a>
+            <span class="ml4 mr4">|</span>
+            <a href="javascript:" (click)="editLaunchChannel(data,true)">复制</a>
+            <span class="ml4 mr4">|</span>
+            <a nz-popconfirm [nzPopconfirmTitle]="'确定要删除吗？'" (nzOnConfirm)="deleteLaunchChannel(data)"
+               nzPopconfirmOverlayClassName="dashboard-delete-card" [nzPopconfirmPlacement]="'bottomRight'" nzPopconfirmTrigger="click" href="javascript:">删除</a>
+          </td>
+          <td >{{data.pub_account_id}}</td>
+          <td>{{data.pub_account_name}}</td>
+          <td>{{data.convert_channel_type=='1'?'转化':'非转化'}}</td>
+          <td>{{data.convert_id}}</td>
+          <td>{{data.app_type === '000' ? '落地页' : data.app_type === '010' ? '安卓' : 'IOS'}}</td>
+          <td>{{data.is_new == '1' ? '是' : '否'}}</td>
+          <td>{{data.app_type === '001' || data.app_type === '010'? '下载链接' : '落地页链接'}}</td>
+          <td>
+            <span class="tooltip-box" [nzTooltipTitle]="data.external_url" nz-tooltip>
+              {{data.external_url}}
+            </span>
+          </td>
+          <td>
+            <span class="tooltip-box" [nzTooltipTitle]="data.download_url" nz-tooltip>
+              {{data.download_url}}
+            </span></td>
+          <td>{{data.package_name}}</td>
+          <td>{{data.app_name}}</td>
+          <td>{{data.convert_type_name}}</td>
+          <td>{{data.deep_convert_type_name}}</td>
+<!--          <td>{{data.feedback_url}}</td>-->
+          <td>{{data.create_time}}</td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+
+
+  <ng-template #noResultTd >
+    <div class="table-no-result" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+      <div class="table-no-result-content">
+        <div class="mt8">无数据</div>
+      </div>
+    </div>
+  </ng-template>
+
+  <nz-modal
+    [(nzVisible)]="isChannelVisible"
+    [nzTitle]="'同步渠道号'"
+    [nzFooter]="null"
+    [nzClassName]="'channel-modal-body'"
+  >
+    <div class="lab-row">
+      <label><span class="redStart">*</span>渠道号来源：</label>
+      <nz-radio-group
+        class="ml8"
+        [nzSize]="'small'"
+        [(ngModel)]="channelSource"
+      >
+        <ng-container>
+          <label nz-radio [nzValue]="1">
+            <span>转化跟踪</span>
+          </label>
+          <!--          <label nz-radio [nzDisabled]="true" [nzValue]="2">-->
+          <!--            <span>橙子站点</span>-->
+          <!--          </label>-->
+          <!--          <label nz-radio [nzDisabled]="true" [nzValue]="3">-->
+          <!--            <span>移动应用</span>-->
+          <!--          </label>-->
+        </ng-container>
+      </nz-radio-group>
+    </div>
+
+    <div class="lab-row mt20">
+      <label><span class="redStart">*</span>账户：</label>
+      <nz-select class="w400 ml8"
+                 [nzSize]="'small'"
+                 [nzMaxTagCount]="1"
+                 [nzMaxTagPlaceholder]="globalTemplate.tagPlaceHolder"
+                 [nzMode]="'multiple'"
+                 [nzPlaceHolder]="'请选择帐户'"
+                 [nzAllowClear]="true"
+                 [(ngModel)]="syncChanPubIds"
+                 nzShowSearch>
+        <nz-option
+          *ngFor="let option of accountsList"
+          [nzLabel]="option.pub_account_name"
+          [nzValue]="option.chan_pub_id">
+        </nz-option>
+      </nz-select>
+
+
+    </div>
+
+    <div class="launch-group-add-btn">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelSyncChannel()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="handSync()">
+        <span>完成</span>
+      </button>
+    </div>
+  </nz-modal>
+
+</div>
+<app-global-template></app-global-template>
+
+

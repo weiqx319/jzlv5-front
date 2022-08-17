@@ -1,0 +1,16 @@
+.edit-data-role {
+  padding: 20px;
+  .lab-row {
+    display: flex;
+    align-items: center;
+    & > label:first-child{
+      width: 100px;
+      text-align: right;
+    }
+  }
+
+  .role-footer{
+    padding: 8px 20px;
+    text-align: right;
+  }
+}

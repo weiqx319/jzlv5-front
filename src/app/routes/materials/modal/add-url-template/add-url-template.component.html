@@ -1,0 +1,32 @@
+<div class="add-external-url-box">
+  <div class="url-content">
+    <label class="url-label">{{urlTypeNameMap[urlType]}}: </label>
+    <div class="url-list">
+      <div class="url-list-item mb20" *ngFor="let data of list;let i = index;">
+        <div class="form-content">
+          <input nz-input
+                 class="w100 ml8"
+                 [nzSize]="'small'"
+                 type="text"
+                 [(ngModel)]="data.app_url_name"
+                 placeholder="请输入备注">
+          <input nz-input
+                 class="w_full ml8"
+                 [nzSize]="'small'"
+                 type="text"
+                 [(ngModel)]="data.app_url"
+                 placeholder="请输入{{urlTypeNameMap[urlType]}}">
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submiting" [nzSize]="'small'" (click)="doSave()">
+      <span>保存</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+<div  class="safariItem" *ngFor="let item of all_items;let p_index = index;">
+  <label>
+    <i nz-icon nzTheme="outline" [nzType]="selected_item_obj[item.publisher_id] ? 'check-square' : 'minus-square'" [ngClass]="{'active-color':selected_item_obj[item.publisher_id]}" (click)="publisherChange(p_index)"></i>
+    <span class="ml8">{{item.publisher_name}}</span>
+  </label>
+</div>

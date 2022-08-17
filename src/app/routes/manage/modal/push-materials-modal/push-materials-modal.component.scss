@@ -1,0 +1,27 @@
+.materials-manage-modal{
+  color: #606266;
+  font-size: 14px;
+  padding: 10px;
+  .file-name-box{
+    max-width: 300px;
+    max-height: 128px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .file-name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 30px;
+  }
+  .button-controller{
+    display: flex;
+    display: -webkit-flex;
+    justify-content: flex-end;
+  }
+  .lab-row {
+    display: flex;
+  }
+}
+

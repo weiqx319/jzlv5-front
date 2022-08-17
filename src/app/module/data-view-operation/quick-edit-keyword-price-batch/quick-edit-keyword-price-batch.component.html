@@ -1,0 +1,117 @@
+<div class="lab-row-more-publisher">
+  <!--<span class="row-title pull-left">关键词出价：</span>-->
+  <ng-container *ngIf="publisherId == 17 && summaryType == 'adgroup'">
+    <div class="ed_shotinp mt5" *ngIf="publisherId == 17 && summaryType == 'adgroup'">
+      <div class="h20 pull-left">
+        <label class="inline-block w100">出价类型:</label>
+      </div>
+      <nz-select style=" width: 145px;" class="mr5"
+                 [(ngModel)]="bach_edit_price.bidStage"
+                 [nzSize]="'small'"
+                 nzPlaceHolder="'请选择'">
+        <nz-option
+          *ngFor="let option of priceTypeArray"
+          [nzLabel]="option.label"
+          [nzValue]="option.key">
+        </nz-option>
+      </nz-select>
+    </div>
+    <div class="ed_shotinp mt5">
+      <div class="h20 pull-left">
+        <label class="inline-block w100">出价修改为:</label>
+      </div>
+      <nz-input-number style=" width: 145px; border-radius: 2px;"
+                       [(ngModel)]="bach_edit_price.price"
+                       [nzSize]="'small'">
+      </nz-input-number><span class="ml5">元</span>
+      <div class="clear"></div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="publisherId != 17">
+    <nz-radio-group [(ngModel)]="param.modify_type" (ngModelChange)="someChange()">
+      <div class="ed_shotinp mt5">
+        <div class="h20 pull-left">
+          <label class="inline-block w100"
+                 nz-radio
+                 [nzValue]="1">
+            出价修改为:</label>
+        </div>
+        <nz-input-number style=" width: 145px; border-radius: 2px;"
+                         [nzDisabled]="param.modify_type !== 1"
+                         [(ngModel)]="bach_edit_price.price1"
+                         [nzSize]="'small'">
+        </nz-input-number><span class="ml5">元</span>
+        <div class="clear"></div>
+      </div>
+      <div class="ed_shotinp mt5">
+        <div class="h20 pull-left">
+          <label class="inline-block w100"
+                 nz-radio [nzValue]="2">将出价:</label>
+        </div>
+        <nz-select class="w70 mr5"
+                   [nzDisabled]="param.modify_type !== 2"
+                   [(ngModel)]="bach_edit_price.action2"
+                   [nzSize]="'small'"
+                   nzPlaceHolder="'请选择'">
+          <nz-option
+            *ngFor="let option of bach_edit_price.priceArray"
+            [nzLabel]="option.name"
+            [nzValue]="option.value">
+          </nz-option>
+        </nz-select>
+        <nz-input-number class="numberInput w70"
+                         [nzDisabled]="param.modify_type !== 2"
+                         [(ngModel)]="bach_edit_price.price2"
+                         [nzSize]="'small'">
+        </nz-input-number>
+        <span class="ml5">元</span>
+
+        <div class="clear"></div>
+      </div>
+      <div class="ed_shotinp mt5">
+        <div class="h20 pull-left">
+          <label class="inline-block w100"
+                 nz-radio [nzValue]="3">将出价:</label>
+        </div>
+        <nz-select class="w70 mr5"
+                   [nzDisabled]="param.modify_type !== 3"
+                   [(ngModel)]="bach_edit_price.action3"
+                   [nzSize]="'small'"
+                   nzPlaceHolder="请选择">
+          <nz-option
+            *ngFor="let option of bach_edit_price.priceArray"
+            [nzLabel]="option.name"
+            [nzValue]="option.value">
+          </nz-option>
+        </nz-select>
+        <nz-input-number class="numberInput w70"
+                         [nzDisabled]="param.modify_type !== 3"
+                         [(ngModel)]="bach_edit_price.price3"
+                         [nzSize]="'small'">
+        </nz-input-number>
+        <span class="ml5">%</span>
+        <div class="clear"></div>
+      </div>
+    </nz-radio-group>
+  </ng-container>
+  <div class="mt5" *ngIf="this.publisherId===24&&this.summaryType==='keyword'&&param.modify_type !== 1">
+   <div *ngIf="bach_edit_price['action'+param.modify_type]===1">
+    <span class="price-limit-label">最终出价不高于</span>
+    <nz-input-number class="numberInput w70 ml5 mr5"
+                       [(ngModel)]="bach_edit_price.maxPrice"
+                       [nzSize]="'small'">
+    </nz-input-number>
+    <span>元</span>
+   </div>
+   <div *ngIf="bach_edit_price['action'+param.modify_type]===2">
+    <span class="price-limit-label">最终出价不低于</span>
+    <nz-input-number class="numberInput w70 ml5 mr5"
+                       [(ngModel)]="bach_edit_price.minPrice"
+                       [nzSize]="'small'">
+    </nz-input-number>
+    <span>元</span>
+   </div>
+  </div>
+
+</div>

@@ -1,0 +1,158 @@
+<div class="setting-item-container mb20">
+  <div class="select-container">
+    <div class="item-title">数据分类</div>
+    <div class="item-body">
+      <ul class="item-define mr8">
+        <ng-container *ngFor="let item of dataItemAttrs; let index = index;">
+          <li class="pl8 hand"  [class.active]="index===selectItemIndex" (click)="changeSelectIndex(index)">
+            <!-- 定向模块下媒体属性不展示 -->
+            <span nz-tooltip [nzTooltipTitle]="item.name">{{item.name}}
+              <ng-template #rankTemplate><p class="w220">刷排名提示：百度和神马使用的是访问URL，搜狗使用的是显示URL，360因媒体不返回URL字段所以为空</p></ng-template>
+              <i nz-icon nzType="question-circle" nzTheme="outline"
+                 *ngIf="item.key==='real_ranking'"
+                 nz-popover
+                 [nzPopoverContent]="rankTemplate"
+                 nzPopoverPlacement="right"
+                 class="ml8"
+                 style="color: #f09200"></i>
+            </span>
+          </li>
+        </ng-container>
+      </ul>
+      <ul class="item-option pl8 pr8">
+        <ng-container *ngIf="dataItemAttrs[selectItemIndex]['type']=='basic'">
+          <li>
+            <div>数据项</div>
+            <div class="select-area-menu">
+              <label nz-checkbox [(ngModel)]="dataItemAttrs[selectItemIndex]['allSelected']['current']" (ngModelChange)="changeSelectedItems('current')" [nzDisabled]="(dataItemAttrs[selectItemIndex]['lockSelectCount'] === dataItemAttrs[selectItemIndex]['data'].length) || (dataItemAttrs[selectItemIndex]['key']==='pub_lock_data'&&dataItemAttrs[selectItemIndex]['allSelected']['current'])" [nzIndeterminate]="dataItemAttrs[selectItemIndex]['selectIndexNum']['current']>0 && dataItemAttrs[selectItemIndex]['selectIndexNum']['current']!=dataItemAttrs[selectItemIndex]['allIndexNum']['current'] "></label>
+            </div>
+          </li>
+        </ng-container>
+        <ng-template #stableTemplate>
+          <div class="w220">
+            符号分别为：实际值，#对比值，△变化值，%变化率 , a 日均, p 占比,率和成本类指标不支持计算a日均和p占比
+          </div>
+        </ng-template>
+        <!--有对比-->
+        <ng-container *ngIf="dataItemAttrs[selectItemIndex]['type']=='compare' && dataItemAttrs[selectItemIndex]['is_compare'] == true">
+          <li>
+            <div >
+              <span>数据项</span>
+              <i nz-icon nzType="question-circle" nzTheme="outline"
+                 nz-popover
+                 [nzPopoverContent]="stableTemplate"
+                 nzPopoverPlacement="right"
+                 class="ml8"
+                 style="color: #f09200"></i>
+            </div>
+            <div class="select-area-menu">
+              <label nz-checkbox [(ngModel)]="dataItemAttrs[selectItemIndex]['allSelected']['current']" (ngModelChange)="changeSelectedItems('current')" [nzIndeterminate]="dataItemAttrs[selectItemIndex]['selectIndexNum']['current']>0 && dataItemAttrs[selectItemIndex]['selectIndexNum']['current']!=dataItemAttrs[selectItemIndex]['allIndexNum']['current'] "></label>
+              <div class="select-menu-toolip">#</div>
+              <label nz-checkbox [(ngModel)]="dataItemAttrs[selectItemIndex]['allSelected']['compare']" (ngModelChange)="changeSelectedItems('compare')" [nzIndeterminate]="dataItemAttrs[selectItemIndex]['selectIndexNum']['compare']>0 && dataItemAttrs[selectItemIndex]['selectIndexNum']['compare']!=dataItemAttrs[selectItemIndex]['allIndexNum']['compare'] "></label>
+              <div class="select-menu-toolip">△</div>
+              <label nz-checkbox [(ngModel)]="dataItemAttrs[selectItemIndex]['allSelected']['compare_abs']" (ngModelChange)="changeSelectedItems('compare_abs')" [nzIndeterminate]="dataItemAttrs[selectItemIndex]['selectIndexNum']['compare_abs']>0 && dataItemAttrs[selectItemIndex]['selectIndexNum']['compare_abs']!=dataItemAttrs[selectItemIndex]['allIndexNum']['compare_abs'] "></label>
+              <div class="select-menu-toolip">%</div>
+              <label nz-checkbox [(ngModel)]="dataItemAttrs[selectItemIndex]['allSelected']['compare_rate']" (ngModelChange)="changeSelectedItems('compare_rate')" [nzIndeterminate]="dataItemAttrs[selectItemIndex]['selectIndexNum']['compare_rate']>0 && dataItemAttrs[selectItemIndex]['selectIndexNum']['compare_rate']!=dataItemAttrs[selectItemIndex]['allIndexNum']['compare_rate'] "></label>
+              <div class="select-menu-toolip">a</div>
+              <label nz-checkbox [(ngModel)]="dataItemAttrs[selectItemIndex]['allSelected']['avg']" (ngModelChange)="changeSelectedItems('avg')" [nzIndeterminate]="dataItemAttrs[selectItemIndex]['selectIndexNum']['avg']>0 && dataItemAttrs[selectItemIndex]['selectIndexNum']['avg']!=dataItemAttrs[selectItemIndex]['allIndexNum']['avg'] "></label>
+              <div class="select-menu-toolip">p</div>
+              <label nz-checkbox [(ngModel)]="dataItemAttrs[selectItemIndex]['allSelected']['percentage']" (ngModelChange)="changeSelectedItems('percentage')" [nzIndeterminate]="dataItemAttrs[selectItemIndex]['selectIndexNum']['percentage']>0 && dataItemAttrs[selectItemIndex]['selectIndexNum']['percentage']!=dataItemAttrs[selectItemIndex]['allIndexNum']['percentage'] "></label>
+            </div>
+          </li>
+        </ng-container>
+        <!--无对比-->
+        <ng-container *ngIf="dataItemAttrs[selectItemIndex]['type']=='compare' && dataItemAttrs[selectItemIndex]['is_compare'] == false">
+          <li>
+            <div>
+              <span>数据项</span>
+            </div>
+            <div class="select-area-menu">
+              <label nz-checkbox [(ngModel)]="dataItemAttrs[selectItemIndex]['allSelected']['current']" (ngModelChange)="changeSelectedItems('current')" [nzIndeterminate]="dataItemAttrs[selectItemIndex]['selectIndexNum']['current']>0 && dataItemAttrs[selectItemIndex]['selectIndexNum']['current']!=dataItemAttrs[selectItemIndex]['allIndexNum']['current'] "></label>
+            </div>
+          </li>
+        </ng-container>
+
+        <ng-container *ngIf="dataItemAttrs[selectItemIndex]['type']=='basic'">
+          <li *ngFor="let item of dataItemAttrs[selectItemIndex]['data'];let index=index">
+            <div class="item-option-item-flex">
+              <span class="item-option-item" nz-tooltip [nzTooltipTitle]="item.name">{{item.name}}</span>
+              <i *ngIf="item['remarks']" nz-icon nzType="question-circle"  nzTheme="outline"  nz-popover [nzPopoverContent]="item['remarks']" nzPopoverPlacement="right" style="color: #f09200" ></i>
+            </div>
+            <div class="select-area-menu">
+              <label nz-checkbox [(ngModel)]="item.selected.current" [nzDisabled]="(item['locking'] && item['locking'].indexOf(summaryType) !== -1) || (item['has_least'] && dataItemAttrs[selectItemIndex]['leastSelectCount'] === 1 && item.selected.current)" (ngModelChange)="changeSelectedItem(item,index,'current')"></label>
+            </div>
+          </li>
+        </ng-container>
+        <ng-container *ngIf="dataItemAttrs[selectItemIndex]['type']=='compare' && dataItemAttrs[selectItemIndex]['is_compare'] == true">
+          <li *ngFor="let item of dataItemAttrs[selectItemIndex]['data'];let index = index">
+            <div class="item-option-item-flex">
+              <span class="item-option-item" nz-tooltip [nzTooltipTitle]="item.name">{{item.name}}</span>
+              <i *ngIf="item['remarks']" nz-icon nzType="question-circle"  nzTheme="outline"   nz-popover [nzPopoverContent]="item['remarks']" nzPopoverPlacement="right" style="color: #f09200" ></i>
+            </div>
+            <div class="select-area-menu">
+              <label nz-checkbox [(ngModel)]="item.selected.current"  (ngModelChange)="changeSelectedItem(item,index,'current')"></label>
+              <div class="select-menu-toolip"></div>
+              <label nz-checkbox [(ngModel)]="item.selected.compare"  (ngModelChange)="changeSelectedItem(item,index,'compare')"></label>
+              <div class="select-menu-toolip"></div>
+              <label nz-checkbox [(ngModel)]="item.selected.compare_abs"  (ngModelChange)="changeSelectedItem(item,index,'compare_abs')"></label>
+              <div class="select-menu-toolip"></div>
+              <label nz-checkbox [(ngModel)]="item.selected.compare_rate"  (ngModelChange)="changeSelectedItem(item,index,'compare_rate')"></label>
+              <div class="select-menu-toolip"></div>
+              <label nz-checkbox [(ngModel)]="item.selected.avg"  (ngModelChange)="changeSelectedItem(item,index,'avg')"></label>
+              <div class="select-menu-toolip"></div>
+              <label nz-checkbox [(ngModel)]="item.selected.percentage"  (ngModelChange)="changeSelectedItem(item,index,'percentage')"></label>
+            </div>
+          </li>
+        </ng-container>
+        <ng-container *ngIf="dataItemAttrs[selectItemIndex]['type']=='compare' && dataItemAttrs[selectItemIndex]['is_compare'] == false">
+          <li *ngFor="let item of dataItemAttrs[selectItemIndex]['data'];let index = index">
+            <div class="item-option-item-flex">
+              <span class="item-option-item" nz-tooltip [nzTooltipTitle]="item.name">{{item.name}}</span>
+            </div>
+            <div class="select-area-menu">
+              <label nz-checkbox [(ngModel)]="item.selected.current"  (ngModelChange)="changeSelectedItem(item,index,'current')"></label>
+            </div>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+  <div class="sort-container ml8">
+    <div class="item-sort-title">调整顺序（可鼠标拖动调整顺序）</div>
+    <div class="item-sort-body">
+      <ul class="item-sort-lock">
+        <li *ngFor="let item of lockedItems; let lockIndex=index">
+          <div class="lock-title">{{item.name}}</div>
+          <!--<div class="pull-right">-->
+            <!--<a title="上移" *ngIf="lockIndex !== 0"><i nz-icon nzType="arrow-up" nzTheme="outline" (click)="upLockSelectedItems(item,lockIndex)"></i></a>-->
+            <!--<a title="下移" *ngIf="lockIndex !== lockedItems.length-1"><i nz-icon nzType="arrow-down" nzTheme="outline" (click)="downLockSelectedItems(item,lockIndex)" class="ml2 mr2"></i></a>-->
+            <!--<i nz-icon nzType="lock" nzTheme="outline"></i>-->
+          <!--</div>-->
+          <i nz-icon nzType="lock" nzTheme="outline"></i>
+
+        </li>
+      </ul>
+      <ul class="item-sort-define mt8"  dnd-sortable-container [sortableData]="selectedItems">
+        <ng-container *ngFor="let item of selectedItems;let index=index;" >
+          <li dnd-sortable [sortableIndex]="index" [dragData]="{index:index}">
+            <!-- 定向模块下媒体属性不展示 -->
+            <div class="item-sort-single" nz-tooltip [nzTooltipTitle]="item.name">{{item['name']}}</div>
+            <div class="pull-right">
+              <a title="上移" *ngIf="index !== 0"><i nz-icon nzType="arrow-up" nzTheme="outline" (click)="upSelectedItems(item,index)"></i></a>
+              <a title="下移" *ngIf="index !== selectedItems.length-1"><i nz-icon nzType="arrow-down" nzTheme="outline" (click)="downSelectedItems(item,index)" class="ml2 mr2"></i></a>
+              <a style="color: red;"><i nz-icon nzType="close" nzTheme="outline" *ngIf="!(item['locking'] && item['locking'].indexOf(summaryType) !== -1)" (click)="deleteSelectedItems(item,index)"></i></a>
+            </div>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="button-controller">
+  <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelModal()">
+    <span>取消</span>
+  </button>
+  <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="saveField()">
+    <span>确定</span>      </button>
+</div>

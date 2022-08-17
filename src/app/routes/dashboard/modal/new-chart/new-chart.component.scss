@@ -1,0 +1,67 @@
+$color-e4e4e4:#e4e4e4;
+$color-fbfbfb:#fbfbfb;
+$color-404040:#404040;
+.w306{
+  width: 306px;
+}
+.h40{
+  height: 40px;
+}
+.color-979797{
+  color: #979797;
+}
+.steps-content {
+  margin-top: 16px;
+  height: 300px;
+  //overflow-y: auto;
+}
+.steps-action {
+  margin-top: 8px;
+  text-align: right;
+}
+.new-chart-type{
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  //overflow: hidden;
+}
+.new-chart-type-ul{
+
+  display: flex;
+  justify-content:center;
+  list-style:none;
+  .active{
+    background-color:#ecf6fe;
+  }
+}
+.new-chart-type-btns{
+  align-self:flex-end;
+}
+.new-chart-icon{
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  border:1px solid $color-e4e4e4;
+  background-color:$color-fbfbfb;
+  text-align: center;
+  font-size: 42px;
+  color: $color-404040;
+  cursor: pointer;
+}
+.new-chart-title{
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+}
+.new-chart-icon-card .anticon, .new-chart-icon-map .anticon {
+  vertical-align: -0em;
+  font-size: 36px;
+  // color: #979797;
+}

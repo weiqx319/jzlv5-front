@@ -1,0 +1,26 @@
+<app-layout-left-menu [menuList]="menuList"></app-layout-left-menu>
+<!-- <div class="manage-container">
+  <div class="manage-sidebar">
+    <ul class="manage-link mt10">
+
+      <li class="manage-link-item" [routerLinkActive]="['active-link']" *ngIf="authService.getCurrentAdminOperdInfo().role_id == 1">
+        <a routerLink="/manage/account/advert_manage">广告主管理</a>
+      </li>
+      <li class="manage-link-item" [routerLinkActive]="['active-link']" *ngIf="authService.getCurrentAdminOperdInfo().role_id == 1 || authService.getCurrentAdminOperdInfo().role_id == 3">
+        <a routerLink="/manage/account/user_manage">用户管理</a>
+      </li>
+      <li class="manage-link-item" [routerLinkActive]="['active-link']" *ngIf="authService.getCurrentAdminOperdInfo().role_id == 1 || authService.getCurrentAdminOperdInfo().role_id == 3 ">
+        <a routerLink="/manage/account/account_keeper">媒体帐户管家</a>
+      </li>
+      <li class="manage-link-item" [routerLinkActive]="['active-link']">
+        <a routerLink="/manage/account/account_binding">媒体账户授权</a>
+      </li>
+      <li class="manage-link-item" [routerLinkActive]="['active-link']">
+        <a routerLink="/manage/account/generator">URL生成器</a>
+      </li>
+    </ul>
+  </div>
+  <div class="manage-content">
+    <router-outlet></router-outlet>
+  </div>
+</div> -->

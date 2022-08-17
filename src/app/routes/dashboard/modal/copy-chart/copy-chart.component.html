@@ -1,0 +1,44 @@
+<div class="copy-chart-content">
+  <form class="copy-chart-content-form" nz-form [formGroup]="validateForm">
+    <nz-form-item class="copy-chart-content-row">
+      <div class="pull-left form-label">
+        <label [attr.for]="'dashboard_id'">复制到概览页:</label>
+      </div>
+      <nz-form-control class="w270 ml8 pull-left">
+        <nz-select [formControlName]="'dashboard_id'" [nzSize]="'small'" [(ngModel)]="setting.dashboard_id">
+          <nz-option
+            *ngFor="let option of dashboardLists"
+            [nzLabel]="option.dashboard_name"
+            [nzValue]="option.dashboard_id">
+          </nz-option>
+        </nz-select>
+        <div class='ant-form-item-explain' *ngIf="getFormControl('dashboard_id')?.dirty&&getFormControl('dashboard_id')?.hasError('required')">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请选择概览页
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="copy-chart-content-row">
+      <div class="w76 form-label pull-left">
+        <label [attr.for]="'chart_name'">图表标题:</label>
+      </div>
+      <nz-form-control class="w270 ml8 pull-left">
+        <input nz-input
+          type="text"
+          [nzSize]="'small'"
+          placeholder="请填写标题"
+          [formControlName]="'chart_name'"
+          [(ngModel)]="setting.chart_name">
+
+        <div class='ant-form-item-explain' *ngIf="getFormControl('chart_name')?.dirty&&getFormControl('chart_name')?.hasError('required')">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>请填写标题
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="copy-chart-footer mt46">
+      <nz-form-control nz-col [nzSpan]="24">
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelForm()">取消</button>
+        <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [disabled]="!setting.chart_name||!setting.dashboard_id" (click)="submitForm()">确认</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>

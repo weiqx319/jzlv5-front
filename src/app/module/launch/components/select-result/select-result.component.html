@@ -1,0 +1,52 @@
+<div class="cascader-container">
+    <div class="cascader-box">
+      <header>一级分类</header>
+      <ul class="cascader-content">
+        <li *ngFor="let item of industryList" class="cascader-item">
+          <div class="cascader-item" (click)="getChild(item)">
+            <span>{{item.name}}</span>
+            <i nz-icon nzType="right" nzTheme="outline"></i>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  <ng-container>
+    <div class="cascader-box">
+      <header>二级分类</header>
+      <ul class="cascader-content">
+        <li *ngFor="let item of s_category" class="cascader-item">
+          <ng-container *ngIf="!item.children">
+            <label nz-checkbox [(ngModel)]="item.checked" [nzDisabled]="maxSelect&&industryNumber>=maxSelect&&!item.checked" (ngModelChange)="changeChecked(item)"><span>{{item.name}}</span></label>
+          </ng-container>
+          <div class="cascader-item" *ngIf="item.children"  (click)="getChild(item)">
+            <span>{{item.name}}</span>
+            <i nz-icon nzType="right" nzTheme="outline"></i>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+
+  <ng-container>
+    <div class="cascader-box">
+      <header>三级分类</header>
+      <ul class="cascader-content">
+        <li *ngFor="let item of s_s_category" class="cascader-item">
+          <label nz-checkbox [(ngModel)]="item.checked" [nzDisabled]="maxSelect&&industryNumber>=maxSelect&&!item.checked" (ngModelChange)="changeChecked(item)"><span>{{item.name}}</span></label>
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+
+  <div class="cascader-result">
+
+    <header>
+      <span>已选{{industryNumber}}个<span *ngIf="maxSelect">，最多{{maxSelect}}个</span></span>
+      <span class="clear" (click)="clear()">清空</span>
+    </header>
+    <div class="tag-box">
+      <nz-tag *ngFor="let item of data.resultData" [nzMode]="'closeable'" (nzOnClose)="deleteTag(item)">{{item.name}}</nz-tag>
+    </div>
+  </div>
+</div>

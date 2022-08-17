@@ -1,0 +1,16 @@
+<div class="register-result">
+  <div class="icon"><i nz-icon nzType="check-circle" nzTheme="outline" class="success" ></i></div>
+  <div class="title">恭喜您，已成功注册{{productInfo['name']}}账户</div>
+  <div class="description">
+    感谢您注册{{productInfo['name']}}营销云系统，工作时间内{{productInfo['name']}}客户成功顾问会在5-10分钟左右给您来电沟通需求。非工作时间注册，您可以先体验{{productInfo['name']}}系统，后续我们的客户成功顾问在工作时间回访您。
+  </div>
+  <div class="actions" *ngIf="productInfo['isVideo']">
+    <a href="http://www.jiuzhilan.com/yonghuzhongxin/shipinxuexi-yonghuzhongxin/">观看视频</a>
+    <a class="pc_btn" routerLink="/">体验系统</a>
+    <a class="pc_btn" href="{{redirectUrl}}">体验 Demo</a>
+  </div>
+  <div class="mobile-tip mt25" *ngIf="productInfo['isVideo']">
+    <i class="mr2" nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: red;"></i>
+    <span style="color: red">体验Demo请进入PC端体验</span>
+  </div>
+</div>

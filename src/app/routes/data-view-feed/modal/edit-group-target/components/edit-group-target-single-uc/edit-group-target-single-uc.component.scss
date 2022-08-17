@@ -1,0 +1,126 @@
+@import '../../../../component/data-view-add/data-view-add.component';
+.w130 {
+  width: 130px;
+}
+
+.w200{
+  width:200px;
+}
+
+.ant-checkbox-group{
+  line-height: 18px;
+}
+
+.biz-area-body-content{
+  height: 300px;
+  overflow: scroll;
+  width: 250px;
+  border: 1px solid #eeee;
+  display: inline-block;
+}
+
+.crowd-body-content{
+  height: 300px;
+  overflow: scroll;
+  width: 500px;
+  border: 1px solid #eeee;
+  display: inline-block;
+}
+
+.biz-area-body-content-select-tooltip{
+  height: 300px;
+  overflow: scroll;
+  width: 250px;
+  border: 1px solid #eeee;
+  display: inline-block;
+}
+
+.disableArea{
+  position: absolute !important;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  opacity: .5;
+  background: #ccc;
+  z-index: 9999;
+  cursor: not-allowed;
+}
+
+.relative{
+  position: relative;
+}
+
+.target-group{
+  padding: 10px 20px 20px 20px;
+  //border: 1px solid #2f54eb;
+
+  .target-group-title{
+    font-weight: bold;
+    height: 30px;
+    line-height: 30px;
+    padding: 4px;
+    font-size: 14px;
+    display: flex;
+    //justify-content:center;
+    align-items:center;
+
+  }
+
+
+}
+
+.combine_tile{
+  height: 40px;
+  line-height: 40px;
+  cursor: pointer;
+}
+
+.combine_content{
+  padding-left: 20px;
+}
+
+.target-slider{
+
+  ::ng-deep .ant-slider-rail{
+    background-color: #e4e4e4 !important;
+  }
+}
+.textarea-box{
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.text_header{
+  height: 43px;
+  line-height: 43px;
+  font-size: 14px;
+  padding: 0 12px;
+  background: rgba(0,0,0,.02);
+  text-align: left;
+  color: #666;
+  border-bottom: 1px solid #ddd;
+  .num {
+    font-size: 12px;
+    color: #999;
+    padding-left: 5px;
+    font-weight: 400;}
+}
+.textarea-box{
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.text_header{
+  height: 43px;
+  line-height: 43px;
+  font-size: 14px;
+  padding: 0 12px;
+  background: rgba(0,0,0,.02);
+  text-align: left;
+  color: #666;
+  border-bottom: 1px solid #ddd;
+  .num {
+    font-size: 12px;
+    color: #999;
+    padding-left: 5px;
+    font-weight: 400;}
+}

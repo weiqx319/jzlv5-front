@@ -1,0 +1,17 @@
+<div class="conver-author">
+  <p class="title">
+    <span [ngClass]="{'green': authorTitle.key === 2, 'red': authorTitle.key === 3}">{{authorTitle.name}}</span>
+    <i *ngIf="authorTitle.key === 3" class="ml8 red" nz-icon nzType="close-circle" nzTheme="outline"></i>
+    <i *ngIf="authorTitle.key === 2" class="ml8 green" nz-icon nzType="check-circle" nzTheme="outline"></i>
+    <i *ngIf="authorTitle.key === 1" class="ml5" nz-icon [nzType]="'sync'" [nzSpin]="true"></i>
+  </p>
+  <div class="conver-author-container">
+    <p>注：若授权不成功，可能是如下原因导致。</p>
+    <p>1、授权系统弹出另一个页面，您可以检查页面是否是被浏览器拦截了</p>
+  </div>
+  <div class="button-controller mt50 mb30">
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+  </div>
+</div>

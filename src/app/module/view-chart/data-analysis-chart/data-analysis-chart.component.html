@@ -1,0 +1,132 @@
+<div class="font12 mb8">
+  <div class="lab-row ml30">
+    <label>时间范围:</label>
+    <nz-select
+      class="w100 ml8"
+      [nzSize]="'small'"
+      [(ngModel)]="dataAnalysisParm.summary_date"
+      (ngModelChange)="changeSelectedDate($event)"
+    >
+      <ng-container *ngFor="let item of dateLists">
+        <nz-option
+          [nzLabel]="item.name"
+          [nzValue]="item.key"
+          [nzDisabled]="
+            item['disable'] && item['disable'].indexOf(summaryType) !== -1
+          "
+        ></nz-option>
+      </ng-container>
+    </nz-select>
+    <nz-range-picker
+      [(ngModel)]="dataAnalysisParm.summary_date_range"
+      [nzDisabledDate]="getDisableDate"
+      [nzFormat]="'yyyy/MM/dd'"
+      [nzDisabled]="dataAnalysisParm.summary_date !== 'custom'"
+      [nzAllowClear]="false"
+      [nzSize]="'small'"
+      class="ml8"
+      (ngModelChange)="changeDate()"
+    ></nz-range-picker>
+    <label
+      nz-checkbox
+      class="ml8"
+      [(ngModel)]="dataAnalysisParm.is_compare"
+      (ngModelChange)="changeCompare($event)"
+      >对比</label
+    >
+  </div>
+  <div class="lab-row mt10 ml30" *ngIf="dataAnalysisParm.is_compare">
+    <label>对比时间:</label>
+    <nz-select
+      class="w100 ml8"
+      [nzSize]="'small'"
+      [(ngModel)]="dataAnalysisParm.summary_date_compare"
+    >
+      <ng-container *ngFor="let item of compareDateLists">
+        <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+      </ng-container>
+    </nz-select>
+    <nz-range-picker
+      [(ngModel)]="dataAnalysisParm.summary_date_compare_range"
+      [nzDisabledDate]="getDisableDate"
+      [nzFormat]="'yyyy/MM/dd'"
+      [nzAllowClear]="false"
+      [nzDisabled]="dataAnalysisParm.summary_date_compare !== 'custom'"
+      [nzSize]="'small'"
+      class="ml8"
+      (ngModelChange)="changeDate()"
+    ></nz-range-picker>
+  </div>
+</div>
+<div class="view-chart" *ngFor="let parent of tableGroup">
+  <div>
+    <div class="view-chart-title mt8">
+      <nz-button-group>
+        <div *ngFor="let child of parent.children" class="fll">
+          <button
+            nz-button
+            [nzSize]="'small'"
+            [nzType]="'default'"
+            [ngClass]="{ 'chart-active': parent.activeIndex !== child.index }"
+            (click)="refreshChartData(child.key, true)"
+            *ngIf="
+              child.key !== 'data_hour' ||
+              (child.key === 'data_hour' && summaryType !== 'search_keyword')
+            "
+          >
+            <ng-container>
+              <i *ngIf="child.type === 'line'" nz-icon nzType="line-chart" nzTheme="outline"></i>
+              <i *ngIf="child.type === 'bar'" nz-icon nzType="bar-chart" nzTheme="outline"></i>
+            </ng-container>
+
+            <span>{{ child.btn_text }}</span>
+          </button>
+        </div>
+      </nz-button-group>
+    </div>
+    <div class="view-chart-body">
+      <div class="view-chart-selection">
+        <nz-select
+          class="w240"
+          [nzSize]="'small'"
+          [nzMode]="'multiple'"
+          [nzMaxMultipleCount]="3"
+          [(ngModel)]="parent.activeSelectedItems"
+          (ngModelChange)="changeChartItem(parent)"
+          [nzPlaceHolder]="'请选择指标项'"
+        >
+          <nz-option
+            *ngFor="let item of chartItems"
+            [nzLabel]="item.name"
+            [nzValue]="item.key"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+      <div
+        echarts
+        [options]="parent.chartOptions"
+        [initOpts]="chartInitOpts"
+        style="height:272px;"
+      ></div>
+      <div *ngFor="let child of parent.children">
+        <p
+          class="tips"
+          *ngIf="
+            child.key === parent.activeFieldNameKey &&
+            !child.loadingStatus &&
+            !child.resultData.length
+          "
+        >
+          暂无数据
+        </p>
+        <p
+          class="tips tipStyle"
+          *ngIf="child.key === parent.activeFieldNameKey && child.loadingStatus"
+        >
+          <nz-spin nzSimple nzTip="Loading..."></nz-spin>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

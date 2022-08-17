@@ -1,0 +1,253 @@
+<div>
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="header-left">
+      <button class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="changeField()">
+        <i nz-icon nzType="bars" nzTheme="outline"></i><span>选择维度</span>
+      </button>
+    </div>
+  </div>
+  <div class="top-condition-manage">
+    <div class="materials-manage-content-top">
+      <form [formGroup]="validateVideoForm">
+        <div nz-row [nzGutter]="24">
+          <div class="materials-manage-item" nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label>事业部</nz-form-label>
+              <nz-form-control>
+                <nz-select class="w240"
+                           [nzMaxTagCount]="1"
+                           formControlName="department"
+                           [nzMaxTagPlaceholder]="tagPlaceHolder"
+                           nzMode="multiple"
+                           [nzPlaceHolder]="'请选择事业部'"
+                           [(ngModel)]="defaultData.department"
+                           (ngModelChange)="changeSelected('department')"
+                           [nzDropdownRender]="renderDepartmentTemplate"
+                           nzShowSearch>
+                  <nz-option
+                    *ngFor="let option of departmentList"
+                    [nzLabel]="option"
+                    [nzValue]="option">
+                  </nz-option>
+                </nz-select>
+                <ng-template #renderDepartmentTemplate>
+                  <div *ngIf="!allDepartmentCheck" style="padding: 5px;text-align: center;">
+                    <a style="font-size: 15px" (click)="checkAllType('department')">选择全部</a>
+                  </div>
+                  <div *ngIf="allDepartmentCheck" style="padding: 5px;text-align: center;background-color: #e6f7ff;">
+                    <a style="font-size: 15px" (click)="checkAllType('department')">选择全部</a>
+                  </div>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="materials-manage-item" nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label>广告主</nz-form-label>
+              <nz-form-control>
+                <nz-select class="w240"
+                           [nzMaxTagCount]="1"
+                           formControlName="cid"
+                           [nzMaxTagPlaceholder]="tagPlaceHolder"
+                           nzMode="multiple"
+                           [nzPlaceHolder]="'请选择广告主'"
+                           [(ngModel)]="defaultData.cid"
+                           (ngModelChange)="changeSelected('cid')"
+                           [nzDropdownRender]="renderCidTemplate"
+                           nzShowSearch>
+                  <nz-option
+                    *ngFor="let option of selectList.advertiserList"
+                    [nzLabel]="option.name"
+                    [nzValue]="option.key">
+                  </nz-option>
+                </nz-select>
+                <ng-template #renderCidTemplate>
+                  <div *ngIf="!allCidCheck" style="padding: 5px;text-align: center;">
+                    <a style="font-size: 15px" (click)="checkAllType('cid')">选择全部</a>
+                  </div>
+                  <div *ngIf="allCidCheck" style="padding: 5px;text-align: center;background-color: #e6f7ff;">
+                    <a style="font-size: 15px" (click)="checkAllType('cid')">选择全部</a>
+                  </div>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="materials-manage-item" nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label>媒体</nz-form-label>
+              <nz-form-control>
+                <nz-select class="w240"
+                           [nzMaxTagCount]="1"
+                           formControlName="publisher_id"
+                           [nzMaxTagPlaceholder]="tagPlaceHolder"
+                           nzMode="multiple"
+                           [nzPlaceHolder]="'请选择媒体'"
+                           [(ngModel)]="defaultData.publisher_id"
+                           (ngModelChange)="changeSelected('publisher_id')"
+                           [nzDropdownRender]="renderPulisherTemplate"
+                           nzShowSearch>
+                  <nz-option
+                    *ngFor="let option of selectList.mediaList"
+                    [nzLabel]="option.name"
+                    [nzValue]="option.key">
+                  </nz-option>
+                </nz-select>
+                <ng-template #renderPulisherTemplate>
+                  <div *ngIf="!allPublisherCheck" style="padding: 5px;text-align: center;">
+                    <a style="font-size: 15px" (click)="checkAllType('publisher_id')">选择全部</a>
+                  </div>
+                  <div *ngIf="allPublisherCheck" style="padding: 5px;text-align: center;background-color: #e6f7ff;">
+                    <a style="font-size: 15px" (click)="checkAllType('publisher_id')">选择全部</a>
+                  </div>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <!-- 多选超出限制提示模板 -->
+          <ng-template #tagPlaceHolder let-selectedList> 已选{{ selectedList.length+1 }}项</ng-template>
+          <ng-container *ngFor="let item of configList;let i =index">
+            <div class="materials-manage-item" nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label>{{item.name}}</nz-form-label>
+                <nz-form-control>
+                  <ng-container *ngIf="item.type==='select'">
+                    <nz-select class="w240" [nzMode]="item['mode']?item['mode']:'default'" [formControlName]="item.key" [(ngModel)]="defaultData[item.key]"
+                               [nzPlaceHolder]="'请选择'+item.name" (ngModelChange)="selectChange($event,item.key)">
+                      <nz-option *ngFor="let option of item['optionList']" [nzValue]="option['key']" [nzLabel]="option['name']"></nz-option>
+                    </nz-select>
+                  </ng-container>
+                  <ng-container *ngIf="item.type==='input'">
+                    <input class="w240" [formControlName]="item.key" nz-input [placeholder]="'请输入'+item.name"
+                           [(ngModel)]="defaultData[item.key]"/>
+                  </ng-container>
+                  <ng-container *ngIf="item.type==='date'">
+                    <div class="w240" style="line-height: 30px;border: 1px solid #d9d9d9;" (click)="changeOnlineDate()">
+                      <span class="ml8" [style]="timeDesc.length>0?'':'color:#bdbdbd'">{{timeDesc.length>0?timeDesc:'请选择报告时间'}}</span>
+                    </div>
+                  </ng-container>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </ng-container>
+          <div class="materials-manage-item" nz-col [nzSpan]="8">
+            <button class="mr10" nz-button nzType="primary" nzSize="default" (click)="reloadData()">查询</button>
+            <button class="mr10" nz-button nzSize="default" (click)="resetData()">重置</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="materials-manage-content-bottom">
+      <nz-table #basicTable
+                  nzShowSizeChanger
+                  [nzPageSizeOptions]="[10,20,30,50,100]"
+                  [nzShowTotal]="totalItemTemplate"
+                  nzFrontPagination="false"
+                  [nzSize]="'default'"
+                  [nzData]="apiData"
+                  [(nzPageSize)]="pageSize"
+                  [(nzPageIndex)]="currentPage"
+                  (nzPageIndexChange)="refreshData()"
+                  (nzPageSizeChange)="refreshData(true)"
+                  [nzTotal]="total"
+                  [nzLoading]="loading"
+                  [nzScroll]="{ x: '2562px', y: noResultHeight + 'px' }">
+          <thead>
+          <tr>
+            <th nzWidth="320px" nzLeft>视频</th>
+            <th nzWidth="120px" nzLeft>标签</th>
+            <th nzWidth="100px">素材状态</th>
+            <ng-container *ngFor="let row of selected_items">
+              <th [nzWidth]="row.width+'px'">{{row.name}}</th>
+            </ng-container>
+    <!--        <th nzWidth="100px">广告主</th>-->
+            <th nzWidth="100px">媒体</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'material_name')" nzWidth="200px">素材名称</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'create_time')" nzWidth="150px">创建时间</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'video_type')" nzWidth="100px">素材类型</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'director_id')" nzWidth="100px">编导</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'camerist_id')" nzWidth="100px">摄影</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'movie_editor_id')" nzWidth="100px">剪辑</th>
+            <th nzWidth="100px">素材尺寸</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'use_count_num')" nzWidth="150px">计划使用次数<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'use_count_num',name:'计划使用次数'}" [(filterResult)]="filterResult['use_count_num']" (submit)="reloadData(true)"></app-filter></th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_impression')" nzWidth="120px">展现<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_impression',name:'展现'}" [(filterResult)]="filterResult['pub_impression']" (submit)="reloadData(true)"></app-filter></th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_click')" nzWidth="120px">点击<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_click',name:'点击'}" [(filterResult)]="filterResult['pub_click']" (submit)="reloadData(true)"></app-filter></th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_cost')" nzWidth="120px">消耗<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_cost',name:'消耗'}" [(filterResult)]="filterResult['pub_cost']" (submit)="reloadData(true)"></app-filter></th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_cpm')" nzWidth="120px">CPM</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_cpc')" nzWidth="120px">CPC</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_ctr')" nzWidth="120px">点击率</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'pub_convert')" nzWidth="120px">转化<app-filter [filterType]="'numberFilter'" [filterKey]="{key:'pub_convert',name:'转化'}" [(filterResult)]="filterResult['pub_convert']" (submit)="reloadData(true)"></app-filter></th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'convert_rate')" nzWidth="120px">转化率</th>
+            <th nzShowSort (nzSortOrderChange)="sortData($event,'convert_cost')" nzWidth="120px">转化成本</th>
+            <th nzWidth="120px">大小</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td colspan="2" nzLeft><span class="ml100">合计</span></td>
+            <td></td>
+            <ng-container *ngFor="let row of selected_items">
+              <td></td>
+            </ng-container>
+            <td colspan="9"></td>
+            <td>{{sumData['pub_impression']}}</td>
+            <td>{{sumData['pub_click']}}</td>
+            <td>{{sumData['pub_cost']}}</td>
+            <td>{{sumData['pub_cpm']}}</td>
+            <td>{{sumData['pub_cpc']}}</td>
+            <td>{{sumData['pub_ctr']}}</td>
+            <td>{{sumData['pub_convert']}}</td>
+            <td>{{sumData['convert_rate']}}</td>
+            <td>{{sumData['convert_cost']}}</td>
+            <td></td>
+          </tr>
+          <tr *ngFor="let data of apiData">
+            <td nzLeft>
+              <div class="materials-cell" (click)="materialsDetail(data,'video')">
+                <div class="materials-info">
+                  <div class="materials-poster">
+                    <img [src]="data['preview_img']" alt="">
+                    <i class="play-icon" nz-icon nzType="play-circle" nzTheme="outline"></i>
+                  </div>
+                  <div class="materials-title"> {{data['material_name']}}</div>
+                </div>
+              </div>
+            </td>
+            <td nzLeft>{{data['material_tags']}}</td>
+            <td><span>{{data['material_status']>0?'已确认':'未确认'}}</span></td>
+            <ng-container *ngFor="let row of selected_items">
+              <td>{{data[row.showKey]}}</td>
+            </ng-container>
+    <!--        <td>{{data['advertiser_name']}}</td>-->
+            <td>{{data['publisher_name']}}</td>
+            <td>{{data['material_name']}}</td>
+            <td>{{data['create_time']}}</td>
+            <td>{{data['video_type']==='1'?'横版视频':'竖版视频'}}</td>
+            <td>{{data['director_name']}}</td>
+            <td>{{data['camerist_name']}}</td>
+            <td>{{data['movie_editor_name']}}</td>
+            <td>{{data['upload_video_width']}}*{{data['upload_video_height']}}</td>
+            <td>{{data['use_count_num']}}</td>
+            <td>{{data['pub_impression']}}</td>
+            <td>{{data['pub_click']}}</td>
+            <td>{{data['pub_cost']}}</td>
+            <td>{{data['pub_cpm']}}</td>
+            <td>{{data['pub_cpc']}}</td>
+            <td>{{data['pub_ctr']}}%</td>
+            <td>{{data['pub_convert']}}</td>
+            <td>{{data['convert_rate']}}%</td>
+            <td>{{data['convert_cost']}}</td>
+            <td>{{data['size']}}</td>
+          </tr>
+
+          </tbody>
+        </nz-table>
+        <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+        <ng-container *ngIf="visible">
+          <app-create-materials-detail [show_type]="materials_type"
+                                       [materialsData]="detailData" [authorRole]="authorRole" [tagsList]="selectList.tagsList" (visible)="close($event)"></app-create-materials-detail>
+        </ng-container>
+    </div>
+  </div>
+</div>

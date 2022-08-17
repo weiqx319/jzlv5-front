@@ -1,0 +1,28 @@
+.add-launch-title-container {
+
+  .document-selected{
+    color: #07a204;
+  }
+
+
+  .add-launch-title-content {
+     .item-data{
+       display: flex;
+
+       .item-head{
+         width: 100px;
+         text-align: right;
+       }
+
+       .item-body{
+          width: 70%;
+       }
+     }
+  }
+
+  .form-btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+}

@@ -1,0 +1,28 @@
+<div class="safariItem" *ngFor="let item of all_items;let p_index = index;">
+  <label>
+    <i class="mr8" nz-icon [nzType]="item.open ? 'down' : 'right'" nzTheme="outline" (click)="item.open=!item.open"></i>
+    <i nz-icon nzTheme="outline" [nzType]="selected_item_obj[item.publisher_id] ? 'check-square' : 'minus-square'" [ngClass]="{'active-color':selected_item_obj[item.publisher_id]}" (click)="publisherChange(p_index)"></i>
+    <span class="ml8">{{item.publisher_name}}</span>
+  </label>
+  <ng-container *ngIf="item.open">
+    <div class="ml20">
+      <div *ngFor="let a_item of item.detail;let a_index = index;">
+        <label>
+          <i class="mr8" nz-icon [nzType]="a_item.open ? 'down' : 'right'" nzTheme="outline" (click)="a_item.open=!a_item.open"></i>
+          <i nz-icon nzTheme="outline" [nzType]="selected_item_obj[a_item.publisher_id+'_'+a_item.chan_pub_id+'_'+a_item.pub_account_id] ? 'check-square' : 'minus-square'" [ngClass]="{'active-color':selected_item_obj[a_item.publisher_id+'_'+a_item.chan_pub_id+'_'+a_item.pub_account_id]}" (click)="accountChange(p_index, a_index)"></i>
+          <span class="ml8">{{a_item.pub_account_name}}</span>
+        </label>
+        <ng-container *ngIf="a_item.open">
+          <div class="ml40">
+            <div *ngFor="let c_item of a_item.detail;let c_index = index;">
+              <label>
+                <i nz-icon nzTheme="outline" [nzType]="selected_item_obj[c_item.publisher_id+'_'+c_item.chan_pub_id+'_'+c_item.pub_account_id+'_'+c_item.pub_campaign_id] ? 'check-square' : 'minus-square'" [ngClass]="{'active-color':selected_item_obj[c_item.publisher_id+'_'+c_item.chan_pub_id+'_'+c_item.pub_account_id+'_'+c_item.pub_campaign_id]}" (click)="campaignChange(p_index, a_index, c_index)"></i>
+                <span class="ml8">{{c_item.pub_campaign_name}}</span>
+              </label>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>

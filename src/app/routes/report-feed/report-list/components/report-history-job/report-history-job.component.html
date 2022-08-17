@@ -1,0 +1,46 @@
+<div class="report-job-history-title">
+  {{reportTitle}}
+</div>
+<div class="report-job-history-content">
+<nz-table #nzTable
+          [nzSize]="'small'"
+          [nzData]="apiData"
+          [nzFrontPagination]="false"
+          [(nzPageSize)]="pageSize"
+          [(nzPageIndex)]="currentPage"
+          (nzPageIndexChange)="refreshData()"
+          [nzTotal]="total"
+          [nzLoading]="loading"
+          [nzScroll]="scrollHeight"
+          [nzNoResult]="false">
+  <thead nz-thead>
+  <tr>
+    <th>生成时间</th>
+    <th>频率</th>
+    <th>状态</th>
+    <th>接收邮箱</th>
+    <th>操作</th>
+  </thead>
+  <tbody nz-tbody>
+  <tr nz-tbody-tr *ngFor="let data of apiData">
+    <td>{{data.finished_time}}</td>
+    <td>{{reportFreqTypeRelation[data.report_freq]}}</td>
+    <td>
+      <ng-container *ngIf="data.status === 0">待生成</ng-container>
+      <ng-container *ngIf="data.status === 1">生成中</ng-container>
+      <ng-container *ngIf="data.status === 2 ">生成成功</ng-container>
+      <ng-container *ngIf="data.status === 3 ">生成失败</ng-container>
+    </td>
+    <td><div class="email">{{data.email_list}}</div></td>
+    <td>
+      <ng-container *ngIf="data.status===2">
+        <i nz-icon nzType="download" nzTheme="outline" class="down-ico-color hand" (click)="downloadReport(data)"></i>
+      </ng-container>
+      <ng-container *ngIf="data.status === 2">
+        <i nz-icon nzType="eye" nzTheme="outline" class="down-ico-color hand" (click)="seeReport(data)"></i>
+      </ng-container>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>
+</div>

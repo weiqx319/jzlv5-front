@@ -1,0 +1,320 @@
+<div class="channel-add-content">
+  <div class="basic-setting setting-block pl20 mt20">
+    <div class="lab-row mb20 pl20 w100p">
+      <label><span class="redStart">*</span>账户:</label>
+      <div>
+        <nz-select class="w_full ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="defaultData.chan_pub_id"
+                   [nzPlaceHolder]="'请选择帐户'"
+                   (ngModelChange)="changeAccount($event)"
+                   nzShowSearch>
+          <nz-option
+            *ngFor="let option of accountsList"
+            [nzLabel]="option.pub_account_name"
+            [nzValue]="option.chan_pub_id+''">
+          </nz-option>
+        </nz-select>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.chan_pub_id.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.chan_pub_id.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="lab-row mb20 pl20 w100p">
+      <label><span class="redStart">*</span>推广目的:</label>
+      <div>
+        <nz-radio-group
+          class="ml8"
+          [nzSize]="'small'"
+          [(ngModel)]="defaultData.landing_type"
+          (ngModelChange)="changeLandingType()">
+          <ng-container *ngFor="let item of landingTypeList">
+            <label nz-radio-button [nzValue]="item.key">
+              <span>{{item.name}}</span>
+            </label>
+          </ng-container>
+        </nz-radio-group>
+      </div>
+    </div>
+    <div class="lab-row mb20 pl20 w100p">
+      <label><span class="redStart">*</span>渠道类别:</label>
+      <nz-radio-group
+        class="ml8"
+        [(ngModel)]="defaultData.convert_channel_type"
+        (ngModelChange)="changeChannelType($event)"
+        [nzSize]="'small'">
+        <ng-container>
+          <label nz-radio-button [nzValue]="'1'" [nzDisabled]="isEdit && defaultData.convert_channel_type !== '1'">
+            <span>转化</span>
+          </label>
+<!--          <label nz-radio-button [nzValue]="'2'" [nzDisabled]="isEdit && defaultData.convert_channel_type !== '2'">-->
+<!--            <span>非转化</span>-->
+<!--          </label>-->
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row mb20 pl20 w100p">
+      <label><span class="redStart">*</span>渠道名称:</label>
+      <div>
+        <input class="w_full ml8" nz-input [(ngModel)]="defaultData.convert_channel_name" nzSize="small"
+               (ngModelChange)="checkBasicData('convert_channel_name')"
+               placeholder="请输入渠道名称"/>
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.convert_channel_name.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.convert_channel_name.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="lab-row mb20 pl20 w100p">
+      <label><span class="redStart">*</span>接入方式:</label>
+      <nz-radio-group
+        class="ml8"
+        [(ngModel)]="defaultData.trans_form" (ngModelChange)="changeTransFromType($event)"
+        [nzSize]="'small'">
+        <label nz-radio-button [nzValue]="'1'" *ngIf="defaultData.landing_type!=='1'">
+          <span>应用API</span>
+        </label>
+        <label nz-radio-button [nzValue]="'2'" *ngIf="defaultData.landing_type==='1'">
+          <span>基木鱼营销页</span>
+        </label>
+      </nz-radio-group>
+    </div>
+    <div class="lab-row pl20 mb20 w100p"
+         *ngIf="defaultData.landing_type === '3'">
+      <label><span class="redStart">*</span>下载类别:</label>
+      <nz-radio-group
+        class="ml8"
+        [(ngModel)]="defaultData.external_type"
+        (ngModelChange)="changeExternalType()"
+        [nzSize]="'small'">
+        <ng-container>
+          <label nz-radio-button [nzValue]="'media'">
+            <span>媒体</span>
+          </label>
+          <label nz-radio-button [nzValue]="'operate'">
+            <span>手动</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+
+    <ng-container
+      *ngIf="defaultData.landing_type !== '1'">
+      <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.external_type === 'media'&& defaultData.landing_type === '3'">
+        <label><span class="redStart">*</span>下载链接:</label>
+        <div>
+          <nz-select class="w_full ml8"
+                     [nzSize]="'small'"
+                     [nzPlaceHolder]="'请选择下载链接'"
+                     [(ngModel)]="defaultData.app_id"
+                     (ngModelChange)="downloadUrlChanged($event,'1')"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of downloadUrlList"
+              [nzLabel]="option.app_name"
+              [nzValue]="option.app_id">
+            </nz-option>
+          </nz-select>
+          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.app_url.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.app_url.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="lab-row pl20 mb20 w100p"
+           *ngIf="defaultData.external_type === 'operate'||defaultData.landing_type === '2'">
+        <label><span class="redStart">*</span>下载链接:</label>
+        <div>
+          <input class="w_full ml8" nz-input [(ngModel)]="defaultData.app_url"
+                 (ngModelChange)="downloadUrlChanged($event)"
+                 (blur)="downloadUrlBlur()" nzSize="small" placeholder="请输入下载链接"/>
+          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.app_url.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.app_url.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <div class="lab-row pl20 mb20"
+         *ngIf="defaultData.landing_type !== '1'">
+      <label><span class="redStart">*</span>应用包名:</label>
+      <div>
+        <input nz-input
+               [disabled]="defaultData.landing_type === '3'"
+               class="w_full ml8"
+               [nzSize]="'small'"
+               type="text"
+               [(ngModel)]="defaultData.apk_name"
+               (ngModelChange)="apkNameIpt()"
+               placeholder="请输入">
+        <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.apk_name.is_show">
+          <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+          <span style="color: red;">{{ checkErrorTip.apk_name.tip_text }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lab-row pl20 mb20 w100p"
+         *ngIf="defaultData.landing_type === '1'">
+      <label><span class="redStart">*</span>落地页类别:</label>
+      <nz-radio-group
+        class="ml8"
+        [(ngModel)]="defaultData.external_type"
+        (ngModelChange)="changeExternalType()"
+        [nzSize]="'small'">
+        <ng-container>
+          <label nz-radio-button [nzValue]="'media'">
+            <span>基木鱼页面</span>
+          </label>
+          <label nz-radio-button [nzValue]="'operate'">
+            <span>手动填写</span>
+          </label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+
+    <ng-container
+      *ngIf="defaultData.landing_type === '1'">
+      <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.external_type === 'media'">
+        <label><span class="redStart">*</span>落地页链接:</label>
+        <div>
+          <nz-select class="w_full ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="defaultData.page_id"
+                     [nzPlaceHolder]="'请选择落地页链接'"
+                     (ngModelChange)="changeExternal($event,'1')"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of mediaTargetList"
+              [nzLabel]="option.page_name"
+              [nzValue]="option.page_id">
+            </nz-option>
+          </nz-select>
+          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.online_url.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.online_url.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="lab-row pl20 mb20 w100p" *ngIf="defaultData.external_type === 'operate'">
+        <label><span class="redStart">*</span>落地页链接:</label>
+        <div>
+          <input nz-input
+                 class="w_full ml8"
+                 [nzSize]="'small'"
+                 type="text"
+                 [(ngModel)]="defaultData.online_url"
+                 (ngModelChange)="checkBasicData('online_url')"
+                 (blur)="externalUrlBlur();"
+                 placeholder="请输入落地页链接">
+          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.online_url.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.online_url.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="defaultData.convert_channel_type === '1'">
+      <div class="lab-row pl20 mb20">
+        <label><span class="redStart">*</span>转化目标:</label>
+        <div>
+          <nz-select class="w_full ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="defaultData.convert_id"
+                     (ngModelChange)="changeConvertName($event)"
+                     [nzPlaceHolder]="'请选择转化目标'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of conversionNameList"
+              [nzLabel]="option.trans_name"
+              [nzValue]="option.app_trans_id">
+            </nz-option>
+          </nz-select>
+          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.convert_id.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.convert_id.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="lab-row pl20 mb20">
+        <label><span class="redStart">*</span>转化类型:</label>
+        <div>
+          <nz-select class="w_full ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="defaultData.trans_types"
+                     (ngModelChange)="checkBasicData('trans_types')"
+                     [nzPlaceHolder]="'请选择转化类型'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of conversionTargetList|keyvalue"
+              [nzLabel]="option.value"
+              [nzValue]="option.key">
+            </nz-option>
+          </nz-select>
+          <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.trans_types.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.trans_types.tip_text }}</span>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="isEmpty(deepConversionTargetList)">
+        <!--深度转化目标-->
+        <div class="lab-row pl20 mb20 w100p">
+          <label>深度转化目标:</label>
+          <div>
+            <nz-select class="w_full ml8"
+                       [nzSize]="'small'"
+                       [nzPlaceHolder]="'请选择'"
+                       [(ngModel)]="defaultData.deep_trans_types"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of deepConversionTargetList|keyvalue"
+                [nzLabel]="option.value"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+            <div class="error-tip mt5 ml8" *ngIf="checkErrorTip.deep_trans_types.is_show">
+            <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red" class="mr5"></i>
+            <span style="color: red;">{{ checkErrorTip.deep_trans_types.tip_text }}</span>
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+    </ng-container>
+
+    <div class="lab-row w100p pl20 mb20">
+      <label>点击监测链接:</label>
+      <div>
+        <input nz-input
+               class="w_full ml8"
+               [nzSize]="'small'"
+               type="text"
+               [(ngModel)]="defaultData.monitor_url"
+               placeholder="请输入">
+      </div>
+    </div>
+    <div class="lab-row mb20 pl20 w100p">
+      <label>展示监测链接:</label>
+      <div>
+        <input nz-input
+               class="w_full ml8"
+               [nzSize]="'small'"
+               type="text"
+               [(ngModel)]="defaultData.exposure_url"
+               placeholder="请输入">
+      </div>
+    </div>
+  </div>
+
+
+  <div class="channel-add-btn">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+</div>

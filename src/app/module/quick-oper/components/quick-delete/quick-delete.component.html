@@ -1,0 +1,38 @@
+<button
+        [ngClass]="{'disabled-status':delDisabled||selected.length<1}"
+        class="manage-add mr8"
+        nz-button
+        [disabled]="delDisabled||selected.length<1"
+        [nzType]="'default'"
+        (click)="delData()"
+        [nzSize]="'small'"
+>
+  <i nz-icon nzType="close"  nzTheme="outline"></i><span>删除</span>
+</button>
+
+
+<nz-modal
+  [(nzVisible)]="modalIsVisible"
+  [nzTitle]="modelTitle"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handOk()"
+  [nzOkLoading]="isOkRequest"
+>
+  <div class="del-content">
+    <ng-container *ngIf="summary_type == 'campaign'&&publisherId==6">
+      <div class="del-tooltip"><i style="color: orange" nz-icon nzType="question-circle" nzTheme="fill"></i>开启的计划,系统会先暂停后删除</div>
+    </ng-container>
+    <div class="del-tooltip"><i style="color: orange" nz-icon nzType="warning" nzTheme="fill"></i>{{modelContent}}</div>
+    <div class="del-input">
+      <input nz-input
+             class="w100p"
+             [nzSize]="'small'"
+             type="text"
+             placeholder="确认删除"
+             [(ngModel)]="modelCheckContent">
+    </div>
+  </div>
+
+
+
+</nz-modal>

@@ -1,0 +1,21 @@
+<div class="optimization-detail-nav-tab">
+  <div class="optimization-detail-desc">
+    <div class="action-back" >
+      <a (click)="backList()">
+      <i nz-icon nzType="left" nzTheme="outline"></i><span>返回优化列表页</span>
+      </a>
+    </div>
+    <div *ngIf="optimizationGroupInfo!=null"> <span>{{optimizationGroupInfo['optimization_type']!=2?'排名优化组':'效果优化组'}}:{{optimizationGroupInfo['optimization_name']}}</span>  </div>
+  </div>
+  <div class="optimization-detail-nav-menu">
+    <ng-container *ngFor="let tab of optimizationTab">
+      <div class="oper-type" [routerLink]="[tab.key]"  [routerLinkActive]="['active']">
+        {{tab.name}}
+      </div>
+      <div class="ml10"></div>
+    </ng-container>
+  </div>
+</div>
+<div class="optimization-detail">
+  <router-outlet></router-outlet>
+</div>

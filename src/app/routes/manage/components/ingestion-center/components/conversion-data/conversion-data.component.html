@@ -1,0 +1,95 @@
+<div>
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="manage-operation">
+      <div class="manage-header-left">
+        <a class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="clickUploadBtn()">
+          <i nz-icon nzType="upload" nzTheme="outline"></i><span>上传自定义转化数据</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="manage-table manage-no-result-table">
+      <nz-table #nzTable
+                nzShowSizeChanger
+                [nzPageSizeOptions]="[30,50,100,500]"
+                [nzSize]="'default'"
+                [nzData]="apiData"
+                [nzFrontPagination]="false"
+                [(nzPageSize)]="logPageInfo.pageSize"
+                [(nzPageIndex)]="logPageInfo.currentPage"
+                (nzPageIndexChange)="refreshData()"
+                (nzPageSizeChange)="refreshData('log')"
+                [nzTotal]="logPageInfo.total"
+                [nzLoading]="loading"
+                [nzShowTotal]="totalItemTemplate"
+                [nzScroll]="{ y: noResultHeight+'px' }">
+        <thead>
+        <tr>
+          <th [nzWidth]="'180px'">
+            <span>转化数据上传时间</span>
+          </th>
+          <th [nzWidth]="'250px'">
+            <span>转化文件名称</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'original_file_name',name:'转化数据表名称',type:'multiValue'}" [(filterResult)]="filterResult['original_file_name']" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'150px'">
+            <span>转化数据格式</span>
+          </th>
+          <th [nzWidth]="'180px'">
+            <span>广告主</span>
+            <app-filter [filterType]="'operSingleList'" [filterOption]="advertiserList" [filterKey]="{key:'cid',name:'广告主',type:'operSingleList'}" [(filterResult)]="filterResult['cid']" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'150px'">
+            <span>操作人</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>状态</span>
+          </th>
+          <th [nzWidth]="'300px'">
+            <span>具体说明</span>
+          </th>
+          <th [nzWidth]="'80px'">
+            <span>操作</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of apiData">
+          <td>{{data.create_time}}</td>
+          <td>{{data.original_file_name}}</td>
+          <td>{{conversionTypeRelation['conType_'+data.data_source_type]}}</td>
+          <td>{{data.advertiser_name}}</td>
+          <td>{{data.user_name}}</td>
+          <td>
+            <ng-container *ngIf="data.record_status == 3">
+              <span class="red">处理失败</span>
+            </ng-container>
+            <ng-container *ngIf="data.record_status != 3">
+              <span *ngIf="data.record_status == 0">上传成功</span>
+              <span *ngIf="data.record_status == 1">匹配账号结构</span>
+              <span *ngIf="data.record_status == 2">处理成功</span>
+              <span *ngIf="data.record_status == 4">作废</span>
+            </ng-container>
+          </td>
+          <td>{{data.record_note}}</td>
+          <td><a (click)="downloadConversion(data)">下载</a></td>
+        </tr>
+        <tr *ngIf="apiData.length===0">
+          <td #noResultTd [attr.colspan]="8"  [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+            <div class="table-no-result">
+              <div class="table-no-result-content">
+                <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="clickUploadBtn()">
+                  <i nz-icon nzType="upload" nzTheme="outline"></i><span>上传转化数据</span>
+                </button>
+                <!--<div class="mt8">只有在您定义转化数据后，工具才可以做各种转化数据分析和优化建议</div>-->
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #totalItemTemplate let-total>共{{ logPageInfo.total }}条</ng-template>
+    </div>
+  </div>
+</div>

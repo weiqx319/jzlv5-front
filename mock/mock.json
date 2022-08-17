@@ -1,0 +1,777 @@
+{"dashboard":[
+  {
+    "dashboard_id": "xMgIw0IYqw",
+    "dashboard_name": "PMdHZMqvgn",
+    "create_time": 1512980478449,
+    "last_modify_time": 1513507188694,
+    "creator_id": "WoMNNJe9",
+    "creator": "邢",
+    "last_editor_id": "WoMNNJe9",
+    "updater": "邢",
+    "components": [
+      {
+        "chart_id": "b4Okz2je7Y",
+        "chart_type": "pie",
+        "chart_name": "NikjGYBMBH",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "V6AspTw06m",
+        "chart_type": "lineStack",
+        "chart_name": "ewaP7WfCax",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "r5CZUkDpXn",
+        "chart_type": "bar",
+        "chart_name": "CCj7TemzJh",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "XA7ME6VjSC",
+        "chart_type": "line",
+        "chart_name": "vTyd0N3VaC",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "hTfCO6ZosX",
+        "chart_type": "bar",
+        "chart_name": "NuvqsEzM1p",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "ovixsqnJMM",
+        "chart_type": "pie",
+        "chart_name": "T6R0tg48NN",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "tWbzLoBAt0",
+        "chart_type": "lineStack",
+        "chart_name": "icTTYcqj80",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "4tJ4lgRIpq",
+        "chart_type": "bar",
+        "chart_name": "Wty6ulVBm0",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "T5IxAu2K2m",
+        "chart_type": "line",
+        "chart_name": "qf9VSZRDM5",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "f1iJ4Lgyjv",
+        "chart_type": "line",
+        "chart_name": "uxNIGthFZd",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "LB1jzGuMhJ",
+        "chart_type": "bar",
+        "chart_name": "syBMNQ5FHN",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "QnLQlBByq3",
+        "chart_type": "line",
+        "chart_name": "z9rlF64PLy",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "HWnk9bZGJC",
+        "chart_type": "pie",
+        "chart_name": "zrLEBfhuZ8",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "PkWcUu1RP5",
+        "chart_type": "line",
+        "chart_name": "d3xdGTD1QO",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      }
+    ],
+    "id": "xMgIw0IYqw"
+  },
+  {
+    "dashboard_id": "RCNEPLBSyB",
+    "dashboard_name": "iqlcqy24Fw",
+    "create_time": 1512980478449,
+    "last_modify_time": 1513507188694,
+    "creator_id": "WoMNNJe9",
+    "creator": "邢",
+    "last_editor_id": "WoMNNJe9",
+    "updater": "邢",
+    "components": [
+      {
+        "chart_id": "ZO3mjSWRwS",
+        "chart_type": "line",
+        "chart_name": "AjV6UIoD64",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "OSgH7qfTm0",
+        "chart_type": "line",
+        "chart_name": "SyjkCuQEGo",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "7v0qqxVPQQ",
+        "chart_type": "line",
+        "chart_name": "3DkiIBBKeC",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "zSQHDxzKmv",
+        "chart_type": "line",
+        "chart_name": "5LYSCUJplR",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "1k3axigwOm",
+        "chart_type": "line",
+        "chart_name": "GiWGpHVrkh",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      }
+    ],
+    "id": "RCNEPLBSyB"
+  },
+  {
+    "dashboard_id": "7AZafbBJcr",
+    "dashboard_name": "0aPWD8e2rv",
+    "create_time": 1512980478449,
+    "last_modify_time": 1513507188694,
+    "creator_id": "WoMNNJe9",
+    "creator": "邢",
+    "last_editor_id": "WoMNNJe9",
+    "updater": "邢",
+    "components": [
+      {
+        "chart_id": "0zPqc859Bk",
+        "chart_type": "line",
+        "chart_name": "qrk65PcwPO",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "Zk8QGZMIf9",
+        "chart_type": "bar",
+        "chart_name": "2oiKLRzDVs",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "B3vpqyC7UP",
+        "chart_type": "bar",
+        "chart_name": "WKODpdQ8jM",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      },
+      {
+        "chart_id": "JrXF0jVUf6",
+        "chart_type": "bar",
+        "chart_name": "cMvjOWvbYj",
+        "date_range": "",
+        "conditions": {
+          "key": "",
+          "value": "",
+          "name": "",
+          "op": "",
+          "type": ""
+        },
+        "metrics": [
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          },
+          {
+            "id": "wqUBUvIYur",
+            "key": "zv4LZxT2FR",
+            "name": "xDKNOxjfnX",
+            "type": "bar",
+            "is_x": true,
+            "order": "6"
+          }
+        ],
+        "summary_type": ""
+      }
+    ],
+    "id": "7AZafbBJcr"
+  }
+]}

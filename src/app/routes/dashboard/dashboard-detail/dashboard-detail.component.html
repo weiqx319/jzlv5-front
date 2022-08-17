@@ -1,0 +1,51 @@
+<app-dashboard-nav (download)="downloadPdf()" (refresh)="refreshAllChart()" (dateChange)="dateChange($event)"></app-dashboard-nav>
+<div id="dashboardSection">
+  <div id="dashboardContent" nz-row [nzGutter]="8" #dashboardContent class="dashboard-content" *ngIf="chartList.length>0 && !loading"  dnd-sortable-container [sortableData]="chartDataOptionList" >
+
+   <!-- <div nz-col [nzSpan]=size dnd-sortable [dragData]="{index:i}" (onDragSuccess)="dragSuccess($event)">
+      <app-jzl-chart [chart_type]="'simple_data'"  [size]="size" (edit)="editChart()" (reload)="reloadChart($event)" (copy)="copyChart($event)" (del)="delChart($event)" class="demo-chart"></app-jzl-chart>
+    </div>-->
+    <ng-container *ngFor="let item of chartDataOptionList; let i  = index">
+      <ng-container *ngIf="item">
+        <div nz-col [nzSpan]=size dnd-sortable [sortableIndex]="i" [dragData]="{index:i}" (onDragSuccess)="dragSuccess($event,i)">
+          <app-jzl-chart [dashboardConfig]="dashboardGlobalConfig" [option]="item.data" [dataOption]="item.dataOption" [dashboardId]="item.dashboardId" [size]="size" (edit)="editChart($event, i)" (reload)="reloadChart($event,i)" (copy)="copyChart($event, i)" (del)="delChart($event,i)" class="demo-chart"></app-jzl-chart>
+        </div>
+      </ng-container>
+    </ng-container>
+    <div id="empty-chart-add" nz-col [nzSpan]="size" *ngIf="(currentDashBoard$|async)?.is_default===0">
+      <app-empty-chart [size]="size"></app-empty-chart>
+    </div>
+  </div>
+  <div class="dashboard-empty-content" *ngIf="!chartList.length && !loading && (currentDashBoard$|async)?.is_default===0">
+    <div class="dashboard-empty-content-desc">
+      <app-add-chart [btn_size]="'large'" [source]="'dashboard-empty'"></app-add-chart>
+      <div class="dashboard-empty-content-hint">{{dashboardName}}还没有添加图表，请添加</div>
+    </div>
+  </div>
+  <div  class="dashboard-loading" style="display: block;" *ngIf="loading">
+    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 30 30" style="enable-background:new 0 0 30 30" xml:space="preserve"><style type="text/css">.st0{fill:#56acef}</style><path class="st0" d="M19.8,21L19.8,21c-0.6,0-1-0.4-1-1V10c0-0.5,0.4-1,1-1h0c0.5,0,1,0.4,1,1v10C20.8,20.6,20.4,21,19.8,21z" transform="scale(1 1.33543)"><animateTransform attributeType="xml" attributeName="transform" type="scale" values="1,1; 1,2; 1,1" begin="0s" dur="0.8s" repeatCount="indefinite"></animateTransform></path><path class="st0" d="M10.2,21L10.2,21c-0.6,0-1-0.4-1-1V10c0-0.5,0.4-1,1-1h0c0.5,0,1,0.4,1,1v10C11.2,20.6,10.7,21,10.2,21z" transform="scale(1 1.83543)"><animateTransform attributeType="xml" attributeName="transform" type="scale" values="1,1; 1,2; 1,1" begin="0.2s" dur="0.8s" repeatCount="indefinite"></animateTransform></path><path class="st0" d="M15,21L15,21c-0.6,0-1-0.4-1-1V10c0-0.5,0.4-1,1-1h0c0.5,0,1,0.4,1,1v10C16,20.6,15.6,21,15,21z" transform="scale(1 1.66457)"><animateTransform attributeType="xml" attributeName="transform" type="scale" values="1,1; 1,2; 1,1" begin="0.4s" dur="0.8s" repeatCount="indefinite"></animateTransform></path></svg>
+    <div class="tip">正在加载数据...</div>
+  </div>
+</div>
+<!-- 导出pdf提示框 -->
+<nz-modal
+   [(nzVisible)]="pdfModalVisible"
+   nzTitle="导出PDF"
+   [nzFooter]="null"
+   (nzOnCancel)="handleCancel()"
+ >
+  <div class="tips">注：仅下载已加载的图表</div>
+  <div class="modalContext">
+    <ng-container  *ngIf="pdfModalLoading">
+     <nz-spin nzSimple class="load"></nz-spin>
+     <div> 文件生成中，请稍等...</div>
+    </ng-container>
+    <ng-container  *ngIf="!pdfModalLoading">
+     <i nz-icon nzType="file-pdf" nzTheme="outline" class="file-pdf"></i>
+     <div> 文件生成成功!</div>
+    </ng-container>
+   <button nz-button [nzType]="'primary'" class="downloadBtn" [nzLoading]="pdfModalLoading" (click)="doDownloadPdf()">
+     <i nz-icon nzType="download" nzTheme="outline"></i><span>下载文件</span>
+   </button>
+  </div>
+ </nz-modal>

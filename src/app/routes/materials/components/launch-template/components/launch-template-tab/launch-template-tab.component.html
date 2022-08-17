@@ -1,0 +1,42 @@
+<div class="materials-nav-tab">
+  <div class="materials-nav-menu">
+    <ng-container *ngFor="let tab of materialsTab">
+      <div class="materials-type" (click)="changeActive(tab.key)" [ngClass]="{'active':activeType===tab.key}">{{tab.name}}</div>
+      <div class="ml10"></div>
+    </ng-container>
+  </div>
+</div>
+<ng-container *ngIf="activeType === 'launch'">
+  <app-campaign-template></app-campaign-template>
+</ng-container>
+<ng-container *ngIf="activeType === 'target'">
+  <app-target-template></app-target-template>
+</ng-container>
+<!--<ng-container *ngIf="activeType === 'campaign_name'">-->
+<!--  <app-campaign-name-template></app-campaign-name-template>-->
+<!--</ng-container>-->
+<ng-container *ngIf="activeType === 'android_download_link'">
+  <app-android-download-link></app-android-download-link>
+</ng-container>
+<ng-container *ngIf="activeType === 'ios_download_link'">
+  <app-ios-download-link></app-ios-download-link>
+</ng-container>
+<ng-container *ngIf="activeType === 'landing_page'">
+  <app-landing-page-template></app-landing-page-template>
+</ng-container>
+<ng-container *ngIf="activeType === 'deeplink_url'">
+  <app-url-template [urlType]="'deeplink_url'"></app-url-template>
+</ng-container>
+<ng-container *ngIf="activeType === 'applet_url'">
+  <app-url-template [urlType]="'applet_url'"></app-url-template>
+</ng-container>
+<ng-container *ngIf="activeType === 'click_monitor_url'">
+  <app-url-template [urlType]="'click_monitor_url'"></app-url-template>
+</ng-container>
+<ng-container *ngIf="activeType === 'catalogue_list'">
+  <app-catalogue-list-template [urlType]="'catalogue_list'"></app-catalogue-list-template>
+</ng-container>
+<ng-container *ngIf="activeType === 'card_list'">
+  <app-card-template></app-card-template>
+</ng-container>
+

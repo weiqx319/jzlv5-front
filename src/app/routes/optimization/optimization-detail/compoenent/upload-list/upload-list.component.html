@@ -1,0 +1,57 @@
+<div class="ranking-log-list-nav">
+  <div class="ranking-log-nav-col">
+    <div class="ranking-log-nav-btn">
+      <button class="manage-add mr8 background" nz-button [nzType]="'default'" (click)="refreshData()" [nzSize]="'small'" >
+        <i nz-icon nzType="sync" nzTheme="outline"></i><span>刷新</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+<div class="ranking-log-data">
+  <nz-table #nzTable [nzData]="rows"
+            [nzSize]="'small'"
+            [nzFrontPagination]="false"
+            [(nzPageSize)]="pageInfo.pageSize"
+            [(nzPageIndex)] = "pageInfo.currentPage"
+            (nzPageSizeChange)="refreshData()"
+            (nzPageIndexChange)="refreshData()"
+            [nzShowSizeChanger] = true
+            [nzTotal]="pageInfo.allCount"
+            [nzLoading]="dataLoading"
+            [nzShowTotal]="totalTemplate"
+            [nzScroll]="{ y: tableHeight+'px'}">
+    <thead>
+    <tr>
+      <th style="padding-left: 30px !important;" [nzWidth]="'140px'">文件上传时间</th>
+      <th [nzWidth]="'166px'" >状态</th>
+      <th [nzWidth]="'66px'" >处理结果</th>
+      <th [nzWidth]="'80px'" >处理明细</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template ngFor let-row [ngForOf]="nzTable.data">
+      <tr>
+        <td style="padding-left: 30px !important;" >{{row.create_time}}</td>
+        <td>
+          <span *ngIf="row.status == 0">待运行</span>
+          <span *ngIf="row.status == 1">运行中</span>
+          <span *ngIf="row.status == 3">成功</span>
+          <span *ngIf="row.status == 4">失败</span>
+        </td>
+        <td>{{row.message}}</td>
+        <td>
+          <a *ngIf="row.status === 3" class="mr8" (click)="downLoad(row.job_id)"><i nz-icon nzType="download" nzTheme="outline" class="down-ico-color hand mr8"></i></a>
+          <a *ngIf="row.status === 3" (click)="seeUploadFile(row)"><i nz-icon nzType="eye" nzTheme="outline" class="down-ico-color hand mr8"></i></a>
+        </td>
+
+      </tr>
+
+    </ng-template>
+    <ng-template #totalTemplate let-total>
+      共 {{total}} 条
+    </ng-template>
+    </tbody>
+  </nz-table>
+
+</div>

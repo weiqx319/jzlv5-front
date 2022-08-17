@@ -1,0 +1,99 @@
+<p style="color: red;" class="mt8" *ngIf="uploading">正在上传转化数据，请勿离开或者刷新此页面！</p>
+<div>
+  <form nz-form [formGroup]="uploadForm">
+    <!--<p style="color: red;margin-bottom: 10px;padding-left: 76px;">正在上传转化数据，请勿离开或者刷新此页面！</p>-->
+    <!--<p class="mt8">*请上传.xls或.xlsx文件</p>-->
+    <div>
+      <nz-form-item>
+        <div class="form-label pull-left w60" style="text-align: right">
+          <label><span class="redStart">*</span>广告主:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left" >
+          <nz-select class="w100p" [formControlName]="'cid'" [nzSize]="'small'" [(ngModel)]="uploadSetting.cid" [nzPlaceHolder]="'请选择广告主'" nzShowSearch>
+            <ng-container *ngFor="let item of advertiserLists">
+              <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <div class="form-label pull-left w60" style="text-align: right">
+          <label><span class="redStart">*</span>导入类型:</label>
+        </div>
+        <nz-form-control class="w200 ml8 pull-left" >
+          <nz-radio-group [formControlName]="'cash_type'" [nzSize]="'small'" [(ngModel)]="uploadSetting.cash_type">
+            <label nz-radio [nzValue]="'indemnity'">赔付消耗</label>
+            <label nz-radio [nzValue]="'media_return_cash'">媒体返货</label>
+          </nz-radio-group>
+        </nz-form-control>
+      </nz-form-item>
+      <div class="fontSize12" style="height:200px;overflow: hidden">
+        <hot-table
+          class="hot"
+          [data]="dataset"
+          [colHeaders]="true"
+          [rowHeaders]="true"
+          [contextMenu]="contextMenu"
+          [colWidths]="[150, 100, 100, 100,100,100,100]">
+          <hot-column data="date" [readOnly]="false" title="日期"></hot-column>
+          <hot-column data="channel" title="渠道"></hot-column>
+          <hot-column data="media" title="媒体"></hot-column>
+          <hot-column data="account" title="账户"></hot-column>
+          <hot-column data="equipment" title="设备"></hot-column>
+          <hot-column data="compensate" [title]="uploadSetting.cash_type==='indemnity'?'赔付消耗':'媒体返货'"></hot-column>
+          <hot-column data="is_virtual" title="是否为虚拟户"></hot-column>
+        </hot-table>
+        <div *ngIf="copyMessage.length">
+          <p *ngFor="let i of copyMessage" class="fontSize12" style="color: red; line-height: 20px;">{{i}}</p>
+        </div>
+      </div>
+      <div class="fontSize12">
+        <p>备注1：赔付消耗，一般为媒体消费成本过高，媒体进行赔付；</p>
+        <p>备注2：媒体返货，一般为媒体根据已消费金额，进行返货直接充值到账户，个别媒体也会以优惠券形式发放；</p>
+        <p>备注3：赔付消耗和媒体返货同一个账户同一个日期，可分别进行上传</p>
+        <p>备注4：赔付消耗和媒体返货上传影响营销分析视图中账户层级以上的现金消费指标，公式为：现金消费=（媒体消费-赔付消耗-媒体返货）/现金返点公式</p>
+        <p>备注5：V5视图各层级的现金消费未计算赔付消耗和媒体返货，公式为：现金消费=媒体消费/现金返点公式</p>
+        <p>备注6：渠道、媒体、账户名称与{{productInfo['name']}}帐户列表中名称保持一致</p>
+        <p>备注7：设备（计算机、移动）</p>
+        <p>备注8：如果帐户为虚拟户，请将"是否为虚拟户"设为是 ，默认为否</p>
+
+      </div>
+<!--      <div class="uploadDiv" style="display: inline-block;position: relative;width: 100%;margin-left: 108px;margin-top: 5px;">-->
+<!--        <nz-upload *ngIf="!uploading" class="pull-left"-->
+<!--                   [nzCustomRequest]="customReq"-->
+<!--                   [(nzFileList)]="fileList"-->
+<!--                   [nzBeforeUpload]="beforeUpload"-->
+<!--                   [nzSize]="'default'"-->
+<!--                   [nzLimit] = 1-->
+<!--                   [nzName]="'files'">-->
+<!--          <button nz-button style="height: 20px">-->
+<!--            <i nz-icon nzType="upload" nzTheme="outline"  ></i><span>上传文件</span>-->
+<!--          </button>-->
+<!--        </nz-upload>-->
+<!--        <button *ngIf="uploading" nz-button style="height: 20px" class="mt2 pull-left">-->
+<!--          <i nz-icon nzType="upload" nzTheme="outline"  ></i><span>上传文件</span>-->
+<!--        </button>-->
+<!--        <span style="display: inline-block; margin-top: 3px; position: absolute;left: 95px;">*请上传.xls或.xlsx文件</span>-->
+<!--      </div>-->
+<!--      <div *ngIf="uploading || exception === 'exception'" class="m1020" style="margin-right: 25px; width: 72%; margin-left: 20px;">-->
+<!--        <nz-progress [nzStatus]="exception" [nzPercent]="speed" nzSize="default"></nz-progress>-->
+<!--      </div>-->
+<!--      <div class="mb20"  style="display: inline-block;position: relative;width: 100%;margin-left: 108px;margin-top: 5px;">-->
+<!--        <a href="javascript:" class="inline-block" style="position: absolute; top:2px;" (click)="downloadTemplate()">下载参考模板</a>-->
+<!--      </div>-->
+
+
+    </div>
+    <div class="sub-company-form-footer">
+      <button class="ml8" nz-button [nzType]="'default'" [disabled]="uploading" [nzSize]="'default'" (click)="cancelUpload()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" *ngIf="!uploading" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="handleUpload()">
+        <span>完成</span>
+      </button>
+      <button class="ml8" *ngIf="uploading" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="uploading">
+        <span>上传中...</span>
+      </button>
+    </div>
+  </form>
+</div>

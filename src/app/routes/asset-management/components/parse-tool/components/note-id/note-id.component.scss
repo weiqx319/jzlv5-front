@@ -1,0 +1,29 @@
+.top-content {
+  padding: 6px 15px;
+  margin: 0 10px;
+  background-color: #fff;
+  display: flex;
+
+  .top-content-item {
+    padding: 10px 0;
+    display: flex;
+    .label {
+      width: 80px;
+      .label-name {
+        font-size: 14px;
+      }
+    }
+    .parseBtn {
+      width: 70px;
+      font-size: 14px;
+    }
+  }
+}
+
+#hotTableWrapper {
+  height: calc(100vh - 60px - 30px - 220px);
+  overflow: auto;
+}
+.colHeader{
+  height: 40px;
+}

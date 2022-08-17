@@ -1,0 +1,292 @@
+<div class="conDiv">
+  <div class="conSon ml200">
+    <div class="mb400">
+      <h3>基本信息</h3>
+      <div class="inpRow mt8" >
+        <div class="inpRow_left mr8 pull-left">
+          <label class="titleLa w52 inline-block">
+            <span>媒体:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left" >
+          <p>{{publisherOption[info.monitor_info['publisher_id']]}}</p>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="inpRow mt8">
+        <div class="inpRow_left mr8 pull-left">
+          <label class="titleLa w52 inline-block">
+            <span>名称:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left" >
+          <div class="pull-left">
+            <input nz-input
+                   [(ngModel)]="info.monitor_info.monitor_name"
+                   [nzSize]="'small'">
+          </div>
+          <div class="ml8 pull-left wroning" [ngClass]="{clSave:iswraing == true}" *ngIf="!info.monitor_info.monitor_name">
+            <span><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>输入名称</span>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <h3>监控设置</h3>
+
+
+      <div class="inpRow mt10">
+        <div class="inpRow_left pull-left">
+          <label class="titleLa w90 mr8 inline-block">
+            <span>报警频率:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left noCheckbox ">
+          <nz-select style="width: 200px;"
+                     [nzSize]="'small'"
+                     nzPlaceHolder="请选择报警频率"
+                     [(ngModel)]="info.monitor_info['monitor_interval']">
+            <nz-option *ngFor="let option of monitor_rate"
+                       [nzLabel]="option. name"
+                       [nzValue]="option. key"></nz-option>
+          </nz-select>
+          <ng-container *ngIf="!info.monitor_info['monitor_interval']">
+            <span class="wroning ml20" [ngClass]="{clSave:iswraing}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>报警频率能为空</span>
+          </ng-container>
+        </div>
+        <div class="clear"></div>
+      </div>
+
+      <div class="inpRow mt10">
+        <div class="inpRow_left pull-left">
+          <label class="titleLa w90 mr8 inline-block">
+            <span>当天是否重复报警:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left noCheckbox ">
+          <nz-radio-group [nzSize]="'small'" [(ngModel)]="info.monitor_info['is_repeat_alarm']">
+            <label nz-radio [nzValue]="'0'" >
+              <span>否</span>
+            </label>
+            <label nz-radio [nzValue]="'1'">
+              <span>是</span>
+            </label>
+          </nz-radio-group>
+        </div>
+        <div class="clear"></div>
+      </div>
+
+      <!--监测指标-->
+      <div class="inpRow mt10 mb14 monitor_method">
+        <div class="inpRow_left pull-left">
+          <label class="titleLa w90 mr8 inline-block">
+            <span class="method_title">监测指标:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left noCheckbox" style="width: 800px;">
+          <div class="monitor_item" *ngFor="let target of info.monitor_info.monitor_metric, let i = index">
+            <div class="monitor_sub_item" *ngFor="let type of target.rule_define, let j = index" [ngClass]="{removeMB:j === target.rule_define.length - 1}">
+              <nz-select class="mr8" style="width: 150px;"
+                         [(ngModel)]="type.data_type"
+                         (ngModelChange)="itemTypeRelationChange($event, i, j)"
+                         [nzSize]="'small'">
+                <nz-option
+                  *ngFor="let option of itemTypeRelation"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+              </nz-select>
+              <nz-select class="mr8" style="width: 200px;"
+                         [(ngModel)]="type.key"
+                         (ngModelChange)="itemTypeDataDetailChange($event, i, j)"
+                         [nzSize]="'small'">
+                <nz-option
+                  *ngFor="let option of itemTypeDataDetail[type.data_type]"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+              </nz-select>
+              <nz-select class="mr8" style="width: 180px;"
+                         [(ngModel)]="type.comparison_operation"
+                         [nzSize]="'small'">
+                <ng-container *ngFor="let option of getOperationByItem(type.key);trackBy:operationTrack">
+                  <nz-option
+                    [nzLabel]="option.name"
+                    [nzValue]="option.key">
+                  </nz-option>
+                </ng-container>
+              </nz-select>
+              <nz-input-number class="mr8" style="width: 100px;"
+                               [(ngModel)]="type.comparison_value"
+                               [nzSize]="'small'">
+              </nz-input-number>
+              <span *ngIf="(type.comparison_operation !== '>=' && type.comparison_operation !== '<=') || type.is_rate == 1">%</span>
+              <i nz-icon nzType="question-circle" nzTheme="outline"
+                 class="ml8"
+                 nz-popover
+                 [nzPopoverContent]="stableTemplate"
+                 nzPopoverPlacement="right"
+                 style="color: #f09200"
+                 *ngIf="(type.comparison_operation !== '>=' && type.comparison_operation !== '<=') || type.is_rate == 1">
+              </i>
+              <ng-template #stableTemplate>
+                <div class="w400">
+                  <p>比较的数值为当日0点至目前已过去的最近的整点的累加值。如：8点半的时候建立的监控组，则系统9点半时计算的是0点到8点这个时间段的数据累加值，比较的是近XX天0点到8点这个时间段累加值的平均值。</p>
+                </div>
+              </ng-template>
+              <div class="monitor_sub_item_operate">
+                <ng-container>
+                  <i  nz-icon nzType="close" nzTheme="outline" class="ml10 iBtn" nz-popconfirm [nzPopconfirmTitle]="'确定要删除？'" (nzOnConfirm)="onDeleteMonitorItem(true, i, j)" [nzPopconfirmPlacement]="'bottomLeft'" *ngIf="target.rule_define.length > 1"></i>
+                </ng-container>
+                <i class="ml10 iBtn" nz-icon nzType="plus" nzTheme="outline" (click)="onAddMonitorItem(true, i, j)"></i>
+                <span class="ml10" *ngIf="j < target.rule_define.length - 1">且</span>
+              </div>
+            </div>
+            <div class="monitor_item_operate">
+              <ng-container>
+                <i nz-icon nzType="close" nzTheme="outline" class="ml10 iBtn" nz-popconfirm [nzPopconfirmTitle]="'确定要删除？'" (nzOnConfirm)="onDeleteMonitorItem(false, i,0)" [nzPopconfirmPlacement]="'bottomLeft'" *ngIf="info.monitor_info.monitor_metric.length > 1"></i>
+              </ng-container>
+              <i class="ml10 iBtn" nz-icon nzType="plus" nzTheme="outline" (click)="onAddMonitorItem(false, i,0)"></i>
+              <span class="ml10" *ngIf="i < info.monitor_info.monitor_metric.length - 1">或</span>
+            </div>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+
+      <!--投放状态-->
+      <div *ngIf="info.monitor_info.monitor_module === 'keyword'" class="inpRow mt10">
+        <div class="inpRow_left pull-left">
+          <label class="titleLa w90 mr8 inline-block">
+            <span class="method_title">执行操作:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left">
+          <div *ngFor="let action of info.monitor_info.monitor_action">
+            <div *ngIf="action.key === 'pause'" [ngClass]="{disabled: action.is_open}">
+              <div class="inpRow_left pull-left">
+                <label class="titleLa w98 inline-block"
+                       nz-checkbox
+                       [(ngModel)]="action.is_open">
+                  <span>投放状态:</span>
+                </label>
+              </div>
+              <div class="inpRow_right pull-left">
+                <nz-radio-group
+                  [nzDisabled]="!action.is_open"
+                  [(ngModel)]="action.value">
+                  <label class="mr20" nz-radio [nzValue]="false" >
+                    <span>开启</span>
+                  </label>
+                  <label nz-radio [nzValue]="true">
+                    <span>暂停</span>
+                  </label>
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="clear"></div>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+
+
+      <div class="inpRow mt10" [ngClass]="{disabled:info.monitor_info.notify_email.is_notify}">
+        <div class="inpRow_left pull-left">
+          <label class="titleLa w98 inline-block" nz-checkbox [(ngModel)]="info.monitor_info.notify_email.is_notify">
+            <span>通知邮箱:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left">
+          <div>
+        <textarea placeholder="输入邮箱"
+                  *ngIf="info.monitor_info.notify_email.is_notify"
+                  [(ngModel)]="emails"
+                  (ngModelChange)="changeEmail()"
+                  class="titleColor w438 border"  rows="5"></textarea>
+            <textarea placeholder="输入邮箱" *ngIf="!info.monitor_info.notify_email.is_notify" [(ngModel)]="emails"  disabled="" readonly=""  class="w438 border background not-allowed"  rows="5"></textarea>
+            <ng-container *ngIf="info.monitor_info.notify_email.is_notify && !emails">
+              <span style=" position: absolute;display: inline-block;left: 430px;width: 200px;top: 0px;" class="wroning ml20" [ngClass]="{clSave:iswraing}">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>通知邮箱不能为空</span>
+            </ng-container>
+            <ng-container *ngIf="info.monitor_info.notify_email.is_notify && emails">
+              <span style=" position: absolute;display: inline-block;left: 430px;width: 200px;top: 0px;" class="wroning ml20" [ngClass]="{clSave:iswraing}" *ngIf="email_warning">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>存在不合法邮箱，请改正</span>
+            </ng-container>
+
+          </div>
+          <div>
+            <p>注：一行一个邮箱</p>
+            <!--<label  style="position: absolute;right: -8px;top: 0;" nz-checkbox
+                    [nzDisabled]="!info.monitor_info.notify_email.is_notify"
+                    [(ngModel)]="info.monitor_info.notify_email.send_report">
+              <span>同时发送报表</span>
+            </label>-->
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="inpRow mt10" [ngClass]="{disabled:info.monitor_info.notify_phone.is_notify}">
+        <div class="inpRow_left pull-left">
+          <label class="titleLa w98 inline-block" nz-checkbox [(ngModel)]="info.monitor_info.notify_phone.is_notify">
+            <span>通知手机:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left">
+          <div>
+            <input nz-input style="width: 200px;"
+                   [(ngModel)]="info.monitor_info.notify_phone.phone"
+                   disabled="{{!info.monitor_info.notify_phone.is_notify}}"
+                   placeholder="输入手机号"
+                   [nzSize]="'small'">
+
+            <ng-container *ngIf="info.monitor_info.notify_phone.is_notify && !info.monitor_info.notify_phone.phone">
+              <span class="wroning ml20" [ngClass]="{clSave:iswraing}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>通知手机不能为空</span>
+            </ng-container>
+            <ng-container *ngIf="info.monitor_info.notify_phone.is_notify && info.monitor_info.notify_phone.phone &&  !myreg.test(info.monitor_info.notify_phone.phone)">
+              <span class="wroning ml20" [ngClass]="{clSave:iswraing}"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>手机号格式不对</span>
+            </ng-container>
+          </div>
+          <div class="mt8">
+            <span>接受短信时间段：</span>
+            <nz-select class="mr8" style="width: 100px;"
+                       [(ngModel)]="info.monitor_info.notify_phone.notify_hour_start"
+                       [nzDisabled]="!info.monitor_info.notify_phone.is_notify"
+                       (ngModelChange)="changeStartTime()"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of startTimeArray"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+            <span class="mr8">至</span>
+            <nz-select class="mr8" style="width: 100px;"
+                       [(ngModel)]="info.monitor_info.notify_phone.notify_hour_end"
+                       [nzDisabled]="!info.monitor_info.notify_phone.is_notify"
+                       [nzSize]="'small'">
+              <nz-option
+                *ngFor="let option of endTimeArray"
+                [nzLabel]="option.name"
+                [nzValue]="option.key">
+              </nz-option>
+            </nz-select>
+          </div>
+
+        </div>
+        <div class="clear"></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+<!--footer start-->
+<div class="flexFooter border">
+<!--  <button nz-button class="mr8" [nzLoading]="saveing"  [nzType]="'primary'" (click)="_save(100)">
+    <span>保存设置</span>
+  </button>-->
+  <button nz-button [nzLoading]="saveing"  [nzType]="'primary'" (click)="_save(200)">
+    <span>立即监控</span>
+  </button>
+</div>
+<!--footer end-->

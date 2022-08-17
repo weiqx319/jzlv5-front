@@ -1,0 +1,15 @@
+<div class="fixed-condition-manage">
+  <ul nz-menu nzMode="horizontal">
+    <ng-container *ngFor="let tabItem of sectionTabList">
+      <li nz-menu-item nzMatchRouter>
+        <a [routerLink]="tabItem.url">{{tabItem.title}}</a>
+      </li>
+    </ng-container>
+  </ul>
+</div>
+<div class="content-section-manage">
+  <div class="section-content-container">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+

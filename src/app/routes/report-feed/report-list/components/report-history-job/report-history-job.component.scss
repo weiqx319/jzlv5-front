@@ -1,0 +1,31 @@
+
+:host ::ng-deep .ant-table-placeholder{
+  background-color: #fcf8e3 !important;
+}
+.report-job-history-content{
+  height: 330px;
+}
+
+.report-job-history-title{
+  height: 40px;
+  line-height: 40px;
+  padding-left: 15px;
+}
+
+.down-ico-color{
+  color: #56acef;
+}
+.report-job-history-content .email{
+  width: 250px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
+
+//
+//:host ::ng-deep .ant-modal-body{
+//  padding: 0;
+//}
+
+
+

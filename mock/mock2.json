@@ -1,0 +1,898 @@
+{
+  "dashboard111": [
+    {
+      "dashboard_id": "xMgIw0IYqw",
+      "dashboard_name": "PMdHZMqvgn",
+      "create_time": 1512980478449,
+      "last_modify_time": 1513507188694,
+      "creator_id": "WoMNNJe9",
+      "creator": "邢",
+      "last_editor_id": "WoMNNJe9",
+      "updater": "邢",
+      "components": [
+        {
+          "chart_id": "b4Okz2je7Y",
+          "chart_type": "pie",
+          "chart_name": "NikjGYBMBH",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "V6AspTw06m",
+          "chart_type": "lineStack",
+          "chart_name": "ewaP7WfCax",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "r5CZUkDpXn",
+          "chart_type": "bar",
+          "chart_name": "CCj7TemzJh",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "XA7ME6VjSC",
+          "chart_type": "line",
+          "chart_name": "vTyd0N3VaC",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "hTfCO6ZosX",
+          "chart_type": "bar",
+          "chart_name": "NuvqsEzM1p",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "ovixsqnJMM",
+          "chart_type": "pie",
+          "chart_name": "T6R0tg48NN",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "tWbzLoBAt0",
+          "chart_type": "lineStack",
+          "chart_name": "icTTYcqj80",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "4tJ4lgRIpq",
+          "chart_type": "bar",
+          "chart_name": "Wty6ulVBm0",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "T5IxAu2K2m",
+          "chart_type": "line",
+          "chart_name": "qf9VSZRDM5",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "f1iJ4Lgyjv",
+          "chart_type": "line",
+          "chart_name": "uxNIGthFZd",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "LB1jzGuMhJ",
+          "chart_type": "bar",
+          "chart_name": "syBMNQ5FHN",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "QnLQlBByq3",
+          "chart_type": "line",
+          "chart_name": "z9rlF64PLy",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "HWnk9bZGJC",
+          "chart_type": "pie",
+          "chart_name": "zrLEBfhuZ8",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        },
+        {
+          "chart_id": "PkWcUu1RP5",
+          "chart_type": "line",
+          "chart_name": "d3xdGTD1QO",
+          "date_range": "",
+          "conditions": {
+            "key": "",
+            "value": "",
+            "name": "",
+            "op": "",
+            "type": ""
+          },
+          "metrics": [
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            },
+            {
+              "id": "wqUBUvIYur",
+              "key": "zv4LZxT2FR",
+              "name": "xDKNOxjfnX",
+              "type": "bar",
+              "is_x": true,
+              "order": "6"
+            }
+          ],
+          "summary_type": ""
+        }
+      ],
+      "id": "xMgIw0IYqw"
+    },
+    {
+      "dashboard_id": "RCNEPLBSyB",
+      "dashboard_name": "iqlcqy24Fw",
+      "id": "RCNEPLBSyB",
+      "components": []
+    },
+    {
+      "dashboard_id": "7AZafbBJcr",
+      "dashboard_name": "0aPWD8e2rv",
+      "id": "7AZafbBJcr",
+      "components": []
+    },
+    {
+      "dashboard_id": "XaZIjHW",
+      "dashboard_name": "PMdHZMqvgn-copy",
+      "id": "XaZIjHW",
+      "components": []
+    },
+    {
+      "dashboard_id": "LSrMmAu",
+      "dashboard_name": "xuting-test",
+      "id": "LSrMmAu",
+      "components": []
+    },
+    {
+      "dashboard_id": "BflXrMR",
+      "dashboard_name": "xt-test",
+      "components": [],
+      "id": "BflXrMR"
+    }
+  ],
+  "chart": [
+    {
+      "chart_name": "line-test",
+      "chart_type": "line",
+      "summary_type": "pub_account_id",
+      "date_range": "14",
+      "metrics": [
+        {
+          "id": 1,
+          "key": "time",
+          "name": "时间",
+          "type": "line",
+          "is_x": true,
+          "order": 0
+        },
+        {
+          "id": 2,
+          "key": "pub_impression",
+          "name": "展现",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        },
+        {
+          "id": 0,
+          "key": "pub_click",
+          "name": "点击",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        },
+        {
+          "id": 0,
+          "key": "pub_ctr",
+          "name": "点击率",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        }
+      ],
+      "conditions": [
+        {
+          "key": "channel_id",
+          "value": "all",
+          "name": "渠道",
+          "op": "=",
+          "type": ""
+        }
+      ],
+      "id": 1,
+      "chart_id": 1
+    },
+    {
+      "chart_name": "test",
+      "chart_type": "line",
+      "summary_type": "pub_account_id",
+      "date_range": "14",
+      "metrics": [
+        {
+          "id": 1,
+          "key": "time",
+          "name": "时间",
+          "type": "line",
+          "is_x": true,
+          "order": 0
+        },
+        {
+          "id": 2,
+          "key": "pub_impression",
+          "name": "展现",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        },
+        {
+          "id": 0,
+          "key": "pub_click",
+          "name": "点击",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        },
+        {
+          "id": 0,
+          "key": "pub_cost",
+          "name": "消费",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        },
+        {
+          "id": 0,
+          "key": "pub_ctr",
+          "name": "点击率",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        }
+      ],
+      "conditions": [
+        {
+          "key": "channel_id",
+          "value": "all",
+          "name": "渠道",
+          "op": "=",
+          "type": ""
+        }
+      ],
+      "id": 2
+    },
+    {
+      "chart_name": "bar-test",
+      "chart_type": "bar",
+      "summary_type": "channel_id",
+      "date_range": "7",
+      "metrics": [
+        {
+          "id": 1,
+          "key": "device",
+          "name": "设备",
+          "type": "bar",
+          "is_x": true,
+          "order": 0
+        },
+        {
+          "id": 2,
+          "key": "pub_impression",
+          "name": "展现",
+          "type": "bar",
+          "is_x": false,
+          "order": 0
+        }
+      ],
+      "conditions": [
+        {
+          "key": "channel_id",
+          "value": "all",
+          "name": "渠道",
+          "op": "=",
+          "type": ""
+        }
+      ],
+      "id": 3
+    },
+    {
+      "chart_name": "ddd",
+      "chart_type": "line",
+      "summary_type": "channel_id",
+      "date_range": "7",
+      "metrics": [
+        {
+          "id": 1,
+          "key": "time",
+          "name": "时间",
+          "type": "line",
+          "is_x": true,
+          "order": 0
+        },
+        {
+          "id": 2,
+          "key": "pub_impression",
+          "name": "展现",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        }
+      ],
+      "conditions": [
+        {
+          "key": "channel_id",
+          "value": "all",
+          "name": "渠道",
+          "op": "=",
+          "type": ""
+        }
+      ],
+      "id": 4
+    },
+    {
+      "chart_name": "lineStack-test",
+      "chart_type": "lineStack",
+      "summary_type": "channel_id",
+      "date_range": "7",
+      "metrics": [
+        {
+          "id": 1,
+          "key": "time",
+          "name": "时间",
+          "type": "line",
+          "is_x": true,
+          "order": 0
+        },
+        {
+          "id": 2,
+          "key": "pub_click",
+          "name": "点击",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        }
+      ],
+      "conditions": [
+        {
+          "key": "channel_id",
+          "value": "all",
+          "name": "渠道",
+          "op": "=",
+          "type": ""
+        },
+        {
+          "key": "pub_ctr",
+          "value": 0,
+          "name": "点击率",
+          "op": ">",
+          "type": ""
+        }
+      ],
+      "chart_id": 0,
+      "id": 5
+    },
+    {
+      "chart_name": "line-chart",
+      "chart_type": "lineStack",
+      "summary_type": "channel_id",
+      "date_range": "14",
+      "metrics": [
+        {
+          "id": 1,
+          "key": "time",
+          "name": "时间",
+          "type": "line",
+          "is_x": true,
+          "order": 0
+        },
+        {
+          "id": 2,
+          "key": "pub_click",
+          "name": "点击",
+          "type": "smooth_line",
+          "is_x": false,
+          "order": 0
+        }
+      ],
+      "conditions": [
+        {
+          "key": "channel_id",
+          "value": "all",
+          "name": "渠道",
+          "op": "=",
+          "type": ""
+        },
+        {
+          "key": "pub_click",
+          "value": 0,
+          "name": "点击",
+          "op": ">",
+          "type": ""
+        }
+      ],
+      "chart_id": 0,
+      "id": 6
+    },
+    {
+      "chart_name": "",
+      "chart_type": "line",
+      "summary_type": "pub_keyword_id",
+      "date_range": "7",
+      "metrics": [
+        {
+          "id": 1,
+          "key": "time",
+          "name": "时间",
+          "type": "line",
+          "is_x": true,
+          "order": 0
+        },
+        {
+          "id": 2,
+          "key": "pub_cost",
+          "name": "消费",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        },
+        {
+          "id": 0,
+          "key": "pub_click",
+          "name": "点击",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        },
+        {
+          "id": 0,
+          "key": "pub_impression",
+          "name": "展现",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        }
+      ],
+      "conditions": [
+        {
+          "key": "channel_id",
+          "value": "all",
+          "name": "渠道",
+          "op": "=",
+          "type": ""
+        },
+        {
+          "key": "publisher_id",
+          "value": "2",
+          "name": "媒体",
+          "op": "=",
+          "type": ""
+        },
+        {
+          "key": "pub_adgroup_id",
+          "value": "cest",
+          "name": "单元",
+          "op": "=",
+          "type": ""
+        }
+      ],
+      "chart_id": 0,
+      "id": 7
+    },
+    {
+      "chart_name": "",
+      "chart_type": "line",
+      "summary_type": "channel_id",
+      "date_range": "14",
+      "metrics": [
+        {
+          "id": 1,
+          "key": "time",
+          "name": "时间",
+          "type": "line",
+          "is_x": true,
+          "order": 0
+        },
+        {
+          "id": 2,
+          "key": "pub_impression",
+          "name": "展现",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        }
+      ],
+      "conditions": [
+        {
+          "key": "channel_id",
+          "value": "all",
+          "name": "渠道",
+          "op": "=",
+          "type": ""
+        }
+      ],
+      "chart_id": 0,
+      "id": 8
+    },
+    {
+      "chart_name": "",
+      "chart_type": "line",
+      "summary_type": "channel_id",
+      "date_range": "7",
+      "metrics": [
+        {
+          "id": 1,
+          "key": "time",
+          "name": "时间",
+          "type": "line",
+          "is_x": true,
+          "order": 0
+        },
+        {
+          "id": 2,
+          "key": "pub_impression",
+          "name": "展现",
+          "type": "line",
+          "is_x": false,
+          "order": 0
+        }
+      ],
+      "conditions": [
+        {
+          "key": "channel_id",
+          "value": "all",
+          "name": "渠道",
+          "op": "=",
+          "type": ""
+        }
+      ],
+      "chart_id": 0,
+      "id": 9
+    }
+  ],
+  "logo": [
+    {
+      "id": 1
+    }
+  ]
+}

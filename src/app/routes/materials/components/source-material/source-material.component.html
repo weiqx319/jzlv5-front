@@ -1,0 +1,14 @@
+<div class="materials-nav-tab">
+  <div class="materials-nav-menu">
+    <ng-container *ngFor="let tab of materialsTab">
+      <div class="materials-type" (click)="changeActive(tab.key)" [ngClass]="{'active':activeType===tab.key}">{{tab.name}}</div>
+      <div class="ml10"></div>
+    </ng-container>
+  </div>
+</div>
+<ng-container *ngIf="activeType === 'video'">
+  <app-video></app-video>
+</ng-container>
+<ng-container *ngIf="activeType === 'image'">
+  <app-image></app-image>
+</ng-container>

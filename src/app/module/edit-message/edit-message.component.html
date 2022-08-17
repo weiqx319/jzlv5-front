@@ -1,0 +1,43 @@
+<div class="edit-price-container">
+
+  <ng-container *ngIf="edit_source !== 'optimization_group'  && edit_source !== 'edit_optimization_group_name'">
+    <h3>确认要<span *ngIf="editData === false">开启</span><span *ngIf="editData === true">暂停</span>？</h3>
+  </ng-container>
+
+  <ng-container *ngIf="edit_source === 'edit_optimization_group_name'">
+
+    <h3>部分修改失败，优化组名称重复,重复优化组名如下</h3>
+
+    <div class="mt8">
+      <p class="mt4" *ngFor="let item of repeat">{{item}}</p>
+    </div>
+  </ng-container>
+  <ng-container  *ngIf="edit_source === 'optimization_group'">
+    <ng-container *ngIf="editData === false">
+      <h3>你确定要开启调价吗?</h3>
+    </ng-container>
+    <ng-container *ngIf="editData === true">
+      <h3 class="mb16">你确定要停止调价吗?</h3>
+      <nz-radio-group [nzSize]="'small'" [(ngModel)]="price_status">
+        <div>
+          <label class="mb2" nz-radio [nzValue]="1" >
+            <span>保留关键词当前的价格</span>
+          </label>
+        </div>
+        <div>
+          <label nz-radio [nzValue]="2">
+            <span>恢复关键词原始价格</span>
+          </label>
+        </div>
+      </nz-radio-group>
+    </ng-container>
+  </ng-container>
+
+
+
+
+  <div class="edit-price-footer mt30">
+    <button *ngIf="edit_source !== 'edit_optimization_group_name'" class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancel()">取消</button>
+    <button class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'"  (click)="sure()">确认</button>
+  </div>
+</div>

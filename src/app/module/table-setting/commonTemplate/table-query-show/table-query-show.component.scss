@@ -1,0 +1,48 @@
+$border-color:#e4e4e4;
+$icon-bg-color:#fbfbfb;
+.condition-descs{
+  display: flex;
+  line-height:1.5;
+  display: -webkit-flex;
+/*  max-width: -moz-calc(100% - 500px);
+  max-width: -webkit-calc(100% - 500px);
+  max-width: calc(100% - 500px)*/;
+}
+.condition-clear{
+  width: 30px;
+  height: 20px;
+  text-align: center;
+  border:1px solid $border-color;
+  background-color: $icon-bg-color;
+}
+.condition-desc{
+  display: flex;
+  display: -webkit-flex;
+}
+.condition-desc-content{
+  height: 20px;
+  border:1px solid $border-color;
+  border-left:none;
+}
+.filter-desc-content{
+  height: 20px;
+  border:1px solid $border-color;
+  border-left:none;
+}
+.dataRange-desc{
+  border:1px solid $border-color;
+  border-left:none;
+  padding:0 8px;
+
+}
+.white-space{
+  line-height: 12px;
+  display: inline-block;
+  max-width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.line-height{
+  line-height: 20px;
+}

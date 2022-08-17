@@ -1,0 +1,303 @@
+.theme2,.theme1{
+
+  .ant-tooltip-inner{
+    font-size: 12px;
+  }
+
+  .ant-form-item-control{
+    flex:none;
+  }
+
+  .ant-form-item-control-input{
+    min-height: 0;
+  }
+
+  .has-error .ant-input, .has-error .ant-input:hover{
+    border-color:red;
+  }
+
+  .ant-table-small .ant-table-thead .ant-table-column-sorters{
+    padding: 0 !important;
+  }
+
+
+  .ant-table-small {
+    border: 1px solid #e8e8e8;
+    border-radius: 0;
+  }
+
+  .ant-table-small .ant-table-tbody > tr > td.nz-disable-td{
+    padding: 0 !important;
+  }
+
+  .ant-table-column-sorter{
+    margin-left: 2px;
+  }
+
+
+
+  .ant-table-container,.ant-table-container table>thead>tr:first-child th:first-child {
+    border-top-left-radius: 0;
+  }
+
+  .ant-table-container,.ant-table-container table>thead>tr:first-child th:last-child {
+    border-top-right-radius: 0;
+  }
+
+  .ant-table-footer {
+    border-radius: 0;
+  }
+
+
+  .ant-select-item, .ant-select-item-empty{
+    font-size: 12px;
+  }
+
+  .ant-cascader-picker-label{
+    font-size: 12px;
+  }
+  .ant-cascader-menus{
+    font-size: 12px;
+  }
+
+
+
+
+
+  .ant-select-single.ant-select-sm:not(.ant-select-customize-input) .ant-select-selector {
+    height: 20px;
+    padding: 0 7px
+  }
+
+  .ant-select-single.ant-select-sm:not(.ant-select-customize-input) .ant-select-selector .ant-select-selection-item,.ant-select-single.ant-select-sm:not(.ant-select-customize-input) .ant-select-selector .ant-select-selection-placeholder {
+    line-height: 18px
+  }
+
+  .ant-select-single.ant-select-sm:not(.ant-select-customize-input):not(.ant-select-customize-input) .ant-select-selection-search-input {
+    height: 20px
+  }
+
+
+
+
+
+  .ant-select-multiple.ant-select-sm .ant-select-selector {
+    padding-top: 0;
+    padding-bottom: 0;
+  }.ant-select-multiple.ant-select-sm .ant-select-selector::after {
+     line-height: 14px
+   }
+
+  .ant-select-multiple.ant-select-sm .ant-select-selection-item {
+    height: 16px;
+    line-height: 14px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+  }
+
+  .ant-select-multiple.ant-select-sm .ant-select-selection-search {
+    height: 16px;
+    line-height: 16px
+  }
+
+  .ant-select-multiple.ant-select-sm .ant-select-selection-search-input,.ant-select-multiple.ant-select-sm .ant-select-selection-search-mirror {
+    height: 16px;
+    line-height: 14px
+  }
+
+  .ant-select-multiple.ant-select-sm .ant-select-selection-placeholder {
+    left: 7px
+  }
+
+  .ant-select-multiple.ant-select-sm .ant-select-selection-search:first-child .ant-select-selection-search-input {
+    margin-left: 3px
+  }
+
+
+  .ant-btn-icon-only.ant-btn-sm>*{
+    font-size:12px;
+  }
+
+  .ant-btn-icon-only.ant-btn-sm{
+    width:30px;
+  }
+
+
+  .ant-picker-small .ant-picker-input>input{
+    font-size: 12px;
+  }
+
+  .ant-picker.ant-picker-small{
+    font-size: 12px;
+  }
+
+
+
+  .ant-progress-outer{
+    width: 85%;
+  }
+  .ant-progress-bg{
+    max-width:100% !important;
+  }
+
+  .ant-modal-body{
+    padding: 16px;
+  }
+  .ant-radio-inner:after{
+    width: 6px;
+    height: 6px;
+  }
+
+  .ant-radio-checked .ant-radio-inner:after{
+    transform: scale(1);
+  }
+
+  .ant-checkbox-inner,.ant-radio-inner{
+    width: 14px;
+    height: 14px;
+  }
+  .ant-checkbox-inner,.ant-checkbox-wrapper, .ant-radio-wrapper{
+    display: inline-block;
+  }
+  .ant-checkbox-inner:after{
+    left:2px;
+  }
+ .ant-checkbox-inner:after{
+    //left:1.7px;
+    //top:5.5px;
+  }
+  .ant-checkbox-indeterminate .ant-checkbox-inner:after{
+    left: 50%;
+    top: 50%;
+  }
+  .ant-steps-small .ant-steps-item-icon{
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+
+  }
+  .ant-steps-small .ant-steps-item-title{
+    line-height: 18px;
+  }
+
+  .ant-table-small>.ant-table-content>.ant-table-body>table, .ant-table-small>.ant-table-content>.ant-table-fixed-left>.ant-table-body-outer>.ant-table-body-inner>table, .ant-table-small>.ant-table-content>.ant-table-fixed-left>.ant-table-header>table, .ant-table-small>.ant-table-content>.ant-table-fixed-right>.ant-table-body-outer>.ant-table-body-inner>table, .ant-table-small>.ant-table-content>.ant-table-fixed-right>.ant-table-header>table, .ant-table-small>.ant-table-content>.ant-table-header>table, .ant-table-small>.ant-table-content>.ant-table-scroll>.ant-table-body>table, .ant-table-small>.ant-table-content>.ant-table-scroll>.ant-table-header>table{
+    padding: 0;
+    margin: 0;
+  }
+  .conDiv {
+    .ant-checkbox + span {
+      display: inline-block;
+      text-align: right;
+      float: right;
+    }
+    .ant-select-selection--multiple {
+      padding-bottom: 0px;
+      min-height: 20px;
+    }
+  }
+
+
+  // -- ant tooltip
+
+  .ant-tooltip-placement-right .ant-tooltip-arrow, .ant-tooltip-placement-rightBottom .ant-tooltip-arrow, .ant-tooltip-placement-rightTop .ant-tooltip-arrow{
+    border-right-color: #fff !important;;
+  }
+
+
+  // ant -rate
+  .ant-rate{
+    font-size: 12px;
+    .ant-rate-star{
+      margin-right: 2px;
+      font-size: 12px;
+    }
+  }
+
+
+  .ant-form{
+    font-size: 12px;
+    label{
+      font-size: 12px;
+    }
+    .ant-form-item{
+      font-size: 12px;
+    }
+
+
+  }
+  .ant-form-item{
+    font-size: 12px;
+  }
+
+  .ant-radio-wrapper, .ant-radio-group, .ant-radio-button-wrapper{
+    font-size: 12px;
+  }
+  .ant-checkbox-checked::after {
+    top: -2px;
+    height: 14px;
+  }
+  .ant-btn{
+    font-size: 12px;
+  }
+
+  .ant-checkbox, .ant-checkbox-wrapper{
+    font-size: 12px;
+  }
+  .ant-input{
+    font-size: 12px;
+  }
+
+  .ant-modal-body{
+    font-size: 12px;
+  }
+  .ant-message{
+    font-size:12px;
+  }
+  .ant-tabs-small .ant-tabs-nav-container {
+    font-size: 12px;
+  }
+  .ant-tabs-small .ant-tabs-nav .ant-tabs-tab{
+    font-size: 12px;
+  }
+
+
+  .ant-input-number{
+    font-size: 12px;
+  }
+  .ant-input-number-sm input{
+    height:18px
+  }
+
+  .pop-report .lab-row{
+    font-size: 12px;
+  }
+  .ant-popover-message{
+    font-size: 12px;
+  }
+  .ant-input-affix-wrapper{
+    font-size: 12px;
+  }
+
+  .ant-dropdown-menu-item>a, .ant-dropdown-menu-submene-title>a{
+    font-size: 12px !important;
+  }
+
+  .ant-table-thead>tr>th .ant-table-filter-icon, .ant-table-thead>tr>th .anticon-filter{
+    position: static;
+    color: rgba(0,0,0,.85);
+    width: auto;
+  }
+  .ant-table-thead>tr>th .ant-table-filter-icon>svg, .ant-table-thead>tr>th .anticon-filter>svg{
+    margin-left: 0;
+    position: static;
+  }
+}
+
+.ant-drawer-content {
+  position: relative;
+  z-index: 1;
+  overflow: auto;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 0;
+}

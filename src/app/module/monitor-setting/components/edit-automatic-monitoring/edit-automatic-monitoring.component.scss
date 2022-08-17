@@ -1,0 +1,558 @@
+$edit-background:#F6F6F6;
+$edit-cannot-click:#c8c8c8;
+$edit-Subtitle:#404040;
+$edit-title:#000;
+$edit-menu-electted-font:#56acef;
+$edit-menu-selected-background:#EEF2F7;
+$edit-border-clor:#e4e4e4;
+$edit-form:#fff;
+$edit-transparent:transparent;
+$edit-save-btn:#588AA5;
+
+.displayNone {
+  display: none;
+}
+.conDiv{
+  height: calc(100vh - 80px - 70px);
+  overflow: hidden;
+  background:$edit-background;
+  .whiteBackground{
+    background: $edit-form;
+  }
+}
+.conDiv i{
+  font-style: normal;
+}
+.conDiv .conSon{
+  max-height: calc(100vh);
+  overflow-y: scroll;
+}
+.conSon h3{
+  font-size: 14px;
+  margin-top: 16px;
+  margin-bottom: 15px;
+  color: $edit-title;
+}
+.slow_360{
+  color: #f09200;
+  margin-top: -5px;
+}
+.inpRow  .titleLa span{
+  text-align: right;
+  float: right;
+  color: $edit-Subtitle;
+}
+.inpRow .inpRow_left{
+  //margin-right: 5px;
+}
+.inpRow_right div{
+  position: relative;
+  color: $edit-cannot-click;
+}
+.hasInput{
+  color: $edit-cannot-click ;
+}
+.hasInputs nz-input{
+  width: 200px;
+  margin-right:5px;
+}
+.longInput nz-input{
+  width: 400px;
+  margin-right:5px;
+}
+.inpRow .inpRow_right .ed_shotinp nz-input{
+  width: 96px;
+}
+.inpRow .inpRow_right .tip{
+  position: absolute;
+  top: 0px;
+  right: -163px;
+  width: 150px;
+}
+textarea{
+  padding: 10px;
+  box-sizing: border-box;
+  color: #c8c8c8;
+  border-radius: 2px;
+  outline: orange;
+  height: 150px;
+}
+.inpRow .inpRow_right .searchP nz-input{
+  width: 362px;
+}
+.addWD{
+  display: block;
+  height: 20px;
+  border-radius: 2px;
+  text-align: center;
+  line-height: 20px;
+  background: $edit-transparent;
+  color: $edit-cannot-click;
+}
+
+
+.a{
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  text-align: center;
+  line-height: 24px;
+}
+.cannotClickColor{
+  color: $edit-cannot-click;
+}
+.border{
+  border:1px solid $edit-border-clor !important;
+}
+.whiteClolor{
+  background: $edit-form;
+}
+.background{
+  background: $edit-transparent !important;
+}
+.origina_background{
+  background: $edit-transparent !important;
+  cursor: not-allowed !important;
+}
+.disabled ,.disabled .edit-Subtitle ,.disabled .addWD,.disabled .tip,.disabled label span,.disabled p i,.disabled select,.disabled div{
+  color: $edit-Subtitle !important;
+}
+.disabled .addWD ,.disabled .addWD, .disabled select ,.disabled .adSelect,.disabled .adInput,.disabled textarea,.disabled .searchP input{
+  background: $edit-form !important;
+}
+.disabled div .dimensionsEdit{
+  color: $edit-menu-electted-font !important;
+}
+.flexFooter{
+  height: 40px;
+  position: fixed;
+  bottom: 30px;
+  left: 0px;
+  background: $edit-form;
+  width: 100%;
+  text-align: center;
+  line-height: 40px;
+}
+.flexFooter .edSave{
+  color: $edit-form;
+  background: $edit-save-btn;
+  margin-left: 10px;
+}
+.text-center{
+  text-align: center;
+}
+.text-right{
+  text-align: right;
+}
+
+.clear{
+  clear: both;
+}
+
+/*计划*/
+.flexLeft ul{
+  border: 1px solid $edit-border-clor;
+  background: #eef2f7;
+  list-style: none;
+}
+.flexLeft ul li{
+  height: 28px;
+  line-height: 28px;
+  padding-left: 10px;
+  box-sizing: border-box;
+  color: $edit-Subtitle;
+  cursor: pointer;
+}
+.flexLeft ul li.disable{
+  cursor: not-allowed;
+  color: #c8c8c8;
+  //background: #f5f5f5;
+}
+/*.flexLeft ul li:hover{
+  background: #EEF2F7;
+  color: #56acef !important;
+}*/
+.menuSle{
+  background: $edit-form;
+  color: $edit-menu-electted-font !important;
+}
+
+.uploadFile  nz-input{
+  width: 200px;
+}
+.uploadFile  .uploadBtn{
+  height: 20px;
+  line-height: 16px;
+  text-align: center;
+  color: $edit-Subtitle;
+  position: relative;
+  background:$edit-form ;
+}
+.uploadFile  .uploadBtn input{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+.uploadFile .download{
+  color: $edit-menu-electted-font;
+  text-decoration: none;
+}
+.titleColor{
+  color: $edit-Subtitle !important;
+}
+.position_relative{
+  position: relative;
+}
+.not-allowed{cursor:not-allowed;}
+.positionLeft{
+  left:412px !important;
+}
+.prompt p{
+  color: #666;
+  line-height: 25px;
+  width: 700px;
+}
+.needPosition{
+  position: relative;
+  padding-left: 24px;
+}
+.needPosition i{
+  position: absolute;
+  left: -2px;
+  top: 0px;
+}
+.tableHead{
+  width: 700px;
+}
+
+.tableHead ul{
+  background: $edit-menu-selected-background;
+  overflow: hidden;
+  height: 30px;
+  line-height: 30px;
+}
+.tableHead ul li{
+  padding:0px 15px;
+  cursor: pointer;
+}
+.tableHead textarea{
+  width: 672px;
+  border: none;
+}
+.wroning span{
+  color: #f9c137;
+  visibility: hidden;
+}
+.wroning{
+  color: #f9c137;
+  visibility: hidden;
+}
+.clSave span{
+  visibility: visible !important;
+}
+.clSave{
+  visibility: visible !important;
+}
+
+.numberInput{
+  border-radius: 2px;
+}
+.ant-input-number-sm input {
+  height: 18px !important;
+}
+.dimension{
+  margin-bottom: 0px !important;
+}
+.dimension nz-input{
+  height: 20px;
+}
+.dimension nz-input .ant-input{
+  height: 20px !important;
+}
+.dimension button{
+  height: 18px;
+  line-height: 17px;
+  font-size: 12px;
+  border-radius: 0px;
+  padding: 0 5px;
+  margin-left: 3px;
+}
+.dimensionTableDiv{
+  width: 700px;
+  padding-bottom: 20px;
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  color: #c8c8c8;
+
+}
+
+
+.addDimension{
+  cursor: pointer;
+  margin-left: 50px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #404040;
+  height: 20px;
+  border-radius: 2px;
+  border: 1px solid #e4e4e4;
+  padding: 2px;
+  background: #fff;
+  text-align: center;
+  width: 78px;
+  line-height: 14px;
+}
+.c8c8c8{
+  color: #c8c8c8 !important;
+}
+.dimensionTableDiv table{
+  width: 100%;
+  text-align: left;
+}
+.dimensionTableDiv table thead tr span{
+  font-weight: 500;
+  color: $edit-Subtitle;
+}
+.dimensionTableDiv table thead tr th:nth-of-type(1){
+  width: 25%;
+}
+
+.dimensionTableDiv table thead tr th:last-child{
+  width: 35%;
+}
+.dimensionTableDiv table tr th{
+  background: $edit-menu-selected-background;
+}
+.dimensionTableDiv table tr th,.dimensionTableDiv table tr td{
+  padding:0px 8px;
+  box-sizing: border-box;
+  height: 25px;
+}
+.dimensionTableDiv table tr td:nth-of-type(1) span{
+  display: inline-block;
+  width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-style: normal;
+}
+.tdWidth,.tdWidth span{
+  width: auto !important;
+}
+.dimensionTableDiv table tbody tr:nth-child(even) td{
+  background: $edit-background;
+}
+.wordeCount{
+  display: inline-block;
+  height: 20px;
+  line-height: 17px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  border: 1px solid $edit-border-clor;
+  background: $edit-form;
+  cursor: pointer;
+}
+.noCheckbox div{
+  color: $edit-Subtitle;
+}
+.gradeDiv {
+  height: 4px;
+  background: linear-gradient(to right, #f6f6f6, #57b5ff);
+  width: 200px;
+  margin-top: 8px;
+  div{
+    margin-top: -8px;
+    float: left;
+    label{
+      height: 34px;
+      position: relative;
+      .spanText{
+        position: absolute;
+        left: 0px;
+        top: 18px;
+      }
+    }
+  }
+  .modelDiv{
+    margin-left: 23%;
+  }
+  .lastDiv{
+    float: right;
+    margin-right: -28px;
+  }
+}
+.grade_no_click {
+  background: linear-gradient(to right, #f6f6f6, #b7dffd) !important;
+}
+.inpRow_right{
+  .advancedStting{
+    background: $edit-form;
+    border: 1px solid #e4e4e4;
+    width: 580px;
+    padding: 5px 0px 15px 0px;
+    margin-top: 5px;
+    div{
+      color: $edit-Subtitle;
+      margin-bottom: 0px;
+    }
+  }
+  .optimization {
+    div{
+      margin-bottom: 0px;
+      color: $edit-Subtitle;
+    }
+  }
+  .h20{
+    height: 20px;
+  }
+
+  .tishi{
+    margin-left: 14px;
+    color: #404040;
+  }
+}
+.cantClick{
+  .inpRow{
+    span{
+      color:$edit-cannot-click !important;
+    }
+    i{
+      color:$edit-cannot-click !important;
+    }
+    .inpRow_right{
+      .advancedStting{
+        background: $edit-transparent ;
+      }
+    }
+  }
+  button{
+    background: $edit-transparent !important;
+    color: $edit-cannot-click !important;
+  }
+}
+
+.textareaDiv{
+  width: 450px;
+  //border:1px solid #d6d6d6 !important;
+  background: #fff;
+
+
+  .textarea-top{
+    padding: 0 8px;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid $edit-border-clor;
+    border-bottom: none;
+  }
+  textarea{
+    border: none !important;
+    outline-color: #fff;
+    width: 440px;
+    height: 130px;
+  }
+  .textarea-content{
+    padding:4px;
+    border: 1px solid $edit-border-clor;
+  }
+
+}
+.f09200{
+  color: #f09200;
+}
+.border-warning{
+  border: 1px solid #f09200 !important;
+}
+.countTip{
+  max-width: 730px;
+  color: #a9a8a8;
+  margin-bottom: 6px;
+  position: relative;
+  padding-left: 22px;
+  span{
+    position: absolute;
+    left: 0;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+h3{
+  font-size: 14px;
+  margin-top: 16px;
+  margin-bottom: 15px;
+  color: $edit-title;
+}
+i{
+  font-style: normal;
+}
+
+.monitor_item {
+  background: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  position: relative;
+
+  .monitor_sub_item {
+    margin-bottom: 10px;
+    position: relative;
+
+    .monitor_sub_item_operate {
+      width: 70px;
+      height: 12px;
+      line-height: 12px;
+      position: absolute;
+      top: 50%;
+      right: 2px;
+      margin-top: -6px;
+      font-size: 12px;
+      .iBtn {
+        font-size: 12px;
+        color: red;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    }
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  .monitor_item_operate {
+    width: 100px;
+    height: 12px;
+    line-height: 12px;
+    position: absolute;
+    top: 50%;
+    left: 800px;
+    margin-top: -6px;
+    font-size: 12px;
+    .iBtn {
+      font-size: 12px;
+      color: red;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .removeMB {
+    margin-bottom: 0 !important;
+  }
+
+}
+

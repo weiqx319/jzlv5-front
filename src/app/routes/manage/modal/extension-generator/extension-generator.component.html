@@ -1,0 +1,219 @@
+<div>
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="manage-header-left">
+      <button *ngIf="selected.length > 0"
+              class="mr8"
+              [nzSize]="'default'"
+              nz-button
+              nz-popover
+              [(nzPopoverVisible)]="visibleAdd"
+              nzPopoverPlacement="bottomLeft"
+              nzPopoverTrigger="click"
+              [nzPopoverContent]="addTemplate">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加跟踪码</span>
+      </button>
+      <button *ngIf="!selected.length"
+              class="mr8 disabled-status"
+              [nzSize]="'default'"
+              nz-button>
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加跟踪码</span>
+      </button>
+      <ng-template #addTemplate>
+        <div style="max-width: 300px;" class="mb8">
+          点击确认后，系统将给关键词添加跟踪码。跟踪码默认添加到URl的最后，不影响其他跟踪码的使用。
+        </div>
+        <div class="mb8">
+          <span class="mr8">创意跟踪:</span>
+          <label nz-checkbox [(ngModel)]="add_creative_checkBox"></label>
+        </div>
+        <div class="mb8">
+          <span class="mr8" style="display: block;float: left;">&nbsp;&nbsp;&nbsp;连接符:</span>
+          <nz-radio-group
+            [nzSize]="'small'"
+            [(ngModel)]="batchAddGenerator['symbol']">
+            <label nz-radio
+                   [nzValue]="0">
+              <span>#</span>
+            </label>
+            <label nz-radio
+                   [nzValue]="1">
+              <span>&</span>
+            </label>
+          </nz-radio-group>
+        </div>
+        <div style="text-align: right">
+          <button  [nzSize]="'small'"
+                   class="mr5"
+                   nz-button (click)='clickAddCancel()'>取消</button>
+          <button  nzType="primary"
+                   [nzSize]="'small'"
+                   nz-button (click)='clickAddOk()'>确定</button>
+        </div>
+      </ng-template>
+      <button *ngIf="selected.length > 0"
+              [nzSize]="'default'"
+              nz-button
+              nz-popover
+              [(nzPopoverVisible)]="visibleDele"
+              nzPopoverPlacement="bottomLeft"
+              nzPopoverTrigger="click"
+              [nzPopoverContent]="deleteTemplate">
+        <i nz-icon nzType="close" nzTheme="outline"></i><span>删除跟踪码</span>
+      </button>
+      <button *ngIf="!selected.length"
+              class="mr8 disabled-status"
+              [nzType]="'default'"
+              [nzSize]="'default'"
+              nz-button>
+        <i nz-icon nzType="close" nzTheme="outline"></i><span>删除跟踪码</span>
+      </button>
+      <ng-template #deleteTemplate>
+        <div style="max-width: 300px;" class="mb8">
+          跟踪码删除后会影响转化，确定要删除跟踪器吗？
+        </div>
+        <div style="text-align: right">
+          <button  [nzSize]="'small'"
+                   class="mr5"
+                   nz-button (click)='clickDeleCancel()'>取消</button>
+          <button  nzType="primary"
+                   [nzSize]="'small'"
+                   nz-button (click)='clickDeleOk()'>确定</button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="manage-table manage-no-result-table">
+      <nz-table
+        #nzTable
+        nzShowSizeChanger
+        [nzPageSizeOptions]="[30,50,100,500]"
+        [nzSize]="'default'"
+        [nzData]="apiData"
+        [nzFrontPagination]="false"
+        [(nzPageSize)]="pageSize"
+        [(nzPageIndex)]="currentPage"
+        (nzPageIndexChange)="refreshData()"
+        (nzPageSizeChange)="refreshData(true)"
+        [nzTotal]="total"
+        [nzLoading]="loading"
+        [nzShowTotal]="totalItemTemplate"
+        [nzScroll]="{ y: noResultHeight+'px' }">
+        <thead>
+        <tr>
+          <th [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll($event)">
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>账户名称</span>
+            <!-- <app-filter [filterType]="'singleValue'" [filterKey]="{key:'pub_account_name',name:'账户名称'}" [(filterResult)]="filterResult['pub_account_name']" (submit)="doFilter()"></app-filter>
+          -->
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_account_name',name:'账户名称',type:'multiValue'}" [(filterResult)]="filterResult['pub_account_name']" (submit)="doFilter()"></app-filter>
+
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>广告主</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'advertiser_name',name:'广告主',type:'multiValue'}" [(filterResult)]="filterResult['advertiser_name']" (submit)="doFilter()"></app-filter>
+            <!--<app-filter [filterType]="'operSingleList'" [(filterOption)]="advertiserList" [filterKey]="{key:'cid',name:'广告主'}" [(filterResult)]="filterResult['cid']" (submit)="doFilter()"></app-filter>-->
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>媒体</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'publisher_id',name:'媒体',type:'singleList'}" [(filterResult)]="filterResult['publisher_id']" [filterOption]="filterPublisherOption" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>渠道</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'channel_id',name:'渠道',type:'singleList'}" [(filterResult)]="filterResult['channel_id']" [filterOption]="filterChannelOption" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'250px'">
+            <span>新增关键词自动添加跟踪码</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of apiData">
+          <td  nzShowCheckbox [nzDisabled]="data.disabled" [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus(data['chan_pub_id'])"></td>
+          <td>{{data.pub_account_name}}</td>
+          <td>{{data.advertiser_name}}</td>
+          <td>{{publisherTypeRelation['publisher_id_'+data.publisher_id]}}</td>
+          <td>{{data.channel_id == 2 ? "信息流":"搜索推广"}}</td>
+          <td class="generator">
+            <ng-container *ngIf="data['channel_id']===1 || [6,7].indexOf(data['publisher_id'])<0 && data['channel_id']===2">
+              <!--点击取消-->
+              <ng-container *ngIf="data['auto_tracecode'] === 1 && data['channel_id']===1">
+               <i nz-icon nzType="check-square" nzTheme="outline"
+                   style=" font-size: 14px;color: #1890ff;"
+                   nz-popconfirm
+                   (nzOnConfirm)="setAutoUrlcode(data['chan_pub_id'], 0, 1, 0)"
+                   nzPopconfirmPlacement="bottom"
+                   nzPopconfirmTitle="取消对新添加的关键词自动添加跟踪参数"></i>
+                <span class="ml5 mr8">跟踪</span>
+              </ng-container>
+              <!--添加-->
+              <ng-container *ngIf="data['auto_tracecode'] === 0 && data['channel_id']==1">
+                <i style="display: block; width: 14px; height: 14px;border: 1px solid #d9d9d9;border-radius: 2px;margin-top: 2px;background: #fff;"
+                   class="pull-left"
+                   nz-popconfirm
+                   (nzOnConfirm)="setAutoUrlcode(data['chan_pub_id'], 1, 1, 0)"
+                   nzPopconfirmPlacement="bottom"
+                   nzPopconfirmTitle="将对您账户中新添加的关键词自动加跟踪参数"></i>
+                <span class="ml5">跟踪</span>
+              </ng-container>
+
+              <ng-container *ngIf="data['auto_tracecode'] === 1 && data['channel_id']===1">
+               <i nz-icon nzType="check-square" nzTheme="outline"
+                   *ngIf="data['add_creative_tracecode']===1"
+                   style=" font-size: 14px;color: #1890ff;"
+                   nz-popconfirm
+                   (nzOnConfirm)="setAutoUrlcode(data['chan_pub_id'], data['auto_tracecode'], data['add_creative_tracecode']===1?0:1, data['tracecode_symbol'])"
+                   nzPopconfirmPlacement="bottom"
+                   nzPopconfirmTitle="取消自动加跟踪码"></i>
+
+                <div style="display: inline-block;padding-top: 4px;height: 16px;"  *ngIf="data['add_creative_tracecode']===0">
+                  <i style="display: block; width: 14px; height: 14px;border: 1px solid #d9d9d9;border-radius: 2px;background: #fff;"
+                     class="pull-left"
+                     nz-popconfirm
+                     (nzOnConfirm)="setAutoUrlcode(data['chan_pub_id'], data['auto_tracecode'], data['add_creative_tracecode']===1?0:1, data['tracecode_symbol'])"
+                     nzPopconfirmPlacement="bottom"
+                     nzPopconfirmTitle="增加自动加跟踪码"></i>
+                </div>
+                <span class="ml5 mr8">创意跟踪</span>
+
+                <div class="generator-radio" style='display: inline-block;height: 16px;padding-top: 0px;box-sizing: border-box;overflow: hidden'>
+                  <span class="pull-left mr2" style="line-height: 22px;">连接符:</span>
+                  <nz-radio-group
+                    [nzSize]="'small'"
+                    [(ngModel)]="data['tracecode_symbol']"
+                    (ngModelChange)="changeSymbol(data)">
+                    <label nz-radio
+                           [nzValue]="0">
+                      <span>#</span>
+                    </label>
+                    <label nz-radio
+                           [nzValue]="1">
+                      <span>&</span>
+                    </label>
+                  </nz-radio-group>
+                </div>
+
+
+              </ng-container>
+            </ng-container>
+
+
+
+          </td>
+        </tr>
+        <tr *ngIf="apiData.length===0 && !loading">
+          <td #noResultTd [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height':(noResultHeight-10)+'px'}">
+            <div class="table-no-result">
+              <div class="table-no-result-content">
+                <div class="mt8">无数据展示</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+    </div>
+  </div>
+</div>

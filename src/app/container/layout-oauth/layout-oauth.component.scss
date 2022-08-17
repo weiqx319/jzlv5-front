@@ -1,0 +1,33 @@
+.container {
+  width: 100%;
+  min-height: 100%;
+  background: #f0f2f5 url("../../../assets/Bitmap.png") no-repeat center;
+  background-size: cover;
+  padding: 110px 0 144px;
+  position: relative;
+}
+
+.top {
+  text-align: center;
+}
+
+.head {
+  height: 44px;
+  line-height: 44px;
+  a {
+    text-decoration: none;
+  }
+}
+
+.logo {
+  height: 44px;
+  vertical-align: top;
+  margin-right: 16px;
+}
+
+.desc {
+  color: #878787;
+  font-size: 19px;
+  margin-top: 22px;
+  margin-bottom: 32px;
+}

@@ -1,0 +1,9 @@
+<div class="video mt4 mb4">
+  <p class="create-title" *ngIf="!imgUrl">
+    {{ title }}
+  </p>
+  <div class="create-content mt4" *ngIf="imgUrl">
+    <img src="{{ imgUrl }}" class="vertical_video_bytedance" />
+    <<i nz-icon nzType="play-circle" nzTheme="outline" class="video-btn" ></i>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+.manage-container {
+  height: 100%;
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.manage-sidebar {
+  width: 150px;
+  flex: 0 0 150px;
+  background-color: #eef2f7;
+}
+.manage-link {
+  a {
+    color: #404040;
+    text-decoration: none;
+  }
+  .active-link {
+    background-color: #fff;
+  }
+  .active-link a {
+    color: #56acef;
+  }
+}
+.manage-link-item {
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+}
+.manage-content {
+  overflow: auto;
+  flex: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}

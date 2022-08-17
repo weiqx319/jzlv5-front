@@ -1,0 +1,105 @@
+<button #quickEditButton *ngIf="!selected.length" class="manage-add mr8" nz-button [nzType]="'default'"
+        (keyup)="quickEditKeyUp($event)" (click)="quickEdit()" [nzSize]="'small'">
+ <i nz-icon nzType="edit" nzTheme="outline"></i><span>快捷编辑</span>
+</button>
+<button #quickEditButton *ngIf="selected.length"
+        class="manage-add mr8"
+        nz-button
+        [nzType]="'default'"
+        nz-popover
+        nzPopoverTitle="编辑{{selectData.selected_length}}个{{summary_type_name[summary_type]}}"
+        [(nzPopoverVisible)]="quickEditParam.showQuickEdit"
+        nzPopoverTrigger="click"
+        [nzPopoverContent]="showQuickEditTpl"
+        nzPopoverPlacement="bottom"
+        (click)="quickEdit()"
+        [nzSize]="'small'"
+        (nzPopoverVisibleChange)="initWarning()"
+>
+ <i nz-icon nzType="edit" nzTheme="outline"></i><span>快捷编辑</span>
+</button>
+<ng-template #showQuickEditTpl>
+  <div class="pop-quick-edit">
+    <div class="lab-row mb16">
+      <nz-select [nzSize]="'small'" style="width: 250px" [(ngModel)]="quickEditParam.quickEditItem">
+        <nz-option *ngFor="let option of quickEditParam.editItem" [nzLabel]="option.name"
+                   [nzValue]="option.value"></nz-option>
+      </nz-select>
+    </div>
+    <!--投放状态-->
+    <app-quick-edit-feed-status *ngIf="quickEditParam.quickEditItem == 'pause'"
+                           (result)="quickResult($event)"></app-quick-edit-feed-status>
+    <app-quick-edit-feed-mask-prefer *ngIf="quickEditParam.quickEditItem == 'mask_prefer'"
+                           (result)="quickResult($event)"></app-quick-edit-feed-mask-prefer>
+    <app-quick-edit-feed-region *ngIf="quickEditParam.quickEditItem == 'region'"
+                           [checkErrorTip]="checkErrorTip"
+                           [regionList]="regionList"
+                           (result)="quickResult($event)"></app-quick-edit-feed-region>
+    <app-quick-edit-feed-time-interval *ngIf="quickEditParam.quickEditItem == 'time_interval'"
+                           [checkErrorTip]="checkErrorTip"
+                           (result)="quickResult($event)"></app-quick-edit-feed-time-interval>
+    <app-quick-edit-feed-budget #budgetTemplate *ngIf="quickEditParam.quickEditItem == 'budget'" [publisherId]="publisher_id" [summaryType]="summary_type" [checkCommit]="submitCheck"
+                           [checkErrorTip]="checkErrorTip"
+                           (submit)="quickResult($event)"></app-quick-edit-feed-budget>
+
+    <app-quick-edit-keyword-price-batch *ngIf="quickEditParam.quickEditItem == 'price' && selectData.selected_length !=1" [publisherId]="publisher_id" [summaryType]="summary_type"
+                           (valueChange)="initWarning()" (result)="quickResult($event)"></app-quick-edit-keyword-price-batch>
+
+    <app-quick-edit-or-replace-batch *ngIf="quickEditParam.quickEditItem == 'deep_link_url'"
+                           (result)="quickResult($event)"></app-quick-edit-or-replace-batch>
+
+    <app-quick-edit-or-replace-batch *ngIf="quickEditParam.quickEditItem == 'link_page_spec'"
+                           (result)="quickResult($event)"></app-quick-edit-or-replace-batch>
+    <app-quick-edit-or-replace-batch *ngIf="quickEditParam.quickEditItem == 'external_url'"
+                                     (result)="quickResult($event)"></app-quick-edit-or-replace-batch>
+    <app-quick-edit-or-replace-batch *ngIf="quickEditParam.quickEditItem == 'open_url'"
+                                     (result)="quickResult($event)"></app-quick-edit-or-replace-batch>
+    <app-quick-edit-or-replace-batch *ngIf="quickEditParam.quickEditItem == 'web_url'"
+                                     (result)="quickResult($event)"></app-quick-edit-or-replace-batch>
+    <app-quick-edit-or-replace-batch *ngIf="quickEditParam.quickEditItem == 'destinationUrl'"
+                                     (result)="quickResult($event)"></app-quick-edit-or-replace-batch>
+    <app-quick-edit-or-replace-batch *ngIf="quickEditParam.quickEditItem == 'name'"
+                                     (result)="quickResult($event)"></app-quick-edit-or-replace-batch>
+    <app-quick-edit-keyword-price-single
+      class='mb10'
+      *ngIf="quickEditParam.quickEditItem == 'price' && selectData.selected_length ===1  "
+      (result)="quickResult($event)"
+      [parentData]="quickEditParam.showData.price"></app-quick-edit-keyword-price-single>
+
+    <app-quick-edit-ocpc-price-batch *ngIf="quickEditParam.quickEditItem == 'ocpc_bid' && selectData.selected_length !=1"
+                       (result)="quickResult($event)"></app-quick-edit-ocpc-price-batch>
+
+    <app-quick-edit-keyword-price-single
+      class='mb10'
+      *ngIf="quickEditParam.quickEditItem == 'ocpc_bid' && selectData.selected_length ===1  "
+      (result)="quickResult($event)"
+      [parentData]="quickEditParam.showData.ocpc_bid"></app-quick-edit-keyword-price-single>
+
+    <app-quick-edit-creative-label-batch *ngIf="quickEditParam.quickEditItem == 'label'" [summaryType]="summary_type"
+                                         (result)="quickResult($event)"></app-quick-edit-creative-label-batch>
+    <app-quick-edit-creative-click-url-batch *ngIf="quickEditParam.quickEditItem == 'click_monitor_url'" [summaryType]="summary_type"
+                                             (result)="quickResult($event)"></app-quick-edit-creative-click-url-batch>
+    <!--同媒体 匹配模式-->
+    <app-quick-edit-keyword-match-type
+      class='mb10' *ngIf="quickEditParam.quickEditItem === 'match_type'||quickEditParam.quickEditItem === 'matchType'"
+      (result)="quickResult($event)"
+      [matchTypeData]="matchTypeData"
+      [parentData]="quickEditParam.showData.match_type"></app-quick-edit-keyword-match-type>
+
+    <p style="margin-top: 8px; color: #f09200" *ngIf="quickEditParam.is_warning">{{quickEditParam.warning_info}}</p>
+
+    <div class="quick-edit-footer mt30">
+      <button class="ml8" type="button" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelQuickEdit()">
+        取消
+      </button>
+      <button  class="ml8" type="submit" nz-button [nzType]="'primary'" [nzSize]="'small'"
+              [nzLoading]="quickEditParam.saveing" (click)="quickEditOk()">确认
+      </button>
+    </div>
+
+  </div>
+</ng-template>
+
+<nz-modal [(nzVisible)]="isConfirmVisible" nzTitle="批量编辑预算" (nzOnCancel)="handleCancel()" (nzOnOk)="quickConfirmEditSubmit()">
+  <p class="pt20 pb20"><i style="color: orange" nz-icon nzType="warning" nzTheme="fill"></i> 您将批量编辑{{selectData.selected_length}}个{{summary_type_name[summary_type]}}的预算，确认修改吗？</p>
+</nz-modal>

@@ -1,0 +1,33 @@
+<div class="conDiv">
+  <div class="conSon ml200">
+    <div class="mb400">
+      <h3>基本信息</h3>
+      <div class="inpRow mt8">
+        <div class="inpRow_left mr8 pull-left">
+          <label class="titleLa w52 inline-block">
+            <span>名称:</span>
+          </label>
+        </div>
+        <div class="inpRow_right pull-left" >
+          <div class="pull-left">
+            <input nz-input
+                   [(ngModel)]="info['folder_name']"
+                   [nzSize]="'small'">
+          </div>
+          <div class="ml8 pull-left wroning" [ngClass]="{clSave:iswraing == true}" *ngIf="!this.info['folder_name']">
+            <span><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>输入名称</span>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!--footer start-->
+<div class="flexFooter border">
+  <button nz-button [nzLoading]="saveing" [nzType]="'primary'" (click)="_save()">
+    <span>保存</span>
+  </button>
+</div>
+<!--footer end-->

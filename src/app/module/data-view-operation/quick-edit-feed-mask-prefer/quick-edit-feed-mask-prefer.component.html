@@ -1,0 +1,24 @@
+<div class="lab-row-more-publisher">
+  <!-- <span class="row-title">封面优选：</span> -->
+  <nz-radio-group [nzSize]="'small'"
+                  [(ngModel)]="maskPrefer">
+    <div>
+      <label class="mr20" nz-radio [nzValue]="true">
+        <span>开启<i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="tips" [nzTooltipPlacement]="'topLeft'" class="ml5" style="color: #f09200"></i></span>
+      </label>
+    </div>
+    <div>
+      <label nz-radio [nzValue]="false">
+        <span>关闭</span>
+      </label>
+    </div>
+  </nz-radio-group>
+  <ng-template #tips>
+    <div class="tips">
+      <p>开启后:</p>
+      <p class="pt5">视频笔记通过优选算法挑选视频抽帧作为笔记封面备选，最终展示点击率最高的封面图片，优选后笔记点击率预计提升20%左右；</p>
+      <p class="pt5">图文笔记通过优选算法展示其余笔记非封面图片，最终展示点击率最高的封面图片，优选后笔记点击率预计提升15%左右；</p>
+     </div>
+  </ng-template>
+
+</div>

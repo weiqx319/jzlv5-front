@@ -1,0 +1,91 @@
+<div class="materials-detail-container">
+  <div class="form-content">
+    <div class="form-content-left">
+      <div class="image-content-preview mt4" [ngStyle]="{'background-image': 'url('+imgUrl+')'}" *ngIf="imgUrl"></div>
+    </div>
+    <div class="form-content-right">
+      <div class="lab-row mb10">
+        <label class="mr8">标识:</label>
+        <span>{{ defaultData.image_md5 }}</span>
+      </div>
+      <div class="lab-row mb10">
+        <label class="mr8">名称:</label>
+        <ng-container *ngIf="!is_edit.material_name">
+          <span>{{ defaultData.material_name }}</span>
+        </ng-container>
+        <ng-container *ngIf="is_edit.material_name && canEdit">
+          <input nz-input
+                 class="w200"
+                 [nzSize]="'small'"
+                 type="text"
+                 [(ngModel)]="defaultData.material_name"
+                 placeholder="请输入名称">
+        </ng-container>
+        <i nz-icon nzType="edit" nzTheme="outline" class="ml8 mt4" *ngIf="canEdit" (click)="editStatus('material_name');"></i>
+      </div>
+      <div class="lab-row mb10" *ngIf="canEdit">
+        <label class="mr8">素材制作时间:</label>
+        <ng-container *ngIf="!is_edit.material_make_time">
+          <span>{{ material_make_time_str }}</span>
+        </ng-container>
+        <ng-container *ngIf="is_edit.material_make_time">
+          <nz-date-picker
+            class="w200 datePicker"
+            [nzSize]="'small'"
+            nzFormat="yyyy-MM-dd"
+            [nzAllowClear]="false"
+            nzPlaceHolder="请选择素材制作时间"
+            [(ngModel)]="material_make_time">
+          </nz-date-picker>
+        </ng-container>
+        <i nz-icon nzType="edit" nzTheme="outline" class="ml8 mt4" (click)="editStatus('material_make_time');"></i>
+      </div>
+
+      <div class="lab-row mb10">
+        <label class="mr8">宽高:</label>
+        <span>{{ defaultData.image_width }} px × {{defaultData.image_height}} px</span>
+      </div>
+      <div class="lab-row mb10">
+        <label class="mr8">尺寸:</label>
+        <span>{{ defaultData.image_size }} KB</span>
+      </div>
+      <div class="lab-row mb10" *ngIf="canEdit">
+        <label class="mr8">标签:</label>
+        <ng-container *ngIf="!is_edit.material_tags">
+          <span>{{ defaultData.material_tags }}</span>
+        </ng-container>
+        <ng-container *ngIf="is_edit.material_tags">
+          <nz-select class="w200"
+                     [nzSize]="'small'"
+                     [nzMode]="'tags'"
+                     [(ngModel)]="defaultData.material_tags"
+                     [nzPlaceHolder]="'请选择标签'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of typesList"
+              [nzLabel]="option.advertiser_name"
+              [nzValue]="option.cid">
+            </nz-option>
+          </nz-select>
+        </ng-container>
+        <i nz-icon nzType="edit" nzTheme="outline" class="ml8 mt4" (click)="editStatus('material_tags');"></i>
+      </div>
+      <div class="lab-row mb10" *ngIf="canEdit">
+        <label class="mr8">创建:</label>
+        <span>{{ defaultData.create_time }}</span>
+      </div>
+      <div class="lab-row mb10">
+        <label class="mr8">审核意见:</label>
+        <span>{{ defaultData.confirm_suggest }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saveing" (click)="doSave()">
+      <span>确定</span>
+    </button>
+  </div>
+</div>

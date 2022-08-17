@@ -1,0 +1,713 @@
+<div >
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <a class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="addAccountAddChannel()" *ngIf="((authState$|async)?.user.company_type!=1 || ((authState$|async)?.user.company_type == 1 && total===0)) && !loading && show_type === 'hasAccount'">
+        <i nz-icon nzType="plus" nzTheme="outline"></i><span>账户授权</span>
+       </a>
+       <a class="manage-add mr8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="addVirtualAccount()" *ngIf="((authState$|async)?.user.company_type!=1 || ((authState$|async)?.user.company_type == 1 && total===0)) && !loading && show_type === 'virtualAccount'">
+        <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加账户</span>
+       </a>
+       <ng-container *ngIf="!_indeterminate && show_type !== 'compensateAccount' && show_type !== 'compensateLog'">
+         <button class="manage-pause disabled-status mr8" nz-button [nzType]="'default'" [nzSize]="'default'">
+           <i nz-icon nzType="pause" nzTheme="outline"></i><span>{{show_type === 'hasAccount' ? '取消授权' :'删除账户'}}</span>
+         </button>
+       </ng-container>
+       <ng-container *ngIf="_indeterminate && show_type !== 'compensateAccount'&& show_type !== 'compensateLog'">
+           <button class="manage-pause mr8" nz-popconfirm [nzPopconfirmTitle]="'确定取消授权所选账户？'" (nzOnConfirm)="doUnbinding()"  [nzPopconfirmPlacement]="'bottomLeft'" nz-button [nzType]="'default'" [nzSize]="'default'">
+             <i nz-icon nzType="pause" nzTheme="outline"></i><span>{{show_type === 'hasAccount' ? '取消授权' :'删除账户'}}</span>
+           </button>
+       </ng-container>
+       <ng-container *ngIf="!_indeterminate && show_type === 'hasAccount'">
+         <button class="manage-pause disabled-status mr8" nz-button [nzType]="'default'" [nzSize]="'default'">
+           <i nz-icon nzType="sync" nzTheme="outline"></i><span>同步账户</span>
+         </button>
+       </ng-container>
+       <ng-container *ngIf="_indeterminate && show_type === 'hasAccount'">
+           <button class="manage-pause mr8" nz-popconfirm [nzPopconfirmTitle]="'确定同步所选账户？'" (nzOnConfirm)="doSync()" [nzPopconfirmPlacement]="'bottomLeft'"  nz-button [nzType]="'default'" [nzSize]="'default'">
+             <i nz-icon nzType="sync" nzTheme="outline"></i><span>同步账户</span>
+           </button>
+       </ng-container>
+       <button *ngIf="show_type !== 'compensateLog'&& show_type !== 'compensateAccount'" class="manage-pause mr8" nz-button [nzType]="'default'" [nzSize]="'default'"  (click)="downloadAccount()">
+        <i nz-icon nzType="download" nzTheme="outline"></i><span>导出账户</span>
+       </button>
+ <!--      <ng-container *ngIf="!_indeterminate  && (show_type === 'hasAccount' || show_type === 'virtualAccount')">-->
+ <!--        <button class="manage-pause disabled-status mr8" nz-button [nzType]="'default'" [nzSize]="'small'">-->
+ <!--          <span>批量编辑返点</span>-->
+ <!--        </button>-->
+ <!--      </ng-container>-->
+ <!--      <ng-container *ngIf="_indeterminate  && (show_type === 'hasAccount' || show_type === 'virtualAccount')">-->
+ <!--        <button class="manage-pause mr8" nz-popconfirm nz-button [nzType]="'default'" [nzSize]="'small'" (click)="$event.srcElement.blur();batchEditDiscount(content)">-->
+ <!--          <span>批量编辑返点</span>-->
+ <!--        </button>-->
+
+ <!--        <ng-template #content>-->
+ <!--          <ng-template #cashTemplate><p class="w220">现金返点作用于计算现金消费，<br />现金消费=消费*100/(100+现金返点)</p></ng-template>-->
+
+ <!--          <div class="mt10 mb10 ml50">-->
+ <!--            <label  class="w100 text-right inline-block">现金返点:</label>-->
+ <!--            <i nz-icon nzType="question-circle" nzTheme="outline"-->
+ <!--               nz-popover-->
+ <!--               [nzPopoverContent]="cashTemplate"-->
+ <!--               nzPopoverPlacement="bottom"-->
+ <!--               class="ml8"-->
+ <!--               style="color: #f09200"></i>-->
+ <!--            <div class="w200 ml8 inline-block">-->
+ <!--              <input nz-input-->
+ <!--                     class="w100p"-->
+ <!--                     [nzSize]="'small'"-->
+ <!--                     type="number"-->
+ <!--                     step="0.1"-->
+ <!--                     [(ngModel)]="discountEdit.discount">-->
+ <!--            </div>-->
+ <!--          </div>-->
+
+ <!--          <div class="mt10 mb10 ml50">现金返点作用于计算现金消费，现金消费=消费*100/(100+现金返点)</div>-->
+
+ <!--          <div class="text-right">-->
+ <!--            <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelEdit()">-->
+ <!--              <span>取消</span>-->
+ <!--            </button>-->
+ <!--            <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="updating" (click)="updateDiscount('discount')">-->
+ <!--              <span>下一步</span>-->
+ <!--            </button>-->
+ <!--          </div>-->
+
+ <!--        </ng-template>-->
+
+ <!--      </ng-container>-->
+
+      <ng-container *ngIf="(show_type === 'hasAccount' || show_type === 'virtualAccount')">
+        <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="menu" [nzTrigger]="'click'">批量设置<i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu style="min-width:145px">
+            <ng-container *ngFor="let item of batchEditOptions">
+              <!-- 批量编辑 -->
+              <!-- <ng-container *ngIf="item.value!==='compensate'" >-->
+                <li nz-menu-item *ngIf="!this._indeterminate" [nzDisabled]="!this._indeterminate"><a>{{item.label}}</a></li>
+                <li nz-menu-item *ngIf="this._indeterminate"  (click)="batchEdit(item.value)"><a>{{item.label}}</a></li>
+              <!-- </ng-container> -->
+              <!-- <li nz-menu-item *ngIf="item.value==='compensate'" (click)="batchEdit(item.value)"><a>{{item.label}}</a></li> -->
+            </ng-container>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-container>
+       <ng-container *ngIf="filter_result_array.length>0">
+         <div class="inline-block" style="vertical-align: middle;">
+           <div class="filter-trash pull-left" *ngIf="filter_result_array.length>1" (click)="clearFilter()">
+             <i nz-icon nzType="delete" nzTheme="outline"></i>
+           </div>
+           <div class="filter-desc pull-left">
+             <span *ngFor="let filter of filter_result_array;let i = index;">
+               {{filter.name}}{{filter.op}}{{filter.value}}
+               <span class="filter-delete ml8" (click)="deleteFilter(i)"><i nz-icon nzType="close" nzTheme="outline"></i></span>
+               <span *ngIf="i < filter_result_array.length-1">；</span>
+             </span>
+           </div>
+         </div>
+       </ng-container>
+     </div>
+  </div>
+  <ng-template #formulaContentNew>
+    <div class="mt10 mb10 ml50">
+      <label  class="w100 text-right inline-block" style="position: relative;top: -5px">返点类型：</label>
+      <div class="w200 ml8 inline-block">
+        <nz-radio-group [(ngModel)]="radioValueNew" nzName="radiogroup">
+          <label nz-radio nzValue = '1'>长期</label>
+          <label nz-radio nzValue = '0'>按时间分段</label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <div *ngIf="radioValueNew==='0'">
+      <div class="mt10 mb10 ml30" *ngFor="let date of formulaContentNewArr;let id = index" style="position: relative">
+        <i class="ml8 up-add-icon" *ngIf="id===0" nz-icon nzType="plus" nzTheme="outline" (click)="upAddFormulaContentNew('discount')"></i>
+        <nz-date-picker class="ml8" [nzSize]="'small'" nzFormat="yyyy-MM-dd" [(ngModel)]="date.sdate" (ngModelChange)="onSdateChange($event,'discount',id)" [nzDisabledDate]="disabledStartDate(date.edate,date.limitSdate,date.limitEdate)"></nz-date-picker>
+        <span>&nbsp;-&nbsp;</span>
+        <nz-date-picker [nzSize]="'small'" nzFormat="yyyy-MM-dd" [(ngModel)]="date.edate" (ngModelChange)="onEdateChange($event,'discount',id)" [nzDisabledDate]="disabledEndDate(date.sdate,date.limitSdate)"></nz-date-picker>
+        <div class="w200 ml8 inline-block">
+          <input nz-input
+                 [nzSize]="'small'"
+                 [(ngModel)]="date.discount_rate_formula"
+                 placeholder="请输入现金返点公式">
+        </div>
+        <i class="ml8" nz-icon nzType="close" nzTheme="outline" (click)="deleteFormulaContentNew('discount',id)"></i>
+        <i class="ml8" nz-icon nzType="plus" nzTheme="outline" (click)="addFormulaContentNew('discount',id)"></i>
+      </div>
+    </div>
+    <div class="mt10 mb10 ml50" *ngIf="radioValueNew==='1'">
+      <label  class="w100 text-right inline-block">现金返点公式:</label>
+      <div class="w200 ml8 inline-block">
+        <input nz-input
+               [nzSize]="'default'"
+               [(ngModel)]="discountEditNew.discount_rate_formula"
+               placeholder="请输入现金返点公式">
+      </div>
+    </div>
+
+    <div class="mt20 fontSize12">
+      <p>备注1:	现金返点公式作用于计算现金消费，现金消费=消费/现金返点公式</p>
+      <p>备注2:	现金返点可以是公式也可以一个具体的值，如 1+20% 或 1.2</p>
+    </div>
+
+    <div class="text-right">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancelEditNew('discount')">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="updating" (click)="isSetDiscount?setDiscountNew('discount',radioValueNew):updateDiscountNew('discount',radioValueNew)">
+        <span>完成</span>
+      </button>
+    </div>
+
+  </ng-template>
+  <ng-template #commissionContent>
+
+    <div class="mt10 mb10 ml50">
+      <label  class="w100 text-right inline-block" style="position: relative;top: -5px">佣金比例类型：</label>
+      <div class="w200 ml8 inline-block">
+        <nz-radio-group [(ngModel)]="radioValueCommission" nzName="radiogroup">
+          <label nz-radio nzValue = '1'>长期</label>
+          <label nz-radio nzValue = '0'>按时间分段</label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <div *ngIf="radioValueCommission==='0'">
+      <div class="mt10 mb10 ml30" *ngFor="let date of commissionContentNewArr;let id = index" style="position: relative">
+        <i class="ml8 up-add-icon" *ngIf="id===0" nz-icon nzType="plus" nzTheme="outline" (click)="upAddFormulaContentNew('commission')"></i>
+        <nz-date-picker class="ml8" [nzSize]="'small'" nzFormat="yyyy-MM-dd" [(ngModel)]="date.sdate" (ngModelChange)="onSdateChange($event,'commission',id)" [nzDisabledDate]="disabledStartDate(date.edate,date.limitSdate,date.limitEdate)"></nz-date-picker>
+        <span>&nbsp;-&nbsp;</span>
+        <nz-date-picker [nzSize]="'small'" nzFormat="yyyy-MM-dd" [(ngModel)]="date.edate" (ngModelChange)="onEdateChange($event,'commission',id)" [nzDisabledDate]="disabledEndDate(date.sdate,date.limitSdate)"></nz-date-picker>
+        <div class="w200 ml8 inline-block">
+          <input nz-input
+                 [nzSize]="'small'"
+                 [(ngModel)]="date.commission_rate_formula"
+                 placeholder="请输入佣金比例公式">
+        </div>
+        <i class="ml8" nz-icon nzType="close" nzTheme="outline" (click)="deleteFormulaContentNew('commission',id)"></i>
+        <i class="ml8" nz-icon nzType="plus" nzTheme="outline" (click)="addFormulaContentNew('commission',id)"></i>
+      </div>
+    </div>
+    <div class="mt10 mb10 ml50" *ngIf="radioValueCommission==='1'">
+      <label  class="w100 text-right inline-block">佣金比例公式:</label>
+      <div class="w200 ml8 inline-block">
+        <input nz-input
+               [nzSize]="'default'"
+               [(ngModel)]="commissionEditNew.commission_rate_formula"
+               placeholder="请输入佣金比例公式">
+      </div>
+    </div>
+
+    <div class="mt20 fontSize12">
+      <p>备注1:	佣金比例作用于计算佣金，佣金=消费*佣金比例公式</p>
+      <p>备注2:	佣金比例可以是公式也可以一个具体的值，如 20% 或 0.2（小于1）</p>
+    </div>
+
+    <div class="text-right">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancelEditNew('commission')">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="updating" (click)="isSetDiscount?setDiscountNew('commission',radioValueCommission):updateDiscountNew('commission',radioValueCommission)">
+        <span>完成</span>
+      </button>
+    </div>
+
+  </ng-template>
+  <!-- 编辑计划出价限制 -->
+  <ng-template #adBidMaxContent>
+    <div class="mt10 mb10 ml50">
+      <label  class="w100 text-right inline-block">最大出价限制:</label>
+      <div class="w200 ml8 inline-block">
+        <nz-input-number
+          class="w200"
+          [(ngModel)]="adBidMax"
+          [nzSize]="'default'"
+          [nzStep]="0.01"
+          [nzPrecision]="2"
+          [nzPlaceHolder]="'请输入出价限制'"
+        ></nz-input-number>
+      </div>
+    </div>
+
+    <div class="mt20 fontSize12 ml50">
+      <p>备注1：广告出价限制只作用于腾讯广告，默认不限制</p>
+      <p>备注2：如果出价超过限制，会提示修改失败</p>
+      <p>备注3：0或不填为不限</p>
+    </div>
+
+    <div class="text-right">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancelEditNew('ad_bid_max')">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="updating" (click)="updateAdBidMax()">
+        <span>完成</span>
+      </button>
+    </div>
+
+  </ng-template>
+  <!-- 编辑数据归属渠道 -->
+  <ng-template #attributionChannelContent>
+    <div class="mt10 mb10 ml50">
+      <div class="w100 text-right inline-block">
+        <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'营销分析中显示的渠道名称'" [nzTooltipPlacement]="'topLeft'" class="mr5" style="color: #f09200"></i>
+        <label>数据归属渠道:</label>
+       </div>
+      <div class="w200 ml8 inline-block">
+        <nz-select class="w100p" [nzSize]="'default'" [(ngModel)]="attribution_channel" nzShowSearch>
+          <nz-option
+            *ngFor="let option of allChannels"
+            [nzLabel]="option.channel_name"
+            [nzValue]="option.channel_id">
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="text-right">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancelEditNew('attribution_channel')">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="updating" (click)="updateAttribution('attribution_channel')">
+        <span>完成</span>
+      </button>
+    </div>
+  </ng-template>
+  <!-- 编辑数据归属媒体 -->
+  <ng-template #attributionPublisherContent>
+    <div class="mt10 mb10 ml50">
+      <div class="w100 text-right inline-block">
+        <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'营销分析中显示的媒体名称'" [nzTooltipPlacement]="'topLeft'" class="mr5" style="color: #f09200"></i>
+        <label>数据归属媒体:</label>
+       </div>
+      <div class="w200 ml8 inline-block">
+        <nz-select class="w100p" [nzSize]="'default'" [(ngModel)]="attribution_publisher" nzShowSearch>
+          <nz-option
+            *ngFor="let option of allPublishers"
+            [nzLabel]="option.publisher_name"
+            [nzValue]="option.publisher_id">
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="text-right">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="cancelEditNew('attribution_publisher')">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" [nzLoading]="updating" (click)="updateAttribution('attribution_publisher')">
+        <span>完成</span>
+      </button>
+    </div>
+  </ng-template>
+  <ng-template #batchUserList>
+    <div class="mt10 mb10 ml50">
+      <label  class="w80 text-right inline-block">用户列表:</label>
+      <div class="w200 ml8 inline-block">
+        <nz-select class="w200" nzAllowClear nzPlaceHolder="请选择用户" nzSize="default" [(ngModel)]="user_id" [nzShowSearch]="true" >
+          <nz-option *ngFor="let item of userList" [nzValue]="item.user_id" [nzLabel]="item.user_name"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="text-right">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="closeBatchAllotUser()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [disabled]="!user_id" [nzSize]="'default'" [nzLoading]="updating" (click)="saveBatchAllotUser()">
+        <span>完成</span>
+      </button>
+    </div>
+  </ng-template>
+  <ng-template #batchAdList>
+    <div class="mt10 mb10 ml50">
+      <label  class="w80 text-right inline-block">广告主列表:</label>
+      <div class="w200 ml8 inline-block">
+        <nz-select class="w200" nzAllowClear nzPlaceHolder="请选择广告主" nzSize="default" [(ngModel)]="advertiser_id" [nzShowSearch]="true" >
+          <nz-option *ngFor="let item of advertiserList" [nzValue]="item.key" [nzLabel]="item.name"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="mt20 fontSize12">
+     <p style="color:#f09200;">提示：账户转移广告主会导致该账户的转化数据异常，需要重新在新广告主重新添加规则并重跑转化数据，请确认是否继续转移广告主'</p>
+    </div>
+    <div class="text-right">
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="closeBatchAllotAd()">
+        <span>取消</span>
+      </button>
+      <button class="ml8" nz-button [nzType]="'primary'" [disabled]="!advertiser_id" [nzSize]="'default'" [nzLoading]="updating" (click)="saveBatchAllotAd()">
+        <span>完成</span>
+      </button>
+    </div>
+  </ng-template>
+  <div *ngIf="show_type === 'hasAccount'"class="manage-table manage-no-result-table pt8">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500,5000]"
+              [nzSize]="'default'"
+              [nzData]="apiData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ x: '1050px', y: noResultHeight+'px' }">
+      <thead>
+      <tr>
+        <th nzLeft [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll($event)">
+        </th>
+        <th [nzWidth]="'200px'" nzLeft>
+          <span>账户名称</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_account_name',name:'账户名称',type:'multiValue'}" [(filterResult)]="filterResult['pub_account_name']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'" nzLeft>
+          <span>账户标签</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'account_label',name:'帐户标签',type:'multiValue'}" [(filterResult)]="filterResult['account_label']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>事业部</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'department',name:'事业部',type:'multiValue'}" [(filterResult)]="filterResult['department']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>广告主</span>
+          <app-filter [filterType]="'operSingleList'" [filterOption]="advertiserList" [filterKey]="{key:'cid',name:'广告主',type:'operSingleList'}" [(filterResult)]="filterResult['cid']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>所属用户</span>
+          <app-filter [filterType]="'operSingleList'" [filterOption]="useUserIdList" [filterKey]="{key:'user_id',name:'所属用户',type:'operSingleList'}" [(filterResult)]="filterResult['user_id']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>现金返点</span>
+           <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'现金消费=消费/现金返点公式'" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>返点操作</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>广告出价限制</span>
+           <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'广点通广告最大出价设置'" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>广告出价操作</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>佣金比例</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>佣金操作</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>账户操作日志</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>所属管家帐号</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>媒体</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'publisher_id',name:'媒体',type:'singleList'}" [(filterResult)]="filterResult['publisher_id']" [filterOption]="filterPublisherOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>渠道</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'channel_id',name:'渠道'}" [(filterResult)]="filterResult['channel_id']" [filterOption]="filterChannelOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>数据归属媒体</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'attribution_publisher',name:'数据归属媒体',type:'singleList'}" [(filterResult)]="filterResult['attribution_publisher']" [filterOption]="filterPublisherOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>数据归属渠道</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'attribution_channel',name:'数据归属渠道'}" [(filterResult)]="filterResult['attribution_channel']" [filterOption]="filterChannelOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>状态</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'account_status',name:'状态',type:'singleList'}" [(filterResult)]="filterResult['account_status']" [filterOption]="filterAccountStatusOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <!-- 账户标签分类 -->
+        <th [nzWidth]="'120px'" *ngFor="let item of accountLabelList">
+          <span>标签-{{item.name}}</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:item.key,name:item.name,type:'multiValue'}" [(filterResult)]="filterResult[item.key]" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>账户备注</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'account_comment',name:'帐户备注',type:'multiValue'}" [(filterResult)]="filterResult['account_comment']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'160px'">
+          <span>编辑</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td nzLeft  nzShowCheckbox [nzDisabled]="data.disabled" [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)">
+        </td>
+        <td nzLeft>
+          <a (click)="editHasAccount(data.chan_pub_id,'pub')">{{data.pub_account_name}}</a>
+        </td>
+        <td nzLeft>{{data.account_label}}</td>
+        <td>{{data.department}}</td>
+        <td>{{data.advertiser_name}}</td>
+        <td>{{data.belong_username}}</td>
+        <td>{{data.discount_setting_desc}}</td>
+        <td>
+          <a (click)="checkDiscountLog(data.chan_pub_id,'discount',discountLogContent)">查看修改记录</a><span class="ml8 mr8">|</span>
+          <a (click)="setDiscount(data.chan_pub_id,'discount',formulaContentNew)">编辑返点</a>
+        </td>
+        <td>{{data.ad_bid_max}}</td>
+        <td>
+          <a *ngIf="data.publisher_id!==6" style="color:#ccc; cursor: not-allowed;">编辑出价限制</a>
+          <a *ngIf="data.publisher_id===6" (click)="setAdBidMax('single',adBidMaxContent,data)">编辑出价限制</a>
+        </td>
+        <td>{{data.commission_setting_desc}}</td>
+        <td>
+          <a (click)="checkDiscountLog(data.chan_pub_id,'commission',discountLogContent)">查看修改记录</a><span class="ml8 mr8">|</span>
+          <a (click)="setDiscount(data.chan_pub_id,'commission',commissionContent)">编辑佣金</a>
+        </td>
+        <td>
+          <a (click)="authorizeLog(data.chan_pub_id,discountAuthorizeLogContent)">查看账户操作日志</a>
+        </td>
+        <td>{{data.super_account_name}}</td>
+        <td>{{publisherTypeRelation['publisher_id_'+data.publisher_id]}}</td>
+        <td>{{channelRelation['channel_id_'+data.channel_id]}}</td>
+        <td>{{publisherTypeRelation['publisher_id_'+data.attribution_publisher]}}</td>
+        <td>{{channelRelation['channel_id_'+data.attribution_channel]}}</td>
+        <td>{{data.account_status>-1?'有效':'无效'}}</td>
+        <td *ngFor="let item of accountLabelList">{{data['account_custom_label'][item.key]}}</td>
+        <td>{{data.account_comment}}</td>
+        <td>
+<!--          <ng-container *ngIf="data.account_status<=-1 && (data.publisher_id===6 || data.publisher_id ===9)"><a (click)="setPassword(data.chan_pub_id)">重新授权</a> <span class="ml8 mr8">|</span> </ng-container>-->
+          <ng-container *ngIf="data.account_status<=-1 && data.publisher_id===10 "><a (click)="setPassword(data.chan_pub_id)">重新授权</a> <span class="ml8 mr8">|</span> </ng-container>
+          <ng-container *ngIf="[6,7,8,9,10,11,15,16,18,19,20,22,23].indexOf(data.publisher_id)===-1&& data.super_account_id<1">
+            <a (click)="setPassword(data.chan_pub_id)">编辑密码</a> <span class="ml8 mr8">|</span>
+          </ng-container>
+          <a (click)="editHasAccount(data.chan_pub_id,'pub')">编辑账户</a>
+        </td>
+      </tr>
+      <tr *ngIf="apiData.length===0">
+        <td #noResultTd [attr.colspan]="26" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+          <div class="table-no-result">
+            <div class="table-no-result-content">
+              <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addAccountAddChannel()">
+               <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加账户</span>
+              </button>
+              <div class="mt8">您还未授权账户，点击按钮授权账户</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+  <div *ngIf="show_type === 'virtualAccount'" class="manage-table manage-no-result-table pt8">
+    <nz-table #nzTable
+              nzShowSizeChanger
+              [nzPageSizeOptions]="[30,50,100,500,5000]"
+              [nzSize]="'default'"
+              [nzData]="apiData"
+              [nzFrontPagination]="false"
+              [(nzPageSize)]="pageSize"
+              [(nzPageIndex)]="currentPage"
+              (nzPageIndexChange)="refreshData()"
+              (nzPageSizeChange)="refreshData(true)"
+              [nzTotal]="total"
+              [nzLoading]="loading"
+              [nzShowTotal]="totalItemTemplate"
+              [nzScroll]="{ y: noResultHeight+'px' }">
+      <thead>
+      <tr>
+        <th nzLeft [nzWidth]="'62px'" nzShowCheckbox [(nzChecked)]="_allChecked" (nzCheckedChange)="_checkAll($event)">
+        </th>
+        <th nzLeft [nzWidth]="'200px'">
+          <span>账户名称</span>
+          <!--  <app-filter [filterType]="'singleValue'" [filterKey]="{key:'pub_account_name',name:'账户名称'}" [(filterResult)]="filterResult['pub_account_name']" (submit)="doFilter()"></app-filter>
+  -->
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'pub_account_name',name:'账户名称',type:'multiValue'}" [(filterResult)]="filterResult['pub_account_name']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th nzLeft [nzWidth]="'100px'">
+          <span>账户标签</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'account_label',name:'帐户标签',type:'multiValue'}" [(filterResult)]="filterResult['account_label']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>事业部</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'department',name:'事业部',type:'multiValue'}" [(filterResult)]="filterResult['department']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>广告主</span>
+          <app-filter [filterType]="'operSingleList'" [filterOption]="advertiserList" [filterKey]="{key:'cid',name:'广告主',type:'operSingleList'}" [(filterResult)]="filterResult['cid']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>所属用户</span>
+          <app-filter [filterType]="'operSingleList'" [filterOption]="useUserIdList" [filterKey]="{key:'user_id',name:'所属用户',type:'operSingleList'}" [(filterResult)]="filterResult['user_id']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>现金返点</span>
+           <i nz-icon nzType="question-circle" nzTheme="outline"  nz-tooltip [nzTooltipTitle]="'现金消费=消费/现金返点公式'" [nzTooltipPlacement]="'topLeft'" class="ml8" style="color: #f09200"></i>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>返点操作</span>
+        </th>
+        <th [nzWidth]="'150px'">
+          <span>佣金比例</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>佣金操作</span>
+        </th>
+        <th [nzWidth]="'200px'">
+          <span>账户操作日志</span>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>媒体</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'publisher_id',name:'媒体',type:'singleList'}" [(filterResult)]="filterResult['publisher_id']" [filterOption]="filterPublisherOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>渠道</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'channel_id',name:'渠道'}" [(filterResult)]="filterResult['channel_id']" [filterOption]="filterChannelOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'100px'">
+          <span>状态</span>
+          <app-filter [filterType]="'singleList'" [filterKey]="{key:'account_status',name:'状态',type:'singleList'}" [(filterResult)]="filterResult['account_status']" [filterOption]="filterAccountStatusOption" (submit)="doFilter()"></app-filter>
+        </th>
+        <!-- 账户标签分类 -->
+        <th [nzWidth]="'120px'" *ngFor="let item of accountLabelList">
+          <span>标签-{{item.name}}</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:item.key,name:item.name,type:'multiValue'}" [(filterResult)]="filterResult[item.key]" (submit)="doFilter()"></app-filter>
+        </th>
+
+        <th [nzWidth]="'100px'">
+          <span>账户备注</span>
+          <app-filter [filterType]="'multiValue'" [filterKey]="{key:'account_comment',name:'帐户备注',type:'multiValue'}" [(filterResult)]="filterResult['account_comment']" (submit)="doFilter()"></app-filter>
+        </th>
+        <th [nzWidth]="'160px'">
+          <span>编辑</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of apiData">
+        <td nzLeft nzShowCheckbox [nzDisabled]="data.disabled" [(nzChecked)]="data.checked" (nzCheckedChange)="_refreshStatus($event)">
+        </td>
+        <td nzLeft>
+          <a (click)="editHasAccount(data.chan_pub_id,'virtual')">{{data.pub_account_name}}</a>
+        </td>
+        <td nzLeft>{{data.account_label}}</td>
+        <td>{{data.department}}</td>
+        <td>{{data.advertiser_name}}</td>
+        <td>{{data.belong_username}}</td>
+        <td>{{data.discount_setting_desc}}</td>
+        <td>
+          <a (click)="checkDiscountLog(data.chan_pub_id,'discount',discountLogContent)">查看修改记录</a><span class="ml8 mr8">|</span>
+          <a (click)="setDiscount(data.chan_pub_id,'discount',formulaContentNew)">编辑返点</a>
+        </td>
+        <td>{{data.commission_setting_desc}}</td>
+        <td>
+          <a (click)="checkDiscountLog(data.chan_pub_id,'commission',discountLogContent)">查看修改记录</a><span class="ml8 mr8">|</span>
+          <a (click)="setDiscount(data.chan_pub_id,'commission',commissionContent)">编辑佣金</a>
+        </td>
+        <td>
+          <a (click)="authorizeLog(data.chan_pub_id,discountAuthorizeLogContent)">查看账户操作日志</a>
+        </td>
+        <td>{{publisherTypeRelation['publisher_id_'+data.publisher_id]}}</td>
+        <td>{{channelRelation['channel_id_'+data.channel_id]}}</td>
+        <td>{{data.account_status>-1?'有效':'无效'}}</td>
+        <td *ngFor="let item of accountLabelList">{{data['account_custom_label'][item.key]}}</td>
+        <td>{{data.account_comment}}</td>
+        <td>
+          <a (click)="editHasAccount(data.chan_pub_id,'virtual')">编辑账户</a>
+        </td>
+      </tr>
+      <tr *ngIf="apiData.length===0">
+        <td #noResultTd [attr.colspan]="24" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+          <div class="table-no-result">
+            <div class="table-no-result-content">
+              <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addVirtualAccount()">
+               <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加账户</span>
+              </button>
+              <div class="mt8">您还未授权账户，点击按钮授权账户</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+  <div>
+    <ng-template #discountLogContent>
+      <div class="mt10 mb10">
+          <nz-table #nestedTable [nzSize]="'default'" [nzData]="discountLogList">
+            <thead>
+            <tr>
+              <th [nzWidth]="'150px'">
+                <span>创建日期</span>
+              </th>
+              <th [nzWidth]="'100px'">
+                <span>用户</span>
+              </th>
+              <th [nzWidth]="'300px'">
+                <span>修改前</span>
+              </th>
+              <th [nzWidth]="'300px'">
+                <span>修改后</span>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of discountLogList ">
+                <td>{{item.create_time}}</td>
+                <td>{{item.user_name}}</td>
+                <td><div [innerHTML]="item.modify_before"></div></td>
+                <td><div [innerHTML]="item.modify_after"></div></td>
+              </tr>
+            </tbody>
+          </nz-table>
+      </div>
+    </ng-template>
+  </div>
+  <ng-template #discountAuthorizeLogContent>
+    <div class="mt10 mb10">
+      <nz-table
+        [nzSize]="'default'"
+        [nzData]="discountLogList"
+        [(nzPageSize)]="authPageInfo.pageSize"
+        [(nzPageIndex)]="authPageInfo.currentPage"
+        [nzTotal]="authPageInfo.total"
+        [nzShowTotal]="totalItemTemplate"
+        [nzFrontPagination]="false"
+        (nzPageIndexChange)="getAuthorizeLogData()"
+      >
+        <thead>
+        <tr>
+          <th [nzWidth]="'150px'">
+            <span>操作日期</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>操作类型</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'log_type',name:'操作类型',type:'multiValue'}" [(filterResult)]="logFilterResult['log_type']" [filterOption]="logTypeOptionList" (submit)="getAuthorizeLogData()"></app-filter>
+          </th>
+          <th [nzWidth]="'300px'">
+            <span>修改前</span>
+          </th>
+          <th [nzWidth]="'300px'">
+            <span>修改后</span>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>备注</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of discountLogList ">
+          <td>{{item.create_time}}</td>
+          <td>
+            <span *ngIf="item.log_type===1">新增</span>
+            <span *ngIf="item.log_type===2">删除</span>
+            <span *ngIf="item.log_type===3">修改</span>
+            <span *ngIf="item.log_type===4">无效账户</span>
+            <span *ngIf="item.log_type===5">修改密码</span>
+          </td>
+          <td><div [innerHTML]="item.modify_before"></div></td>
+          <td><div [innerHTML]="item.modify_after"></div></td>
+          <td>{{item.remark}}</td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+    <ng-template #totalItemTemplate let-total>共{{ authPageInfo.total }}条</ng-template>
+  </ng-template>
+</div>

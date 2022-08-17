@@ -1,0 +1,180 @@
+<div class="materials-detail-container">
+  <div class="form-content">
+    <div class="form-content-left">
+      <ng-container *ngIf="materialId">
+        <div [ngClass]="{ml10: !isVertical}" class="mb10" *ngFor="let item of config">
+          <i nz-icon nzType="exclamation-circle" nzTheme="outline"
+             style="color: rgb(250, 173, 20)" class="mr5"></i>
+          *限制封面图上传大小 {{item.width}} x {{item.height}}，
+          格式<span class="ml5 mr5" *ngFor="let s_item of item.ext_type">{{s_item}}</span>
+        </div>
+      </ng-container>
+      <div class="form-content-left-content" [ngClass]="{vertical_layout: isVertical, horizontal_layout: !isVertical}">
+        <div class="mr10 image-box">
+          <img src="{{ imgUrl }}" [ngClass]="{vertical_video_bytedance: isVertical, horizontal_video_bytedance: !isVertical}">
+          <nz-upload [nzCustomRequest]="uploadImage" [nzAccept]="'.png,.jpg,.jpeg'" *ngIf="materialId"
+                     [nzBeforeUpload]="beforeUpload"
+                     [nzLimit] = 1
+                     [nzName]="'files'"
+                     [nzShowUploadList]="false"
+                     [ngClass]="{vertical_upload_box: isVertical, horizontal_upload_box: !isVertical}"
+                     class="upload_box"
+          >
+            <button nz-button><i nz-icon nzType="upload"></i><span>修改封面图</span></button>
+          </nz-upload>
+        </div>
+        <ng-container *ngIf="publisher_id== 7 && !materialId">
+          <a [href]="videoUrl" target="_blank">预览视频</a>
+        </ng-container>
+        <ng-container *ngIf="!(publisher_id== 7 && !materialId)">
+          <video controls="controls"
+                 controlslist="nodownload"
+                 poster="{{imgUrl}}"
+                 [ngClass]="{vertical_video: isVertical, horizontal_video: !isVertical}"
+                 src="{{ videoUrl }}"></video>
+        </ng-container>
+
+      </div>
+    </div>
+    <div class="form-content-right" *ngIf="materialId">
+          <div class="lab-row mb10">
+            <label class="mr8">标识:</label>
+            <span>{{ defaultData.upload_video_md5 }}</span>
+          </div>
+          <div class="lab-row mb10">
+            <label class="mr8">名称:</label>
+            <ng-container *ngIf="!is_edit.material_name">
+              <span>{{ defaultData.material_name }}</span>
+            </ng-container>
+            <ng-container *ngIf="is_edit.material_name">
+              <input nz-input
+                     class="w200"
+                     [nzSize]="'small'"
+                     type="text"
+                     [(ngModel)]="defaultData.material_name"
+                     placeholder="请输入名称">
+            </ng-container>
+            <i nz-icon nzType="edit" nzTheme="outline" class="ml8 mt4" (click)="editStatus('material_name');"></i>
+          </div>
+          <div class="lab-row mb10">
+            <label class="mr8">素材制作时间:</label>
+            <ng-container *ngIf="!is_edit.material_make_time">
+              <span>{{ material_make_time_str }}</span>
+            </ng-container>
+            <ng-container *ngIf="is_edit.material_make_time">
+              <nz-date-picker
+                class="w200 datePicker"
+                [nzSize]="'small'"
+                nzFormat="yyyy-MM-dd"
+                [nzAllowClear]="false"
+                nzPlaceHolder="请选择素材制作时间"
+                [(ngModel)]="material_make_time">
+              </nz-date-picker>
+            </ng-container>
+            <i nz-icon nzType="edit" nzTheme="outline" class="ml8 mt4" (click)="editStatus('material_make_time');"></i>
+          </div>
+
+          <div class="lab-row mb10">
+            <label class="mr8">编导:</label>
+            <ng-container *ngIf="!is_edit.director">
+              <span>{{ defaultData.director_name }}</span>
+            </ng-container>
+            <ng-container *ngIf="is_edit.director">
+              <nz-select class="w200"
+                         [nzSize]="'small'"
+                         [(ngModel)]="defaultData.director_id"
+                         [nzPlaceHolder]="'请选择编导'"
+                         nzShowSearch>
+                <nz-option
+                  *ngFor="let option of choreographerList"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+              </nz-select>
+            </ng-container>
+            <i nz-icon nzType="edit" nzTheme="outline" class="ml8 mt4" (click)="editStatus('director');"></i>
+          </div>
+          <div class="lab-row mb10">
+            <label class="mr8">摄影:</label>
+            <ng-container *ngIf="!is_edit.camerist">
+              <span>{{ defaultData.camerist_name }}</span>
+            </ng-container>
+            <ng-container *ngIf="is_edit.camerist">
+              <nz-select class="w200"
+                         [nzSize]="'small'"
+                         [(ngModel)]="defaultData.camerist_id"
+                         [nzPlaceHolder]="'请选择摄影'"
+                         nzShowSearch>
+                <nz-option
+                  *ngFor="let option of photographList"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+              </nz-select>
+            </ng-container>
+            <i nz-icon nzType="edit" nzTheme="outline" class="ml8 mt4" (click)="editStatus('camerist');"></i>
+          </div>
+          <div class="lab-row mb10">
+            <label class="mr8">剪辑:</label>
+            <ng-container *ngIf="!is_edit.movie_editor">
+              <span>{{ defaultData.movie_editor_name }}</span>
+            </ng-container>
+            <ng-container *ngIf="is_edit.movie_editor">
+              <nz-select class="w200"
+                         [nzSize]="'small'"
+                         [(ngModel)]="defaultData.movie_editor_id"
+                         [nzPlaceHolder]="'请选择剪辑'"
+                         nzShowSearch>
+                <nz-option
+                  *ngFor="let option of clipList"
+                  [nzLabel]="option.name"
+                  [nzValue]="option.key">
+                </nz-option>
+              </nz-select>
+            </ng-container>
+            <i nz-icon nzType="edit" nzTheme="outline" class="ml8 mt4" (click)="editStatus('movie_editor');"></i>
+          </div>
+          <div class="lab-row mb10">
+            <label class="mr8">宽高:</label>
+            <span>{{ defaultData.upload_video_width }} px × {{defaultData.upload_video_height}} px</span>
+          </div>
+          <div class="lab-row mb10">
+            <label class="mr8">尺寸:</label>
+            <span>{{ defaultData.upload_video_size }} MB</span>
+          </div>
+          <div class="lab-row mb10">
+            <label class="mr8">标签:</label>
+            <ng-container *ngIf="!is_edit.material_tags">
+              <span>{{ defaultData.material_tags }}</span>
+            </ng-container>
+            <ng-container *ngIf="is_edit.material_tags">
+              <nz-select class="w200"
+                         [nzSize]="'small'"
+                         [nzMode]="'tags'"
+                         [(ngModel)]="defaultData.material_tags"
+                         [nzPlaceHolder]="'请选择标签'"
+                         nzShowSearch>
+                <nz-option
+                  *ngFor="let option of typesList"
+                  [nzLabel]="option.advertiser_name"
+                  [nzValue]="option.cid">
+                </nz-option>
+              </nz-select>
+            </ng-container>
+            <i nz-icon nzType="edit" nzTheme="outline" class="ml8 mt4" (click)="editStatus('material_tags');"></i>
+          </div>
+          <div class="lab-row mb10">
+            <label class="mr8">创建:</label>
+            <span>{{ defaultData.create_time }}</span>
+          </div>
+        </div>
+  </div>
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="saveing" (click)="doSave()">
+      <span>确定</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,158 @@
+<div class="fengwu-preview-container">
+  <!--凤舞橱窗-->
+  <ng-container *ngIf="creative_type==='windows'">
+    <div class="windows-content mt10 mb20">
+      <div class="windows-item" *ngFor="let item of data;">
+        <a target="_blank" [href]="item.url" e_href="javascript:;">
+          <div class="windows-cover">
+            <img [src]="item.iurl">
+          </div>
+          <span class="windows-title">
+            {{item.title}}</span>
+          <span class="windows-price">{{item.price}}</span>
+        </a>
+      </div>
+      <div style="clear:both"></div>
+    </div>
+  </ng-container>
+  <!--凤舞寻客-->
+  <ng-container *ngIf="creative_type==='potential'">
+    <div class="potential-content mt10">
+      <label class="potential-title">免费申请使用九枝兰系统</label>
+      <div class="pl10 pr10">
+          <ul class="pb10">
+            <li class="potential-item" *ngIf="data.name==1">
+              <span style="width:65px">您的称呼：</span>
+              <input class="w100" nzSize="small" nz-input placeholder="先生/女士"/>
+            </li>
+            <li class="potential-item" *ngIf="data.contact==1">
+              <span style="width:65px">联系方式：</span>
+              <input class="w200" nzSize="small" nz-input placeholder="输入您的手机号码"/>
+            </li>
+            <li class="potential-item" *ngIf="data.areas==1">
+              <span style="width:65px">所在地区：</span>
+              <nz-select class="w100" nzSize="small">
+              </nz-select>
+            </li>
+            <li class="potential-item" *ngFor="let other of data.others">
+              <span style="width:65px">{{other.key}}：</span>
+              <nz-select class="w100 mr20" nzSize="small" [ngModel]="other.value[0]">
+                <ng-container *ngFor="let option of other.value">
+                  <nz-option [nzValue]="option" [nzLabel]="option"></nz-option>
+                </ng-container>
+              </nz-select>
+            </li>
+            <li class="potential-item">
+              <button class="w80" nzSize="small" nz-button nzType="primary">{{data.button}}</button>
+            </li>
+            <div style="clear:both"></div>
+          </ul>
+        </div>
+    </div>
+  </ng-container>
+  <!--凤舞短子链 -->
+  <ng-container *ngIf="creative_type==='sublinks'">
+    <div class="links-content">
+      <a href="javascript:" target="_blank">
+        <div class="links-title">
+          <div class="alink">凤舞短子链，突出业务信息，提高有效转化！ </div>
+        </div>
+        <p class="links-desc">突出展示有效信息，让您的推广吸引更多关注，获得更好推广效果！</p>
+      </a>
+
+      <div class="short-links-list">
+        <ng-container *ngFor="let item of data">
+          <a class="short-split-link" [href]="item.url" target="_blank"><span>{{item.title}}</span></a>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+  <!--凤舞长子链 -->
+  <ng-container *ngIf="creative_type==='links'">
+    <div class="links-content">
+      <a href="javascript:">
+        <div class="links-title">
+          <div class="alink">凤舞长子链，丰富推广信息，提高推广准确性！</div>
+        </div>
+        <p class="links-desc">披露更详细的推广信息，准确定位目标客户，节省转化成本！</p>
+      </a>
+
+      <ul class="long-links-list back_white">
+        <li *ngFor="let item of data">
+          <span>{{item.dece}}</span>
+          <a [href]="item.url" target="_blank">{{item.title}}</a>
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+  <!--凤舞导航 -->
+  <ng-container *ngIf="creative_type==='guides'">
+    <div class="links-content">
+      <a href="javascript:">
+        <div class="links-title">
+          <div class="alink">凤舞导航，突出重点信息，提升转化点击！</div>
+        </div>
+        <p class="links-desc">针对网民检索需求，突出推广站点业务所在，节省推广成本！</p>
+      </a>
+
+      <ul class="mt10 back_white pt10 pb10 pl10 pr10">
+        <li class="mb5" *ngFor="let guide of data">
+          <label class="link-title">{{guide.key}}</label>
+          <ng-container *ngFor="let item of guide.values">
+            <a class="mr10" [href]="item.url" target="_blank">{{item.dece}}</a>
+          </ng-container>
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+  <!--凤舞短导航 -->
+  <ng-container *ngIf="creative_type==='short_guides'">
+    <div class="links-content">
+      <a href="javascript:">
+        <div class="links-title">
+          <div class="alink">凤舞高级创意让您的广告脱颖而出！</div>
+        </div>
+        <p class="links-desc">凤舞高级创意让您的广告脱颖而出！</p>
+      </a>
+
+      <ul class="mt10 back_white pt10 pb10 pl10 pr10">
+        <li class="mb5" *ngFor="let guide of data">
+          <label class="link-title">{{guide.key}}</label>
+          <ng-container *ngFor="let item of guide.values">
+            <a class="mr10" [href]="item.url" target="_blank">{{item.dece}}</a>
+          </ng-container>
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+  <!--凤舞列表 -->
+  <ng-container *ngIf="creative_type==='lists'">
+    <div class="links-content">
+      <a href="javascript:">
+        <div class="links-title">
+          <div class="alink">凤舞高级创意让您的广告脱颖而出！</div>
+        </div>
+      </a>
+
+      <nz-table class="mt10" #basicTable nzSize="small" [nzShowPagination]="false" [nzData]="data">
+        <thead>
+        <tr>
+          <th nzWidth="150px">商品名称</th>
+          <th nzWidth="200px">描述</th>
+          <th nzWidth="120px">点击标签</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of data">
+          <td><a href="javascript:">{{item.title}}</a></td>
+          <td style="color: red;">{{item.dece2}}</td>
+          <td>
+            <a [href]="item.url" target="_blank">{{item.dece3}}</a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </ng-container>
+
+</div>

@@ -1,0 +1,120 @@
+<div class="sub-company-content">
+  <div nz-form class="sub-company-form">
+    <nz-tabset [nzSize]="'small'" [nzTabPosition]="'top'"
+               [(nzSelectedIndex)]="selectedIndex">
+      <nz-tab *ngFor="let item of upload_method; let i = index;" [nzDisabled]="item.disabled" [nzTitle]="item.name" (nzClick)="tabClick($event)">
+        <ng-container *ngIf="i===1 && tableShow">
+          <div class="lab-row mb10 fontSize12 " >
+            <p style="color: red">为防止浏览器崩溃，超过1万条，建议使用文件上传（粘贴条数跟电脑配置相关，{{productInfo['name']}}不设置上限）</p>
+          </div>
+          <div class="lab-row mb10" >
+            <label>批量导入媒体:</label>
+            <nz-select  class="w150 ml8" [nzSize]="'small'" nzPlaceHolder="请选择媒体" [(ngModel)]="defaultPostData.deal_publisher_id" (ngModelChange)="refreshTableField($event)">
+              <nz-option [nzLabel]="publisher.name" [nzValue]="publisher.key" *ngFor="let publisher of publisherTypeList">
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="fontSize12 mb20" style="height:200px;overflow: hidden">
+            <hot-table
+              class="hot"
+              [data]="dataset"
+              [colHeaders]="true"
+              [rowHeaders]="true"
+              [contextMenu]="contextMenu">
+              <ng-container *ngFor="let col of tableField">
+                <hot-column title="{{col}}"></hot-column>
+              </ng-container>
+            </hot-table>
+          </div>
+          <div class="lab-row fontSize12" *ngIf="summaryType=='keyword'">
+            <p>备注1:	以上列均为必填项</p>
+
+          </div>
+          <div class="lab-row fontSize12" *ngIf="summaryType=='creative'">
+            <p>备注1:	以上列均为必填项</p>
+          </div>
+
+
+          <div *ngIf="copyMessage.length">
+            <p *ngFor="let i of copyMessage" class="fontSize12" style="color: red; line-height: 20px;">{{i}}</p>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="i===0">
+          <div class="sub-company-form-content fontSize12">
+            <div  class="upload-item">
+              <p style="color: red;" *ngIf="uploading">正在上传文件，请勿离开或者刷新此页面！</p>
+            </div>
+            <div class="lab-row mb10" >
+              <label>批量导入媒体:</label>
+              <nz-select  class="w150 ml8" [nzSize]="'small'" nzPlaceHolder="请选择媒体" [(ngModel)]="defaultPostData.deal_publisher_id">
+                <nz-option [nzLabel]="publisher.name" [nzValue]="publisher.key" *ngFor="let publisher of publisherTypeList">
+                </nz-option>
+              </nz-select>
+            </div>
+
+            <div class="upload-item">
+              <div class="upload-title">上传Excel:</div>
+              <div class="uploadDiv">
+                <div class="overHidden">
+                  <nz-upload *ngIf="!uploading" class="pull-left"
+                             [nzCustomRequest]="customReq"
+                             [(nzFileList)]="fileList"
+                             [nzAccept]="'.xlsx,.xls,.csv'"
+                             [nzBeforeUpload]="beforeUpload"
+                             (click)="changeBtn()"
+                             [nzSize]="'small'"
+                             [nzLimit] = 1
+                             [nzName]="'files'">
+                    <button nz-button class="height20">
+                     <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+                    </button>
+                  </nz-upload>
+                  <button *ngIf="uploading" nz-button class="mt2 pull-left height20">
+                   <i nz-icon nzType="upload" nzTheme="outline" ></i><span>选择文件</span>
+                  </button>
+                  <span class="zhushi">*请上传.xls或.xlsx文件或.csv文件</span>
+                </div>
+                <div class="mt8">
+                  <span><a (click)="downloadTemplate(summaryType)">下载参考模板</a></span>
+                </div>
+
+              </div>
+            </div>
+            <div class="upload-item">
+              <div *ngIf="(uploading || exception === 'exception') && fileList.length" class="m1020 progressDiv">
+                <nz-progress [nzStatus]="exception" [nzPercent]="speed" nzSize="small"></nz-progress>
+              </div>
+            </div>
+            <div class="upload-item" *ngIf="resultMessage">
+              <p style="color: red;">{{resultMessage}}</p>
+            </div>
+          </div>
+        </ng-container>
+      </nz-tab>
+    </nz-tabset>
+
+    <div class="sub-company-form-footer">
+
+      <ng-container *ngIf="selectedIndex===0">
+        <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="cancelUpload()">
+          <span>取消</span>
+        </button>
+        <button class="ml8" [nzLoading]="copyUploading" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="handleUpload()">
+          <span>完成</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedIndex===1">
+        <button class="ml8" nz-button [nzType]="'default'" [disabled]="uploading" [nzSize]="'small'" (click)="cancelUpload()">
+          <span>取消</span>
+        </button>
+        <button class="ml8" *ngIf="!uploading" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="handleUpload()">
+          <span>完成</span>
+        </button>
+        <button class="ml8" *ngIf="uploading" nz-button [nzType]="'primary'" [nzSize]="'small'" [nzLoading]="uploading">
+          <span>上传中...</span>
+        </button>
+      </ng-container>
+
+    </div>
+  </div>
+</div>

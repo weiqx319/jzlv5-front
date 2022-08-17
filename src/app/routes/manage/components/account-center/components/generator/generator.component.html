@@ -1,0 +1,13 @@
+<div class="manage-top clearDefaultStyle" *ngIf="companyId*1===33||this.companyId*1 === 22 || this.companyId*1===1776">
+  <!-- <button class="manage-table-icon pull-left " [ngClass]="{'manage-active-icon':show_type === 'extension'}" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeActive('extension')">
+    <span>搜索推广跟踪</span>
+  </button> -->
+  <!-- <button class="manage-tree pull-left" [ngClass]="{'manage-active-icon':show_type === 'other'}" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="changeActive('other')">
+    <span>其他渠道跟踪</span>
+  </button> -->
+</div>
+
+
+<div *ngIf="show_type === 'extension'">
+  <app-extension-generator></app-extension-generator>
+</div>

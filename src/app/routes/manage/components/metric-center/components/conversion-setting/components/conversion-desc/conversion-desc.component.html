@@ -1,0 +1,70 @@
+<div>
+  <div class="manage-operation">
+    <div class="manage-header-left">
+      <a
+        class="manage-add mr8"
+        nz-button
+        [nzType]="'primary'"
+        [nzSize]="'default'"
+        (click)="addConversionDesc()"
+      >
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加转化描述</span>
+      </a>
+    </div>
+  </div>
+  <div class="manage-table manage-no-result-table pt8">
+     <nz-table
+        #nzTable
+        nzShowSizeChanger
+        [nzPageSizeOptions]="[30, 50, 100, 500]"
+        [nzSize]="'default'"
+        [nzData]="apiData"
+        [nzFrontPagination]="false"
+        [(nzPageSize)]="pageInfo.pageSize"
+        [(nzPageIndex)]="pageInfo.currentPage"
+        (nzPageIndexChange)="refreshData()"
+        (nzPageSizeChange)="refreshData(true)"
+        [nzTotal]="pageInfo.total"
+        [nzLoading]="loading"
+        [nzShowTotal]="totalItemTemplate"
+        [nzScroll]="{ y: noResultHeight + 'px' }"
+      >
+        <thead>
+          <tr>
+            <th [nzWidth]="'200px'">
+              <span>转化描述</span>
+            </th>
+            <th [nzWidth]="'180px'">
+              <span>数据来源</span>
+            </th>
+            <th [nzWidth]="'180px'">
+              <span>推送方式</span>
+            </th>
+            <th [nzWidth]="'250px'">
+              <span>广告主</span>
+              <app-filter
+                [filterType]="'operSingleList'"
+                [(filterOption)]="advertiserList"
+                [filterKey]="{ key: 'cid', name: '广告主',type:'operSingleList' }"
+                [(filterResult)]="filterResult['cid']"
+                (submit)="doFilter()"
+              ></app-filter>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of apiData">
+            <td>
+              <a (click)="editConversionDesc(data.desc_define_id)">{{
+                data.desc_name
+              }}</a>
+            </td>
+            <td>{{conversionSourceTypeRelation['sourceType_' + data['conver_source_type']]}}</td>
+            <td>{{data['conver_source_type']===2?conversionImTypeTypeRelation['imType_'+data['im_push_type']]:''}}</td>
+            <td>{{ data.advertiser_name }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+  </div>
+</div>

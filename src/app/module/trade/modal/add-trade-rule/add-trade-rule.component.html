@@ -1,0 +1,212 @@
+
+<div class="conversion-container mt20 mb20">
+  <div class="trade-mark-content">
+
+    <div class="lab-row mb10">
+      <label class="">类型:</label>
+      <div>
+        <nz-select class="w200 ml8"
+                   [nzSize]="'small'"
+                   [(ngModel)]="defaultData.biz_unit_rule_type">
+          <ng-container *ngFor="let item of word_type ">
+            <nz-option [nzLabel]="item.name" [nzDisabled]="item['disable']" [nzValue]="item.key"></nz-option>
+          </ng-container>
+        </nz-select>
+        <label *ngIf="defaultData.biz_unit_rule_type!=='txt_partial'" class="ml8" nz-checkbox [(ngModel)]="defaultData[defaultData.biz_unit_rule_type]['caps_lock']">区分大小写</label>
+      </div>
+    </div>
+    <div *ngIf="defaultData.biz_unit_rule_type==='txt_contain'">
+      <div class="lab-row mb10">
+        <label class="">维度:</label>
+        <div>
+          <nz-select class="w200 ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="defaultData[defaultData.biz_unit_rule_type]['match_object']">
+            <ng-container >
+              <nz-option *ngFor="let item of summer_type" [nzLabel]="item.name" [nzDisabled]="item['disabled']" [nzValue]="item.key"></nz-option>
+              <nz-option [nzLabel]="'搜索词/访客名称/自定义列等'" [nzValue]="'other'"></nz-option>
+            </ng-container>
+          </nz-select>
+        </div>
+      </div>
+      <div class="lab-row mb10">
+        <label class="">{{parentInfo?parentInfo.biz_unit_type_name:''}}名称:</label>
+        <div class="clear">
+          <div class="pull-left">
+            <nz-select class="w200 ml8"
+                       [nzSize]="'small'"
+                       nzShowSearch
+                       [(ngModel)]="defaultData['biz_unit_column']"
+                       (ngModelChange)="columnChange(defaultData['biz_unit_column'])">
+              <ng-container *ngFor="let item of listFilter ">
+                <nz-option [nzLabel]="item.name" [nzDisabled]="item['disabled']" [nzValue]="item.key"></nz-option>
+              </ng-container>
+            </nz-select>
+            <span class="ml8">:</span>
+          </div>
+          <div class="pull-left">
+            <div class="flex text-contains-item mb10" *ngFor="let textItem of defaultData[defaultData.biz_unit_rule_type].rule_item, let index = index">
+              <nz-select class="w100 ml8"
+                         [nzSize]="'small'"
+                         [(ngModel)]="textItem.match_type">
+                <ng-container *ngFor="let item of opList ">
+                  <nz-option [nzLabel]="item.name" [nzDisabled]="item['disabled']" [nzValue]="item.key"></nz-option>
+                </ng-container>
+              </nz-select>
+              <textarea class="ml8" [(ngModel)]="textItem.text_content" placeholder="一行一个"></textarea>
+
+              <div class="opBtn" *ngIf="defaultData[defaultData.biz_unit_rule_type].rule_item.length===1">
+                <!--<i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  (click)="removeItem('text_contains', index)"></i>-->
+                <i nz-icon nzType="plus" nzTheme="outline" class="delete-color ml10" (click)="addItem('text_contains')"></i>
+              </div>
+              <div class="opBtn" *ngIf="defaultData[defaultData.biz_unit_rule_type].rule_item.length>1">
+                <i nz-icon nzType="close" nzTheme="outline" class="delete-color ml8"  (click)="removeItem('text_contains'+defaultData.biz_unit_rule_type, index)"></i>
+                <i nz-icon nzType="plus" nzTheme="outline" class="delete-color ml10"  *ngIf="index===defaultData[defaultData.biz_unit_rule_type].rule_item.length-1" (click)="addItem('text_contains'+defaultData.biz_unit_rule_type)"></i>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="defaultData.biz_unit_rule_type==='txt_partial'">
+      <div class="lab-row mb10">
+        <label class="">{{parentInfo?parentInfo.biz_unit_type_name:''}}名称:</label>
+        <div class="clear">
+          <div class="pull-left w600">
+            <div>
+              <div>
+                <nz-select class="w200 ml8"
+                           [nzSize]="'small'"
+                           nzShowSearch
+                           [(ngModel)]="defaultData['biz_unit_column']"
+                           (ngModelChange)="columnChange(defaultData['biz_unit_column'])">
+                  <ng-container *ngFor="let item of listFilter ">
+                    <nz-option [nzLabel]="item.name" [nzDisabled]="item['disabled']" [nzValue]="item.key"></nz-option>
+                  </ng-container>
+                </nz-select>
+                <span class="ml4">提取</span>
+                <nz-select class="w130 ml4"
+                           [nzSize]="'small'"
+                           [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].match_object">
+                  <ng-container *ngFor="let item of summer_type ">
+                    <nz-option [nzLabel]="item.name" [nzDisabled]="item['disabled']" [nzValue]="item.key"></nz-option>
+                  </ng-container>
+                </nz-select>
+                <nz-select class="trade-mark-select w200 ml8"
+                           nzMode="multiple"
+                           [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].match_symbol"
+                           (ngModelChange)="symbolChange()"
+                           [nzPlaceHolder]="'请选择'"
+                           [nzSize]="'small'">
+                  <nz-option *ngFor="let item of brackets_type " [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+                </nz-select>
+
+                <!--<span class="ml4"></span>-->
+              </div>
+              <div *ngIf="defaultData[defaultData.biz_unit_rule_type].match_object === 'campaign'" class="flex pl20 mt10 pull-left" style="margin-left: -76px;">
+                <span>中内容,（ 其中计划名称包含</span>
+                <textarea class="ml4" [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].text_content" placeholder="一行一个"></textarea>
+                <span class="ml4">提取</span>
+                <span class="mr4">单元名称</span>
+              </div>
+              <div *ngIf="defaultData[defaultData.biz_unit_rule_type].match_object === 'campaign'" class="mt10 pl40">
+                <nz-select class="trade-mark-select w200 8"
+                           nzMode="multiple"
+                           [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].match_symbol"
+                           [nzDisabled]="true"
+                           [nzPlaceHolder]="'请选择'"
+                           [nzSize]="'small'">
+                  <nz-option *ngFor="let item of brackets_type " [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+                </nz-select>
+                <span class="ml4">中内容 ）</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="defaultData.biz_unit_rule_type==='url'">
+      <div class="lab-row mb10">
+        <label class="">匹配类型:</label>
+        <div>
+          <nz-select class="w200 ml8"
+                     [nzSize]="'small'"
+                     [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].match_type">
+            <ng-container *ngFor="let item of match_type">
+              <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+            </ng-container>
+          </nz-select>
+        </div>
+      </div>
+      <div class="lab-row mb10">
+        <label class="">词性名称:</label>
+        <div class="clear w600">
+          <div class="pull-left mb8">
+            <nz-select class="w200 ml8"
+                       [nzSize]="'small'"
+                       nzShowSearch
+                       [(ngModel)]="defaultData['biz_unit_column']">
+              <ng-container *ngFor="let item of listFilter ">
+                <nz-option [nzLabel]="item.name" [nzDisabled]="item['disabled']" [nzValue]="item.key"></nz-option>
+              </ng-container>
+            </nz-select>
+            <span class="ml8">:</span>
+          </div>
+          <div class="pull-left" style="margin-left: 6px;">
+            <div>
+              <div class="text-contains-item mb10">
+                <div class="pull-left mb10">
+                  <nz-select class="w150 trade-mark-select mr4 ml2"
+                             [ngClass]="{'ml8': defaultData[defaultData.biz_unit_rule_type].match_type===1}"
+                             nzMode="multiple"
+                             [nzSize]="'small'"
+                             [nzPlaceHolder]="'选择媒体'"
+                             [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].publisher_ids">
+                    <ng-container *ngFor="let item of publisher ">
+                      <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+                    </ng-container>
+                  </nz-select>
+                  <!--<label class="ml8" nz-checkbox [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].caps_lock">区分大小写</label>-->
+                </div>
+                <div class="flex">
+                  <span>URL</span>
+                  <nz-select class="w80 ml4"
+                             *ngIf="defaultData[defaultData.biz_unit_rule_type].match_type===2"
+                             [nzSize]="'small'"
+                             [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].partial">
+                    <ng-container *ngFor="let item of urlList ">
+                      <nz-option [nzLabel]="item.name" [nzValue]="item.key"></nz-option>
+                    </ng-container>
+                  </nz-select>
+                  <nz-select class="w80 ml4"
+                             *ngIf="defaultData[defaultData.biz_unit_rule_type].match_type===2"
+                             [nzSize]="'small'"
+                             [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].position">
+                    <nz-option [nzLabel]="'前'" [nzValue]="'before'"></nz-option>
+                    <nz-option [nzLabel]="'后'" [nzValue]="'after'"></nz-option>
+                  </nz-select>
+                  <span class="ml4 mr4">包含</span>
+                  <!--<textarea class="not-allowed" *ngIf="defaultData[defaultData.biz_unit_rule_type].match_type===1"  disabled="" readonly="" [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].text_content" placeholder="一行一个"></textarea>-->
+                  <textarea style="width: 160px;" [(ngModel)]="defaultData[defaultData.biz_unit_rule_type].text_content" placeholder="一行一个"></textarea>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">URL包含类型对接的是IM端的转化数据，若需要对应到前端数据，则需要建立相应的文字包含或者文字提取类型规则来对应</div>
+    </div>
+  </div>
+  <div class="trade-mark-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'default'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="doSave()">
+      <span>完成</span>
+    </button>
+  </div>
+
+</div>

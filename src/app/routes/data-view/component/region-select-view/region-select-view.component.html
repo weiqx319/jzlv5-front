@@ -1,0 +1,238 @@
+<div style="display: flex">
+  <div class="region-content inline-block" #region style="position: relative;">
+    <div class="region-header">
+      <div>已选 {{selectCityNum}} 个城市</div>
+      <div style="display: flex">
+        <div class="batch-add-button mr10" (click)="downloadRegions()">
+          <i nz-icon nzType="download" nzTheme="outline"></i>
+          <span>下载区域字典</span>
+        </div>
+        <div class="batch-add-button" (click)="batchAddRegion()">
+          <i nz-icon nzType="plus" nzTheme="outline"></i>
+          <span>批量添加地域</span>
+        </div>
+      </div>
+    </div>
+    <div class="select-china-right mt10"></div>
+    <ng-container *ngIf="divisionType==='province'">
+      <div class="region-cross">
+        <div class="select-china">
+          <label nz-checkbox [(ngModel)]="allSelectChina" (ngModelChange)="chinaSelect()">
+            <span>中国</span>
+          </label>
+        </div>
+       <!-- <div class="select-china-right"></div> -->
+      </div>
+      <div class="region-cross ml20" *ngFor="let key of getKeys(region_across)">
+        <ng-container *ngIf="key !== 'the_abroad'">
+          <div class="region-cross-desc">
+            <label nz-checkbox [(ngModel)]="region_across[key].is_selected" (ngModelChange)="regionSelect(key)">
+              <span>{{region_across[key].name}}:</span>
+            </label>
+          </div>
+          <div class="region-cross-province">
+            <div class="region-cross-province-desc pl20" appToggleCity *ngFor="let province of region_across[key].sub;let p_index = index;">
+              <div>
+                <label nz-checkbox [(ngModel)]="province.is_selected" (ngModelChange)="provinceSelect(province, p_index, key)" [nzIndeterminate]="province.is_one_selected">
+                  <!--  <span><a [ngClass]="{blue: province.is_one_selected}" title="{{'我爱'+province.name}}">{{province.name}}</a></span>
+                   --> <span><a title="{{province.name}}">{{province.name}}</a></span>
+                </label>
+              </div>
+              <ng-container *ngIf="province.sub.length">
+                <div class="city-content">
+                  <div class="region-cross-city">
+                    <div class="region-cross-city-desc pl20" *ngFor="let city of province.sub;let c_index = index;">
+                      <label nz-checkbox [(ngModel)]="city.is_selected" (ngModelChange)="citySelect(city, c_index, p_index, key)">
+                        <span>{{city.name}}</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="region-cross" *ngIf="publisher === 1 || publisher === 2">
+        <div class="select-china">
+          <label nz-checkbox [(ngModel)]="allSelectAbroad" (ngModelChange)="abroadSelect()">
+            <span>国外</span>
+          </label>
+        </div>
+        <div class="select-china-right"></div>
+      </div>
+      <div class="region-cross ml20" *ngIf="publisher === 1 || publisher === 2">
+        <!--<div class="region-cross-desc">
+          <label nz-checkbox [(ngModel)]="region_across['the_abroad'].is_selected" (ngModelChange)="regionSelect('the_abroad')">
+            <span>{{region_across['the_abroad'].name}}:</span>
+          </label>
+        </div>-->
+        <div class="region-cross-province">
+          <div class="region-cross-province-desc" appToggleCity *ngFor="let province of region_across['the_abroad'].sub;let p_index = index;">
+            <div>
+              <label nz-checkbox [(ngModel)]="province.is_selected" (ngModelChange)="provinceSelect(province, p_index, 'the_abroad')" [nzIndeterminate]="province.is_one_selected">
+                <span><a>{{province.name}}</a></span>
+              </label>
+            </div>
+            <ng-container *ngIf="province.sub.length">
+              <div class="city-content">
+                <div class="region-cross-city">
+                  <div class="region-cross-city-desc pl20" *ngFor="let city of province.sub;let c_index = index;">
+                    <label nz-checkbox [(ngModel)]="city.is_selected" (ngModelChange)="citySelect(city, c_index, p_index, 'the_abroad')">
+                      <span>{{city.name}}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="divisionType==='city'">
+      <div class="region-cross" *ngFor="let key of getKeys(region_across)">
+        <ng-container *ngIf="key !== 'the_abroad'">
+          <div class="region-cross-desc">
+            <label nz-checkbox [(ngModel)]="region_across[key].is_selected" (ngModelChange)="regionSelect(key)">
+              <span>{{region_across[key].name}}:</span>
+            </label>
+          </div>
+          <div class="region-cross-province">
+            <div class="region-cross-province-desc pl20" appToggleCity *ngFor="let province of region_across[key].sub;let p_index = index;">
+              <div>
+                <label nz-checkbox [(ngModel)]="province.is_selected" (ngModelChange)="provinceSelect(province, p_index, key)" [nzIndeterminate]="province.is_one_selected">
+                  <!--  <span><a [ngClass]="{blue: province.is_one_selected}" title="{{'我爱'+province.name}}">{{province.name}}</a></span>
+                   --> <span><a title="{{province.name}}">{{province.name}}</a></span>
+                </label>
+              </div>
+              <ng-container *ngIf="province.sub.length">
+                <div class="city-content">
+                  <div class="region-cross-city">
+                    <div class="region-cross-city-desc pl20" *ngFor="let city of province.sub;let c_index = index;">
+                      <label nz-checkbox [(ngModel)]="city.is_selected" (ngModelChange)="citySelect(city, c_index, p_index, key)">
+                        <span>{{city.name}}</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+    <div *ngIf="!is_hidden" style="position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    opacity: .5;
+    background: #ccc;
+    z-index: 9999;
+    cursor: not-allowed;"></div>
+  </div>
+
+  <div class="region-coefficient inline-block" style="position: relative;" *ngIf="showCoefficient">
+    <div class="region-oper" style="padding: 10px 20px 10px 20px;">
+      <span>统一系数(0.1-10):</span>
+      <nz-input-number style="width: 80px;"
+                       [(ngModel)]="coefficientAll"
+                       [nzMin]="0"
+                       [nzMax]="10"
+                       [nzPrecision]="2"
+                       [nzStep]="0.01"
+                       [nzSize]="'small'">
+      </nz-input-number>
+      <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="batchUpdateAllCoefficient()">应用</button>
+
+    </div>
+    <div class="region-coefficient-title">
+      <div class="title-region">已选地域</div>
+      <div class="title-price-factor">出价系数</div>
+    </div>
+    <ul class="region-coefficient-content">
+      <ng-container *ngFor= "let item of regionCoefficientResult">
+        <li>
+        <span class="title-region">
+          {{item.name}}
+          <ng-container *ngIf="item.sub.length>0">
+            <i nz-icon nzType="down" nzTheme="outline" (click)="item.dropdown = true;" *ngIf="!item.dropdown"></i>
+             <i nz-icon nzType="up" nzTheme="outline"  (click)="item.dropdown = false" *ngIf="!!item.dropdown"></i>
+          </ng-container>
+
+        </span>
+          <span class="title-price-factor" (mouseenter)="item.edit=true" (mouseleave)="item.edit=false">
+          <!--<ng-container [hidden]="!item.edit">{{item.coefficient}}</ng-container>-->
+          <ng-container *ngIf="item.sub.length===0">
+            <nz-input-number style="width: 80px;"
+                             [(ngModel)]="item.coefficient"
+                             [nzMin]="0"
+                             [nzMax]="10"
+                             [nzPrecision]="2"
+                             [nzStep]="0.01"
+                             (ngModelChange)="coefficientItemChange(item,$event)"
+                             [nzSize]="'small'">
+            </nz-input-number>
+          </ng-container>
+
+          <ng-container *ngIf="item.sub.length>0">
+            <span style="margin-left: -51px;">批量设置:</span>
+            <nz-input-number style="width: 70px;"
+                             [(ngModel)]="item.coefficient"
+                             [nzMin]="0"
+                             [nzMax]="10"
+                             [nzPrecision]="2"
+                             [nzStep]="0.01"
+                             (ngModelChange)="coefficientItemChange(item,$event)"
+                             [nzSize]="'small'">
+            </nz-input-number>
+            <i nz-icon nzType="check" nzTheme="outline"  style=" cursor: pointer;" (click)="batchUpdateItemCoefficient(item)"></i>
+          </ng-container>
+        </span>
+        </li>
+
+
+        <ng-container *ngIf="item.sub.length > 0 && item.dropdown">
+          <ng-container *ngFor="let subItem of item['sub']">
+            <li *ngIf="subItem['is_selected']">
+              <span class="title-region-sub">{{subItem.name}}</span>
+              <span class="title-price-factor" (mouseenter)="subItem.edit=true" (mouseleave)="subItem.edit=false">
+              <!--<ng-container *ngIf="!subItem.edit">{{subItem.coefficient}}</ng-container>-->
+                <!--<ng-container *ngIf="!!subItem.edit">-->
+              <nz-input-number style="width: 80px;"
+                               [(ngModel)]="subItem.coefficient"
+                               [nzMin]="0"
+                               [nzMax]="10"
+                               [nzPrecision]="2"
+                               [nzStep]="0.01"
+                               (ngModelChange)="coefficientItemChange(item,$event)"
+                               [nzSize]="'small'">
+              </nz-input-number>
+                <!--</ng-container>-->
+            </span>
+            </li>
+          </ng-container>
+
+
+
+        </ng-container>
+
+      </ng-container>
+
+
+
+
+    </ul>
+    <div *ngIf="!is_hidden" style="position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    opacity: .5;
+    background: #ccc;
+    z-index: 9999;
+    cursor: not-allowed;"></div>
+
+
+  </div>
+</div>

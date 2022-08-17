@@ -1,0 +1,92 @@
+<div>
+  <div class="fixed-condition-manage page-condition-header">
+    <div class="manage-header-left">
+      <a class="manage-add mr8" nz-button [nzType]="'primary'" [nzSize]="'default'" (click)="addAccountKeeper()">
+       <i nz-icon nzType="plus" nzTheme="outline"></i><span>绑定管家帐号</span>
+      </a>
+      <ng-container *ngIf="filter_result_array.length>0">
+        <div class="inline-block" style="vertical-align: middle;">
+          <div class="filter-trash pull-left" *ngIf="filter_result_array.length>1" (click)="clearFilter()">
+            <i nz-icon nzType="delete" nzTheme="outline"></i>
+          </div>
+          <div class="filter-desc pull-left">
+            <span *ngFor="let filter of filter_result_array;let i = index;">
+              {{filter.name}}{{filter.op}}{{filter.value}}
+              <span class="filter-delete ml8" (click)="deleteFilter(i)"><i nz-icon nzType="close" nzTheme="outline"></i></span>
+              <span *ngIf="i < filter_result_array.length-1">；</span>
+            </span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="content-section-manage">
+    <div class="manage-table manage-no-result-table">
+      <nz-table #nzTable
+                nzShowSizeChanger
+                [nzPageSizeOptions]="[30,50,100,500]"
+                [nzSize]="'default'"
+                [nzData]="apiData"
+                [nzFrontPagination]="false"
+                [(nzPageSize)]="pageSize"
+                [(nzPageIndex)]="currentPage"
+                (nzPageIndexChange)="refreshData()"
+                (nzPageSizeChange)="refreshData(true)"
+                [nzTotal]="total"
+                [nzLoading]="loading"
+                [nzShowTotal]="totalItemTemplate"
+                [nzScroll]="{ x: '1050px', y: noResultHeight+'px' }">
+        <thead>
+        <tr>
+          <th [nzWidth]="'200px'">
+            <span>账户名称</span>
+            <app-filter [filterType]="'multiValue'" [filterKey]="{key:'super_account_name',name:'账户名称',type:'multiValue'}" [(filterResult)]="filterResult['super_account_name']" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>媒体</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'publisher_id',name:'媒体',type:'singleList'}" [(filterResult)]="filterResult['publisher_id']" [filterOption]="filterPublisherOption" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>渠道</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'channel_id',name:'渠道'}" [(filterResult)]="filterResult['channel_id']" [filterOption]="filterChannelOption" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'100px'">
+            <span>状态</span>
+            <app-filter [filterType]="'singleList'" [filterKey]="{key:'super_account_status',name:'状态',type:'singleList'}" [(filterResult)]="filterResult['super_account_status']" [filterOption]="filterAccountStatusOption" (submit)="doFilter()"></app-filter>
+          </th>
+          <th [nzWidth]="'200px'">
+            <span>编辑</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of apiData">
+          <td>
+            <a href="javascript:" [routerLink]="['./', data.super_account_id]">{{data.super_account_name}}</a>
+          </td>
+          <td>{{publisherTypeRelation['publisher_id_'+data.publisher_id]}}</td>
+          <td>{{data.channel_id == 2 ? "信息流":(data.channel_id == 3?"应用市场":"搜索推广")}}</td>
+          <td>{{data.super_account_status>-1?'有效':'无效'}}</td>
+          <td>
+            <a (click)="editKeeperAccount(data.super_account_id)">编辑管家帐号</a>
+          </td>
+        </tr>
+        <tr *ngIf="apiData.length===0">
+          <td #noResultTd [attr.colspan]="6" [ngStyle]="{'background-color':'#f6f6f6','height':noResultHeight+'px'}">
+            <div class="table-no-result">
+              <div class="table-no-result-content">
+                <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="addAccountKeeper()">
+                 <i nz-icon nzType="plus" nzTheme="outline"></i><span>添加管家账户</span>
+                </button>
+                <div class="mt8">您还未绑定管家账户，点击按钮绑定管家账户</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #totalItemTemplate let-total>共{{ total }}条</ng-template>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,63 @@
+<div class="add-document-container">
+  <div class="document-alert-warning" *ngIf="publisherId!=1">
+    <i class="alert-warning-icon" nz-icon nzType="exclamation-circle" nzTheme="outline"></i>
+    <span class="ml8 mr8">违禁词:</span>
+    <span>最好 微信 最强 干脆 直接 主动 最 极 神器 离异 寂寞 大叔 介意 独居 没人玩 夜 睡不着 离婚</span>
+  </div>
+  <div class="form-content">
+
+    <div class="mt5 mb5" style="margin-left: 88px" *ngIf="publisherId!=1 && publisherId!=17">
+      <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+      <span>每条文案长度限制5-30个字, 且只能包含两个公共词包</span>
+    </div>
+    <div class="mt5 mb5" style="margin-left: 88px" *ngIf="publisherId==1">
+      <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+      <span>每条文案长度限制1-60个字</span>
+    </div>
+    <div class="mt5 mb5" style="margin-left: 88px" *ngIf="publisherId==17">
+      <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+      <span>每条文案长度限制10-45个字, 且只能包含一个公共词包</span>
+    </div>
+    <div class="lab-row">
+      <label>文案: </label>
+      <div class="document-list ml8" #inputBox>
+        <div class="document-list-item mb20" *ngFor="let item of titleList;let i = index;">
+          <input nz-input
+                 class="w_full ipts"
+                 [nzSize]="'small'"
+                 type="text"
+                 [(ngModel)]="item.title"
+                 (ngModelChange)="titleChange(item)"
+                 (click)="getCurrentFocus(i);"
+                 placeholder="请输入文案">
+          <span class="ml10" *ngIf="publisherId != 17">{{item.len}}/30</span>
+          <span class="ml10" *ngIf="publisherId == 17">{{item.len}}/45</span>
+          <i nz-icon nzType="plus" nzTheme="outline" class="deleteBtn ml10" (click)="addItem(i)"></i>
+          <i nz-icon nzType="close" nzTheme="outline" class="deleteBtn ml10"  *ngIf="titleList.length > 1"  (click)="removeItem(i)"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="tag-content mt8 mb8">
+    <div class="tag" *ngIf="publisherId!=1">
+      <ng-container *ngFor="let word of wordList;let i = index;">
+        <nz-tag class="mb8" (click)="addTags(word)">{{ word }}</nz-tag>
+      </ng-container>
+    </div>
+    <div class="tag" *ngIf="publisherId==1">
+      <ng-container *ngFor="let word of wordList;let i = index;">
+        <nz-tag class="mb8" (click)="addTags(word)">{{ word['name'] }}</nz-tag>
+      </ng-container>
+    </div>
+
+  </div>
+  <div class="form-btns">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzLoading]="submit" [nzSize]="'small'" (click)="doSave()">
+      <span>保存</span>
+    </button>
+  </div>
+</div>

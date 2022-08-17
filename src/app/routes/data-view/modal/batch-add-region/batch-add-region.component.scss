@@ -1,0 +1,14 @@
+.batch-add-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px 20px 20px;
+
+  .top-tips {
+    color: #f09200;
+  }
+  .textarea-box {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+}

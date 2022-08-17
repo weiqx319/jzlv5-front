@@ -1,0 +1,309 @@
+<div class="target-setting-container">
+  <div class="form-content">
+    <ng-container *ngFor="let slot of launchTemplateGroupData[curGroupFlag]">
+
+      <!-- radio -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'radio'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].resultValue">
+            <ng-container *ngFor="let radio of editDefaultDataOption[slot].sub">
+              <ng-container *ngIf="slot !== 'hide_if_converted' || (slot === 'hide_if_converted' && (radio['value'] !== 'APP' || (radio['value'] === 'APP' && (landingType !== 'LINK' && landingType !== 'EXTERNAL'))))">
+                <label nz-radio-button [nzValue]="radio['value']">
+                  {{radio['label']}}
+                </label>
+              </ng-container>
+            </ng-container>
+
+          </nz-radio-group>
+        </div>
+      </ng-container>
+
+      <!-- district_radio -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'district_radio'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].radioValue">
+            <label *ngFor="let radio of editDefaultDataOption[slot].sub" nz-radio-button nzValue="{{radio['value']}}">
+              {{radio['label']}}
+            </label>
+          </nz-radio-group>
+        </div>
+        <div class="ml148 relative" *ngIf="editDefaultDataOption[slot].radioValue == 'BUSINESS_DISTRICT'">
+          <div class="mb5">
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+            <span>商圈数量不能超过100个</span>
+          </div>
+          <nz-transfer-tree [limitKeyNum]="editDefaultDataOption[slot].combine_data.BUSINESS_DISTRICT.limit" [getParentKey]="false" [target]="editDefaultDataOption[slot].combine_data.BUSINESS_DISTRICT.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.BUSINESS_DISTRICT,$event)" [source]="editDefaultDataOption[slot].combine_data.BUSINESS_DISTRICT.sub"></nz-transfer-tree>
+          <!--              <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.one_extra.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.one_extra,$event)" [source]="editDefaultDataOption[slot].combine_data.one_extra.sub"></nz-transfer-tree>-->
+        </div>
+
+        <div class="ml148 relative" *ngIf="editDefaultDataOption[slot].radioValue == 'COUNTY'">
+          <nz-transfer-tree [getParentKey]="false" [target]="editDefaultDataOption[slot].combine_data.COUNTY.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.COUNTY,$event)" [source]="editDefaultDataOption[slot].combine_data.COUNTY.sub"></nz-transfer-tree>
+          <!--              <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.one_extra.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.one_extra,$event)" [source]="editDefaultDataOption[slot].combine_data.one_extra.sub"></nz-transfer-tree>-->
+        </div>
+
+        <div class="ml148 relative" *ngIf="editDefaultDataOption[slot].radioValue == 'CITY'">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.CITY.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.CITY,$event)" [source]="editDefaultDataOption[slot].combine_data.CITY.sub"></nz-transfer-tree>
+        </div>
+
+        <ng-container *ngIf="editDefaultDataOption.district.radioValue !== 'NONE'">
+          <nz-radio-group style="display: inline-flex" class="mt10 ml148 mb20" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption.district.location_type.radioValue">
+            <label  *ngFor="let radio of editDefaultDataOption.district.location_type.sub" nz-radio-button nzValue="{{radio['value']}}">
+              {{radio['label']}}
+            </label>
+          </nz-radio-group>
+        </ng-container>
+
+      </ng-container>
+
+      <!-- one_extra_radio -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'one_extra_radio'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].radioValue">
+            <label *ngFor="let radio of editDefaultDataOption[slot].sub" nz-radio-button nzValue="{{radio['value']}}">
+              {{radio['label']}}
+            </label>
+          </nz-radio-group>
+        </div>
+
+        <div class="mt10 ml148 relative mb20" *ngIf="['ad_tag','article','auto_extend_targets'].indexOf(editDefaultDataOption[slot].radioValue)>-1">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.one_extra.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.one_extra,$event)" [source]="editDefaultDataOption[slot].combine_data.one_extra.sub"></nz-transfer-tree>
+        </div>
+      </ng-container>
+
+      <!-- device_brand_radio -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'device_brand_radio' && editDefaultDataOption[slot].isShow">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].radioValue">
+            <label *ngFor="let radio of editDefaultDataOption[slot].sub" nz-radio-button nzValue="{{radio['value']}}">
+              {{radio['label']}}
+            </label>
+          </nz-radio-group>
+        </div>
+
+        <div class="mt10 ml148 relative mb20" *ngIf="['brand'].indexOf(editDefaultDataOption[slot].radioValue)>-1">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.one_extra.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.one_extra,$event)" [source]="editDefaultDataOption[slot].combine_data.one_extra.sub"></nz-transfer-tree>
+        </div>
+      </ng-container>
+
+      <!-- aweme_fan_radio -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'aweme_fan_radio'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].radioValue">
+            <label *ngFor="let radio of editDefaultDataOption[slot].sub" nz-radio-button nzValue="{{radio['value']}}">
+              {{radio['label']}}
+            </label>
+          </nz-radio-group>
+        </div>
+
+        <ng-container *ngIf="['aweme_fan'].indexOf(editDefaultDataOption[slot].radioValue)>-1">
+          <div class="mt10 ml148 relative mb10">
+            <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.one_extra.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.one_extra,$event)" [source]="editDefaultDataOption[slot].combine_data.one_extra.sub"></nz-transfer-tree>
+          </div>
+
+          <ng-container>
+            <div class="mt10 ml148 mb20">
+              <nz-checkbox-group class="mr8" [(ngModel)]="editDefaultDataOption[slot].aweme_fan_behaviors.sub"
+                                 (ngModelChange)="updateSingleChecked(slot)"></nz-checkbox-group>
+              <div class="mt5">
+                <i nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: rgb(250, 173, 20)" class="mr5"></i>
+                <span>至少选择一个抖音达人行为</span>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+
+      <!-- checkbox -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'checkbox'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <div class="ml8">
+            <label
+              nz-checkbox
+              [nzDisabled]="editDefaultDataOption[slot]['disabled_nolimit']"
+              [(ngModel)]="editDefaultDataOption[slot].NOLIMIT"
+              (ngModelChange)="updateNotLimit(editDefaultDataOption[slot],slot)"
+            >
+              不限
+            </label>
+            <ng-container *ngFor="let item of editDefaultDataOption[slot].sub">
+              <ng-container>
+                <label
+                  class="ml8"
+                  nz-checkbox
+                  [nzDisabled]="item['disabled'] || (slot === 'platform' && item.value === 'PC' && curGroupFlag === '0_1')"
+                  [(ngModel)]="item.checked"
+                  (ngModelChange)="updateSingleChecked(slot, item.value)"
+                >
+                  {{ item.label }}
+                </label>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+
+
+      <!-- select -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'select'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-select class="w200 ml8"
+                     [(ngModel)]="editDefaultDataOption[slot].resultValue"
+                     [nzPlaceHolder]="'请选择'"
+                     [nzSize]="'small'"
+                     nzShowSearch>
+            <nz-option
+              *ngFor="let option of editDefaultDataOption[slot].sub"
+              [nzLabel]="option['label']"
+              [nzValue]="option['value']"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+      </ng-container>
+
+
+      <!-- targeting_audience -->
+      <ng-container *ngIf="!isRemoveTargetingAudience && editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'targeting_audience'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].radioValue">
+            <label *ngFor="let radio of editDefaultDataOption[slot].sub" nz-radio-button nzValue="{{radio['value']}}">
+              {{radio['label']}}
+            </label>
+          </nz-radio-group>
+        </div>
+
+        <div class="lab-row mb20" *ngIf="editDefaultDataOption.targeting_audience.radioValue == 'custom_audience'">
+          <label>定向人群:</label>
+          <div class="crowd-body-content mb20 ml8">
+            <nz-tree #tree
+                     nzCheckable
+                     [nzData]="editDefaultDataOption.targeting_audience.combine_data.crowdList"
+                     (nzCheckBoxChange)="treeCrowdOnCheck($event)"
+                     [nzCheckedKeys]="editDefaultDataOption.targeting_audience.combine_data.crowdResultList"
+                     nzBlockNode
+            ></nz-tree>
+          </div>
+        </div>
+
+        <div class="lab-row mb20" *ngIf="editDefaultDataOption.targeting_audience.radioValue == 'custom_audience'">
+          <label>排除人群:</label>
+          <div class="crowd-body-content mb20 ml8">
+            <nz-tree #tree
+                     nzCheckable
+                     [nzData]="editDefaultDataOption.targeting_audience.combine_data.excludeCrowdList"
+                     (nzCheckBoxChange)="treeExcludeCrowdOnCheck($event)"
+                     [nzCheckedKeys]="editDefaultDataOption.targeting_audience.combine_data.excludeCrowdResultList"
+                     nzBlockNode
+            ></nz-tree>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <!-- interest_action -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'interest_action'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].resultValue">
+            <label *ngFor="let radio of editDefaultDataOption[slot].sub" nz-radio-button nzValue="{{radio['value']}}">
+              {{radio['label']}}
+            </label>
+          </nz-radio-group>
+        </div>
+
+        <div class="lab-row mb20" *ngIf="editDefaultDataOption.interest_action.resultValue == 'CUSTOM'">
+          <label>行为:</label>
+          <div class="ml10">
+            <span>在</span>
+            <nz-select class="w150 mr5 ml5"
+                       [(ngModel)]="editDefaultDataOption[slot]['action_scene'].resultList"
+                       [nzPlaceHolder]="'所有行为场景'"
+                       [nzMode]="'multiple'"
+                       [nzSize]="'small'"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of editDefaultDataOption[slot]['action_scene'].sub"
+                [nzLabel]="option['label']"
+                [nzValue]="option['value']"
+              >
+              </nz-option>
+            </nz-select>
+            <span>中, 选择用户</span>
+            <nz-select class="w80 mr5 ml5"
+                       [(ngModel)]="editDefaultDataOption[slot]['action_days'].resultValue"
+                       [nzPlaceHolder]="'天数'"
+                       [nzSize]="'small'"
+                       nzShowSearch>
+              <nz-option
+                *ngFor="let option of editDefaultDataOption[slot]['action_days'].sub"
+                [nzLabel]="option['label']"
+                [nzValue]="option['value']"
+              >
+              </nz-option>
+            </nz-select>
+            <span>内发生的行为:</span>
+          </div>
+        </div>
+
+        <div class="lab-row mb20" *ngIf="editDefaultDataOption.interest_action.resultValue == 'CUSTOM'">
+          <label></label>
+          <div class="ml10 relative">
+            <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.action.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.action,$event)" [source]="editDefaultDataOption[slot].combine_data.action.actionList"></nz-transfer-tree>
+          </div>
+        </div>
+
+        <div class="lab-row mb20" *ngIf="editDefaultDataOption.interest_action.resultValue == 'CUSTOM'">
+          <label>兴趣:</label>
+          <div class="ml10 relative">
+            <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.interest.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.interest,$event)" [source]="editDefaultDataOption[slot].combine_data.interest.interestList"></nz-transfer-tree>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <!-- app_behavior_target_radio -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'app_behavior_target_radio' && editDefaultDataOption[slot].isShow">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].radioValue">
+            <label *ngFor="let radio of editDefaultDataOption[slot].sub" nz-radio-button nzValue="{{radio['value']}}">
+              {{radio['label']}}
+            </label>
+          </nz-radio-group>
+        </div>
+
+        <div class="mt10 ml148 relative mb20" *ngIf="editDefaultDataOption[slot].radioValue == 'CATEGORY'">
+          <nz-transfer-tree [getParentKey]="true" [target]="editDefaultDataOption[slot].combine_data.one_extra.resultList"  (nzChange)="transferTreeChange(editDefaultDataOption[slot].combine_data.one_extra,$event)" [source]="editDefaultDataOption[slot].combine_data.one_extra.sub"></nz-transfer-tree>
+        </div>
+
+      </ng-container>
+
+      <!--  launch_price_radio -->
+      <ng-container *ngIf="editDefaultDataOption[slot] && editDefaultDataOption[slot].form_type === 'launch_price_radio'">
+        <div class="lab-row mb20">
+          <label>{{editDefaultDataOption[slot].name}}:</label>
+          <nz-radio-group class="ml8" [nzSize]="'small'" [(ngModel)]="editDefaultDataOption[slot].radioValue">
+            <label *ngFor="let radio of editDefaultDataOption[slot].sub" nz-radio-button nzValue="{{radio['value']}}">
+              {{radio['label']}}
+            </label>
+          </nz-radio-group>
+        </div>
+        <div class="target-slider mt10 mb20 ml148" *ngIf="editDefaultDataOption[slot].radioValue == 'price'" style="width: 500px;">
+          <nz-slider [nzMarks]="editDefaultDataOption.launch_price.priceMark" nzIncluded nzRange [nzDots]="true" [(ngModel)]="editDefaultDataOption.launch_price.priceResult" [nzMax]="11000"></nz-slider>
+        </div>
+
+      </ng-container>
+
+
+
+    </ng-container>
+  </div>
+</div>

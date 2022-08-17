@@ -1,0 +1,11 @@
+<div class="conver-author">
+  <p class="title">{{productInfo['name']}}-快商通数据授权会获取访客初次访问网址、对话网址、来源网址、对话数量、访问时间、访客名称、客户类型等非敏感数据；不会获取客户的聊天明细；涉及客户敏感信息的电话、座机、微信、qq、地址等都会采用标识是否为空来传输获取，不会传输具体的内容，最大程度保护客户隐私和数据安全。</p>
+  <div class="button-controller mt20">
+    <button class="ml8" nz-button [nzType]="'default'" [nzSize]="'small'" (click)="doCancel()">
+      <span>取消</span>
+    </button>
+    <button class="ml8" nz-button [nzType]="'primary'" [nzSize]="'small'" (click)="doSave()">
+      <span>确定</span>
+    </button>
+  </div>
+</div>

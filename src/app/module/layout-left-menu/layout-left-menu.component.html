@@ -1,0 +1,73 @@
+<!-- <div class="data-view-container">
+  <div class="left-bar" *ngIf="!isMenuCollapsed">
+    <div class="nav-container">
+      <ul nz-menu nzMode="inline">
+        <ng-container *ngFor="let item of menuList">
+          <li *ngIf="!item.subMenu" nz-menu-item nzMatchRouter>
+            <a [routerLink]="item.url">
+              <span style="padding-left:20px;">{{item.name}}</span>
+            </a>
+          </li>
+          <li *ngIf="item.subMenu" nz-submenu  [nzTitle]="submenuTitle" [nzOpen]="rla.isActive" #rla="routerLinkActive" routerLinkActive>
+            <ul>
+              <li nz-menu-item *ngFor="let subItem of item.subMenu" nzMatchRouter >
+                <a [routerLink]="subItem.url">
+                  <span style="padding-left:16px;">{{subItem.name}}</span>
+                </a>
+              </li>
+            </ul>
+            <ng-template #submenuTitle><span style="padding-left:20px;">{{item.name}}</span></ng-template>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+  <div class="layout-right-container" [ngClass]="{'layout-right-container-collapsed': isMenuCollapsed}" [ngStyle]="{'margin-left': isMenuCollapsed? '16px' : '200px' }">
+    <router-outlet></router-outlet>
+  </div>
+
+  <div class="menu-collapsed-btn" [ngClass]="isMenuCollapsed? 'menu-border-left' : 'menu-border-right'" [ngStyle]="{'left': isMenuCollapsed? '0' : '186px'}" (click)="toggleMenuCollapsed()">
+    <i nz-icon [nzType]="isMenuCollapsed ? 'menu-unfold' : 'menu-fold'"></i>
+  </div>
+</div> -->
+
+<div class="data-view-container" [ngClass]="{'oldMenu': isOldMenu}">
+  <div class="left-bar" *ngIf="!isMenuCollapsed">
+    <div class="nav-container">
+      <ul nz-menu nzMode="inline">
+        <ng-container *ngFor="let item of menuList">
+          <li *ngIf="!item.subMenu" nz-menu-item nzMatchRouter>
+            <a [routerLink]="item.url">
+              <span style="padding-left:20px;font-size: 13px">{{item.name}}</span>
+            </a>
+          </li>
+          <li *ngIf="item.subMenu" nz-submenu  [nzTitle]="submenuTitle" [nzOpen]="rla.isActive" #rla="routerLinkActive" routerLinkActive>
+            <ul>
+              <li nz-menu-item *ngFor="let subItem of item.subMenu" nzMatchRouter >
+                <div [routerLink]="subItem.url">
+                  <span style="padding-left:20px;font-size: 13px">
+                    {{subItem.name}}
+                  </span>
+                </div>
+              </li>
+            </ul>
+            <ng-template #submenuTitle>
+              <div style="padding-left:20px">
+                <i *ngIf="item.icon" nz-icon [nzType]="item.icon" nzTheme="outline"></i>
+                <span >{{item.name}}</span>
+              </div>
+            </ng-template>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+  <div class="layout-right-container" [ngClass]="{'layout-right-container-collapsed': isMenuCollapsed}" [ngStyle]="{'margin-left': isMenuCollapsed? '16px' : '240px' }">
+    <router-outlet></router-outlet>
+  </div>
+
+  <div class="menu-collapsed-btn" [ngClass]="isMenuCollapsed? 'menu-border-left' : 'menu-border-right'" [ngStyle]="{'left': isMenuCollapsed? '0' : '226px'}" (click)="toggleMenuCollapsed()">
+    <i nz-icon [nzType]="isMenuCollapsed ? 'menu-unfold' : 'menu-fold'"></i>
+  </div>
+</div>
+
